@@ -1,0 +1,81 @@
+docker pull <cont> - скачать obraz
+docker images - pokazat ska4enie lokalno obrazi
+docker run <> - ska4at i zapustit konteyner
+docker run -e MY_ENV=test nginx -zadat peremennuy sredu
+docker run \ - razbitiay kommand na stroki
+> --name <my name> \
+> -d \ - zapusk v background
+> <conteyner>
+
+docker start <> - zapustit ostanovleniy konteyner
+docker stop <conteiner> - ostanovit konteiner
+docker kill <conteiner> - ostanovit konteiner esli stop ne rabotaet
+docker rm <container id or NAMES> - udalit conteiner
+docker run --rm <conteyner> - avtomati4eskoe udalenie conteynera posle ego zaverchenia
+docker container prune - udalit vse ostanovlenie konteyneri
+docker logs <conteiner> - log conteynera (ego vivod)
+docker volume ls - info dlia volumes vnutri Docker Host
+docker inspect <nazvanie toma> - info o tome
+
+docker container inspect <conteiner> - meta dannie konteinera
+docker container inspect <conteiner> | grep <text> - otfiltrovat po opredelennomu textu
+
+docker exec -it <konteiner> bash - zapusk processa (bash) v zapuchenom conteynere
+docker run --name <imia> <conteiner> - zadat imia dla conteynera
+
+docker run -p 8080:80 <conteiner> - probroska porta 8080 vnechniy, 80 vnutreniy
+
+docker run -v <adress>:<adress v conteynere> <conteyner>
+docker run -v ${PWD}:/usr/share/nginx/html nginx
+${PWD} - peremennaya, absolutniy put k tekuchey papke
+
+docker build . - sozdat image iz tekuchey direktorii
+docker build . -f <filename> - esli nazvanie docker file otli4aetsa on Dockerfile 
+docker build . -t <my image name>:<my tag> - dobavit imia i tag (opcionalno)
+docker build --tag <my image tag> . - dobavit tolko tag (alpine, latest ...)
+
+docker-compose up - zapusk compose
+docker-compose up -d - zapusk v background
+docker-compose down - ostanovka vsex conteynerov compose I ix udalenie
+Docker-compose up --build - peresabrat conteyneri elli 4toto v nix pominialos
+
+
+
+
+
+*** Dockerfile ***
+FROM <imia obraza>:<alpine,.... versia>
+WORKDIR /app - rabo4aya direktoria
+EXPOSE 3000 - nomer porta na kotorom rabotaet app, kotoriy otkrivaem (dla inf, ne igraet roli)
+COPY file*.txt ./ - copy v WORKDIR, * mogno ispolzovat
+RUN top install - ustanovka v nutri konteinera
+CMD ["executable", "parametr1", "parametr2",....] - kakoy proces zapustit v conteynere 
+
+
+
+??? .dockerignor ???
+mozno zadat imeta faylov kotorie ne nuzno kopirivat
+
+
+*** docker-compose.yml ***
+version: '3' 
+
+sercices:
+  service1:
+    build: ./folder  -sdelat sobstvenniy obraz iz Dockerfile
+    command: 
+    restart: always -avtomati4eskiy perezapusk konteynera posle ostanovki
+    ports: -probros portov
+      - '81:80' -81 vnechniy port 80 vnutreniy
+    environment: -peremennie sredy
+      MYSQL_ROOT_PASSORD: example
+      MYSQL_DATABASE: mydb
+  service2:
+    image: nameimage  -ispolzovat obraz iz docker registry
+    volumes:
+      - mysql_data:/var/lib/mysql  - podklu4em tom mysql_data k papke /var... v konteinere (maping tomov)
+      - /app/folder1  - put k pod-papke v /app kotoruu ne nado perezapisivat cm nize. Bez :. Ukazat do sleduuchey stroki 
+      - ./folder2:/app
+volumes:  - zadaem tom vnutri Dicker Host
+  mysql_data:
+
