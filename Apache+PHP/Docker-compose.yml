@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+
+  app:
+    build: .
+    image: apache:test
+    container_name: apache-test
+    # context: .
+    # dockerfile: Dockerfile
+    ports:
+      - "80:80"
