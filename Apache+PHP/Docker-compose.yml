@@ -6,7 +6,10 @@ services:
     build: .
     image: apache:test
     container_name: apache-test
-    # context: .
-    # dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
     ports:
       - "80:80"
+
+# context: .
+# dockerfile: Dockerfile
