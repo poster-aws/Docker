@@ -1,7 +1,7 @@
 #version: '3'
 services:
     
-  inet:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
