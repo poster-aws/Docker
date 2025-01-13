@@ -1,0 +1,14 @@
+#version: '3'
+services:
+    
+  inet:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: apache-test:v2
+    container_name: Http-test
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - .:/usr/local/apache2/htdocs/

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>www.faute.ch -=^..^=-</title>
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .bottom-right {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: blue;
+            margin-top: 50px;
+            padding: 10px;
+            border-radius: 5px;
+
+        }
+    </style>
+</head>
+<body>
+    <h1>Faute.ch HTML page</h1>
+    <div id="time"></div>
+    <div id="ip"></div>
+    <p><a href="errer.html"> go to ERRER page </a></p>
+    <div class="bottom-right"> <b>PosteR<b> </div>
+
+    <script>
+        // Function to update the current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('time').textContent = 'Current Time: ' + timeString;
+        }
+
+        // Update time every second
+        setInterval(updateTime, 1000);
+        updateTime();  // Initial call to set the time immediately
+
+        // Fetch the IP address using a third-party service
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip').textContent = 'Your IP Address: ' + data.ip;
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+            });
+    </script>
+</body>
+</html>
