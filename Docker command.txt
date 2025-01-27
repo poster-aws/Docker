@@ -79,3 +79,8 @@ sercices:
 volumes:  - zadaem tom vnutri Dicker Host
   mysql_data:
 
+
+
+docker rm -v -f $(docker ps -qa) 
+
+docker rmi $(docker images -q)
