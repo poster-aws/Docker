@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 }
 
 // Выполняем запрос
-$sql = "SELECT date, value FROM data_table";
+$sql = "SELECT two_char, three_char FROM data_table";
 $result = $conn->query($sql);
 
 $data = [];
@@ -38,7 +38,7 @@ $json_data = json_encode($data);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chart Example</title>
+    <title>График данных</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -49,28 +49,51 @@ $json_data = json_encode($data);
         // Данные, полученные из PHP (JSON)
         const dataFromPHP = <?php echo $json_data; ?>;
         
-        // Извлекаем даты и значения из данных
-        const labels = dataFromPHP.map(item => item.date);
-        const values = dataFromPHP.map(item => item.value);
+        // Проверка данных
+        console.log(dataFromPHP);  // Это поможет проверить, что данные приходят в JavaScript
+
+        // Извлекаем два символа и три символа из данных
+        const labels = dataFromPHP.map(item => parseInt(item.two_char));  // Два символа как числа для оси Y
+        const values = dataFromPHP.map(item => parseInt(item.three_char));  // Три символа как числа для оси X
 
         // Создание графика
         const ctx = document.getElementById('myChart').getContext('2d');
         const myChart = new Chart(ctx, {
-            type: 'line', // Тип графика (линейный)
+            type: 'scatter', // Тип графика - точечный (scatter)
             data: {
-                labels: labels, // Даты на оси X
                 datasets: [{
                     label: 'Значение',
-                    data: values, // Значения на оси Y
-                    borderColor: 'rgba(75, 192, 192, 1)', // Цвет линии графика
-                    borderWidth: 1,
-                    fill: false // Без заливки графика
+                    data: dataFromPHP.map((item, index) => ({
+                        x: parseInt(item.three_char),  // Значения по оси X (three_char)
+                        y: parseInt(item.two_char)    // Значения по оси Y (two_char)
+                    })),
+                    backgroundColor: 'rgba(75, 192, 6, 1)', // Цвет точек
+                    borderColor: 'rgba(75, 192, 192, 1)', // Цвет обводки точек
+                    borderWidth: 1, // Толщина обводки
+                    pointRadius: 4, // Радиус точек
+                    pointHoverRadius: 5, // Радиус точек при наведении
+                    showLine: false, // Отключаем отображение линии
+                    fill: false, // Отключаем заливку
                 }]
             },
             options: {
+                responsive: true,
                 scales: {
+                    x: {
+                        min: 1,  // Минимальное значение на оси X (1)
+                        max: 200, // Максимальное значение на оси X (200)
+                        title: {
+                            display: true,
+                            text: 'Три символа (значение)'
+                        }
+                    },
                     y: {
-                        beginAtZero: true // Начинать график с 0
+                        min: 1,  // Минимальное значение на оси Y (1)
+                        max: 100, // Максимальное значение на оси Y (100)
+                        title: {
+                            display: true,
+                            text: 'Два символа'
+                        }
                     }
                 }
             }

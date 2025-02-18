@@ -39,6 +39,14 @@ services:
     depends_on:
       - php
 
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"  # Порт, по которому будет доступен Adminer
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
