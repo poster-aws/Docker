@@ -1,0 +1,53 @@
+services:
+  db:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: quotidienne2  # Создаем БД
+      MYSQL_USER: user
+      MYSQL_PASSWORD: q
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d # Загрузка SQL скриптов при старте
+      - ./DB:/var/lib/mysql/  # Для персистентности данных
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  php:
+    build: .
+    container_name: php-fpm
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"  # Порт для взаимодействия с Nginx
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-server
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/var/www/html
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - php
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"  # Порт, по которому будет доступен Adminer
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
