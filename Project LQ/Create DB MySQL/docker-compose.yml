@@ -10,8 +10,9 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: q
     volumes:
-      - ./sql:/docker-entrypoint-initdb.d  # Загрузка SQL скриптов при старте
-      - ./DB:/var/lib/mysql/  # Для персистентности данных
+      # - ./sql:/docker-entrypoint-initdb.d  # Загрузка SQL скриптов при старте
+      - ./sql2:/docker-entrypoint-initdb.d  # Загрузка SQL скриптов при старте
+      # - ./DB:/var/lib/mysql/  # Для персистентности данных
     ports:
       - "3306:3306"  # Открываем порт 3306
     networks:
