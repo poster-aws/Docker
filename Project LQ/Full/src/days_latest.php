@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 }
 
 // Выполняем запрос из таблицы Q2_days
-$sql = "SELECT n1, n2, days FROM Q2_days";
+$sql = "SELECT n1, n2, days FROM Q2_days_latest";
 $result = $conn->query($sql);
 
 $data = [];
@@ -44,8 +44,23 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>График данных</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .top-right-link {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        .top-right-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <a href="index.html" class="top-right-link">Go to main page</a>
     <h1>График данных</h1>
     <canvas id="myChart" width="400" height="200"></canvas>
     

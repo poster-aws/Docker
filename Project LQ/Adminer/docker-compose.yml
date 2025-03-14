@@ -1,0 +1,13 @@
+services:
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"  # Открываем порт для Adminer
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    external: true  # Используем уже созданную сеть
