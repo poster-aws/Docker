@@ -1,11 +1,11 @@
 services:
 
   backup:
-    image: mysql
+    image: mysql:8
     container_name: mysql_restore
     volumes:
       - ./restore.sh:/restore.sh
-      - ./backups:/backups
+      - ../BackupDB:/backups
     entrypoint: ["/bin/sh", "-c", "/restore.sh"]
     restart: "no"
     networks:
