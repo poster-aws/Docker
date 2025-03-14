@@ -1,0 +1,16 @@
+services:
+
+  backup:
+    image: mysql
+    container_name: mysql_restore
+    volumes:
+      - ./restore.sh:/restore.sh
+      - ./backups:/backups
+    entrypoint: ["/bin/sh", "-c", "/restore.sh"]
+    restart: "no"
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    external: true  # Используем уже созданную сеть
