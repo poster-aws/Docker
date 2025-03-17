@@ -55,16 +55,16 @@ if response.status_code == 200:
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                # Создаём таблицу с новой колонкой для даты (Tirage) первым столбцом
+                # Создаём таблицу с новой колонкой для даты (Tirage) первым столбцом и уникальным ключом
                 create_table_query = """
                 CREATE TABLE IF NOT EXISTS Q2 (
-                    Tirage DATE,
+                    Tirage DATE PRIMARY KEY,
                     n1 INT,
                     n2 INT
                 );
                 """
                 cursor.execute(create_table_query)
-                print("Таблица 'loterie' была успешно создана/обновлена.")
+                print("Таблица 'Q2' была успешно создана/обновлена.")
                 
                 # Преобразуем номера в целые числа
                 try:
@@ -81,11 +81,15 @@ if response.status_code == 200:
                     print("Ошибка преобразования даты.")
                     # return
 
-                # SQL-запрос для вставки данных
-                insert_query = """INSERT INTO Q2 (Tirage, n1, n2) VALUES (%s, %s, %s)"""
+                # SQL-запрос для вставки данных с предотвращением дубликатов
+                insert_query = """
+                INSERT INTO Q2 (Tirage, n1, n2) 
+                VALUES (%s, %s, %s) 
+                ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2);
+                """
                 cursor.execute(insert_query, (tirage_date, n1_int, n2_int))
                 connection.commit()
-                print(f"Номера {n1_int} и {n2_int} и дата {tirage_date} были успешно вставлены в базу данных.")
+                print(f"Номера {n1_int} и {n2_int} и дата {tirage_date} были успешно вставлены или обновлены в базе данных.")
         
         except Error as e:
             print("Ошибка при подключении к MySQL:", e)

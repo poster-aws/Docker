@@ -28,4 +28,4 @@ echo "MySQL доступен. Восстанавливаем данные..."
 # Восстановление данных
 mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME < "$LATEST_BACKUP"
 
-echo "Восстановление завершено!"
+echo "Восстановление завершено $(date)"

@@ -13,7 +13,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - app-network
+      - mysql_net
 
   restore:
     image: mysql:8
@@ -23,19 +23,19 @@ services:
     volumes:
       - ../BackupDB:/backups
       - ./restore.sh:/scripts/restore.sh
-      - ./init.sh:/scripts/init.sh
     networks:
-      - app-network
-    entrypoint: ["/bin/sh", "-c", "/scripts/restore.sh && /scripts/init.sh"]
+      - mysql_net
+    entrypoint: ["/bin/sh", "-c", "/scripts/restore.sh"]
     restart: "no"
 
   php:
     build: .
+    image: my-php  # Задаем имя образа
     container_name: php-fpm
     volumes:
       - ./src:/var/www/html
     networks:
-      - app-network
+      - mysql_net
     depends_on:
       - db
     ports:
@@ -50,7 +50,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - app-network
+      - mysql_net
     depends_on:
       - php
 
@@ -60,8 +60,8 @@ services:
     ports:
       - "8080:8080"  # Порт, по которому будет доступен Adminer
     networks:
-      - app-network
+      - mysql_net
 
 networks:
-  app-network:
-    driver: bridge
+  mysql_net:
+    name: mysql_net # Явно указываем имя сети, чтобы Adminer мог её использовать

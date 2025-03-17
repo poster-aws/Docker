@@ -6,6 +6,8 @@ DB_NAME="quotidienne2"      # имя базы данных
 DB_USER="user"          # имя пользователя
 DB_PASS="user"      # пароль
 
+echo "Начинаем выполнение init.sh."
+
 # Выполнение SQL-команд через mysql-клиент
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" <<'EOF'
 -- Создаем результирующую таблицу Q2_days
@@ -13,9 +15,7 @@ CREATE TABLE IF NOT EXISTS Q2_days (
     Tirage DATE NOT NULL,
     n1 INT NOT NULL,
     n2 INT NOT NULL,
-    days INT,
-    PRIMARY KEY (Tirage, n1, n2)
-);
+    days INT );
 
 -- Очищаем таблицу перед вставкой данных
 TRUNCATE TABLE Q2_days;
@@ -35,8 +35,6 @@ SELECT
     ) AS days
 FROM Q2 t1;
 
--- Создаем индекс для ускорения поиска
-CREATE INDEX IF NOT EXISTS idx_Q2 ON Q2 (n1, n2, Tirage);
 EOF
 
 echo "SQL-команды выполнены."

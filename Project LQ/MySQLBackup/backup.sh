@@ -21,3 +21,4 @@ echo "MySQL доступен. Начинаем резервное копиров
 mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
 
 echo "Резервное копирование завершено: $BACKUP_FILE"
+echo "$(date)"

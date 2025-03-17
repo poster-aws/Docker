@@ -1,21 +1,30 @@
 services:
 
   db:
-    image: mysql
+    image: mysql:8
     container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: quotidienne2  # Создаем БД
       MYSQL_USER: user
       MYSQL_PASSWORD: user
-    #volumes:
-     # - ./sql:/docker-entrypoint-initdb.d  # Загрузка SQL скриптов при старте
-     # - ./DB:/var/lib/mysql/  # Для персистентности данных
+    # volumes:
+      # - ./sql:/docker-entrypoint-initdb.d  # Загрузка SQL скриптов при старте
     ports:
       - "3306:3306"  # Открываем порт 3306
     networks:
       - mysql_net
 
+  adminer:
+    image: adminer
+    container_name: adminer
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"  # Открываем порт для Adminer
+    networks:
+      - mysql_net
+
 networks:
   mysql_net:
-    name: mysql_net # Явно указываем имя сети, чтобы Adminer мог её использовать
+    name: mysql_net # Явно указываем имя сети, чтобы ёе мог использовать Services
