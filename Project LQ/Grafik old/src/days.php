@@ -60,7 +60,7 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
     </style>
 </head>
 <body>
-    <a href="index.php" class="top-right-link">Go to main page</a>
+    <a href="index.html" class="top-right-link">Go to main page</a>
 
     <h1>График данных</h1>
     <canvas id="myChart" width="400" height="200"></canvas>
