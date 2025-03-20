@@ -1,0 +1,8 @@
+<h2>Последнее появление чисел</h2>
+    <?php if (!empty($last_appearance_data)): ?>
+        <?php foreach ($last_appearance_data as $row): ?>
+            Число <?= htmlspecialchars($row['Number']) ?> появлялось <?= htmlspecialchars($row['Days_Since_Last_Appearance']) ?> дней назад.<br>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>Нет данных</p>
+    <?php endif; ?>
