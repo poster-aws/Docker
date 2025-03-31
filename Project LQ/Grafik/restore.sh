@@ -14,7 +14,6 @@ if [ -z "$LATEST_BACKUP" ]; then
     echo "Ошибка: Файл резервной копии не найден!"
     exit 1
 fi
-
     echo "Обнаружен последний бэкап: $LATEST_BACKUP"
 
 # Ожидание доступности MySQL
@@ -24,7 +23,6 @@ until mysqladmin ping -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --silent; do
     echo "Ожидаем MySQL..."
     sleep 2
 done
-
     echo "MySQL доступен. Восстанавливаем данные..."
 
 # Восстановление данных

@@ -11,6 +11,7 @@
             text-align: center;
             margin-top: 50px;
         }
+
         .bottom-right {
             position: fixed;
             bottom: 10px;
@@ -18,10 +19,39 @@
             color: blue;
             padding: 10px;
             border-radius: 5px;
+            text-align: right;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.7);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
-        .table-container {
+
+        .top-right-link {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: rgba(255,255,255,0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #000;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .tirages-title {
             position: absolute;
             top: 10px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            color: #333;
+            margin: 0;
+        }
+
+        .table-container {
+            position: absolute;
+            top: 50px; /* сместили вниз, чтобы заголовок не перекрывался */
             left: 10px;
             width: 180px;
             max-height: 90vh;
@@ -35,6 +65,7 @@
             filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
             border: 2px solid #e3c77b;
         }
+
         .interactive-table {
             width: 100%;
             border-collapse: collapse;
@@ -42,6 +73,7 @@
             font-family: 'Shadows Into Light', cursive;
             color: #1a237e;
         }
+
         .interactive-table tbody {
             display: block;
             max-height: 70vh;
@@ -49,9 +81,11 @@
             overflow-x: hidden;
             scrollbar-width: none;
         }
+
         .interactive-table tbody::-webkit-scrollbar {
             display: none;
         }
+
         .interactive-table td {
             border-bottom: 1px dashed #8d6e63;
             padding: 10px;
@@ -60,14 +94,16 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .interactive-table tr:hover {
             background-color: rgba(255, 255, 255, 0.3);
             transition: background-color 0.3s ease;
         }
+
         .interactive-table td:hover {
             background-color: rgba(255, 255, 255, 0.5);
         }
-        /* Новый стиль для блока справа без эффектов */
+
         .plain-table-container {
             position: absolute;
             top: 10px;
@@ -75,37 +111,50 @@
             width: 180px;
             max-height: 90vh;
             overflow: auto;
-            background: #ffffff; /* Обычный белый фон */
+            background: #ffffff;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #ccc; /* Простая серая рамка */
+            border: 1px solid #ccc;
         }
+
         .plain-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 16px;
             font-family: Arial, sans-serif;
-            color: #000; /* Черный цвет текста */
+            color: #000;
         }
+
         .plain-table th, .plain-table td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
         }
+
         .plain-table th {
             background-color: #f2f2f2;
             font-weight: bold;
         }
+
         .highlight {
             background-color: yellow !important;
         }
     </style>
 </head>
 <body>
-    <h1>Вся страница</h1>
-    <div id="time" aria-live="polite">Загрузка времени...</div>
-    <div id="ip">Ваш IP-адрес: <?= htmlspecialchars($ip) ?></div>
-    <p><a href="days.php">Перейти на страницу дней</a></p>
+
+    <!-- Ссылка в правом верхнем углу -->
+    <a href="days.php" class="top-right-link">Перейти на страницу дней</a>
+
+    <!-- Блок в правом нижнем углу -->
+    <div class="bottom-right">
+        <div><b>PosteR</b></div>
+        <div id="ip">Ваш IP-адрес: <?= htmlspecialchars($ip) ?></div>
+        <div id="time" aria-live="polite">Загрузка времени...</div>
+    </div>
+
+    <!-- Заголовок для таблицы -->
+    <h2 class="tirages-title">Tirages</h2>
 
     <!-- Основная таблица (слева) -->
     <div class="table-container">
@@ -126,7 +175,7 @@
         </table>
     </div>
 
-    <!-- Новый блок справа (без эффектов) -->
+    <!-- Таблица справа -->
     <div class="plain-table-container">
         <table class="plain-table">
             <thead>
@@ -149,8 +198,6 @@
             </tbody>
         </table>
     </div>
-
-    <div class="bottom-right"><b>PosteR</b></div>
 
     <script>
         function updateTime() {
