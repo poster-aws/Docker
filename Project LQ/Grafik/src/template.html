@@ -19,7 +19,7 @@
             color: blue;
             padding: 10px;
             border-radius: 5px;
-            text-align: right;
+            text-align: right; 
             font-size: 14px;
             background-color: rgba(255,255,255,0.7);
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
@@ -76,14 +76,15 @@
 
         .interactive-table tbody {
             display: block;
-            max-height: 70vh;
+            max-height: 85vh;
             overflow-y: auto;
             overflow-x: hidden;
-            scrollbar-width: none;
+            /* скрываем полосу прокрутки */
+            scrollbar-width: none; /* Firefox */
         }
 
         .interactive-table tbody::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome/Safari */
         }
 
         .interactive-table td {
@@ -103,6 +104,20 @@
         .interactive-table td:hover {
             background-color: rgba(255, 255, 255, 0.5);
         }
+
+        .circle {  /* кружки */
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            background-color: #599ce8;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+            font-family: Arial, sans-serif;
+    }
 
         .plain-table-container {
             position: absolute;
@@ -139,73 +154,173 @@
         .highlight {
             background-color: yellow !important;
         }
+
+        /*-- Стили для новых таблиц */
+
+        .combination-table-container {
+            position: absolute;
+            top: 50px;
+            left: 510px;
+            width: 150px;
+            max-height: 90vh;
+            overflow: hidden;
+            background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'), 
+                        linear-gradient(80deg, #bab9ce 10%, rgb(102, 32, 242) 100%);
+            background-size: cover;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            border: 2px solid #e3c77b;
+        }
+
+        .combination-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 18px;
+            font-family: 'Shadows Into Light', cursive;
+            color: #1a237e;
+        }
+
+        .combination-table thead,
+        .combination-table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .combination-table thead {
+            background-color: #f2f2f200; /* цвет заголовка колонок */
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .combination-table tbody {
+            display: block;
+            max-height: 75vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            /* скрываем полосу прокрутки */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .combination-table tbody::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .combination-table td {
+            border-bottom: 1px dashed #8d6e63;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .combination-table tr:hover {
+            background-color: rgba(214, 11, 11, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .combination-table td:hover {
+            background-color: rgba(232, 239, 17, 0.5);
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Ссылка в правом верхнем углу -->
-    <a href="days.php" class="top-right-link">Перейти на страницу дней</a>
+<!-- Ссылка в правом верхнем углу -->
+<a href="days.php" class="top-right-link">Перейти на страницу дней</a>
 
-    <!-- Блок в правом нижнем углу -->
-    <div class="bottom-right">
-        <div><b>PosteR</b></div>
-        <div id="ip">Ваш IP-адрес: <?= htmlspecialchars($ip) ?></div>
-        <div id="time" aria-live="polite">Загрузка времени...</div>
-    </div>
+<!-- Блок в правом нижнем углу -->
+<div class="bottom-right">
+    <div><b>PosteR</b></div>
+    <div id="ip">Ваш IP-адрес: <?= htmlspecialchars($ip) ?></div>
+    <div id="time" aria-live="polite">Загрузка времени...</div>
+</div>
 
-    <!-- Заголовок для таблицы -->
-    <h2 class="tirages-title">Tirages</h2>
+<!-- Заголовок для таблицы -->
+<h2 class="tirages-title">Tirages</h2>
 
-    <!-- Основная таблица (слева) -->
-    <div class="table-container">
-        <table class="interactive-table">
-            <tbody>
-                <?php if (!empty($data)): ?>
-                    <?php foreach ($data as $row): ?>
-                        <tr>
-                            <?php foreach ($row as $cell): ?>
-                                <td><?= htmlspecialchars($cell) ?></td>
-                            <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
+<!-- Основная таблица (слева) -->
+<div class="table-container">
+    <table class="interactive-table">
+        <tbody>
+            <?php if (!empty($data)): ?>
+                <?php foreach ($data as $row): ?>
+                    <tr>
+                        <?php foreach ($row as $key => $cell): ?>
+                        <td>
+                          <?php if ($key === 'n1' || $key === 'n2'): ?>
+                            <span class="circle"><?= htmlspecialchars($cell) ?></span>
+                          <?php else: ?>
+                            <?= htmlspecialchars($cell) ?>
+                          <?php endif; ?>
+                        </td>
+                      <?php endforeach; ?>
+                    </tr>
+                  <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="100%">Нет данных</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+                <tr><td colspan="100%">Нет данных</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
-    <!-- Таблица справа -->
-    <div class="plain-table-container">
-        <table class="plain-table">
-            <thead>
-                <tr>
-                    <th>Число</th>
-                    <th>Дней назад</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($last_appearance_data)): ?>
-                    <?php foreach ($last_appearance_data as $row): ?>
-                        <tr class="<?= ($row['Days_Since_Last_Appearance'] == 2) ? 'highlight' : '' ?>">
-                            <td><?= htmlspecialchars($row['Number']) ?></td>
-                            <td><?= htmlspecialchars($row['Days_Since_Last_Appearance']) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr><td colspan="2">Нет данных</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+<!-- Таблица справа -->
+<div class="plain-table-container">
+    <table class="plain-table">
+        <thead>
+            <tr>
+                <th>Число</th>
+                <th>Дней назад</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($last_appearance_data)): ?>
+                <?php foreach ($last_appearance_data as $row): ?>
+                    <tr class="<?= ($row['Days_Since_Last_Appearance'] == 2) ? 'highlight' : '' ?>">
+                        <td><?= htmlspecialchars($row['Number']) ?></td>
+                        <td><?= htmlspecialchars($row['Days_Since_Last_Appearance']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="2">Нет данных</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').textContent = 'Текущее время: ' + now.toLocaleTimeString();
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
-    </script>
+<!-- Таблица упорядоченных комбинаций -->
+<div class="table-block combination-table-container ordered">
+    <table class="combination-table">
+        <thead>
+            <tr>
+                <th>n1</th>
+                <th>n2</th>
+                <th>Jours</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($ordered_combinations as $item): ?>
+            <tr>
+                <td><span class="circle"><?= $item['n1'] ?></span></td>
+                <td><span class="circle"><?= $item['n2'] ?></span></td>
+                <td><?= ($item['days'] === null) ? 'никогда' : $item['days'] ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-------------------------------------------------->
+<script>
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time').textContent = 'Текущее время: ' + now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
 </body>
 </html>

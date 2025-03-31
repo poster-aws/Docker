@@ -129,5 +129,5 @@ $ip = $_SERVER['REMOTE_ADDR'];
 $conn->close();
 
 // Подключаем HTML-шаблон
-include 'template.html';
+include 'xlam.html';
 ?>
