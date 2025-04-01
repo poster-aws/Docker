@@ -1,0 +1,90 @@
+-------- процедура для первоначального создания Q2_stats --------
+-------- перешитывает полностью всю таблицу Q2_stats --------
+
+-------- первая команда --------
+
+DROP TABLE IF EXISTS Q2_stats;
+
+CREATE TABLE Q2_stats (
+    Tirage DATE,
+    n1 TINYINT UNSIGNED,
+    n2 TINYINT UNSIGNED,
+    days INT,
+    days2 INT,
+    fois INT,
+    max INT
+);
+
+-------- вторая команда  добавление процедуры в БД --------
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q2_stats()
+BEGIN
+    DECLARE total INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+
+    -- получить общее количество записей
+    SELECT COUNT(*) INTO total FROM Q2;
+
+    WHILE i < total DO
+        -- получить i-ю строку
+        SELECT Tirage, n1, n2 INTO d, a, b
+        FROM Q2
+        ORDER BY Tirage
+        LIMIT 1 OFFSET i;
+
+        -- вставка расчётных данных
+        INSERT INTO Q2_stats (Tirage, n1, n2, days, days2, fois, max)
+        SELECT 
+            d,
+            a,
+            b,
+
+            -- days
+            IFNULL(DATEDIFF(d, (
+                SELECT MAX(Tirage) FROM Q2
+                WHERE Tirage < d AND n1 = a AND n2 = b
+            )), 0),
+
+            -- days2
+            IFNULL(DATEDIFF((
+                SELECT MAX(Tirage) FROM Q2
+                WHERE Tirage < (
+                    SELECT MAX(Tirage) FROM Q2
+                    WHERE Tirage < d AND n1 = a AND n2 = b
+                ) AND n1 = a AND n2 = b
+            ), (
+                SELECT MAX(Tirage) FROM Q2
+                WHERE Tirage < d AND n1 = a AND n2 = b
+            )), 0),
+
+            -- fois
+            IFNULL((
+                SELECT COUNT(*) FROM Q2
+                WHERE Tirage <= d AND n1 = a AND n2 = b
+            ), 0),
+
+            -- max
+            IFNULL((
+                SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                    SELECT Tirage,
+                           LAG(Tirage) OVER (PARTITION BY n1, n2 ORDER BY Tirage) AS prev_Tirage
+                    FROM Q2
+                    WHERE n1 = a AND n2 = b AND Tirage <= d
+                ) AS temp
+                WHERE prev_Tirage IS NOT NULL
+            ), 0);
+
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;
+
+-------- третья команда вызов процедуры --------
+
+CALL fill_Q2_stats();

@@ -1,0 +1,64 @@
+--------процедура для Q2_stats--------
+--------перешитывает только последний тираж из Q2--------
+
+-- DROP PROCEDURE IF EXISTS fill_Q2_stats;
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q2_stats()
+BEGIN
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+
+    -- Получаем последний (новый) тираж
+    SELECT Tirage, n1, n2
+    INTO d, a, b
+    FROM Q2
+    ORDER BY Tirage DESC
+    LIMIT 1;
+
+    -- Вставляем новую строку статистики (если ещё нет)
+    INSERT IGNORE INTO Q2_stats (Tirage, n1, n2, days, days2, fois, max)
+    SELECT 
+        d,
+        a,
+        b,
+
+        -- days
+        IFNULL(DATEDIFF(d, (
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < d AND n1 = a AND n2 = b
+        )), 0),
+
+        -- days2
+        IFNULL(DATEDIFF((
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < (
+                SELECT MAX(Tirage) FROM Q2
+                WHERE Tirage < d AND n1 = a AND n2 = b
+            ) AND n1 = a AND n2 = b
+        ), (
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < d AND n1 = a AND n2 = b
+        )), 0),
+
+        -- fois
+        IFNULL((
+            SELECT COUNT(*) FROM Q2
+            WHERE Tirage <= d AND n1 = a AND n2 = b
+        ), 0),
+
+        -- max
+        IFNULL((
+            SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                SELECT Tirage,
+                       LAG(Tirage) OVER (PARTITION BY n1, n2 ORDER BY Tirage) AS prev_Tirage
+                FROM Q2
+                WHERE n1 = a AND n2 = b AND Tirage <= d
+            ) AS temp
+            WHERE prev_Tirage IS NOT NULL
+        ), 0);
+END //
+
+DELIMITER ;

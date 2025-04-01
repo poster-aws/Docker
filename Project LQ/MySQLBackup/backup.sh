@@ -17,8 +17,8 @@ done
 
 echo "MySQL доступен. Начинаем резервное копирование..."
 
-# Создание резервной копии
-mysqldump --no-tablespaces -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
+# Создание резервной копии (включая процедуры, триггеры и события)
+mysqldump --routines --triggers --events --no-tablespaces -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
 
 echo "Резервное копирование завершено: $BACKUP_FILE"
 

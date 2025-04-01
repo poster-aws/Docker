@@ -10,43 +10,43 @@ url = "https://loteries.lotoquebec.com/fr/loteries/la-quotidienne"
 # Выполняем GET-запрос
 response = requests.get(url)
 
-# Проверяем статус ответа (код 200)
 if response.status_code == 200:
-    # Получаем исходный код страницы
     page_source = response.text
-    
-    # Сохраняем исходный код в файл HTML
+
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
 
-    print("\nИсходный код был сохранен в 'page_source.html'.")
-    
-    # Используем BeautifulSoup для парсинга HTML
+    print("\n Исходный код был сохранен в 'page_source.html'.")
+
     soup = BeautifulSoup(page_source, 'html.parser')
-    
-    # Извлекаем дату из элемента <div id="dateAffichee">
+
+    # Извлекаем дату как строку
     date_elem = soup.find('div', id='dateAffichee')
     if date_elem:
-        date_str = date_elem.text.strip()  # Извлекаем текст (дату)
+        date_str = date_elem.text.strip()
         print(f"Дата извлечена: {date_str}")
     else:
-        print("Дата не найдена на странице.")
+        print("Дата не найдена.")
         date_str = None
-    
-    # Ищем элементы <span> с классом "num" для номеров
+
+    # Извлекаем номера
     numeros = soup.find_all('span', class_='num')
-    
     if len(numeros) >= 2 and date_str:
-        # Извлекаем два первых номера
-        n1 = numeros[0].text.strip().replace(' ', '')
-        n2 = numeros[1].text.strip().replace(' ', '')
-        
-        print(f"Два первых номера: {n1}, {n2}")
-        
-        # Подключаемся к базе данных MySQL
+        try:
+            n1 = int(numeros[0].text.strip().replace(' ', ''))
+            n2 = int(numeros[1].text.strip().replace(' ', ''))
+            print(f"Два первых номера: {n1}, {n2}")
+        except ValueError:
+            print("Ошибка при преобразовании номеров.")
+            n1, n2 = None, None
+    else:
+        print("Недостаточно номеров или дата не извлечена.")
+        n1, n2 = None, None
+
+    if date_str and n1 is not None and n2 is not None:
         try:
             connection = mysql.connector.connect(
-                host=os.getenv('DB_HOST', 'db'),  # Используем переменные окружения для безопасности
+                host=os.getenv('DB_HOST', 'db'),
                 database=os.getenv('DB_NAME', 'quotidienne2'),
                 user=os.getenv('DB_USER', 'user'),
                 password=os.getenv('DB_PASSWORD', 'user')
@@ -55,52 +55,46 @@ if response.status_code == 200:
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                # Создаём таблицу с новой колонкой для даты (Tirage) первым столбцом и уникальным ключом
+                # Создание таблицы Q2, если не существует
                 create_table_query = """
                 CREATE TABLE IF NOT EXISTS Q2 (
-                    Tirage DATE PRIMARY KEY,
+                    Tirage VARCHAR(50) PRIMARY KEY,
                     n1 INT,
                     n2 INT
                 );
                 """
                 cursor.execute(create_table_query)
-                print("Таблица 'Q2' была успешно создана/обновлена.")
-                
-                # Преобразуем номера в целые числа
-                try:
-                    n1_int = int(n1)
-                    n2_int = int(n2)
-                except ValueError:
-                    print(f"Ошибка преобразования номеров: {n1}, {n2}. Они не являются допустимыми целыми числами.")
-                    # return
 
-                # Преобразуем строку даты в формат для базы данных
-                try:
-                    tirage_date = f"{date_str}"  # Пример: "2025-02-27"
-                except ValueError:
-                    print("Ошибка преобразования даты.")
-                    # return
-
-                # SQL-запрос для вставки данных с предотвращением дубликатов
+                # Вставка в Q2
                 insert_query = """
                 INSERT INTO Q2 (Tirage, n1, n2) 
                 VALUES (%s, %s, %s) 
                 ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2);
                 """
-                cursor.execute(insert_query, (tirage_date, n1_int, n2_int))
+                cursor.execute(insert_query, (date_str, n1, n2))
+                rows_affected = cursor.rowcount
                 connection.commit()
-                print(f"Номера {n1_int} и {n2_int} и дата {tirage_date} были успешно вставлены или обновлены в базе данных.")
-        
+
+                if rows_affected == 1:
+                    print(f"Новые данные добавлены: {date_str} — {n1}, {n2}")
+
+                    # Вызов процедуры обновления статистики
+                    try:
+                        cursor.callproc('fill_Q2_stats')
+                        connection.commit()
+                        print("Процедура fill_Q2_stats была успешно выполнена.")
+                    except Error as e:
+                        print("Ошибка при выполнении процедуры fill_Q2_stats:", e)
+                else:
+                    print("Данные уже существуют. Статистика не обновлялась.")
+
         except Error as e:
             print("Ошибка при подключении к MySQL:", e)
-        
+
         finally:
-            # Закрываем соединение
             if 'connection' in locals() and connection.is_connected():
                 cursor.close()
                 connection.close()
-                print("Соединение закрыто.")
-    else:
-        print("Недостаточно номеров или не найдена дата для вставки в базу данных.")
+                print("Соединение с базой данных закрыто.")
 else:
     print(f"Ошибка при получении страницы: {response.status_code}")
