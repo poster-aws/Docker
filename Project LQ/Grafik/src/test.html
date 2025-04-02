@@ -42,6 +42,66 @@
       padding: 1em;
       overflow-y: auto;
       box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      position: relative; /* Добавлено для позиционирования */
+    }
+  
+     /* Переключатель ON/OFF */
+    .switch-wrapper {
+      position: absolute;
+      top: 1em;
+      right: 1em;
+      display: flex;
+      align-items: center;
+    }
+
+    .switch-wrapper span {
+      margin-right: 8px;
+      font-weight: bold;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 70px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e40909;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: grey;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(28px);
     }
 
     /* Адаптивность */
@@ -85,9 +145,27 @@
   </header>
 
   <div class="container">
+    <!-- Переключатель ON/OFF -->
+    <div class="switch-wrapper">
+      <span id="switchText">Выкл</span>
+      <label class="switch">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <p>Добро пожаловать!</p>
-    <!-- Ваш адаптивный контент -->
+    <!-- Ваш контент -->
   </div>
+
+  <script>
+    const toggle = document.getElementById('toggleSwitch');
+    const text = document.getElementById('switchText');
+
+    toggle.addEventListener('change', () => {
+      text.textContent = toggle.checked ? 'Вкл' : 'Выкл';
+    });
+  </script>
 
 </body>
 </html>

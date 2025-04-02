@@ -1,11 +1,12 @@
---------процедура для Q2_stats--------
---------перешитывает только последний тираж из Q2--------
+-------- Процедура для Q2_stats_order --------
+-------- Перешитывает только последний тираж из Q2 --------
+-------- Порядок важен / Dans l'Order -------- 
 
--- DROP PROCEDURE IF EXISTS fill_Q2_stats;
+-------- Добавление процедуры в БД --------
 
 DELIMITER //
 
-CREATE PROCEDURE fill_Q2_stats()
+CREATE PROCEDURE fill_Q2_stats_order()
 BEGIN
     DECLARE d DATE;
     DECLARE a INT;
@@ -19,7 +20,7 @@ BEGIN
     LIMIT 1;
 
     -- Вставляем новую строку статистики (если ещё нет)
-    INSERT IGNORE INTO Q2_stats (Tirage, n1, n2, days, days2, fois, max)
+    INSERT IGNORE INTO Q2_stats_order (Tirage, n1, n2, days, days2, fois, max)
     SELECT 
         d,
         a,
@@ -62,3 +63,7 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-------- Вызов процедуры --------
+
+CALL fill_Q2_stats_order();

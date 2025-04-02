@@ -1,0 +1,90 @@
+-------- Процедура для Q2_stats_norder --------
+-------- Перешитывает только последний тираж из Q2--------
+-------- Порядок не важен / Dans n'emport quel Order --------
+
+-------- Добавление процедуры в БД --------
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q2_stats_norder()
+BEGIN
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE min_ab INT;
+    DECLARE max_ab INT;
+
+    -- Получаем последний тираж (по дате или по ID — в зависимости от структуры)
+    SELECT Tirage, n1, n2
+    INTO d, a, b
+    FROM Q2
+    ORDER BY Tirage DESC
+    LIMIT 1;
+
+    -- Пара в неупорядоченном виде для расчётов
+    SET min_ab = LEAST(a, b);
+    SET max_ab = GREATEST(a, b);
+
+    -- Вставка в таблицу
+    INSERT INTO Q2_stats_norder (Tirage, n1, n2, days, days2, fois, max)
+    SELECT 
+        d,
+        a,
+        b,
+
+        -- days
+        IFNULL(DATEDIFF(d, (
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < d 
+              AND LEAST(n1, n2) = min_ab
+              AND GREATEST(n1, n2) = max_ab
+        )), 0),
+
+        -- days2
+        IFNULL(DATEDIFF((
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < (
+                SELECT MAX(Tirage) FROM Q2
+                WHERE Tirage < d
+                  AND LEAST(n1, n2) = min_ab
+                  AND GREATEST(n1, n2) = max_ab
+            )
+              AND LEAST(n1, n2) = min_ab
+              AND GREATEST(n1, n2) = max_ab
+        ), (
+            SELECT MAX(Tirage) FROM Q2
+            WHERE Tirage < d
+              AND LEAST(n1, n2) = min_ab
+              AND GREATEST(n1, n2) = max_ab
+        )), 0),
+
+        -- fois
+        IFNULL((
+            SELECT COUNT(*) FROM Q2
+            WHERE Tirage <= d 
+              AND LEAST(n1, n2) = min_ab
+              AND GREATEST(n1, n2) = max_ab
+        ), 0),
+
+        -- max
+        IFNULL((
+            SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                SELECT Tirage,
+                       LAG(Tirage) OVER (
+                           PARTITION BY LEAST(n1, n2), GREATEST(n1, n2)
+                           ORDER BY Tirage
+                       ) AS prev_Tirage
+                FROM Q2
+                WHERE Tirage <= d
+                  AND LEAST(n1, n2) = min_ab
+                  AND GREATEST(n1, n2) = max_ab
+            ) AS temp
+            WHERE prev_Tirage IS NOT NULL
+        ), 0);
+END //
+
+DELIMITER ;
+
+-------- Вызов процедуры --------
+
+CALL fill_Q2_stats_norder();

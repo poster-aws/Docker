@@ -1,11 +1,12 @@
 -------- процедура для первоначального создания Q2_stats --------
 -------- перешитывает полностью всю таблицу Q2_stats --------
+-------- Порядок важен / Dans l'Order -------- 
 
 -------- первая команда --------
 
-DROP TABLE IF EXISTS Q2_stats;
+DROP TABLE IF EXISTS Q2_stats_order;
 
-CREATE TABLE Q2_stats (
+CREATE TABLE Q2_stats_order (
     Tirage DATE,
     n1 TINYINT UNSIGNED,
     n2 TINYINT UNSIGNED,
@@ -19,7 +20,7 @@ CREATE TABLE Q2_stats (
 
 DELIMITER //
 
-CREATE PROCEDURE fill_Q2_stats()
+CREATE PROCEDURE fill_Q2_stats_order()
 BEGIN
     DECLARE total INT DEFAULT 0;
     DECLARE i INT DEFAULT 0;
@@ -37,8 +38,8 @@ BEGIN
         ORDER BY Tirage
         LIMIT 1 OFFSET i;
 
-        -- вставка расчётных данных
-        INSERT INTO Q2_stats (Tirage, n1, n2, days, days2, fois, max)
+        -- вставка расчётных данных (порядок важен!)
+        INSERT INTO Q2_stats_order (Tirage, n1, n2, days, days2, fois, max)
         SELECT 
             d,
             a,
@@ -87,4 +88,4 @@ DELIMITER ;
 
 -------- третья команда вызов процедуры --------
 
-CALL fill_Q2_stats();
+CALL fill_Q2_stats_order();

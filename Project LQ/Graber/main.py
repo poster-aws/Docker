@@ -78,15 +78,24 @@ if response.status_code == 200:
                 if rows_affected == 1:
                     print(f"Новые данные добавлены: {date_str} — {n1}, {n2}")
 
-                    # Вызов процедуры обновления статистики
+                    # Вызов первой процедуры
                     try:
-                        cursor.callproc('fill_Q2_stats')
+                        cursor.callproc('fill_Q2_stats_order')
                         connection.commit()
-                        print("Процедура fill_Q2_stats была успешно выполнена.")
+                        print("Процедура fill_Q2_stats_order была успешно выполнена.")
+
+                        # Вызов второй процедуры
+                        try:
+                            cursor.callproc('fill_Q2_stats_norder')
+                            connection.commit()
+                            print("Процедура fill_Q2_stats_norder была успешно выполнена.")
+                        except Error as e:
+                            print("Ошибка при выполнении процедуры fill_Q2_stats_norder:", e)
+
                     except Error as e:
-                        print("Ошибка при выполнении процедуры fill_Q2_stats:", e)
+                        print("Ошибка при выполнении процедуры fill_Q2_stats_order:", e)
                 else:
-                    print("Данные уже существуют. Статистика не обновлялась.")
+                    print("Данные в Q2 уже существуют. Статистика не обновлялась.")
 
         except Error as e:
             print("Ошибка при подключении к MySQL:", e)
