@@ -4,139 +4,7 @@
   <meta charset="UTF-8">
   <title>Адаптивная страница с фоном</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100vh;
-      overflow: hidden;
-      font-family: sans-serif;
-      background: url('pic1.png') no-repeat center center fixed;
-      background-size: cover;
-    }
-
-    header {
-      height: 10vh;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2em;
-      font-weight: bold;
-      text-align: center;
-      padding: 0 1em;
-    }
-
-    .container {
-      height: 90vh;
-      margin: 0 auto;
-      width: 80%;
-      background-color: rgba(173, 216, 230, 0.85); /* Полупрозрачный белый */
-      border-radius: 10px;
-      padding: 1em;
-      overflow-y: auto;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      position: relative; /* Добавлено для позиционирования */
-    }
-  
-     /* Переключатель ON/OFF */
-    .switch-wrapper {
-      position: absolute;
-      top: 1em;
-      right: 1em;
-      display: flex;
-      align-items: center;
-    }
-
-    .switch-wrapper span {
-      margin-right: 8px;
-      font-weight: bold;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 70px;
-      height: 34px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #e40909;
-      transition: 0.4s;
-      border-radius: 34px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: grey;
-      transition: 0.4s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: #4caf50;
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(28px);
-    }
-
-    /* Адаптивность */
-    @media (max-width: 1024px) {
-      .container {
-        width: 90%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      header {
-        font-size: 1.5em;
-      }
-
-      .container {
-        width: 95%;
-        padding: 0.8em;
-      }
-    }
-
-    @media (max-width: 480px) {
-      header {
-        font-size: 1.2em;
-        height: 12vh;
-      }
-
-      .container {
-        height: 88vh;
-        width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 0.7em;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -155,17 +23,18 @@
     </div>
 
     <p>Добро пожаловать!</p>
-    <!-- Ваш контент -->
+
+    <!-- Таблица -->
+    <div class="table-container">
+      <table class="interactive-table">
+        <tbody>
+          <!--TABLE_PLACEHOLDER-->
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <script>
-    const toggle = document.getElementById('toggleSwitch');
-    const text = document.getElementById('switchText');
-
-    toggle.addEventListener('change', () => {
-      text.textContent = toggle.checked ? 'Вкл' : 'Выкл';
-    });
-  </script>
+  <!--SCRIPT_PLACEHOLDER-->
 
 </body>
 </html>

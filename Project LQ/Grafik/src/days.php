@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 }
 
 // Выполняем запрос из таблицы Q2_days
-$sql = "SELECT n1, n2, days FROM Q2_days";
+$sql = "SELECT n1, n2, days FROM Q2_stats_order";
 $result = $conn->query($sql);
 
 $data = [];

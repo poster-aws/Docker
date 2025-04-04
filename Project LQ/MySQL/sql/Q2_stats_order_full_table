@@ -20,7 +20,7 @@ CREATE TABLE Q2_stats_order (
 
 DELIMITER //
 
-CREATE PROCEDURE fill_Q2_stats_order()
+CREATE PROCEDURE fill_Q2_stats_order_full()
 BEGIN
     DECLARE total INT DEFAULT 0;
     DECLARE i INT DEFAULT 0;
