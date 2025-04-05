@@ -2,21 +2,7 @@
 -------- Перешитывает полностью всю таблицу Q2_stats_norder --------
 -------- Порядок не важен / Dans n'emport quel Order -------- 
 
--------- первая команда --------
-
-DROP TABLE IF EXISTS Q2_stats_norder;
-
-CREATE TABLE Q2_stats_norder (
-    Tirage DATE,
-    n1 TINYINT UNSIGNED,
-    n2 TINYINT UNSIGNED,
-    days INT,
-    days2 INT,
-    fois INT,
-    max INT
-);
-
--------- вторая команда  добавление процедуры в БД --------
+-------- первая команда  добавление процедуры в БД --------
 
 DELIMITER //
 
@@ -30,6 +16,17 @@ BEGIN
     DECLARE min_ab INT;
     DECLARE max_ab INT;
 
+-- создание таблицы
+DROP TABLE IF EXISTS Q2_stats_norder;
+CREATE TABLE Q2_stats_norder (
+    Tirage DATE,
+    n1 TINYINT UNSIGNED,
+    n2 TINYINT UNSIGNED,
+    days INT,
+    days2 INT,
+    fois INT,
+    max INT
+);
     -- количество записей
     SELECT COUNT(*) INTO total FROM Q2;
 
@@ -107,6 +104,6 @@ END //
 
 DELIMITER ;
 
--------- третья команда вызов процедуры --------
+-------- вызов процедуры --------
 
 CALL fill_Q2_stats_norder();

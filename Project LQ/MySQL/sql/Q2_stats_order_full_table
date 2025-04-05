@@ -2,21 +2,7 @@
 -------- перешитывает полностью всю таблицу Q2_stats --------
 -------- Порядок важен / Dans l'Order -------- 
 
--------- первая команда --------
-
-DROP TABLE IF EXISTS Q2_stats_order;
-
-CREATE TABLE Q2_stats_order (
-    Tirage DATE,
-    n1 TINYINT UNSIGNED,
-    n2 TINYINT UNSIGNED,
-    days INT,
-    days2 INT,
-    fois INT,
-    max INT
-);
-
--------- вторая команда  добавление процедуры в БД --------
+-------- первая команда  добавление процедуры в БД --------
 
 DELIMITER //
 
@@ -27,6 +13,18 @@ BEGIN
     DECLARE d DATE;
     DECLARE a INT;
     DECLARE b INT;
+
+-- создание таблицы
+ DROP TABLE IF EXISTS Q2_stats_order;
+ CREATE TABLE Q2_stats_order (
+     Tirage DATE,
+    n1 TINYINT UNSIGNED,
+    n2 TINYINT UNSIGNED,
+    days INT,
+    days2 INT,
+    fois INT,
+    max INT
+);
 
     -- получить общее количество записей
     SELECT COUNT(*) INTO total FROM Q2;
@@ -86,6 +84,6 @@ END //
 
 DELIMITER ;
 
--------- третья команда вызов процедуры --------
+-------- вызов процедуры --------
 
 CALL fill_Q2_stats_order();

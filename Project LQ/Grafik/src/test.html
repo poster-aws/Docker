@@ -15,7 +15,7 @@
   <div class="container">
     <!-- Переключатель ON/OFF -->
     <div class="switch-wrapper">
-      <span id="switchText">Выкл</span>
+      <span id="switchText">Dans l'ordre</span>
       <label class="switch">
         <input type="checkbox" id="toggleSwitch">
         <span class="slider"></span>
@@ -24,13 +24,44 @@
 
     <p>Добро пожаловать!</p>
 
-    <!-- Таблица -->
-    <div class="table-container">
-      <table class="interactive-table">
-        <tbody>
-          <!--TABLE_PLACEHOLDER-->
-        </tbody>
-      </table>
+    <div class="tables-wrapper">
+      <!-- Основная таблица -->
+      <div class="table-container">
+        <table class="interactive-table">
+          <tbody>
+            <!--TABLE_PLACEHOLDER-->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Таблица комбинаций -->
+      <div class="combo-table-container">
+        <table class="interactive-table">
+          <thead>
+            <tr>
+              <th>n1</th>
+              <th>n2</th>
+              <th>Дней назад</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!--COMBO_PLACEHOLDER-->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Таблица дней с последнего появления чисел -->
+      <div class="number-stats-table">
+        <table class="interactive-table">
+          <thead>
+            <tr><th>Число</th><th>Дней с последнего</th></tr>
+          </thead>
+          <tbody>
+            <!--NUMBER_STATS_PLACEHOLDER-->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
