@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Неоновая вывеска и переключатель</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* =========================== */
+    /* НЕОНОВАЯ ВЫВЕСКА "Quotidienne2" */
+    /* =========================== */
+    .neon-sign-box {
+      background: rgba(0, 0, 0, 0.3); /* "стеклянный" фон */
+      border: 2px solid #ff00ff;
+      border-radius: 12px;
+      padding: 20px 40px;
+      margin-bottom: 40px;
+      box-shadow:
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff;
+    }
+
+    .neon-sign {
+      font-family: 'Arial Black', sans-serif;
+      font-size: 42px;
+      color: #ff00ff;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 5px #ff00ff,
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 40px #ff00ff,
+        0 0 80px #ff00ff,
+        0 0 100px #ff00ff;
+      animation: neon-glow 1.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes neon-glow {
+      from {
+        text-shadow:
+          0 0 4px #ff00ff,
+          0 0 8px #ff00ff,
+          0 0 16px #ff00ff,
+          0 0 32px #ff00ff;
+      }
+      to {
+        text-shadow:
+          0 0 10px #ff00ff,
+          0 0 20px #ff00ff,
+          0 0 40px #ff00ff,
+          0 0 80px #ff00ff;
+      }
+    }
+
+    /* =========================== */
+    /* НЕОНОВЫЙ ПЕРЕКЛЮЧАТЕЛЬ */
+    /* =========================== */
+    .neon-switch {
+      position: relative;
+      width: 160px;
+      height: 45px;
+    }
+
+    .neon-switch input {
+      display: none;
+    }
+
+    .neon-slider {
+      position: relative;
+      background-color: #222;
+      box-shadow: 0 0 10px #0ff;
+      border-radius: 45px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      color: #0ff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0 15px;
+      padding-left: 50px;
+    }
+
+    .neon-slider:hover {
+      box-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff;
+      background-color: #000;
+      color: #aff;
+    }
+
+    .neon-slider:before {
+      content: "";
+      position: absolute;
+      height: 32px;
+      width: 32px;
+      left: 6px;
+      top: 6px;
+      background-color: #0ff;
+      box-shadow: 0 0 12px #0ff;
+      border-radius: 50%;
+      transition: transform 0.3s ease, background-color 0.3s, box-shadow 0.3s;
+      z-index: 1;
+    }
+
+    .neon-slider .text-order {
+      position: relative;
+      z-index: 2;
+      transition: color 0.3s;
+    }
+
+    .neon-slider .text-order::after {
+      content: "Order";
+    }
+
+    .neon-switch input:checked + .neon-slider {
+      color: #f0f;
+      box-shadow: 0 0 10px #f0f;
+      justify-content: flex-start;
+      padding-left: 15px;
+      padding-right: 50px;
+    }
+
+    .neon-switch input:checked + .neon-slider:hover {
+      box-shadow: 0 0 20px #f0f, 0 0 40px #f0f, 0 0 60px #f0f;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .neon-switch input:checked + .neon-slider:before {
+      transform: translateX(102px);
+      background-color: #f0f;
+      box-shadow: 0 0 12px #f0f;
+    }
+
+    .neon-switch input:checked + .neon-slider .text-order::after {
+      content: "N'import";
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔮 Неоновая вывеска -->
+  <div class="neon-sign-box">
+    <div class="neon-sign">Quotidienne2</div>
+  </div>
+
+  <!-- 🔘 Неоновый переключатель -->
+  <label class="neon-switch">
+    <input type="checkbox">
+    <span class="neon-slider">
+      <span class="text-order"></span>
+    </span>
+  </label>
+
+</body>
+</html>

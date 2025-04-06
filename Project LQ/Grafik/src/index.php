@@ -12,7 +12,6 @@ if ($conn->connect_error) {
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table = $isNorder ? 'Q2_stats_norder' : 'Q2_stats_order';
 
-// Основная таблица
 $sql = "SELECT * FROM $table ORDER BY Tirage DESC";
 $result = $conn->query($sql);
 $data = [];
@@ -22,7 +21,6 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Комбинации
 $sqlCombo = $isNorder
     ? "SELECT LEAST(n1,n2) as a, GREATEST(n1,n2) as b, MAX(Tirage) as last FROM Q2_stats_norder GROUP BY a, b"
     : "SELECT n1, n2, MAX(Tirage) as last FROM Q2_stats_order GROUP BY n1, n2";
@@ -41,7 +39,6 @@ if ($resCombo && $resCombo->num_rows > 0) {
 }
 usort($comboRows, fn($a, $b) => $b['days'] <=> $a['days']);
 
-// Всегда отображаемая таблица: дни с последнего появления числа (0–9)
 $daysStats = array_fill(0, 10, null);
 $sqlLastNums = "
     SELECT n, MAX(Tirage) AS Last_Tirage
@@ -61,12 +58,10 @@ if ($resLastNums && $resLastNums->num_rows > 0) {
 }
 $conn->close();
 
-// Загрузка HTML
 ob_start();
 include 'test.html';
 $template = ob_get_clean();
 
-// Таблица 1: последние тиражи
 $tableHTML = '';
 foreach ($data as $row) {
     $tableHTML .= '<tr>';
@@ -76,7 +71,6 @@ foreach ($data as $row) {
     $tableHTML .= '</tr>';
 }
 
-// Таблица 2: комбинации
 $comboHTML = '';
 foreach ($comboRows as $row) {
     $comboHTML .= '<tr>';
@@ -87,25 +81,20 @@ foreach ($comboRows as $row) {
     $comboHTML .= '</tr>';
 }
 
-// Таблица 3: дни с последнего появления числа
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
     $numberStatsHTML .= "<tr><td>$num</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
 }
 
-// Скрипт переключения
 $script = "<script>
   const toggle = document.getElementById('toggleSwitch');
-  const text = document.getElementById('switchText');
   toggle.checked = " . ($isNorder ? 'true' : 'false') . ";
-  text.textContent = toggle.checked ? 'Dans n\\'importe quel ordre' : 'Dans l\\'ordre';
   toggle.addEventListener('change', () => {
     const next = toggle.checked ? '?norder=1' : '';
     window.location.href = 'index.php' + next;
   });
 </script>";
 
-// Вставка в шаблон
 echo str_replace(
   ['<!--TABLE_PLACEHOLDER-->', '<!--COMBO_PLACEHOLDER-->', '<!--NUMBER_STATS_PLACEHOLDER-->', '<!--SCRIPT_PLACEHOLDER-->'],
   [$tableHTML, $comboHTML, $numberStatsHTML, $script],

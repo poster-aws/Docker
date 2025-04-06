@@ -11,20 +11,124 @@ html, body {
   background-size: cover;
 }
 
+/* Шапка */
 header {
-  height: 10vh;
+  height: clamp(60px, 10vh, 120px);  /* Адаптивная высота */
   width: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  display: flex;
+  display: flex;                     /* ← БЕЗ ОШИБКИ! */
   align-items: center;
   justify-content: center;
   font-size: 2em;
   font-weight: bold;
   text-align: center;
   padding: 0 1em;
+  position: relative;
 }
 
+/* =============================== */
+/* Контейнер переключателя в header */
+/* =============================== */
+.neon-switch {
+  position: relative;      /* Для позиционирования псевдоэлементов */
+  width: 130px;            /* Общая ширина переключателя */
+  height: 40px;            /* Общая высота переключателя */
+}
+
+/* Скрываем стандартный checkbox */
+.neon-switch input {
+  display: none;           /* Не отображаем сам input */
+}
+
+/* =============================== */
+/* Стиль ползунка (фон и текст)   */
+/* =============================== */
+.neon-slider {
+  position: relative;
+  background-color: #111;         /* Тёмный фон переключателя */
+  box-shadow: 0 0 8px #0ff;      /* Голубая неоновая рамка */
+  border-radius: 45px;            /* Скруглённые углы */
+  height: 100%;
+  display: flex;                  /* Центрирование текста */
+  align-items: center;
+  justify-content: flex-end;
+  color: #0ff;                    /* Цвет текста */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;               /* Курсор "рука" */
+  transition: background-color 0.4s, color 0.4s;
+  padding: 0 15px;               /* Горизонтальные отступы внутри */
+  /* padding-left: 50px; чтобы текст не налезал на кружок */
+  overflow: hidden;              /* Не даём кружку выходить за границу */
+}
+
+/* Эффект при наведении на переключатель */
+.neon-slider:hover {
+  box-shadow: 0 0 10px #0ff;
+}
+
+/* ======================================== */
+/* Кружок-переключатель, который "ездит"    */
+/* ======================================== */
+.neon-slider:before {
+  content: "";
+  position: absolute;           /* Абсолютное позиционирование внутри переключателя */
+  height: 30px;                 /* Размер кружка */
+  width: 30px;
+  top: 5px;                   /* Центровка по вертикали ( (45 - 36) / 2 ) */
+  left: 5px;                    /* Начальная позиция кружка */
+  background-color: #0ff;       /* Цвет кружка */
+  box-shadow: 0 0 12px #0ff;    /* Светящееся неоновое свечение */
+  border-radius: 50%;           /* Круглая форма */
+  transition: transform 0.5s ease, background-color 0.5s, box-shadow 0.3s;
+  z-index: 1;                   /* Находится под текстом */
+}
+
+/* =============================== */
+/* Текст внутри переключателя      */
+/* =============================== */
+.neon-slider .text-order {
+  position: relative;
+  z-index: 2;                   /* Поверх кружка */
+  transition: color 0.4s;
+}
+
+/* Текст по умолчанию (если выключено) */
+.neon-slider .text-order::after {
+  content: "Order";             /* Надпись по умолчанию */
+}
+
+/* ======================================= */
+/* Когда переключатель включён (checked)  */
+/* ======================================= */
+
+/* Изменение цвета текста и свечения */
+.neon-switch input:checked + .neon-slider {
+  color: #f0f;
+  box-shadow: 0 0 8px #f0f;
+  justify-content: flex-start;  /* меняем выравнивание — текст уходит влево */
+  padding-left: 15px;
+}
+
+.neon-switch input:checked + .neon-slider:hover {
+ box-shadow: 0 0 10px #f0f;
+}
+
+/* Кружок сдвигается вправо */
+.neon-switch input:checked + .neon-slider:before {
+  transform: translateX(90px); 
+  /* 170 (ширина) - 36 (кружок) - 2*5 (отступы) = 124px, но safer с calc */
+  background-color: #f0f;
+  box-shadow: 0 0 10px #f0f;
+}
+
+/* Изменение текста при включении */
+.neon-switch input:checked + .neon-slider .text-order::after {
+  content: "N'import";
+}
+
+/* Контейнер с таблицами */
 .container {
   height: 90vh;
   margin: 0 auto;
@@ -37,119 +141,46 @@ header {
   position: relative;
 }
 
-.switch-wrapper {
-  position: absolute;
-  top: 1em;
-  right: 1em;
-  display: flex;
-  align-items: center;
-}
-
-.switch-wrapper span {
-  margin-right: 8px;
-  font-weight: bold;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 70px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #e40909;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: grey;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #4caf50;
-}
-
-input:checked + .slider:before {
-  transform: translateX(28px);
-}
-
-/* Обёртка таблиц */
 .tables-wrapper {
   display: flex;
   flex-direction: row;
-  justify-content: space-between; /* Равномерное распределение */
+  justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;                   /* ← расстояние между таблицами */
+  gap: 20px;
   flex-wrap: nowrap;
-  /* width: 100%; */
   margin-top: 60px;
 }
 
-/*  */
-.table-container {
-  flex: 0 0 auto;         /* не растягивать, не сжимать автоматически */
-  width: max-content;     /* ширина под содержимое */
-  min-width: 250px;
-  max-height: 70vh;
-  overflow-y: auto;
-  margin-inline: auto; /* Центрирование для дополнительного выравнивания */
-  background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
-              linear-gradient(80deg, #fdf7c3 10%, rgb(240, 204, 43) 100%);
-  background-size: cover;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
-  border: 2px solid #e3c77b;
-}
-
-.combo-table-container {
-  flex: 0 0 auto;         /* не растягивать, не сжимать автоматически */
-  width: max-content;     /* ширина под содержимое */
-  min-width: 250px;
-  max-height: 70vh;
-  overflow: auto;
-  margin-inline: auto; /* Центрирование для дополнительного выравнивания */
-  background: #64e26e;
-  padding: 15px;
-  border-radius: 12px;
-  border: 2px solid #e3c77b;
-}
-
-/* Таблица: дней по числам (всегда видимая) */
+/* Таблицы */
+.table-container,
+.combo-table-container,
 .number-stats-table {
   flex: 0 0 auto;
   width: max-content;
-  min-width: 180px;
+  min-width: 250px;
   max-height: 70vh;
   overflow: auto;
-  margin-inline: auto; /* Центрирование для дополнительного выравнивания */
-  background: #a7a4a4;
+  margin-inline: auto;
   padding: 15px;
   border-radius: 12px;
+  border: 2px solid #e3c77b;
+}
+
+.table-container {
+  background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
+              linear-gradient(80deg, #fdf7c3 10%, rgb(240, 204, 43) 100%);
+  background-size: cover;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.combo-table-container {
+  background: #64e26e;
+}
+
+.number-stats-table {
+  background: #a7a4a4;
   border: 2px solid #2f0f5d;
+  min-width: 180px;
 }
 
 .interactive-table {
@@ -193,7 +224,6 @@ input:checked + .slider:before {
   font-family: Arial, sans-serif;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
   .tables-wrapper {
     flex-direction: column;
