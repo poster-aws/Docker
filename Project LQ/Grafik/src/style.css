@@ -27,105 +27,139 @@ header {
   position: relative;
 }
 
-/* =============================== */
-/* Контейнер переключателя в header */
-/* =============================== */
+/* Иконка меню */
+.menu-icon {
+  font-size: 1.8em;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  left: 1em;
+}
+
+/* Обертка переклюка */
+.switch-wrapper {
+  position: absolute;
+  right: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+/* НЕОНОВЫЙ ПЕРЕКЛЮЧАТЕЛЬ */
 .neon-switch {
-  position: relative;      /* Для позиционирования псевдоэлементов */
-  width: 130px;            /* Общая ширина переключателя */
-  height: 40px;            /* Общая высота переключателя */
+  display: block;
+  position: relative;
+  width: 75px;
+  height: 36px;
 }
 
 /* Скрываем стандартный checkbox */
 .neon-switch input {
-  display: none;           /* Не отображаем сам input */
+  display: none;          
 }
 
-/* =============================== */
-/* Стиль ползунка (фон и текст)   */
-/* =============================== */
+/* Бегунок (дорожка всегда чёрная)   */
 .neon-slider {
-  position: relative;
-  background-color: #111;         /* Тёмный фон переключателя */
-  box-shadow: 0 0 8px #0ff;      /* Голубая неоновая рамка */
-  border-radius: 45px;            /* Скруглённые углы */
-  height: 100%;
-  display: flex;                  /* Центрирование текста */
-  align-items: center;
-  justify-content: flex-end;
-  color: #0ff;                    /* Цвет текста */
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;               /* Курсор "рука" */
-  transition: background-color 0.4s, color 0.4s;
-  padding: 0 15px;               /* Горизонтальные отступы внутри */
-  /* padding-left: 50px; чтобы текст не налезал на кружок */
-  overflow: hidden;              /* Не даём кружку выходить за границу */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #111;
+  border-radius: 36px;
+  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
 }
 
 /* Эффект при наведении на переключатель */
-.neon-slider:hover {
+/* .neon-slider:hover {
   box-shadow: 0 0 10px #0ff;
-}
+} */
 
-/* ======================================== */
-/* Кружок-переключатель, который "ездит"    */
-/* ======================================== */
-.neon-slider:before {
+/* Бегунок (голубой по умолчанию)    */
+.neon-slider::before {
   content: "";
-  position: absolute;           /* Абсолютное позиционирование внутри переключателя */
-  height: 30px;                 /* Размер кружка */
-  width: 30px;
-  top: 5px;                   /* Центровка по вертикали ( (45 - 36) / 2 ) */
-  left: 5px;                    /* Начальная позиция кружка */
-  background-color: #0ff;       /* Цвет кружка */
-  box-shadow: 0 0 12px #0ff;    /* Светящееся неоновое свечение */
-  border-radius: 50%;           /* Круглая форма */
-  transition: transform 0.5s ease, background-color 0.5s, box-shadow 0.3s;
-  z-index: 1;                   /* Находится под текстом */
+  position: absolute;
+  top: 4.5px;
+  left: 4.5px;
+  width: 27px;
+  height: 27px;
+  background: #0ff;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
 }
 
-/* =============================== */
-/* Текст внутри переключателя      */
-/* =============================== */
-.neon-slider .text-order {
-  position: relative;
-  z-index: 2;                   /* Поверх кружка */
-  transition: color 0.4s;
+/* Сдвиг бегунка */
+.neon-switch input:checked + .neon-slider::before {
+  transform: translateX(39px);
 }
 
-/* Текст по умолчанию (если выключено) */
-.neon-slider .text-order::after {
-  content: "Order";             /* Надпись по умолчанию */
+/* Активное состояние — зелёное свечение и бегунок */
+.neon-switch.active .neon-slider {
+  box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
 }
 
-/* ======================================= */
-/* Когда переключатель включён (checked)  */
-/* ======================================= */
-
-/* Изменение цвета текста и свечения */
-.neon-switch input:checked + .neon-slider {
-  color: #f0f;
-  box-shadow: 0 0 8px #f0f;
-  justify-content: flex-start;  /* меняем выравнивание — текст уходит влево */
-  padding-left: 15px;
+.neon-switch.active .neon-slider::before {
+  background: #0f0;
+  box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
 }
 
-.neon-switch input:checked + .neon-slider:hover {
- box-shadow: 0 0 10px #f0f;
+/* Надписи для переклюка */
+.switch-labels {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6em;
+  line-height: 1.2em;
+  text-align: left;
 }
 
-/* Кружок сдвигается вправо */
-.neon-switch input:checked + .neon-slider:before {
-  transform: translateX(90px); 
-  /* 170 (ширина) - 36 (кружок) - 2*5 (отступы) = 124px, но safer с calc */
-  background-color: #f0f;
-  box-shadow: 0 0 10px #f0f;
+.switch-labels span {
+  color: gray;
+  transition: color 0.3s ease;
 }
 
-/* Изменение текста при включении */
-.neon-switch input:checked + .neon-slider .text-order::after {
-  content: "N'import";
+.active {
+  color: #00ff00 !important;
+}
+
+ /* ВЫПАДАЮЩЕЕ МЕНЮ */
+.dropdown-menu {
+  position: absolute;
+  top: 10vh;
+  left: 0;
+  background-color: #444;
+  width: 200px;
+  display: none;
+  z-index: 1000;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu li {
+  border-bottom: 1px solid #555;
+}
+
+.dropdown-menu li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 1em;
+  color: white;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background-color: #666;
 }
 
 /* Контейнер с таблицами */
@@ -224,8 +258,27 @@ header {
   font-family: Arial, sans-serif;
 }
 
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .container {
+    width: 90%;
+  }
+}
+
 @media (max-width: 768px) {
-  .tables-wrapper {
-    flex-direction: column;
+  header {
+    font-size: 1.5em;
+  }
+
+  .container {
+    width: 95%;
+    padding: 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    font-size: 1.2em;
+    height: 12vh;
   }
 }

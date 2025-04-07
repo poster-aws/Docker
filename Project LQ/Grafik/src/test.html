@@ -1,26 +1,41 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <title>Адаптивная страница с фоном</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <header>
-    <!-- Переключатель -->
-      <label class="neon-switch">
-        <input type="checkbox" id="toggleSwitch">
-        <span class="neon-slider">
-          <span class="text-order" id="switchText"></span>
-        </span>
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <span>Здесь надпись на полосе</span>
+
+    <div class="switch-wrapper">
+      <label class="neon-switch" id="neonSwitch">
+        <input type="checkbox" id="toggle" onchange="updateLabels()">
+        <span class="neon-slider"></span>
       </label>
+      <div class="switch-labels">
+        <span id="labelOrder">Order</span>
+        <span id="labelNimport">N'import</span>
+      </div>
+    </div>
   </header>
 
-  <div class="container">
-    <p>Добро пожаловать!</p>
+  <!-- Выпадающее меню -->
+  <div id="dropdownMenu" class="dropdown-menu">
+    <ul>
+      <li><a href="#">Пункт 1</a></li>
+      <li><a href="#">Пункт 2</a></li>
+      <li><a href="#">Пункт 3</a></li>
+    </ul>
+  </div>
 
+  <div class="container">
     <div class="tables-wrapper">
       <!-- Основная таблица -->
       <div class="table-container">
@@ -62,7 +77,41 @@
     </div>
   </div>
 
-  <!--SCRIPT_PLACEHOLDER-->
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("dropdownMenu");
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+
+    document.addEventListener('click', function (e) {
+      const menu = document.getElementById("dropdownMenu");
+      const icon = document.querySelector('.menu-icon');
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.style.display = "none";
+      }
+    });
+
+    function updateLabels() {
+      const toggle = document.getElementById("toggle");
+      const isChecked = toggle.checked;
+
+      document.getElementById("labelOrder").classList.toggle("active", !isChecked);
+      document.getElementById("labelNimport").classList.toggle("active", isChecked);
+      document.getElementById("neonSwitch").classList.toggle("active", isChecked);
+
+      window.location.href = "?order=" + (isChecked ? 0 : 1);
+    }
+
+    // Установить состояние переключателя по URL
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const order = urlParams.get('order') || '1';
+      const toggle = document.getElementById("toggle");
+      toggle.checked = (order === '0');
+      updateLabels();
+    }
+  </script>
 
 </body>
 </html>
