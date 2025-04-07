@@ -88,20 +88,7 @@ foreach ($daysStats as $num => $daysAgo) {
 
 $script = "<script>
   const toggle = document.getElementById('toggleSwitch');
-  const labelOrder = document.getElementById('labelOrder');
-  const labelNimport = document.getElementById('labelNimport');
-  const neonSwitch = document.getElementById('neonSwitch');
-
-  const setActiveLabels = () => {
-    const isChecked = toggle.checked;
-    labelOrder.classList.toggle('active', !isChecked);
-    labelNimport.classList.toggle('active', isChecked);
-    neonSwitch.classList.toggle('active', isChecked);
-  };
-
   toggle.checked = " . ($isNorder ? 'true' : 'false') . ";
-  setActiveLabels(); // первичная установка
-  
   toggle.addEventListener('change', () => {
     const next = toggle.checked ? '?norder=1' : '';
     window.location.href = 'index.php' + next;

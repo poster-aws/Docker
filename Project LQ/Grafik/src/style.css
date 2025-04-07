@@ -72,11 +72,6 @@ header {
   transition: box-shadow 0.3s ease;
 }
 
-/* Эффект при наведении на переключатель */
-/* .neon-slider:hover {
-  box-shadow: 0 0 10px #0ff;
-} */
-
 /* Бегунок (голубой по умолчанию)    */
 .neon-slider::before {
   content: "";
@@ -98,12 +93,12 @@ header {
 
 /* Активное состояние — зелёное свечение и бегунок */
 .neon-switch.active .neon-slider {
-  box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
+  box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
 }
 
 .neon-switch.active .neon-slider::before {
-  background: #0f0;
-  box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
+  background: #ff0;
+  box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
 }
 
 /* Надписи для переклюка */
@@ -160,6 +155,7 @@ header {
 
 .dropdown-menu a:hover {
   background-color: #666;
+  border-bottom-right-radius: 10px;
 }
 
 /* Контейнер с таблицами */
@@ -191,7 +187,7 @@ header {
 .number-stats-table {
   flex: 0 0 auto;
   width: max-content;
-  min-width: 250px;
+  /* min-width: 250px; */
   max-height: 70vh;
   overflow: auto;
   margin-inline: auto;
