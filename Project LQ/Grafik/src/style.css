@@ -188,7 +188,7 @@ header {
   flex: 0 0 auto;
   width: max-content;
   /* min-width: 250px; */
-  max-height: 85vh;
+  max-height: 86vh;
   overflow: auto;
   margin-inline: auto;
   padding: 15px;
@@ -219,6 +219,9 @@ header {
   font-size: 18px;
   font-family: 'Shadows Into Light', cursive;
   color: #050c58;
+  /* scrollbar-width: none; */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 .interactive-table th,
@@ -242,8 +245,21 @@ header {
 
 /* Скролл бар */
 
+/* Скрываем вертикальный скроллбар, но оставляем прокрутку */
+.number-stats-table::-webkit-scrollbar,
+.combo-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* скрываем фон скроллбара */
+} 
 
-
+/* Для Firefox */
+.number-stats-table,
+.combo-table-container,
+.table-container {
+  scrollbar-width: none; /* скрывает скроллбар */
+  -ms-overflow-style: none; /*IE 10+*/
+}
 
 .circle {
   display: inline-block;
