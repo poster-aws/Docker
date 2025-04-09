@@ -83,7 +83,8 @@ foreach ($comboRows as $row) {
 
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
-    $numberStatsHTML .= "<tr><td>$num</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
+    $circle = "<span class='circle'>$num</span>";
+    $numberStatsHTML .= "<tr><td>$circle</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
 }
 
 $script = "<script>

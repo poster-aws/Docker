@@ -193,32 +193,36 @@ header {
   margin-inline: auto;
   padding: 15px;
   border-radius: 12px;
-  border: 2px solid #e3c77b;
+  border: 2px solid #a4a1a1;
 }
 
 .table-container {
   background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
               linear-gradient(80deg, #fdf7c3 10%, rgb(240, 204, 43) 100%);
   background-size: cover;
-  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .combo-table-container {
   background: #64e26e;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .number-stats-table {
-  background: #a7a4a4;
-  border: 2px solid #2f0f5d;
+  background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
+              linear-gradient(80deg, #000000 10%, rgb(0, 0, 0) 100%);
+  background-size: cover;
+  /* border: 2px solid #2f0f5d; */
   min-width: 180px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .interactive-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 18px;
+  font-size: 20px;
   font-family: 'Shadows Into Light', cursive;
-  color: #050c58;
+  color: #989898;
   /* scrollbar-width: none; */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
@@ -276,12 +280,15 @@ header {
 }
 
 /* Адаптивность */
+
+/* Планшеты и средние экраны */
 @media (max-width: 1024px) {
   .container {
     width: 90%;
   }
 }
 
+/* Мобильные устройства (768px и меньше) */
 @media (max-width: 768px) {
   header {
     font-size: 1.5em;
@@ -291,8 +298,23 @@ header {
     width: 95%;
     padding: 0.8em;
   }
+
+  .tables-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .table-container,
+  .combo-table-container,
+  .number-stats-table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
+/* Очень маленькие экраны (меньше 480px) */
 @media (max-width: 480px) {
   header {
     font-size: 1.2em;
