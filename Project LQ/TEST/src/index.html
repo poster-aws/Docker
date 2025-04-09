@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Адаптивная страница</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* --- CSS остаётся без изменений --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100vh;
+      overflow: hidden;
+      background-color: #e0e0e0;
+      font-family: sans-serif;
+    }
+    header {
+      height: 10vh;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      padding: 0 1em;
+      position: relative;
+    }
+    .menu-icon {
+      font-size: 1.8em;
+      cursor: pointer;
+      user-select: none;
+      position: absolute;
+      left: 1em;
+    }
+    .switch-wrapper {
+      position: absolute;
+      right: 1em;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
+    .neon-switch {
+      display: block;
+      position: relative;
+      width: 75px;
+      height: 36px;
+    }
+    .neon-switch input {
+      display: none;
+    }
+    .neon-slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #111;
+      border-radius: 36px;
+      box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
+    }
+    .neon-slider::before {
+      content: "";
+      position: absolute;
+      top: 4.5px;
+      left: 4.5px;
+      width: 27px;
+      height: 27px;
+      background: #0ff;
+      border-radius: 50%;
+      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
+    }
+    .neon-switch input:checked + .neon-slider::before {
+      transform: translateX(39px);
+    }
+    .neon-switch.active .neon-slider {
+      box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
+    }
+    .neon-switch.active .neon-slider::before {
+      background: #0f0;
+      box-shadow: 0 0 8px #0f0, 0 0 16px #0f0;
+    }
+    .switch-labels {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.6em;
+      line-height: 1.2em;
+      text-align: left;
+    }
+    .switch-labels span {
+      color: gray;
+      transition: color 0.3s ease;
+    }
+    .active {
+      color: #00ff00 !important;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: 10vh;
+      left: 0;
+      background-color: #444;
+      width: 200px;
+      display: none;
+      z-index: 1000;
+      border-bottom-right-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .dropdown-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dropdown-menu li {
+      border-bottom: 1px solid #555;
+    }
+    .dropdown-menu li:last-child {
+      border-bottom: none;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 1em;
+      color: white;
+      text-decoration: none;
+    }
+    .dropdown-menu a:hover {
+      background-color: #666;
+    }
+    .container {
+      height: 90vh;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 1em;
+      overflow-y: auto;
+      width: 80%;
+    }
+    @media (max-width: 1024px) {
+      .container {
+        width: 90%;
+      }
+    }
+    @media (max-width: 768px) {
+      header {
+        font-size: 1.5em;
+      }
+      .container {
+        width: 95%;
+        padding: 0.8em;
+      }
+    }
+    @media (max-width: 480px) {
+      header {
+        font-size: 1.2em;
+        height: 12vh;
+      }
+      .container {
+        height: 88vh;
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0.7em;
+      }
+      .dropdown-menu {
+        width: 100%;
+        border-bottom-right-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <span id="pageTitle">Здесь надпись на полосе</span>
+    <div class="switch-wrapper">
+      <label class="neon-switch" id="neonSwitch">
+        <input type="checkbox" id="toggle">
+        <span class="neon-slider"></span>
+      </label>
+      <div class="switch-labels">
+        <span id="labelOrder" class="active">Order</span>
+        <span id="labelNimport">N'import</span>
+      </div>
+    </div>
+  </header>
+
+  <nav id="dropdownMenu" class="dropdown-menu">
+    <ul>
+      <li><a href="index.html" data-page="index.html">Главная</a></li>
+      <li><a href="about.html" data-page="about.html">О нас</a></li>
+      <li><a href="contact.html" data-page="contact.html">Контакты</a></li>
+    </ul>
+  </nav>
+
+  <!-- 👇 Контейнер для подгрузки содержимого -->
+  <div class="container">
+    <p>Добро пожаловать!</p>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("dropdownMenu");
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById("dropdownMenu");
+      const icon = document.querySelector('.menu-icon');
+      if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.style.display = "none";
+      }
+    });
+
+    function updateToggle(page) {
+      const toggle = document.getElementById("toggle");
+      const labelOrder = document.getElementById("labelOrder");
+      const labelNimport = document.getElementById("labelNimport");
+      const neonSwitch = document.getElementById("neonSwitch");
+
+      // Обновление визуального состояния
+      const isChecked = toggle.checked;
+      labelOrder.classList.toggle("active", !isChecked);
+      labelNimport.classList.toggle("active", isChecked);
+      neonSwitch.classList.toggle("active", isChecked);
+
+      // Удаляем старый обработчик и клонируем toggle
+      const newToggle = toggle.cloneNode(true);
+      toggle.parentNode.replaceChild(newToggle, toggle);
+
+      newToggle.addEventListener("change", () => {
+        const active = newToggle.checked;
+        labelOrder.classList.toggle("active", !active);
+        labelNimport.classList.toggle("active", active);
+        neonSwitch.classList.toggle("active", active);
+
+        // Разный функционал на разных страницах
+        switch (page) {
+          case "index.html":
+            alert(active ? "Index: режим N'import" : "Index: режим Order");
+            break;
+          case "about.html":
+            console.log("About: переключатель =", active);
+            break;
+          case "contact.html":
+            document.querySelector(".container").innerHTML += `<p>Контактный режим: ${active ? "ON" : "OFF"}</p>`;
+            break;
+          default:
+            console.log("Неизвестная страница");
+        }
+      });
+    }
+
+    function loadPageContent(page, addToHistory = true) {
+      fetch(page)
+        .then(response => {
+          if (!response.ok) throw new Error("Load failed");
+          return response.text();
+        })
+        .then(html => {
+          document.querySelector('.container').innerHTML = html;
+
+          // 💡 Обновим заголовок
+          const titles = {
+            "index.html": "Главная",
+            "about.html": "О нас",
+            "contact.html": "Контакты"
+          };
+          document.getElementById("pageTitle").textContent = titles[page] || "Загрузка...";
+          updateToggle(page);
+
+          if (addToHistory) {
+            history.pushState({ page: page }, '', page);
+          }
+        })
+        .catch(error => {
+          document.querySelector('.container').innerHTML = `<p style="color:red;">Ошибка: ${error.message}</p>`;
+          document.getElementById("pageTitle").textContent = "Ошибка загрузки";
+        });
+    }
+
+    window.onload = function () {
+      updateToggle("index.html");
+
+      const menuLinks = document.querySelectorAll('.dropdown-menu a');
+      menuLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const page = this.getAttribute('data-page');
+          loadPageContent(page, true);
+          toggleMenu();
+        });
+      });
+
+      const initialPath = window.location.pathname;
+      const defaultPage = "index.html";
+
+      if (initialPath && initialPath !== "/" && initialPath !== "/index.html") {
+        const page = initialPath.replace(/^\/+/, "");
+        loadPageContent(page, false);
+      } else {
+        loadPageContent(defaultPage, false);
+      }
+
+      window.addEventListener('popstate', function (event) {
+        const page = (event.state && event.state.page) ? event.state.page : "index.html";
+        loadPageContent(page, false);
+      });
+    };
+  </script>
+
+</body>
+</html>
