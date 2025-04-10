@@ -146,15 +146,25 @@ header {
   border-bottom: none;
 }
 
-.dropdown-menu a {
+/* .dropdown-menu a {
   display: block;
   padding: 1em;
+  color: white; 
+  text-decoration: none;
+} */
+
+.dropdown-menu li a {
+  font-size: 14px !important;
+  font-weight: normal !important;
+  font-family: Arial, sans-serif !important;
+  display: block;
+  padding: 0.8em 1em;
   color: white;
   text-decoration: none;
 }
 
 .dropdown-menu a:hover {
-  background-color: #666;
+  background-color: #777;
   border-bottom-right-radius: 10px;
 }
 

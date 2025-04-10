@@ -17,11 +17,12 @@ document.addEventListener('click', function (e) {
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
-  
-  // Спрячем меню при нажатии
+
+  // Спрячем меню
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
 
+  // Загружаем контент
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -32,6 +33,13 @@ function loadPage(page) {
       container.innerHTML = html;
       container.setAttribute("data-page", page);
       updateToggleStyles();
+
+      // 🆕 Меняем заголовок
+      const pageTitle = document.getElementById("pageTitle");
+      if (page.includes("q2")) pageTitle.textContent = "Quotidienne2";
+      else if (page.includes("q3")) pageTitle.textContent = "Quotidienne3";
+      else if (page.includes("q4")) pageTitle.textContent = "Quotidienne4";
+      else pageTitle.textContent = "Quotidienne";
     })
     .catch(err => {
       document.getElementById("container").innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -65,4 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   updateToggleStyles(); // начальная инициализация
+    // Автозагрузка q2.php при первом запуске
+    loadPage("q2.php");
 });
