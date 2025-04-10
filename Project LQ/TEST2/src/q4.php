@@ -1,0 +1,1 @@
+<?php echo "<h1 style='color: white; text-align: center; padding-top: 3em;'>Страница в разработке</h1>"; ?>

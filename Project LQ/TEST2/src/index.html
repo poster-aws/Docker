@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Quotidienne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <span>Quotidienne2</span>
+
+    <div class="switch-wrapper">
+      <label class="neon-switch" id="neonSwitch">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="neon-slider"></span>
+      </label>
+      <div class="switch-labels">
+        <span id="labelOrder">Order</span>
+        <span id="labelNimport">N'import</span>
+      </div>
+    </div>
+  </header>
+
+  <div id="dropdownMenu" class="dropdown-menu">
+    <ul>
+      <li><a href="#" onclick="loadPage('q2.php')">Quotidienne2</a></li>
+      <li><a href="#" onclick="loadPage('q3.php')">Quotidienne3</a></li>
+      <li><a href="#" onclick="loadPage('q4.php')">Quotidienne4</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <iframe id="contentFrame" src="q2.php?mode=order" frameborder="0"></iframe>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Адаптивная страница</title>
+  <title>Page de test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* --- CSS остаётся без изменений --- */
@@ -127,7 +127,7 @@
       text-decoration: none;
     }
     .dropdown-menu a:hover {
-      background-color: #666;
+      background-color: #667;
     }
     .container {
       height: 90vh;
@@ -176,7 +176,7 @@
 
   <header>
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <span id="pageTitle">Здесь надпись на полосе</span>
+    <span id="pageTitle">Line</span>
     <div class="switch-wrapper">
       <label class="neon-switch" id="neonSwitch">
         <input type="checkbox" id="toggle">
@@ -191,15 +191,15 @@
 
   <nav id="dropdownMenu" class="dropdown-menu">
     <ul>
-      <li><a href="index.html" data-page="index.html">Главная</a></li>
-      <li><a href="about.html" data-page="about.html">О нас</a></li>
-      <li><a href="contact.html" data-page="contact.html">Контакты</a></li>
+      <li><a href="index.html" data-page="index.html">Index</a></li>
+      <li><a href="about.html" data-page="about.html">About</a></li>
+      <li><a href="contact.html" data-page="contact.html">Contact</a></li>
     </ul>
   </nav>
 
   <!-- 👇 Контейнер для подгрузки содержимого -->
   <div class="container">
-    <p>Добро пожаловать!</p>
+    <p>Bienvenue</p>
   </div>
 
   <script>
@@ -241,16 +241,16 @@
         // Разный функционал на разных страницах
         switch (page) {
           case "index.html":
-            alert(active ? "Index: режим N'import" : "Index: режим Order");
+            alert(active ? "Index: Stile N'import" : "Index: stile Order");
             break;
           case "about.html":
-            console.log("About: переключатель =", active);
+            console.log("About: switch=", active);
             break;
           case "contact.html":
-            document.querySelector(".container").innerHTML += `<p>Контактный режим: ${active ? "ON" : "OFF"}</p>`;
+            document.querySelector(".container").innerHTML += `<p>Contact stile${active ? "ON" : "OFF"}</p>`;
             break;
           default:
-            console.log("Неизвестная страница");
+            console.log("Page inconu");
         }
       });
     }
@@ -266,11 +266,11 @@
 
           // 💡 Обновим заголовок
           const titles = {
-            "index.html": "Главная",
-            "about.html": "О нас",
-            "contact.html": "Контакты"
+            "index.html": "Index",
+            "about.html": "About",
+            "contact.html": "Contact"
           };
-          document.getElementById("pageTitle").textContent = titles[page] || "Загрузка...";
+          document.getElementById("pageTitle").textContent = titles[page] || "Load...";
           updateToggle(page);
 
           if (addToHistory) {
@@ -278,8 +278,8 @@
           }
         })
         .catch(error => {
-          document.querySelector('.container').innerHTML = `<p style="color:red;">Ошибка: ${error.message}</p>`;
-          document.getElementById("pageTitle").textContent = "Ошибка загрузки";
+          document.querySelector('.container').innerHTML = `<p style="color:red;">Errer:${error.message}</p>`;
+          document.getElementById("pageTitle").textContent = "Load Errer";
         });
     }
 
