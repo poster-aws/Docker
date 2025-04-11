@@ -1,0 +1,92 @@
+-------- процедура для первоначального создания Q3_stats --------
+-------- перешитывает полностью всю таблицу Q3_stats --------
+-------- Порядок важен / Dans l'Order -------- 
+
+-------- первая команда  добавление процедуры в БД --------
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q3_stats_order_full()
+BEGIN
+    DECLARE total INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+
+    -- создание таблицы
+    DROP TABLE IF EXISTS Q3_stats_order;
+    CREATE TABLE Q3_stats_order (
+        Tirage DATE,
+        n1 TINYINT UNSIGNED,
+        n2 TINYINT UNSIGNED,
+        n3 TINYINT UNSIGNED,
+        days INT,
+        days2 INT,
+        fois INT,
+        max INT
+    );
+
+    -- получить общее количество записей
+    SELECT COUNT(*) INTO total FROM Q3;
+
+    WHILE i < total DO
+        -- получить i-ю строку
+        SELECT Tirage, n1, n2, n3 INTO d, a, b, c
+        FROM Q3
+        ORDER BY Tirage
+        LIMIT 1 OFFSET i;
+
+        -- вставка расчётных данных
+        INSERT INTO Q3_stats_order (Tirage, n1, n2, n3, days, days2, fois, max)
+        SELECT 
+            d,
+            a,
+            b,
+            c,
+
+            -- days
+            IFNULL(DATEDIFF(d, (
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+            )), 0),
+
+            -- days2
+            IFNULL(DATEDIFF((
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < (
+                    SELECT MAX(Tirage) FROM Q3
+                    WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+                ) AND n1 = a AND n2 = b AND n3 = c
+            ), (
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+            )), 0),
+
+            -- fois
+            IFNULL((
+                SELECT COUNT(*) FROM Q3
+                WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c
+            ), 0),
+
+            -- max
+            IFNULL((
+                SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                    SELECT Tirage,
+                           LAG(Tirage) OVER (PARTITION BY n1, n2, n3 ORDER BY Tirage) AS prev_Tirage
+                    FROM Q3
+                    WHERE n1 = a AND n2 = b AND n3 = c AND Tirage <= d
+                ) AS temp
+                WHERE prev_Tirage IS NOT NULL
+            ), 0);
+
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;
+
+-------- вызов процедуры --------
+
+CALL fill_Q3_stats_order_full();

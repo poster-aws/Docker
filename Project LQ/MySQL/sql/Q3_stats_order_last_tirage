@@ -1,0 +1,69 @@
+-------- Процедура для Q3_stats_order --------
+-------- Перешитывает только последний тираж из Q3 --------
+-------- Порядок важен / Dans l'Order -------- 
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q3_stats_order()
+BEGIN
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+
+    -- Получаем последний (новый) тираж
+    SELECT Tirage, n1, n2, n3
+    INTO d, a, b, c
+    FROM Q3
+    ORDER BY Tirage DESC
+    LIMIT 1;
+
+    -- Вставляем новую строку статистики (если ещё нет)
+    INSERT IGNORE INTO Q3_stats_order (Tirage, n1, n2, n3, days, days2, fois, max)
+    SELECT 
+        d,
+        a,
+        b,
+        c,
+
+        -- days
+        IFNULL(DATEDIFF(d, (
+            SELECT MAX(Tirage) FROM Q3
+            WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+        )), 0),
+
+        -- days2
+        IFNULL(DATEDIFF((
+            SELECT MAX(Tirage) FROM Q3
+            WHERE Tirage < (
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+            ) AND n1 = a AND n2 = b AND n3 = c
+        ), (
+            SELECT MAX(Tirage) FROM Q3
+            WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c
+        )), 0),
+
+        -- fois
+        IFNULL((
+            SELECT COUNT(*) FROM Q3
+            WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c
+        ), 0),
+
+        -- max
+        IFNULL((
+            SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                SELECT Tirage,
+                       LAG(Tirage) OVER (PARTITION BY n1, n2, n3 ORDER BY Tirage) AS prev_Tirage
+                FROM Q3
+                WHERE n1 = a AND n2 = b AND n3 = c AND Tirage <= d
+            ) AS temp
+            WHERE prev_Tirage IS NOT NULL
+        ), 0);
+END //
+
+DELIMITER ;
+
+-------- Вызов процедуры --------
+
+CALL fill_Q2_stats_order();

@@ -1,0 +1,69 @@
+DELIMITER //
+
+CREATE PROCEDURE fill_Q4_stats_order_full()
+BEGIN
+    DECLARE total INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+    DECLARE e INT;
+
+    DROP TABLE IF EXISTS Q4_stats_order;
+    CREATE TABLE Q4_stats_order (
+        Tirage DATE,
+        n1 TINYINT UNSIGNED,
+        n2 TINYINT UNSIGNED,
+        n3 TINYINT UNSIGNED,
+        n4 TINYINT UNSIGNED,
+        days INT,
+        days2 INT,
+        fois INT,
+        max INT
+    );
+
+    SELECT COUNT(*) INTO total FROM Q4;
+
+    WHILE i < total DO
+        SELECT Tirage, n1, n2, n3, n4 INTO d, a, b, c, e
+        FROM Q4
+        ORDER BY Tirage
+        LIMIT 1 OFFSET i;
+
+        INSERT INTO Q4_stats_order (Tirage, n1, n2, n3, n4, days, days2, fois, max)
+        SELECT 
+            d, a, b, c, e,
+            IFNULL(DATEDIFF(d, (
+                SELECT MAX(Tirage) FROM Q4
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            )), 0),
+            IFNULL(DATEDIFF((
+                SELECT MAX(Tirage) FROM Q4
+                WHERE Tirage < (
+                    SELECT MAX(Tirage) FROM Q4
+                    WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+                ) AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            ), (
+                SELECT MAX(Tirage) FROM Q4
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            )), 0),
+            IFNULL((
+                SELECT COUNT(*) FROM Q4
+                WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            ), 0),
+            IFNULL((
+                SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                    SELECT Tirage,
+                        LAG(Tirage) OVER (PARTITION BY n1, n2, n3, n4 ORDER BY Tirage) AS prev_Tirage
+                    FROM Q4
+                    WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+                ) AS temp
+                WHERE prev_Tirage IS NOT NULL
+            ), 0);
+
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;

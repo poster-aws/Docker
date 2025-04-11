@@ -86,4 +86,4 @@ DELIMITER ;
 
 -------- вызов процедуры --------
 
-CALL fill_Q2_stats_order();
+CALL fill_Q2_stats_order_full();

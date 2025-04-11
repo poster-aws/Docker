@@ -1,0 +1,124 @@
+-------- Процедура для первоначального создания Q3_stats_norder --------
+-------- Перешитывает полностью всю таблицу Q3_stats_norder --------
+-------- Порядок не важен / Dans n'emport quel Order -------- 
+
+-------- первая команда  добавление процедуры в БД --------
+
+DELIMITER //
+
+CREATE PROCEDURE fill_Q3_stats_norder_full()
+BEGIN
+    DECLARE total INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+    DECLARE x INT;
+    DECLARE y INT;
+    DECLARE z INT;
+
+    -- создание таблицы
+    DROP TABLE IF EXISTS Q3_stats_norder;
+    CREATE TABLE Q3_stats_norder (
+        Tirage DATE,
+        n1 TINYINT UNSIGNED,
+        n2 TINYINT UNSIGNED,
+        n3 TINYINT UNSIGNED,
+        days INT,
+        days2 INT,
+        fois INT,
+        max INT
+    );
+
+    -- общее количество строк в Q3
+    SELECT COUNT(*) INTO total FROM Q3;
+
+    WHILE i < total DO
+        -- получаем i-ю строку
+        SELECT Tirage, n1, n2, n3 INTO d, a, b, c
+        FROM Q3
+        ORDER BY Tirage
+        LIMIT 1 OFFSET i;
+
+        -- упорядочим значения (x <= y <= z)
+        SET x = LEAST(a, b, c);
+        SET z = GREATEST(a, b, c);
+        SET y = a + b + c - x - z;
+
+        -- вставка в таблицу
+        INSERT INTO Q3_stats_norder (Tirage, n1, n2, n3, days, days2, fois, max)
+        SELECT 
+            d,
+            a,
+            b,
+            c,
+
+            -- days
+            IFNULL(DATEDIFF(d, (
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < d 
+                  AND LEAST(n1, n2, n3) = x
+                  AND GREATEST(n1, n2, n3) = z
+                  AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+            )), 0),
+
+            -- days2
+            IFNULL(DATEDIFF((
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < (
+                    SELECT MAX(Tirage) FROM Q3
+                    WHERE Tirage < d
+                      AND LEAST(n1, n2, n3) = x
+                      AND GREATEST(n1, n2, n3) = z
+                      AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+                )
+                  AND LEAST(n1, n2, n3) = x
+                  AND GREATEST(n1, n2, n3) = z
+                  AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+            ), (
+                SELECT MAX(Tirage) FROM Q3
+                WHERE Tirage < d
+                  AND LEAST(n1, n2, n3) = x
+                  AND GREATEST(n1, n2, n3) = z
+                  AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+            )), 0),
+
+            -- fois
+            IFNULL((
+                SELECT COUNT(*) FROM Q3
+                WHERE Tirage <= d 
+                  AND LEAST(n1, n2, n3) = x
+                  AND GREATEST(n1, n2, n3) = z
+                  AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+            ), 0),
+
+            -- max
+            IFNULL((
+                SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                    SELECT Tirage,
+                           LAG(Tirage) OVER (
+                               PARTITION BY 
+                                   LEAST(n1, n2, n3), 
+                                   GREATEST(n1, n2, n3), 
+                                   (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3))
+                               ORDER BY Tirage
+                           ) AS prev_Tirage
+                    FROM Q3
+                    WHERE Tirage <= d
+                      AND LEAST(n1, n2, n3) = x
+                      AND GREATEST(n1, n2, n3) = z
+                      AND (n1 + n2 + n3 - LEAST(n1, n2, n3) - GREATEST(n1, n2, n3)) = y
+                ) AS temp
+                WHERE prev_Tirage IS NOT NULL
+            ), 0);
+
+        SET i = i + 1;
+    END WHILE;
+END //
+
+DELIMITER ;
+
+-------- вызов процедуры --------
+
+CALL fill_Q3_stats_norder();

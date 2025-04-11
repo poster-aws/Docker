@@ -1,0 +1,81 @@
+DELIMITER //
+
+CREATE PROCEDURE fill_Q4_stats_norder()
+BEGIN
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+    DECLARE e INT;
+    DECLARE x INT;
+    DECLARE y INT;
+    DECLARE z INT;
+    DECLARE w INT;
+
+    SELECT Tirage, n1, n2, n3, n4 INTO d, a, b, c, e
+    FROM Q4
+    ORDER BY Tirage DESC
+    LIMIT 1;
+
+    SET x = LEAST(a, b, c, e);
+    SET w = GREATEST(a, b, c, e);
+    SET y = a + b + c + e - x - w - LEAST(GREATEST(a,b), GREATEST(c,e));
+    SET z = a + b + c + e - x - w - y;
+
+    INSERT IGNORE INTO Q4_stats_norder (Tirage, n1, n2, n3, n4, days, days2, fois, max)
+    SELECT 
+        d, a, b, c, e,
+        IFNULL(DATEDIFF(d, (
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < d
+              AND LEAST(n1,n2,n3,n4) = x
+              AND GREATEST(n1,n2,n3,n4) = w
+              AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+        )), 0),
+        IFNULL(DATEDIFF((
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < (
+                SELECT MAX(Tirage) FROM Q4
+                WHERE Tirage < d
+                  AND LEAST(n1,n2,n3,n4) = x
+                  AND GREATEST(n1,n2,n3,n4) = w
+                  AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+            )
+              AND LEAST(n1,n2,n3,n4) = x
+              AND GREATEST(n1,n2,n3,n4) = w
+              AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+        ), (
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < d
+              AND LEAST(n1,n2,n3,n4) = x
+              AND GREATEST(n1,n2,n3,n4) = w
+              AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+        )), 0),
+        IFNULL((
+            SELECT COUNT(*) FROM Q4
+            WHERE Tirage <= d
+              AND LEAST(n1,n2,n3,n4) = x
+              AND GREATEST(n1,n2,n3,n4) = w
+              AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+        ), 0),
+        IFNULL((
+            SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                SELECT Tirage,
+                       LAG(Tirage) OVER (
+                           PARTITION BY 
+                               LEAST(n1,n2,n3,n4),
+                               GREATEST(n1,n2,n3,n4),
+                               (n1 + n2 + n3 + n4 - LEAST(n1,n2,n3,n4) - GREATEST(n1,n2,n3,n4))
+                           ORDER BY Tirage
+                       ) AS prev_Tirage
+                FROM Q4
+                WHERE Tirage <= d
+                  AND LEAST(n1,n2,n3,n4) = x
+                  AND GREATEST(n1,n2,n3,n4) = w
+                  AND (n1 + n2 + n3 + n4 - x - w) IN (y + z, z + y)
+            ) AS temp
+            WHERE prev_Tirage IS NOT NULL
+        ), 0);
+END //
+
+DELIMITER ;

@@ -1,0 +1,48 @@
+DELIMITER //
+
+CREATE PROCEDURE fill_Q4_stats_order()
+BEGIN
+    DECLARE d DATE;
+    DECLARE a INT;
+    DECLARE b INT;
+    DECLARE c INT;
+    DECLARE e INT;
+
+    SELECT Tirage, n1, n2, n3, n4 INTO d, a, b, c, e
+    FROM Q4
+    ORDER BY Tirage DESC
+    LIMIT 1;
+
+    INSERT IGNORE INTO Q4_stats_order (Tirage, n1, n2, n3, n4, days, days2, fois, max)
+    SELECT 
+        d, a, b, c, e,
+        IFNULL(DATEDIFF(d, (
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+        )), 0),
+        IFNULL(DATEDIFF((
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < (
+                SELECT MAX(Tirage) FROM Q4
+                WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            ) AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+        ), (
+            SELECT MAX(Tirage) FROM Q4
+            WHERE Tirage < d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+        )), 0),
+        IFNULL((
+            SELECT COUNT(*) FROM Q4
+            WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+        ), 0),
+        IFNULL((
+            SELECT MAX(DATEDIFF(Tirage, prev_Tirage)) FROM (
+                SELECT Tirage,
+                    LAG(Tirage) OVER (PARTITION BY n1, n2, n3, n4 ORDER BY Tirage) AS prev_Tirage
+                FROM Q4
+                WHERE Tirage <= d AND n1 = a AND n2 = b AND n3 = c AND n4 = e
+            ) AS temp
+            WHERE prev_Tirage IS NOT NULL
+        ), 0);
+END //
+
+DELIMITER ;
