@@ -130,7 +130,10 @@ if response.status_code == 200:
                     n4 = VALUES(n4);
                 """
                 cursor.execute(insert_q4_query, (date_str, n6, n7, n8, n9))
+                rows_affected = cursor.rowcount
                 connection.commit()
+
+            if rows_affected == 1:
 
                 print(f"\nДанные добавлены/обновлены:")
                 print(f"  Q2: {date_str} — {n1}, {n2}")
@@ -150,6 +153,9 @@ if response.status_code == 200:
                         print("Ошибка в fill_Q2_stats_norder:", e)
                 except Error as e:
                     print("Ошибка в fill_Q2_stats_order:", e)
+
+            else:
+                    print("Данные в Q2 уже существуют. Статистика не обновлялась.")
 
         except Error as e:
             print("Ошибка при подключении к MySQL:", e)
