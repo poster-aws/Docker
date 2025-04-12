@@ -20,46 +20,34 @@ if response.status_code == 200:
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
 
-    print("\nИсходный код был сохранен в 'page_source.html'.")
+    print("\n Исходный код сохранен в 'page_source.html'.")
 
     soup = BeautifulSoup(page_source, 'html.parser')
 
     # Извлекаем дату
     date_elem = soup.find('div', id='dateAffichee')
-    if date_elem:
-        date_str = date_elem.text.strip()
+    date_str = date_elem.text.strip() if date_elem else None
+    if date_str:
         print(f"Дата извлечена: {date_str}")
     else:
         print("Дата не найдена.")
-        date_str = None
 
-    # Извлекаем все номера
+    # Извлекаем номера
     numeros = soup.find_all('span', class_='num')
     print(f"Найдено номеров: {len(numeros)}")
 
-    if len(numeros) >= 9 and date_str:
-        try:
-            n1 = int(numeros[0].text.strip().replace(' ', ''))
-            n2 = int(numeros[1].text.strip().replace(' ', ''))
-            n3 = int(numeros[2].text.strip().replace(' ', ''))
-            n4 = int(numeros[3].text.strip().replace(' ', ''))
-            n5 = int(numeros[4].text.strip().replace(' ', ''))
-            n6 = int(numeros[5].text.strip().replace(' ', ''))
-            n7 = int(numeros[6].text.strip().replace(' ', ''))
-            n8 = int(numeros[7].text.strip().replace(' ', ''))
-            n9 = int(numeros[8].text.strip().replace(' ', ''))
+    try:
+        values = [int(span.text.strip().replace(' ', '')) for span in numeros[:9]]
+    except ValueError:
+        print("Ошибка при преобразовании номеров.")
+        values = []
 
-            print(f"Q2: {n1}, {n2}")
-            print(f"Q3: {n3}, {n4}, {n5}")
-            print(f"Q4: {n6}, {n7}, {n8}, {n9}")
-        except ValueError:
-            print("Ошибка при преобразовании номеров.")
-            n1 = n2 = n3 = n4 = n5 = n6 = n7 = n8 = n9 = None
-    else:
-        print("Недостаточно номеров или дата не извлечена.")
-        n1 = n2 = n3 = n4 = n5 = n6 = n7 = n8 = n9 = None
+    if len(values) == 9 and date_str:
+        n1, n2, n3, n4, n5, n6, n7, n8, n9 = values
+        print(f"Q2: {n1}, {n2}")
+        print(f"Q3: {n3}, {n4}, {n5}")
+        print(f"Q4: {n6}, {n7}, {n8}, {n9}")
 
-    if date_str and all(n is not None for n in [n1, n2, n3, n4, n5, n6, n7, n8, n9]):
         try:
             connection = mysql.connector.connect(
                 host=os.getenv('DB_HOST', 'db'),
@@ -70,92 +58,89 @@ if response.status_code == 200:
 
             if connection.is_connected():
                 cursor = connection.cursor()
+                inserted = False
 
-                # Создание таблицы Q2
-                create_q2_query = """
-                CREATE TABLE IF NOT EXISTS Q2 (
-                    Tirage VARCHAR(50) PRIMARY KEY,
-                    n1 INT,
-                    n2 INT
-                );
-                """
-                cursor.execute(create_q2_query)
+                # Q2
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS Q2 (
+                        Tirage VARCHAR(50) PRIMARY KEY,
+                        n1 INT,
+                        n2 INT
+                    )
+                """)
+                cursor.execute("""
+                    INSERT INTO Q2 (Tirage, n1, n2)
+                    VALUES (%s, %s, %s)
+                    ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2)
+                """, (date_str, n1, n2))
+                if cursor.rowcount:
+                    inserted = True
 
-                insert_q2_query = """
-                INSERT INTO Q2 (Tirage, n1, n2) 
-                VALUES (%s, %s, %s) 
-                ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2);
-                """
-                cursor.execute(insert_q2_query, (date_str, n1, n2))
+                # Q3
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS Q3 (
+                        Tirage VARCHAR(50) PRIMARY KEY,
+                        n1 INT,
+                        n2 INT,
+                        n3 INT
+                    )
+                """)
+                cursor.execute("""
+                    INSERT INTO Q3 (Tirage, n1, n2, n3)
+                    VALUES (%s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2), n3 = VALUES(n3)
+                """, (date_str, n3, n4, n5))
+                if cursor.rowcount:
+                    inserted = True
+
+                # Q4
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS Q4 (
+                        Tirage VARCHAR(50) PRIMARY KEY,
+                        n1 INT,
+                        n2 INT,
+                        n3 INT,
+                        n4 INT
+                    )
+                """)
+                cursor.execute("""
+                    INSERT INTO Q4 (Tirage, n1, n2, n3, n4)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                        n1 = VALUES(n1),
+                        n2 = VALUES(n2),
+                        n3 = VALUES(n3),
+                        n4 = VALUES(n4)
+                """, (date_str, n6, n7, n8, n9))
+                if cursor.rowcount:
+                    inserted = True
+
                 connection.commit()
 
-                # Создание таблицы Q3
-                create_q3_query = """
-                CREATE TABLE IF NOT EXISTS Q3 (
-                    Tirage VARCHAR(50) PRIMARY KEY,
-                    n1 INT,
-                    n2 INT,
-                    n3 INT
-                );
-                """
-                cursor.execute(create_q3_query)
+                if inserted:
+                    print(f"\nДанные добавлены/обновлены:")
+                    print(f"  Q2: {date_str} — {n1}, {n2}")
+                    print(f"  Q3: {date_str} — {n3}, {n4}, {n5}")
+                    print(f"  Q4: {date_str} — {n6}, {n7}, {n8}, {n9}")
 
-                insert_q3_query = """
-                INSERT INTO Q3 (Tirage, n1, n2, n3)
-                VALUES (%s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2), n3 = VALUES(n3);
-                """
-                cursor.execute(insert_q3_query, (date_str, n3, n4, n5))
-                connection.commit()
+                    procedures = [
+                        'fill_Q2_stats_order',
+                        'fill_Q2_stats_norder',
+                        'fill_Q3_stats_order',
+                        'fill_Q3_stats_norder',
+                        'fill_Q4_stats_order',
+                        'fill_Q4_stats_norder'
+                    ]
 
-                # Создание таблицы Q4
-                create_q4_query = """
-                CREATE TABLE IF NOT EXISTS Q4 (
-                    Tirage VARCHAR(50) PRIMARY KEY,
-                    n1 INT,
-                    n2 INT,
-                    n3 INT,
-                    n4 INT
-                );
-                """
-                cursor.execute(create_q4_query)
-
-                insert_q4_query = """
-                INSERT INTO Q4 (Tirage, n1, n2, n3, n4)
-                VALUES (%s, %s, %s, %s, %s)
-                ON DUPLICATE KEY UPDATE 
-                    n1 = VALUES(n1),
-                    n2 = VALUES(n2),
-                    n3 = VALUES(n3),
-                    n4 = VALUES(n4);
-                """
-                cursor.execute(insert_q4_query, (date_str, n6, n7, n8, n9))
-                rows_affected = cursor.rowcount
-                connection.commit()
-
-            if rows_affected == 1:
-
-                print(f"\nДанные добавлены/обновлены:")
-                print(f"  Q2: {date_str} — {n1}, {n2}")
-                print(f"  Q3: {date_str} — {n3}, {n4}, {n5}")
-                print(f"  Q4: {date_str} — {n6}, {n7}, {n8}, {n9}")
-
-                # Вызов процедур для Q2
-                try:
-                    cursor.callproc('fill_Q2_stats_order')
-                    connection.commit()
-                    print("Процедура fill_Q2_stats_order выполнена.")
-                    try:
-                        cursor.callproc('fill_Q2_stats_norder')
-                        connection.commit()
-                        print("Процедура fill_Q2_stats_norder выполнена.")
-                    except Error as e:
-                        print("Ошибка в fill_Q2_stats_norder:", e)
-                except Error as e:
-                    print("Ошибка в fill_Q2_stats_order:", e)
-
-            else:
-                    print("Данные в Q2 уже существуют. Статистика не обновлялась.")
+                    for proc in procedures:
+                        try:
+                            cursor.callproc(proc)
+                            connection.commit()
+                            print(f"Процедура {proc} выполнена.")
+                        except Error as e:
+                            print(f"Ошибка в {proc}:", e)
+                else:
+                    print("Данные уже существуют. Процедуры не запущены.")
 
         except Error as e:
             print("Ошибка при подключении к MySQL:", e)
@@ -165,5 +150,7 @@ if response.status_code == 200:
                 cursor.close()
                 connection.close()
                 print("Соединение с базой данных закрыто.")
+    else:
+        print("Недостаточно номеров или дата не извлечена.")
 else:
     print(f"Ошибка при получении страницы: {response.status_code}")
