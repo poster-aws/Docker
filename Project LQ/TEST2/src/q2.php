@@ -12,6 +12,7 @@ if ($conn->connect_error) {
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table = $isNorder ? 'Q2_stats_norder' : 'Q2_stats_order';
 
+// 1. Основная таблица
 $sql = "SELECT * FROM $table ORDER BY Tirage DESC";
 $result = $conn->query($sql);
 $data = [];
@@ -39,6 +40,7 @@ if ($resCombo && $resCombo->num_rows > 0) {
 }
 usort($comboRows, fn($a, $b) => $b['days'] <=> $a['days']);
 
+// 3. Последний тираж для каждой цифры 0–9
 $daysStats = array_fill(0, 10, null);
 $sqlLastNums = "
     SELECT n, MAX(Tirage) AS Last_Tirage
@@ -58,10 +60,12 @@ if ($resLastNums && $resLastNums->num_rows > 0) {
 }
 $conn->close();
 
+// Загрузка HTML-шаблона Q2.html
 ob_start();
 include 'q2.html';
 $template = ob_get_clean();
 
+// Генерация таблиц
 $tableHTML = '';
 foreach ($data as $row) {
     $tableHTML .= '<tr>';
@@ -81,10 +85,25 @@ foreach ($comboRows as $row) {
     $comboHTML .= '</tr>';
 }
 
+// Подсветка по условию
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
     $circle = "<span class='circle'>$num</span>";
-    $numberStatsHTML .= "<tr><td>$circle</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
+    $val = $daysAgo ?? 0;
+
+    if ($val >= 1 && $val <= 10) {
+        $class = 'color-range-1';
+    } elseif ($val >= 11 && $val <= 15) {
+        $class = 'color-range-2';
+    } elseif ($val >= 16 && $val <= 20) {
+        $class = 'color-range-3';
+    } elseif ($val > 20) {
+        $class = 'color-range-4';
+    } else {
+        $class = '';
+    }
+
+    $numberStatsHTML .= "<tr class=\"$class\"><td>$circle</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
 }
 
 $script = "<script>

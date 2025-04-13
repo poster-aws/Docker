@@ -214,15 +214,12 @@ header {
 }
 
 .combo-table-container {
-  background: #64e26e;
+  background: #00000005;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .number-stats-table {
-  background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
-              linear-gradient(80deg, #000000 10%, rgb(0, 0, 0) 100%);
-  background-size: cover;
-  /* border: 2px solid #2f0f5d; */
+  background: #00000005;
   min-width: 180px;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
@@ -232,16 +229,16 @@ header {
   border-collapse: collapse;
   font-size: 20px;
   font-family: 'Shadows Into Light', cursive;
-  color: #989898;
+  color: #000000;
   /* scrollbar-width: none; */
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  scrollbar-color: rgb(30, 0, 255) transparent;
 }
 
 .interactive-table th,
 .interactive-table td {
   padding: 10px;
-  border-bottom: 1px dashed #b43a0e;
+  border-bottom: 1px dashed #777777;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -249,13 +246,31 @@ header {
 }
 
 .interactive-table tr:hover {
-  background-color: rgba(8, 98, 65, 0.3);
+  background-color: rgb(0, 255, 34);
   transition: background-color 0.3s ease;
 }
 
 .interactive-table td:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(36, 34, 34, 0.243);
 }
+
+/* Подсветка строк по диапазонам */
+.number-stats-table tr.color-range-1 {
+  background-color: #d4f4dd; /* светло-зелёный */
+}
+
+.number-stats-table tr.color-range-2 {
+  background-color: #fff8c6da; /* светло-жёлтый */
+}
+
+.number-stats-table tr.color-range-3 {
+  background-color: #ffe1c1; /* персиковый */
+}
+
+.number-stats-table tr.color-range-4 {
+  background-color: #f6baba; /* светло-красный */
+}
+
 
 /* Скролл бар */
 
