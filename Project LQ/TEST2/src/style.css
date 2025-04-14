@@ -271,6 +271,15 @@ header {
   background-color: #f6baba; /* светло-красный */
 }
 
+.interactive-table th.sort-asc::after {
+  content: " ▲";
+  font-size: 0.8em;
+}
+
+.interactive-table th.sort-desc::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
 
 /* Скролл бар */
 
