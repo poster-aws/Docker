@@ -9,11 +9,13 @@ if ($conn->connect_error) {
     die("Ошибка подключения: " . $conn->connect_error);
 }
 
+// Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
-$table = $isNorder ? 'Q2_stats_norder' : 'Q2_stats_order';
+$tableMain  = $isNorder ? 'Q2_stats_norder'      : 'Q2_stats_order';
+$tableComb  = $isNorder ? 'Q2_combo_stats_norder': 'Q2_combo_stats_order';
 
 // 1. Основная таблица
-$sql = "SELECT * FROM $table ORDER BY Tirage DESC";
+$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {
@@ -22,25 +24,22 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-$sqlCombo = $isNorder
-    ? "SELECT LEAST(n1,n2) as a, GREATEST(n1,n2) as b, MAX(Tirage) as last FROM Q2_stats_norder GROUP BY a, b"
-    : "SELECT n1, n2, MAX(Tirage) as last FROM Q2_stats_order GROUP BY n1, n2";
+// 2. Комбинации из предрассчитанной таблицы
+$sqlCombo = "SELECT n1, n2, jours, tirage FROM $tableComb ORDER BY jours DESC";
 $resCombo = $conn->query($sqlCombo);
 $comboRows = [];
 if ($resCombo && $resCombo->num_rows > 0) {
     while ($r = $resCombo->fetch_assoc()) {
-        $days = (new DateTime($r['last']))->diff(new DateTime())->days;
         $comboRows[] = [
-            'n1' => $r['n1'] ?? $r['a'],
-            'n2' => $r['n2'] ?? $r['b'],
-            'days' => $days,
-            'date' => $r['last']
+            'n1' => $r['n1'],
+            'n2' => $r['n2'],
+            'days' => $r['jours'],
+            'date' => $r['tirage']
         ];
     }
 }
-usort($comboRows, fn($a, $b) => $b['days'] <=> $a['days']);
 
-// 3. Последний тираж для каждой цифры 0–9
+// 3. Последний тираж для каждой цифры 0–9 (всегда из ORDER)
 $daysStats = array_fill(0, 10, null);
 $sqlLastNums = "
     SELECT n, MAX(Tirage) AS Last_Tirage
@@ -60,12 +59,12 @@ if ($resLastNums && $resLastNums->num_rows > 0) {
 }
 $conn->close();
 
-// Загрузка HTML-шаблона Q2.html
+// Загрузка шаблона q2.html
 ob_start();
 include 'q2.html';
 $template = ob_get_clean();
 
-// Генерация таблиц
+// --- Генерация таблицы 1 (основная)
 $tableHTML = '';
 foreach ($data as $row) {
     $tableHTML .= '<tr>';
@@ -75,17 +74,18 @@ foreach ($data as $row) {
     $tableHTML .= '</tr>';
 }
 
+// --- Таблица 2 (комбинации)
 $comboHTML = '';
 foreach ($comboRows as $row) {
-    $comboHTML .= '<tr>';
+    $comboHTML .= "<tr>";
     $comboHTML .= "<td><span class='circle'>{$row['n1']}</span></td>";
     $comboHTML .= "<td><span class='circle'>{$row['n2']}</span></td>";
     $comboHTML .= "<td>{$row['days']}</td>";
     $comboHTML .= "<td>{$row['date']}</td>";
-    $comboHTML .= '</tr>';
+    $comboHTML .= "</tr>";
 }
 
-// Подсветка по условию
+// --- Таблица 3 (дни по цифрам, с подсветкой)
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
     $circle = "<span class='circle'>$num</span>";
@@ -106,6 +106,7 @@ foreach ($daysStats as $num => $daysAgo) {
     $numberStatsHTML .= "<tr class=\"$class\"><td>$circle</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
 }
 
+// --- JS-переключатель
 $script = "<script>
   const toggle = document.getElementById('toggleSwitch');
   const labelOrder = document.getElementById('labelOrder');
@@ -120,14 +121,15 @@ $script = "<script>
   };
 
   toggle.checked = " . ($isNorder ? 'true' : 'false') . ";
-  setActiveLabels(); // первичная установка
-  
+  setActiveLabels();
+
   toggle.addEventListener('change', () => {
     const next = toggle.checked ? '?norder=1' : '';
     window.location.href = 'index.php' + next;
   });
 </script>";
 
+// --- Вставка в шаблон
 echo str_replace(
   ['<!--TABLE_PLACEHOLDER-->', '<!--COMBO_PLACEHOLDER-->', '<!--NUMBER_STATS_PLACEHOLDER-->', '<!--SCRIPT_PLACEHOLDER-->'],
   [$tableHTML, $comboHTML, $numberStatsHTML, $script],
