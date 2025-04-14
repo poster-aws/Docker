@@ -235,7 +235,14 @@ header {
   scrollbar-color: rgb(30, 0, 255) transparent;
 }
 
-.interactive-table th,
+.interactive-table thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(90deg, #fdf7c3, #f7e89a);
+  z-index: 10;
+  border-bottom: 2px solid #888;
+}
+
 .interactive-table td {
   padding: 10px;
   border-bottom: 1px dashed #777777;
@@ -271,6 +278,7 @@ header {
   background-color: #f6baba; /* светло-красный */
 }
 
+/* сортировка ▲ ▼ */
 .interactive-table th.sort-asc::after {
   content: " ▲";
   font-size: 0.8em;
