@@ -201,7 +201,7 @@ header {
   max-height: 86vh;
   overflow: auto;
   margin-inline: auto;
-  padding: 15px;
+  /* padding: 15px; */
   border-radius: 12px;
   border: 2px solid #a4a1a1;
 }
@@ -319,6 +319,41 @@ header {
   text-align: center;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   font-family: Arial, sans-serif;
+}
+
+/* Анимацию точек */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(173, 216, 230, 0.85);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.loading-text .dots::after {
+  content: '';
+  display: inline-block;
+  width: 1ch;
+  animation: dots 0.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ''; }
+  33%  { content: '.'; }
+  66%  { content: '..'; }
+  100% { content: '...'; }
 }
 
 /* Адаптивность */

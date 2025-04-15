@@ -58,13 +58,19 @@ function loadPage(page) {
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
 
+  const container = document.getElementById("container");
+  container.innerHTML = `
+    <div class="loading-overlay">
+      <span class="loading-text">Loading<span class="dots"></span></span>
+    </div>
+  `;
+
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
       return response.text();
     })
     .then(html => {
-      const container = document.getElementById("container");
       container.innerHTML = html;
       container.setAttribute("data-page", page);
       updateToggleStyles();
@@ -77,7 +83,7 @@ function loadPage(page) {
       else pageTitle.textContent = "Quotidienne";
     })
     .catch(err => {
-      document.getElementById("container").innerHTML = "<p>Не удалось загрузить страницу.</p>";
+      container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
       console.error(err);
     });
 }
