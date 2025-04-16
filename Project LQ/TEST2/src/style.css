@@ -208,7 +208,7 @@ header {
 
 .table-container {
   background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
-              linear-gradient(80deg, #fdf7c3 10%, rgb(240, 204, 43) 100%);
+              linear-gradient(80deg, #7c7c7c63 10%, rgba(43, 59, 240, 0.435) 100%);
   background-size: cover;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
@@ -238,7 +238,7 @@ header {
 .interactive-table thead th {
   position: sticky;
   top: 0;
-  background: linear-gradient(90deg, #fdf7c3, #f7e89a);
+  background-color:rgba(0, 0, 0, 0.3);       /* linear-gradient(90deg, #fdf7c3, #f7e89a); */
   z-index: 10;
   border-bottom: 2px solid #888;
 }
