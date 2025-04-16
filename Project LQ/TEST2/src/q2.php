@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 // Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $tableMain  = $isNorder ? 'Q2_stats_norder'      : 'Q2_stats_order';
-$tableComb  = $isNorder ? 'Q2_combo_stats_norder': 'Q2_combo_stats_order';
+$tableComb  = 'Q2_combo_stats_order';
 
 // 1. Основная таблица
 $sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC";
@@ -24,18 +24,49 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// 2. Комбинации из предрассчитанной таблицы
-$sqlCombo = "SELECT n1, n2, jours, tirage FROM $tableComb ORDER BY jours DESC";
-$resCombo = $conn->query($sqlCombo);
+// 2. Комбинации
 $comboRows = [];
-if ($resCombo && $resCombo->num_rows > 0) {
-    while ($r = $resCombo->fetch_assoc()) {
+
+if ($isNorder) {
+    // Генерация комбинаций без учёта порядка
+    $comboMap = [];
+    foreach ($data as $row) {
+        $nums = [$row['n1'], $row['n2']];
+        sort($nums);
+        $key = implode('-', $nums);
+        if (!isset($comboMap[$key]) || $comboMap[$key]['tirage'] < $row['Tirage']) {
+            $comboMap[$key] = [
+                'n1' => $nums[0],
+                'n2' => $nums[1],
+                'tirage' => $row['Tirage']
+            ];
+        }
+    }
+
+    foreach ($comboMap as $row) {
+        $days = (new DateTime($row['tirage']))->diff(new DateTime())->days;
         $comboRows[] = [
-            'n1' => $r['n1'],
-            'n2' => $r['n2'],
-            'days' => $r['jours'],
-            'date' => $r['tirage']
+            'n1' => $row['n1'],
+            'n2' => $row['n2'],
+            'days' => $days,
+            'date' => $row['tirage']
         ];
+    }
+
+    usort($comboRows, fn($a, $b) => $b['days'] <=> $a['days']);
+} else {
+    // Комбинации из БД (порядок важен)
+    $sqlCombo = "SELECT n1, n2, jours, tirage FROM $tableComb ORDER BY jours DESC";
+    $resCombo = $conn->query($sqlCombo);
+    if ($resCombo && $resCombo->num_rows > 0) {
+        while ($r = $resCombo->fetch_assoc()) {
+            $comboRows[] = [
+                'n1' => $r['n1'],
+                'n2' => $r['n2'],
+                'days' => $r['jours'],
+                'date' => $r['tirage']
+            ];
+        }
     }
 }
 
@@ -64,7 +95,7 @@ ob_start();
 include 'q2.html';
 $template = ob_get_clean();
 
-// --- Генерация таблицы 1 (основная)
+// --- Таблица 1 (основная)
 $tableHTML = '';
 foreach ($data as $row) {
     $tableHTML .= '<tr>';
