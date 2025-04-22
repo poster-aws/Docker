@@ -14,11 +14,11 @@ html, body {
 
 /* Шапка */
 header {
-  height: clamp(60px, 10vh, 120px);
+  height: clamp(60px, 10vh, 120px);  /* Адаптивная высота */
   width: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  display: flex;
+  display: flex;                     /* ← БЕЗ ОШИБКИ! */
   align-items: center;
   justify-content: center;
   font-size: 2em;
@@ -37,7 +37,7 @@ header {
   left: 1em;
 }
 
-/* Обертка переключателя */
+/* Обертка переклюка */
 .switch-wrapper {
   position: absolute;
   right: 1em;
@@ -54,13 +54,18 @@ header {
   height: 36px;
 }
 
+/* Скрываем стандартный checkbox */
 .neon-switch input {
-  display: none;
+  display: none;          
 }
 
+/* Бегунок (дорожка всегда чёрная)   */
 .neon-slider {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: #111;
   border-radius: 36px;
   box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
@@ -68,6 +73,7 @@ header {
   transition: box-shadow 0.3s ease;
 }
 
+/* Бегунок (голубой по умолчанию)    */
 .neon-slider::before {
   content: "";
   position: absolute;
@@ -81,10 +87,12 @@ header {
   box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
 }
 
+/* Сдвиг бегунка */
 .neon-switch input:checked + .neon-slider::before {
   transform: translateX(39px);
 }
 
+/* Активное состояние — зелёное свечение и бегунок */
 .neon-switch.active .neon-slider {
   box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
 }
@@ -94,6 +102,7 @@ header {
   box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
 }
 
+/* Надписи для переклюка */
 .switch-labels {
   display: flex;
   flex-direction: column;
@@ -111,7 +120,7 @@ header {
   color: #00ff00 !important;
 }
 
-/* ВЫПАДАЮЩЕЕ МЕНЮ */
+ /* ВЫПАДАЮЩЕЕ МЕНЮ */
 .dropdown-menu {
   position: absolute;
   top: 10vh;
@@ -153,31 +162,27 @@ header {
   border-bottom-right-radius: 10px;
 }
 
-/* Контейнер */
+/* Контейнер с таблицами */
 .container {
-  display: inline-block;
-  width: fit-content;
-  max-width: 100vw;
-  max-height: 90vh;
+  height: 90vh;
+  width: fit-content; /* width: 75%; */
   background-color: rgba(173, 216, 230, 0.85);
   border-radius: 10px;
   padding: 1em;
-  overflow: auto;
+  overflow-y: auto;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   position: relative;
   margin: 0 auto;
-  text-align: left;
 }
 
-/* Обёртка таблиц */
 .tables-wrapper {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
   flex-wrap: nowrap;
-  width: fit-content;
+  /* margin-top: 40px; */
 }
 
 /* Таблицы */
@@ -186,9 +191,11 @@ header {
 .number-stats-table {
   flex: 0 0 auto;
   width: max-content;
+  /* min-width: 250px; */
   max-height: 85vh;
   overflow: auto;
   margin-inline: auto;
+  /* padding: 15px; */
   border-radius: 12px;
   border: 2px solid #a4a1a1;
 }
@@ -200,14 +207,15 @@ header {
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.combo-table-container,
-.number-stats-table {
+.combo-table-container {
   background: #00000005;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .number-stats-table {
+  background: #00000005;
   min-width: 180px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .interactive-table {
@@ -216,6 +224,7 @@ header {
   font-size: 18px;
   font-family: 'Shadows Into Light', cursive;
   color: #000000;
+  /* scrollbar-width: none; */
   scrollbar-width: thin;
   scrollbar-color: rgb(30, 0, 255) transparent;
 }
@@ -223,13 +232,13 @@ header {
 .interactive-table thead th {
   position: sticky;
   top: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color:rgba(0, 0, 0, 0.3);       /* linear-gradient(90deg, #fdf7c3, #f7e89a); */
   z-index: 10;
   border-bottom: 2px solid #888;
 }
 
 .interactive-table td {
-  padding: 8px;
+  padding: 9px;
   border-bottom: 1px dashed #777777;
   text-align: center;
   white-space: nowrap;
@@ -247,30 +256,51 @@ header {
 }
 
 /* Подсветка строк по диапазонам */
-.number-stats-table tr.color-range-1 { background-color: #d4f4dd; }
-.number-stats-table tr.color-range-2 { background-color: #fff8c6da; }
-.number-stats-table tr.color-range-3 { background-color: #ffe1c1; }
-.number-stats-table tr.color-range-4 { background-color: #f6baba; }
+.number-stats-table tr.color-range-1 {
+  background-color: #d4f4dd; /* светло-зелёный */
+}
 
-/* Сортировка */
-.interactive-table th.sort-asc::after { content: " ▲"; font-size: 0.8em; }
-.interactive-table th.sort-desc::after { content: " ▼"; font-size: 0.8em; }
+.number-stats-table tr.color-range-2 {
+  background-color: #fff8c6da; /* светло-жёлтый */
+}
 
-/* Скрытие скроллбаров */
-.table-container::-webkit-scrollbar,
+.number-stats-table tr.color-range-3 {
+  background-color: #ffe1c1; /* персиковый */
+}
+
+.number-stats-table tr.color-range-4 {
+  background-color: #f6baba; /* светло-красный */
+}
+
+/* сортировка ▲ ▼ */
+.interactive-table th.sort-asc::after {
+  content: " ▲";
+  font-size: 0.8em;
+}
+
+.interactive-table th.sort-desc::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
+
+/* Скролл бар */
+
+/* Скрываем вертикальный скроллбар, но оставляем прокрутку */
+.number-stats-table::-webkit-scrollbar,
 .combo-table-container::-webkit-scrollbar,
-.number-stats-table::-webkit-scrollbar {
+.table-container::-webkit-scrollbar {
   width: 0px;
-  background: transparent;
-}
-.table-container,
+  background: transparent; /* скрываем фон скроллбара */
+} 
+
+/* Для Firefox */
+.number-stats-table,
 .combo-table-container,
-.number-stats-table {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.table-container {
+  scrollbar-width: none; /* скрывает скроллбар */
+  -ms-overflow-style: none; /*IE 10+*/
 }
 
-/* Кружки */
 .circle {
   display: inline-block;
   width: 28px;
@@ -285,10 +315,11 @@ header {
   font-family: Arial, sans-serif;
 }
 
-/* Анимация загрузки */
+/* Анимацию точек */
 .loading-overlay {
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(173, 216, 230, 0.85);
@@ -304,12 +335,14 @@ header {
   color: #333;
   font-family: Arial, sans-serif;
 }
+
 .loading-text .dots::after {
   content: '';
   display: inline-block;
   width: 1ch;
   animation: dots 0.5s steps(3, end) infinite;
 }
+
 @keyframes dots {
   0%   { content: ''; }
   33%  { content: '.'; }
@@ -317,34 +350,32 @@ header {
   100% { content: '...'; }
 }
 
-/* Вертикальная подпись */
-.vertical-signature {
-  position: fixed;
-  bottom: 20px;
-  right: 15px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 14px;
-  color: rgba(7, 11, 237, 0.5);
-  font-family: Arial, sans-serif;
-  transform: rotate(180deg);
-  z-index: 1000;
-  user-select: none;
-  pointer-events: none;
+/* Адаптивность */
+
+/* Планшеты и средние экраны */
+@media (max-width: 1024px) {
+  .container {
+    width: 90%;
+  }
 }
 
-/* Адаптивность */
-@media (max-width: 1024px) {
-  .container { width: 90%; }
-}
+/* Мобильные устройства (768px и меньше) */
 @media (max-width: 768px) {
-  header { font-size: 1.5em; }
-  .container { width: 95%; padding: 0.8em; }
+  header {
+    font-size: 1.5em;
+  }
+
+  .container {
+    width: 95%;
+    padding: 0.8em;
+  }
+
   .tables-wrapper {
     flex-direction: column;
     align-items: center;
     gap: 30px;
   }
+
   .table-container,
   .combo-table-container,
   .number-stats-table {
@@ -353,6 +384,11 @@ header {
     overflow-x: auto;
   }
 }
+
+/* Очень маленькие экраны (меньше 480px) */
 @media (max-width: 480px) {
-  header { font-size: 1.2em; height: 12vh; }
+  header {
+    font-size: 1.2em;
+    height: 12vh;
+  }
 }
