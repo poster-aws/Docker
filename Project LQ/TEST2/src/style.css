@@ -165,7 +165,7 @@ header {
 /* Контейнер с таблицами */
 .container {
   height: 90vh;
-  min-width: 70%; /* не обязательно но так работает Loading */
+  min-width: 50%; /* не обязательно но так работает Loading */
   width: fit-content; 
   background-color: rgba(173, 216, 230, 0.85);
   border-radius: 10px;
