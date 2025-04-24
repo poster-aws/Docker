@@ -1,13 +1,5 @@
 <?php
-$servername = "db";
-$username = "user";
-$password = "user";
-$dbname = "quotidienne2";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Ошибка подключения: " . $conn->connect_error);
-}
+require_once "db.php";
 
 // Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';

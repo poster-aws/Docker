@@ -59,11 +59,9 @@ function loadPage(page) {
   menu.style.display = "none";
 
   const container = document.getElementById("container");
-  container.innerHTML = `
-    <div class="loading-overlay">
-      <span class="loading-text">Loading<span class="dots"></span></span>
-    </div>
-  `;
+  const spinner = document.getElementById("loadingSpinner");
+
+  spinner.classList.remove("hidden"); // показать спиннер
 
   fetch(`${page}?${mode}`)
     .then(response => {
@@ -74,7 +72,7 @@ function loadPage(page) {
       container.innerHTML = html;
       container.setAttribute("data-page", page);
       updateToggleStyles();
-      makeTablesSortable(); // ✅ сортировка активируется ЗДЕСЬ
+      makeTablesSortable();
 
       const pageTitle = document.getElementById("pageTitle");
       if (page.includes("q2")) pageTitle.textContent = "Quotidienne2";
@@ -85,6 +83,9 @@ function loadPage(page) {
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
       console.error(err);
+    })
+    .finally(() => {
+      spinner.classList.add("hidden"); // скрыть спиннер
     });
 }
 

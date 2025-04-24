@@ -1,14 +1,6 @@
 <?php
 // === Q3.PHP ===
-$servername = "db";
-$username = "user";
-$password = "user";
-$dbname = "quotidienne2";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Erreur de connexion: " . $conn->connect_error);
-}
+require_once "db.php";
 
 // Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';

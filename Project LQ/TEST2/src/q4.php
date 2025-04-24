@@ -1,14 +1,6 @@
 <?php
 // === Q4.PHP ===
-$servername = "db";
-$username = "user";
-$password = "user";
-$dbname = "quotidienne2";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Ошибка подключения: " . $conn->connect_error);
-}
+require_once "db.php";
 
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q4_stats_norder' : 'Q4_stats_order';

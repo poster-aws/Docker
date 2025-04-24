@@ -1,13 +1,20 @@
 <?php
-$host = 'localhost';
-$db = 'quotidienne2';
-$user = 'user';
-$pass = 'user';
+// db.php — подключение к базе данных
 
-try {
-  $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-  die("Ошибка подключения: " . $e->getMessage());
+$servername = "db"; 
+$username = "user";
+$password = "user";
+$dbname = "quotidienne2";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Проверка подключения
+if ($conn->connect_error) {
+    die("Ошибка подключения: " . $conn->connect_error);
 }
 ?>
+
+<!-- 
+db - Docker
+localhost - local server not Docker
+ip adress - in server -->
