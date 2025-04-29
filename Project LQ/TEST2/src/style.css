@@ -317,7 +317,27 @@ header {
   font-family: Arial, sans-serif;
 }
 
-/* Спиннер в правом нижнем углу */
+/* Кнопка перехода */
+.corner-button-header {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0ff;
+  color: #000;
+  font-weight: bold;
+  font-size: 0.9em;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
+  transition: background-color 0.3s, color 0.3s;
+  margin-right: 1em; /* 🔵 добавили небольшой отступ справа */
+}
+
+.corner-button-header:hover {
+  background-color: #00ccff;
+  color: #fff;
+}
+
+/* Спинер загрузки страницы */
 .spinner {
   position: fixed;
   top: 50%;
@@ -329,13 +349,13 @@ header {
   border-top: 6px solid #00ffff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  z-index: 999;
+  z-index: 2000;
   background: transparent;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .hidden {

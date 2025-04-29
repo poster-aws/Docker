@@ -14,10 +14,14 @@
     <span class="logo-title" id="pageTitle">Quotidienne2</span>
 
     <div class="switch-wrapper">
+      <!-- 🔵 Кнопка перехода внутрь switch-wrapper -->
+      <a id="cornerButton" class="corner-button-header" href="#">Перейти</a>
+
       <label class="neon-switch" id="neonSwitch">
         <input type="checkbox" id="toggleSwitch">
         <span class="neon-slider"></span>
       </label>
+
       <div class="switch-labels">
         <span id="labelOrder">Order</span>
         <span id="labelNimport">N'import</span>
@@ -33,14 +37,12 @@
     </nav>
   </header>
 
+  <!-- 📦 Контейнер с подгружаемым контентом -->
   <div id="container" class="container">
-    <!-- Выберите страницу. -->
+    <!-- Контент будет подгружаться сюда -->
   </div>
 
-  <!-- <main>
-    <iframe id="contentFrame" src="q2.php?mode=order" frameborder="0"></iframe>
-  </main> -->
-  
+  <!-- 🔵 Спиннер отдельно, а НЕ внутри контейнера! -->
   <div id="loadingSpinner" class="spinner hidden"></div>
 
   <script src="script.js"></script>

@@ -60,6 +60,7 @@ function loadPage(page) {
 
   const container = document.getElementById("container");
   const spinner = document.getElementById("loadingSpinner");
+  const cornerButton = document.getElementById("cornerButton");
 
   spinner.classList.remove("hidden"); // показать спиннер
 
@@ -75,10 +76,20 @@ function loadPage(page) {
       makeTablesSortable();
 
       const pageTitle = document.getElementById("pageTitle");
-      if (page.includes("q2")) pageTitle.textContent = "Quotidienne2";
-      else if (page.includes("q3")) pageTitle.textContent = "Quotidienne3";
-      else if (page.includes("q4")) pageTitle.textContent = "Quotidienne4";
-      else pageTitle.textContent = "Quotidienne";
+
+      if (page.includes("q2")) {
+        pageTitle.textContent = "Quotidienne2";
+        cornerButton.href = "newpage_q2.html"; // переход для Q2
+      } else if (page.includes("q3")) {
+        pageTitle.textContent = "Quotidienne3";
+        cornerButton.href = "newpage_q3.html"; // переход для Q3
+      } else if (page.includes("q4")) {
+        pageTitle.textContent = "Quotidienne4";
+        cornerButton.href = "newpage_q4.html"; // переход для Q4
+      } else {
+        pageTitle.textContent = "Quotidienne";
+        cornerButton.href = "#"; // fallback
+      }
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
