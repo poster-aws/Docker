@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,8 +6,10 @@
   <title>Quotidienne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="q2_chart.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
-
 <body>
 
   <header>
@@ -14,14 +17,12 @@
     <span class="logo-title" id="pageTitle">Quotidienne2</span>
 
     <div class="switch-wrapper">
-      <!-- 🔵 Кнопка перехода внутрь switch-wrapper -->
       <a id="cornerButton" class="corner-button-header" href="#">Перейти</a>
-
+      <button id="toggleViewButton" class="corner-button-header">Показать график</button>
       <label class="neon-switch" id="neonSwitch">
         <input type="checkbox" id="toggleSwitch">
         <span class="neon-slider"></span>
       </label>
-
       <div class="switch-labels">
         <span id="labelOrder">Order</span>
         <span id="labelNimport">N'import</span>
@@ -37,15 +38,9 @@
     </nav>
   </header>
 
-  <!-- 📦 Контейнер с подгружаемым контентом -->
-  <div id="container" class="container">
-    <!-- Контент будет подгружаться сюда -->
-  </div>
-
-  <!-- 🔵 Спиннер отдельно, а НЕ внутри контейнера! -->
+  <div id="chartZone" style="width: 100%; display: none; justify-content: center; padding: 1em 0;"></div>
+  <div id="container" class="container"></div>
   <div id="loadingSpinner" class="spinner hidden"></div>
 
-  <script src="script.js"></script>
-  
 </body>
 </html>

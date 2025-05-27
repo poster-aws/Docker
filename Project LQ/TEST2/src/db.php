@@ -13,8 +13,3 @@ if ($conn->connect_error) {
     die("Ошибка подключения: " . $conn->connect_error);
 }
 ?>
-
-<!-- 
-db - Docker
-localhost - local server not Docker
-ip adress - in server -->
