@@ -50,6 +50,17 @@ function makeTablesSortable() {
 
 let isAltView = false;
 
+function tryUpdateDaysGraph(norder, retries = 10) {
+  const frame = document.getElementById("daysFrame");
+  if (!frame || !frame.contentWindow) return;
+
+  if (typeof frame.contentWindow.loadDaysGraph === "function") {
+    frame.contentWindow.loadDaysGraph(norder);
+  } else if (retries > 0) {
+    setTimeout(() => tryUpdateDaysGraph(norder, retries - 1), 200);
+  }
+}
+
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
@@ -118,8 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleStyles();
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
-    if (currentPage && !isAltView) {
+
+    if (!currentPage) return;
+
+    if (!isAltView) {
       loadPage(currentPage);
+    } else {
+      const norder = toggle.checked ? '1' : '0';
+      tryUpdateDaysGraph(norder);
     }
   });
 
@@ -134,12 +151,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isAltView) {
       if (currentPage.includes("q2")) {
+        const isNorder = document.getElementById("toggleSwitch").checked ? 1 : 0;
         container.innerHTML = `
-          <iframe src="days.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+          <iframe src="days.php?norder=${isNorder}&limit=100" style="width:100%; height:85vh; border:none;" id="daysFrame"></iframe>
         `;
         cornerButton.textContent = "Таблицы";
-
-      } else if (currentPage.includes("q3")) {
+      } 
+      else if (currentPage.includes("q3")) {
         container.innerHTML = `
           <div class="info-placeholder">
             <h2>Информация по Q3</h2>

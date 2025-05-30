@@ -1,8 +1,5 @@
 <?php
-$servername = "db";
-$username = "user";
-$password = "user";
-$dbname = "quotidienne2";
+require_once "db.php";
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -14,8 +11,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Обработка параметра режима порядка
+$isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
+$table = $isNorder ? "Q2_stats_norder" : "Q2_stats_order";
+
 $limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? intval($_GET['limit']) : 100;
-$sql = "SELECT n1, n2, days FROM Q2_stats_order ORDER BY Tirage DESC";
+$sql = "SELECT n1, n2, days FROM $table ORDER BY Tirage DESC";
 if ($limit > 0) {
     $sql .= " LIMIT $limit";
 }
@@ -183,9 +184,9 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       calculateStats(comboDays);
     }
 
-    async function loadData(limit) {
+    async function loadData(limit, norder = false) {
       try {
-        const response = await fetch(`days.php?limit=${limit}&ajax=1`);
+        const response = await fetch(`days.php?limit=${limit}&norder=${norder ? '1' : '0'}&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
@@ -193,11 +194,21 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       }
     }
 
-    document.getElementById('limitSelect').addEventListener('change', function () {
-      loadData(this.value);
+    const limitSelect = document.getElementById('limitSelect');
+
+    // Публичная функция для вызова извне (из твоего проекта)
+    window.loadDaysGraph = function (norderValue) {
+      loadData(limitSelect.value, norderValue === '1');
+    };
+
+    limitSelect.addEventListener('change', function () {
+      const norderParam = new URLSearchParams(window.location.search).get('norder') === '1';
+      loadData(this.value, norderParam);
     });
 
-    renderChart(<?php echo $json_data; ?>);
+    // Инициализация при загрузке страницы
+    const initialNorder = new URLSearchParams(window.location.search).get('norder') === '1';
+    loadData(limitSelect.value, initialNorder);
   </script>
 </body>
 </html>
