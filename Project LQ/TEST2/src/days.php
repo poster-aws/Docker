@@ -11,7 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Обработка параметра режима порядка
+// выбор таблицы
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table = $isNorder ? "Q2_stats_norder" : "Q2_stats_order";
 
@@ -46,7 +46,7 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
   <title>График данных</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    #limitSelect {
+    #limitSelect, #norderToggle {
       font-size: 1em;
       margin-top: 10px;
     }
@@ -70,11 +70,23 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       text-align: center;
       margin-bottom: 10px;
     }
+    #toggleWrapper {
+      text-align: center;
+      margin-top: 10px;
+    }
+    label[for="norderToggle"] {
+      margin-left: 8px;
+    }
   </style>
 </head>
 <body>
   <h2>График количества дней с последнего появления комбинаций</h2>
   <canvas id="myChart" width="400" height="200"></canvas>
+
+  <div id="toggleWrapper">
+    <input type="checkbox" id="norderToggle">
+    <label for="norderToggle">Без учёта порядка (norder)</label>
+  </div>
 
   <div id="selectWrapper">
     <label for="limitSelect">Показать последние:</label>
@@ -184,9 +196,9 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       calculateStats(comboDays);
     }
 
-    async function loadData(limit, norder = false) {
+    async function loadData(limit, isNorder) {
       try {
-        const response = await fetch(`days.php?limit=${limit}&norder=${norder ? '1' : '0'}&ajax=1`);
+        const response = await fetch(`days.php?limit=${limit}${isNorder ? '&norder=1' : ''}&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
@@ -194,21 +206,24 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       }
     }
 
-    const limitSelect = document.getElementById('limitSelect');
+    function getLimit() {
+      return document.getElementById('limitSelect').value;
+    }
 
-    // Публичная функция для вызова извне (из твоего проекта)
-    window.loadDaysGraph = function (norderValue) {
-      loadData(limitSelect.value, norderValue === '1');
-    };
+    function getNorder() {
+      return document.getElementById('norderToggle').checked;
+    }
 
-    limitSelect.addEventListener('change', function () {
-      const norderParam = new URLSearchParams(window.location.search).get('norder') === '1';
-      loadData(this.value, norderParam);
+    document.getElementById('limitSelect').addEventListener('change', function () {
+      loadData(getLimit(), getNorder());
     });
 
-    // Инициализация при загрузке страницы
-    const initialNorder = new URLSearchParams(window.location.search).get('norder') === '1';
-    loadData(limitSelect.value, initialNorder);
+    document.getElementById('norderToggle').addEventListener('change', function () {
+      loadData(getLimit(), getNorder());
+    });
+
+    // initial render
+    renderChart(<?php echo $json_data; ?>);
   </script>
 </body>
 </html>
