@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -43,42 +43,72 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>График данных</title>
+  <!-- <title>График данных</title> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <style>
-    #limitSelect, #norderToggle {
-      font-size: 1em;
-      margin-top: 10px;
-    }
-    #statsTable {
-      margin-top: 20px;
-      border-collapse: collapse;
-      width: 60%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #statsTable th, #statsTable td {
-      border: 1px solid #999;
-      padding: 8px 12px;
-      text-align: center;
-    }
-    #selectWrapper {
-      text-align: center;
-      margin-top: 20px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    #toggleWrapper {
-      text-align: center;
-      margin-top: 10px;
-    }
-    label[for="norderToggle"] {
-      margin-left: 8px;
-    }
+
+/* Убираем отступы по умолчанию и задаем шрифт всей странице */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/* Заголовок h2 по центру с уменьшенными вертикальными отступами */
+h2 {
+  text-align: center;
+  margin: 8px 0;
+  font-size: 1.1em; /* немного уменьшенный размер шрифта */
+}
+
+/* Центрирование и уменьшение вертикальных отступов обёрток переключателя и селектора */
+#toggleWrapper,
+#selectWrapper {
+  text-align: center;
+  margin: 8px 0;
+}
+
+/* Стиль селектора и чекбокса: шрифт и отступ слева */
+#limitSelect, #norderToggle {
+  font-size: 1em;
+  margin-left: 6px;
+}
+
+/* Дополнительный отступ между чекбоксом и его подписью */
+label[for="norderToggle"] {
+  margin-left: 8px;
+}
+
+/* Основная таблица: по центру, с ограниченной шириной и сжатым вертикальным отступом */
+#statsTable {
+  margin: 10px auto;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+/* Ячейки таблицы: рамка, отступы внутри ячеек и выравнивание по центру */
+#statsTable th, #statsTable td {
+  border: 1px solid #999;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+/* Информационный блок под таблицей: ограниченная ширина, серый фон и цветной бордер */
+#infoBlock {
+  max-width: 800px;
+  margin: 14px auto;
+  padding: 8px 16px;
+  background:rgba(245, 245, 245, 0);
+  border-left: 4px solid #007BFF;
+  font-size: 0.95em;
+  line-height: 1.3;
+  color: #333;
+}
+
   </style>
 </head>
+
 <body>
   <h2>График количества дней с последнего появления комбинаций</h2>
   <canvas id="myChart" width="400" height="200"></canvas>
@@ -104,11 +134,17 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
       <tr>
         <th>Диапазон дней</th>
         <th>Кол-во комбинаций</th>
-        <th>% от общего</th>
+        <th>%</th>
       </tr>
     </thead>
     <tbody id="statsBody"></tbody>
   </table>
+
+  <!-- Информационный блок -->
+  <div id="infoBlock">
+    Здесь будет отображаться дополнительная информация о графике и данных.
+  </div>
+
 
   <script>
     let chart;
@@ -198,7 +234,7 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
 
     async function loadData(limit, isNorder) {
       try {
-        const response = await fetch(`days.php?limit=${limit}${isNorder ? '&norder=1' : ''}&ajax=1`);
+        const response = await fetch(`q3info.php?limit=${limit}${isNorder ? '&norder=1' : ''}&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
@@ -225,5 +261,6 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
     // initial render
     renderChart(<?php echo $json_data; ?>);
   </script>
+
 </body>
 </html>

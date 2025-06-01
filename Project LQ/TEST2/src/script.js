@@ -132,35 +132,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isAltView = !isAltView;
 
-    if (isAltView) {
-      if (currentPage.includes("q2")) {
-        container.innerHTML = `
-          <iframe src="days.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-        `;
-        cornerButton.textContent = "Таблицы";
+if (isAltView) {
+  if (currentPage.includes("q2")) {
+    container.innerHTML = `
+      <iframe src="QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+    `;
+    cornerButton.textContent = "Таблицы";
 
-      } else if (currentPage.includes("q3")) {
-        container.innerHTML = `
-          <div class="info-placeholder">
-            <h2>Информация по Q3</h2>
-            <p>Заглушка. График будет позже.</p>
-          </div>
-        `;
-        cornerButton.textContent = "Таблицы";
+  } else if (currentPage.includes("q3")) {
+    container.innerHTML = `
+      <iframe src="QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+    `;
+    cornerButton.textContent = "Таблицы";
 
-      } else if (currentPage.includes("q4")) {
-        container.innerHTML = `
-          <div class="info-placeholder">
-            <h2>Информация по Q4</h2>
-            <p>Заглушка. График будет позже.</p>
-          </div>
-        `;
-        cornerButton.textContent = "Таблицы";
-      }
+  } else if (currentPage.includes("q4")) {
+    container.innerHTML = `
+      <iframe src="QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+    `;
+    cornerButton.textContent = "Таблицы";
+  }
 
-    } else {
-      loadPage(currentPage);
-    }
+} else {
+  loadPage(currentPage);
+}
   });
 
   updateToggleStyles();
