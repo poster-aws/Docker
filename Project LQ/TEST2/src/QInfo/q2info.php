@@ -106,6 +106,32 @@ label[for="norderToggle"] {
   color: #333;
 }
 
+  .digit {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background-color: #7eb0ea;
+    color: #000;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+
+  }
+      /* Скрытие полос прокрутки */
+  body {
+    overflow: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
   </style>
 </head>
 
@@ -142,8 +168,14 @@ label[for="norderToggle"] {
 
   <!-- Информационный блок -->
 <div id="infoBlock">
+  <span class="digit">1</span>
+  <span class="digit">2</span>
   Nombre de combinaisons dans Order – 100<br>
+  <span class="digit">2</span>
+  <span class="digit">1</span>
   Nombre de combinaisons dans N'importe quel order – 55<br>
+  <span class="digit">0</span>
+  <span class="digit">0</span>
   Nombre de combinaisons "Doublons" – 10
 </div>
 

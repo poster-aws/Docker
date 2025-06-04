@@ -122,13 +122,13 @@ foreach ($daysStats as $num => $daysAgo) {
     $circle = "<span class='circle'>$num</span>";
     $val = $daysAgo ?? 0;
 
-    if ($val >= 1 && $val <= 5) {
+    if ($val >= 1 && $val <= 9) {
         $class = 'color-range-1';
-    } elseif ($val >= 6 && $val <= 8) {
+    } elseif ($val >= 10 && $val <= 14) {
         $class = 'color-range-2';
-    } elseif ($val >= 9 && $val <= 15) {
+    } elseif ($val >= 15 && $val <= 20) {
         $class = 'color-range-3';
-    } elseif ($val > 15) {
+    } elseif ($val > 20) {
         $class = 'color-range-4';
     } else {
         $class = '';

@@ -202,9 +202,7 @@ header {
 }
 
 .table-container {
-  background: url('https://www.transparenttextures.com/patterns/crumpled-paper.png'),
-              linear-gradient(80deg, #7c7c7c63 10%, rgba(43, 59, 240, 0.435) 100%);
-  background-size: cover;
+  background: #00000005;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
@@ -249,29 +247,29 @@ header {
 }
 
 .interactive-table tr:hover {
-  background-color: rgb(0, 255, 34);
+  background-color: rgba(221, 221, 221, 0.493);
   transition: background-color 0.3s ease;
 }
 
 .interactive-table td:hover {
-  background-color: rgba(36, 34, 34, 0.243);
+  background-color: rgba(202, 202, 202, 0.485);
 }
 
 /* Подсветка строк по диапазонам */
 .number-stats-table tr.color-range-1 {
-  background-color: #d4f4dd; /* светло-зелёный */
+  background-color: #d4f4dd7e; /* светло-зелёный */
 }
 
 .number-stats-table tr.color-range-2 {
-  background-color: #fff8c6da; /* светло-жёлтый */
+  background-color: #fff4a57e; /* светло-жёлтый */
 }
 
 .number-stats-table tr.color-range-3 {
-  background-color: #ffc592; /* персиковый */
+  background-color: #ffc4937f; /* персиковый */
 }
 
 .number-stats-table tr.color-range-4 {
-  background-color: #f9acac; /* светло-красный */
+  background-color: #f9acac7d; /* светло-красный */
 }
 
 /* сортировка ▲ ▼ */
