@@ -119,22 +119,10 @@ foreach ($comboRows as $row) {
 // --- Таблица 3 (дни по цифрам, с подсветкой)
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
-    $circle = "<span class='circle'>$num</span>";
     $val = $daysAgo ?? 0;
-
-    if ($val >= 1 && $val <= 9) {
-        $class = 'color-range-1';
-    } elseif ($val >= 10 && $val <= 14) {
-        $class = 'color-range-2';
-    } elseif ($val >= 15 && $val <= 20) {
-        $class = 'color-range-3';
-    } elseif ($val > 20) {
-        $class = 'color-range-4';
-    } else {
-        $class = '';
-    }
-
-    $numberStatsHTML .= "<tr class=\"$class\"><td>$circle</td><td>" . ($daysAgo !== null ? $daysAgo : '-') . "</td></tr>";
+    $class = $val <= 9 ? 'color-range-1' : ($val <= 14 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
+    $circle = "<span class='circle'>$num</span>";
+    $numberStatsHTML .= "<tr class='$class'><td>$circle</td><td>" . ($daysAgo ?? '-') . "</td></tr>";
 }
 
 // --- JS-переключатель

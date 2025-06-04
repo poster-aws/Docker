@@ -93,7 +93,13 @@ $template = ob_get_clean();
 // --- Таблица 1 (основная)
 $tableHTML = '';
 foreach ($data as $row) {
-    $tableHTML .= '<tr>';
+    // Проверка: все ли три числа разные
+    $n1 = $row['n1'];
+    $n2 = $row['n2'];
+    $n3 = $row['n3'];
+    $highlightClass = ($n1 !== $n2 && $n1 !== $n3 && $n2 !== $n3) ? 'highlight-row' : '';
+
+    $tableHTML .= "<tr class=\"$highlightClass\">";
     foreach (['Tirage', 'n1', 'n2', 'n3', 'days', 'days2', 'fois', 'max'] as $key) {
         $cell = $row[$key];
         $tableHTML .= in_array($key, ['n1','n2','n3']) ? "<td><span class='circle'>$cell</span></td>" : "<td>$cell</td>";
@@ -107,11 +113,11 @@ foreach ($comboStats as $row) {
     $comboHTML .= "<tr><td><span class='circle'>{$row['n1']}</span></td><td><span class='circle'>{$row['n2']}</span></td><td><span class='circle'>{$row['n3']}</span></td><td>{$row['days']}</td><td>{$row['date']}</td><td>{$row['max_fois']}</td></tr>";
 }
 
-// --- Таблица 3 (дни по цифрам)
+// --- Таблица 3 (дни по цифрам, с подсветкой)
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
     $val = $daysAgo ?? 0;
-    $class = $val <= 10 ? 'color-range-1' : ($val <= 15 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
+    $class = $val <= 9 ? 'color-range-1' : ($val <= 14 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
     $circle = "<span class='circle'>$num</span>";
     $numberStatsHTML .= "<tr class='$class'><td>$circle</td><td>" . ($daysAgo ?? '-') . "</td></tr>";
 }

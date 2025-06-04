@@ -335,6 +335,11 @@ header {
   color: #fff;
 }
 
+/* Подсветка строки в Q3 для основной таблицы */
+.highlight-row {
+    background-color: #8888882d; /* светло-жёлтый, можно другой */
+}
+
 /* Спинер загрузки страницы */
 .spinner {
   position: fixed;

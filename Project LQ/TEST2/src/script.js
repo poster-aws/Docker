@@ -87,7 +87,7 @@ function loadPage(page) {
         pageTitle.textContent = "Quotidienne";
       }
 
-      cornerButton.textContent = "Информация";
+      cornerButton.textContent = "Inform";
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -137,19 +137,19 @@ if (isAltView) {
     container.innerHTML = `
       <iframe src="QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
     `;
-    cornerButton.textContent = "Таблицы";
+    cornerButton.textContent = "Tables";
 
   } else if (currentPage.includes("q3")) {
     container.innerHTML = `
       <iframe src="QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
     `;
-    cornerButton.textContent = "Таблицы";
+    cornerButton.textContent = "Tables";
 
   } else if (currentPage.includes("q4")) {
     container.innerHTML = `
       <iframe src="QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
     `;
-    cornerButton.textContent = "Таблицы";
+    cornerButton.textContent = "Tables";
   }
 
 } else {
