@@ -136,7 +136,7 @@ label[for="norderToggle"] {
 </head>
 
 <body>
-  <h2>График количества дней с последнего появления комбинаций</h2>
+  <!-- <h2>График количества дней с последнего появления комбинаций</h2> -->
   <canvas id="myChart" width="400" height="200"></canvas>
 
   <div id="toggleWrapper">
@@ -145,7 +145,7 @@ label[for="norderToggle"] {
   </div>
 
   <div id="selectWrapper">
-    <label for="limitSelect">Nombre de dernières éditions:</label>
+    <label for="limitSelect">Nombre de dernières tirages:</label>
     <select id="limitSelect">
       <option value="100" selected>100</option>
       <option value="200">200</option>
@@ -170,13 +170,13 @@ label[for="norderToggle"] {
 <div id="infoBlock">
   <span class="digit">1</span>
   <span class="digit">2</span>
-  Nombre de combinaisons dans Order – 100<br>
+  Dans l'Order (toutes comb.) – <b>100</b> combinaisons<br>
   <span class="digit">2</span>
   <span class="digit">1</span>
-  Nombre de combinaisons dans N'importe quel order – 55<br>
+  Dans N'importe quel order sans Doublons – <b>45</b> combinaisons<br>
   <span class="digit">0</span>
   <span class="digit">0</span>
-  Nombre de combinaisons "Doublons" – 10
+  Doublons – <b>10</b> combinaisons
 </div>
 
 

@@ -14,7 +14,7 @@ html, body {
 
 /* Шапка */
 header {
-  height: clamp(60px, 10vh, 120px);  /* Адаптивная высота */
+  height: clamp(60px, 8vh, 120px);  /* Адаптивная высота */
   width: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
@@ -123,7 +123,7 @@ header {
  /* ВЫПАДАЮЩЕЕ МЕНЮ */
 .dropdown-menu {
   position: absolute;
-  top: 10vh;
+  top: 8vh;
   left: 0;
   background-color: #444;
   width: 200px;
@@ -164,7 +164,7 @@ header {
 
 /* Контейнер с таблицами */
 .container {
-  height: 90vh;
+  height: 92vh;
   min-width: 50%; /* не обязательно но так работает Loading */
   width: fit-content; 
   background-color: rgba(173, 216, 230, 0.85);
@@ -193,7 +193,7 @@ header {
   flex: 0 0 auto;
   width: max-content;
   /* min-width: 250px; */
-  max-height: 86vh;
+  max-height: 88vh;
   overflow: auto;
   margin-inline: auto;
   /* padding: 15px; */
@@ -247,7 +247,7 @@ header {
 }
 
 .interactive-table tr:hover {
-  background-color: rgba(221, 221, 221, 0.493);
+  background-color: rgba(161, 161, 161, 0.493);
   transition: background-color 0.3s ease;
 }
 
@@ -337,7 +337,8 @@ header {
 
 /* Подсветка строки в Q3 для основной таблицы */
 .highlight-row {
-    background-color: #8888882d; /* светло-жёлтый, можно другой */
+    /* background-color: #8888882d; светло-жёлтый, можно другой */
+    background-color: rgba(221, 221, 221, 0.493);
 }
 
 /* Спинер загрузки страницы */

@@ -135,7 +135,7 @@ $conn->close();
 </head>
 <body>
 
-<h2>Сетка появления цифр по тиражам</h2>
+<!-- <h2>Сетка появления цифр по тиражам</h2> -->
 
 <div class="table-wrapper">
   <?php if (!empty($tirages)): ?>
@@ -168,12 +168,12 @@ $conn->close();
 </div>
 
 <form class="filter-form" method="get">
-  Показать последних:
+  Dernières
   <select name="limit" onchange="this.form.submit()">
     <?php foreach ([50, 100, 200, 500] as $opt): ?>
       <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
     <?php endforeach; ?>
-  </select> тиражей
+  </select> tirages
 </form>
 
 <div id="infoBlock">
@@ -181,19 +181,44 @@ $conn->close();
     <span class="digit">1</span>
     <span class="digit">2</span>
     <span class="digit">3</span>
-    Nombre de combinaisons dans Order – 1000
+    Dans l'Order (toutes comb.) – <b>1000</b> combinaisons
+  </p>
+    <p>
+    <span class="digit">4</span>
+    <span class="digit">5</span>
+    <span class="digit">6</span>
+    Dans l'Order <b>sans</b> doublons et trois numéros identiques – <b>720</b> combinaisons
+  </p>
+    </p>
+    <p>
+    <span class="digit">1</span>
+    <span class="digit">1</span>
+    <span class="digit">2</span>
+    Dans l'Order <b>seulement</b> les doublons – <b>270</b> combinaisons
+  </p>
+    <p>
+    <span class="digit">1</span>
+    <span class="digit">2</span>
+    <span class="digit">1</span>
+    Dans N'importe quel order <b>avec</b> doublons et trois numéros identiques – <b>220</b> combinaisons
   </p>
   <p>
-    <span class="digit">1</span>
     <span class="digit">3</span>
-    <span class="digit">2</span>
-    Nombre de combinaisons dans N'importe quel order – ???
-  </p>
-  <p>
-    <span class="digit">2</span>
     <span class="digit">1</span>
     <span class="digit">2</span>
-    Nombre de combinaisons dans N'importe quel order avec doublons ?
+    Dans N'importe quel order <b>sans</b> doublons et trois numéros identiques – <b>120</b> combinaisons
+  </p>
+    <p>
+    <span class="digit">1</span>
+    <span class="digit">2</span>
+    <span class="digit">1</span>
+    Dans N'importe quel order <b>seulement</b> les doublons – <b>90</b> combinaisons
+  </p>
+  <p>
+    <span class="digit">7</span>
+    <span class="digit">7</span>
+    <span class="digit">7</span>
+    Trois numéros identiques - <b>10</b> combinaisons
   </p>
 </div>
 
