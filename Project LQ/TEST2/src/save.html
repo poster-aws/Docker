@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Форма добавления в БД</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100vh;
+      font-family: sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      min-width: 320px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-weight: bold;
+      width: 40px;
+    }
+
+    select, input[type="date"], button {
+      padding: 6px 12px;
+      font-size: 16px;
+    }
+
+    .date-row {
+      align-self: center;
+    }
+
+    button {
+      align-self: center;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .error {
+      border: 2px solid red;
+    }
+  </style>
+</head>
+<body>
+
+  <form class="center-container" method="post" action="save.php">
+    <!-- Дата -->
+    <div class="row date-row">
+      <input type="date" name="date" required />
+    </div>
+
+    <!-- Q2 -->
+    <div class="row">
+      <label>Q2:</label>
+      <select name="n1">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n2">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </div>
+
+    <!-- Q3 -->
+    <div class="row">
+      <label>Q3:</label>
+      <select name="n3">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n4">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n5">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </div>
+
+    <!-- Q4 -->
+    <div class="row">
+      <label>Q4:</label>
+      <select name="n6">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n7">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n8">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <select name="n9">
+        <option value="">0–9</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </div>
+
+    <!-- Кнопка -->
+    <button type="submit">Отправить</button>
+  </form>
+
+  <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+      let hasError = false;
+      const selects = this.querySelectorAll('select');
+
+      selects.forEach(select => {
+        if (!select.value) {
+          select.classList.add('error');
+          hasError = true;
+        } else {
+          select.classList.remove('error');
+        }
+      });
+
+      if (hasError) {
+        e.preventDefault();
+      }
+    });
+  </script>
+
+</body>
+</html>
