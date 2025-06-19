@@ -1,6 +1,26 @@
 <?php
 require_once "db.php";
 
+echo "<!DOCTYPE html><html lang='ru'><head><meta charset='UTF-8'><title>Результат</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 30px;
+    background: #f9f9f9;
+    text-align: center;
+  }
+  .message {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+</head><body>";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = $_POST['date'];
     $n1 = $_POST['n1'];
@@ -43,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     if ($stmt->affected_rows > 0) $inserted = true;
 
-    // Вызов процедур, если были изменения
     if ($inserted) {
         $procedures = [
             'fill_Q2_stats_order',
@@ -59,13 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($procedures as $proc) {
             $conn->query("CALL $proc()");
         }
-        echo "✅ Данные успешно сохранены и обновлены.";
+        echo "<div class='message'>✅ Данные успешно сохранены и обновлены.</div>";
     } else {
-        echo "⚠️ Данные не были изменены.";
+        echo "<div class='message'>⚠️ Данные не были изменены.</div>";
     }
 
     $conn->close();
 } else {
-    echo "Неверный метод запроса.";
+    echo "<div class='message'>Неверный метод запроса.</div>";
 }
+
+// Кнопка возврата
+echo "<button onclick=\"window.location.href='save.html'\">Назад</button>";
+
+echo "</body></html>";
 ?>
