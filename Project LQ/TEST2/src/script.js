@@ -64,6 +64,12 @@ function loadPage(page) {
   isAltView = false;
   spinner.classList.remove("hidden");
 
+  // Включаем переключатель при возврате на таблицы
+  const toggleSwitch = document.getElementById("toggleSwitch");
+  const neonSwitch = document.getElementById("neonSwitch");
+  toggleSwitch.disabled = false;
+  neonSwitch.classList.remove("disabled-switch");
+
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -127,34 +133,39 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
+    const toggleSwitch = document.getElementById("toggleSwitch");
+    const neonSwitch = document.getElementById("neonSwitch");
 
     if (!currentPage) return;
 
     isAltView = !isAltView;
 
-if (isAltView) {
-  if (currentPage.includes("q2")) {
-    container.innerHTML = `
-      <iframe src="QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-    `;
-    cornerButton.textContent = "Tables";
+    if (isAltView) {
+      // Отключаем переключатель и делаем серым
+      toggleSwitch.disabled = true;
+      neonSwitch.classList.add("disabled-switch");
 
-  } else if (currentPage.includes("q3")) {
-    container.innerHTML = `
-      <iframe src="QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-    `;
-    cornerButton.textContent = "Tables";
+      if (currentPage.includes("q2")) {
+        container.innerHTML = `
+          <iframe src="QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
+      } else if (currentPage.includes("q3")) {
+        container.innerHTML = `
+          <iframe src="QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
+      } else if (currentPage.includes("q4")) {
+        container.innerHTML = `
+          <iframe src="QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
+      }
 
-  } else if (currentPage.includes("q4")) {
-    container.innerHTML = `
-      <iframe src="QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-    `;
-    cornerButton.textContent = "Tables";
-  }
-
-} else {
-  loadPage(currentPage);
-}
+      cornerButton.textContent = "Tables";
+    } else {
+      // Включаем обратно
+      toggleSwitch.disabled = false;
+      neonSwitch.classList.remove("disabled-switch");
+      loadPage(currentPage);
+    }
   });
 
   updateToggleStyles();

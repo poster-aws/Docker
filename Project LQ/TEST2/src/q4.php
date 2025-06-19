@@ -89,14 +89,21 @@ foreach ($data as $row) {
 
     $classes = [];
     if ($isAllUnique) $classes[] = 'highlight-row';
-    if ($hasZeroFois) $classes[] = 'outline-zero';
+    // if ($hasZeroFois) $classes[] = 'outline-zero';
 
     $rowClass = $classes ? " class='" . implode(' ', $classes) . "'" : "";
 
     $tableHTML .= "<tr$rowClass>";
     foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max'] as $key) {
         $cell = $row[$key];
-        $tableHTML .= in_array($key, ['n1','n2','n3','n4']) ? "<td><span class='circle'>$cell</span></td>" : "<td>$cell</td>";
+        if (in_array($key, ['n1','n2','n3','n4'])) {
+    $circleClass = 'circle';
+    
+    if ($hasZeroFois) $circleClass .= ' zero-fois';
+    $tableHTML .= "<td><span class='$circleClass'>$cell</span></td>";
+} else {
+    $tableHTML .= "<td>$cell</td>";
+}
     }
     $tableHTML .= '</tr>';
 }

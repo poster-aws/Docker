@@ -120,6 +120,12 @@ header {
   color: #00ff00 !important;
 }
 
+/* Серый стиль отключённого переключателя */
+.disabled-switch {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
  /* ВЫПАДАЮЩЕЕ МЕНЮ */
 .dropdown-menu {
   position: absolute;
@@ -345,6 +351,13 @@ header {
 .outline-zero {
   outline: 2px dashed rgb(14, 0, 210);
   outline-offset: -2px; /* чтобы обводка была внутри ячеек */
+}
+
+.zero-fois {
+  background-color: #befbcfb8 !important; /* или любой другой цвет */
+  color: rgb(0, 0, 0) !important;
+  /* box-shadow: 0 0 3px rgba(0, 0, 0, 0.4); */
+  /* border: 1px solid #444; */
 }
 
 /* Спинер загрузки страницы */
