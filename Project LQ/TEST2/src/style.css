@@ -37,6 +37,16 @@ header {
   left: 1em;
 }
 
+/* Иконка HOME */
+.home-icon {
+  font-size: 1.8em;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  left: 3em; /* немного правее бургера */
+}
+
 /* Обертка переклюка */
 .switch-wrapper {
   position: absolute;
@@ -358,6 +368,13 @@ header {
   color: rgb(0, 0, 0) !important;
   /* box-shadow: 0 0 3px rgba(0, 0, 0, 0.4); */
   /* border: 1px solid #444; */
+}
+
+.welcome-placeholder {
+  margin-top: 20%;
+  text-align: center;
+  font-size: 1.3em;
+  color: #333;
 }
 
 /* Спинер загрузки страницы */

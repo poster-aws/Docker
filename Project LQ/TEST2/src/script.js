@@ -64,7 +64,6 @@ function loadPage(page) {
   isAltView = false;
   spinner.classList.remove("hidden");
 
-  // Включаем переключатель при возврате на таблицы
   const toggleSwitch = document.getElementById("toggleSwitch");
   const neonSwitch = document.getElementById("neonSwitch");
   toggleSwitch.disabled = false;
@@ -90,7 +89,7 @@ function loadPage(page) {
       } else if (page.includes("q4")) {
         pageTitle.textContent = "Quotidienne4";
       } else {
-        pageTitle.textContent = "Quotidienne";
+        pageTitle.textContent = "Main";
       }
 
       cornerButton.textContent = "Inform";
@@ -116,6 +115,33 @@ function updateToggleStyles() {
   neonSwitch.classList.toggle("active", isChecked);
 }
 
+// 🏠 Функция возврата на главную
+function goHome() {
+  const container = document.getElementById("container");
+  const spinner = document.getElementById("loadingSpinner");
+  const toggleSwitch = document.getElementById("toggleSwitch");
+  const neonSwitch = document.getElementById("neonSwitch");
+  const cornerButton = document.getElementById("cornerButton");
+
+  spinner.classList.remove("hidden");
+  setTimeout(() => {
+    container.innerHTML = `
+      <div class="welcome-placeholder">
+        <h2>Добро пожаловать в Quotidienne</h2>
+        <p>Пожалуйста, выберите страницу из меню слева.</p>
+      </div>
+    `;
+    container.setAttribute("data-page", "");
+    document.getElementById("pageTitle").textContent = "Main";
+    cornerButton.textContent = "Inform";
+    toggleSwitch.disabled = false;
+    neonSwitch.classList.remove("disabled-switch");
+    updateToggleStyles();
+    spinner.classList.add("hidden");
+  }, 300);
+}
+
+// === DOMContentLoaded ===
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleSwitch");
   const cornerButton = document.getElementById("cornerButton");
@@ -141,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
     isAltView = !isAltView;
 
     if (isAltView) {
-      // Отключаем переключатель и делаем серым
       toggleSwitch.disabled = true;
       neonSwitch.classList.add("disabled-switch");
 
@@ -161,13 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       cornerButton.textContent = "Tables";
     } else {
-      // Включаем обратно
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
       loadPage(currentPage);
     }
   });
 
+
   updateToggleStyles();
-  loadPage("q2.php");
+  // loadPage("q2.php"); // Загрузка первоначальная
 });

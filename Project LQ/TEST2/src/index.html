@@ -11,8 +11,12 @@
 <body>
 
   <header>
+      <!-- ИКОНКА МЕНЮ -->
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <span class="logo-title" id="pageTitle">Quotidienne2</span>
+      <!-- ИКОНКА ДОМОЙ -->
+    <div class="home-icon" onclick="goHome()">&#8962;</div> <!-- Юникод домика -->
+      <!-- ЛОГО -->
+    <span class="logo-title" id="pageTitle">Main</span>
 
     <div class="switch-wrapper">
       <!-- 🔵 Кнопка перехода внутрь switch-wrapper -->
@@ -39,9 +43,12 @@
   </header>
 
   <!-- 📦 Контейнер с подгружаемым контентом -->
-  <div id="container" class="container">
-    <!-- Контент будет подгружаться сюда -->
+<div id="container" class="container" data-page="">
+  <div class="welcome-placeholder">
+    <h2>Добро пожаловать в Quotidienne</h2>
+    <p>Пожалуйста, выберите страницу из меню слева.</p>
   </div>
+</div>
 
   <!-- 🔵 Спиннер отдельно, а НЕ внутри контейнера! -->
   <div id="loadingSpinner" class="spinner hidden"></div>
