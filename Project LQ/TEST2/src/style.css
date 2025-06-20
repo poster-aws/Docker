@@ -136,6 +136,43 @@ header {
   pointer-events: none;
 }
 
+/* Минималистичный переключатель (контур с бегунком) */
+.classic-switch {
+  display: inline-block;
+  width: 70px;                   /* общая ширина */
+  height: 40px;                  /* высота дорожки */
+  border: 6px solid #ffffff;     /* цвет контура */
+  border-radius: 30px;           /* скругление дорожки */
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s; /* плавная смена цвета */
+}
+
+/* Скрываем реальный checkbox — управляем только стилем */
+.classic-switch input {
+  display: none;
+}
+
+/* Бегунок внутри дорожки */
+.switch-box {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background-color: white;       /* цвет по умолчанию */
+  border-radius: 50%;            /* круг */
+  top: 1px;
+  left: 1px;                    /*  стартовая позиция слева */
+  transition: all 0.3s ease;
+}
+
+/* Перемещаем бегунок вправо и меняем цвет при включении */
+.classic-switch input:checked + .switch-box {
+  left: 31px;                    /* конечная позиция справа */
+}
+
+
+
  /* ВЫПАДАЮЩЕЕ МЕНЮ */
 .dropdown-menu {
   position: absolute;
@@ -350,6 +387,29 @@ header {
   background-color: #00ccff;
   color: #fff;
 }
+
+/* Минималистичная кнопка-инфо с ℹ */
+.info-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 6px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  display: flex;                   /* Включаем flex-контейнер */
+  align-items: center;             /* Центровка по вертикали */
+  justify-content: center;         /* Центровка по горизонтали */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.info-button:hover {
+  border: 6px solid rgb(209, 244, 255);
+  color: rgb(209, 244, 255);
+}
+
 
 /* Подсветка строки в Q3 и Q4 для основной таблицы */
 .highlight-row {

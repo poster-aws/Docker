@@ -92,7 +92,7 @@ function loadPage(page) {
         pageTitle.textContent = "Main";
       }
 
-      cornerButton.textContent = "Inform";
+      cornerButton.innerHTML = "&#8505;"; // ℹ
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -133,7 +133,7 @@ function goHome() {
     `;
     container.setAttribute("data-page", "");
     document.getElementById("pageTitle").textContent = "Main";
-    cornerButton.textContent = "Inform";
+    cornerButton.innerHTML = "&#8505;"; // ℹ
     toggleSwitch.disabled = false;
     neonSwitch.classList.remove("disabled-switch");
     updateToggleStyles();
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
-      cornerButton.textContent = "Tables";
+      cornerButton.innerHTML = "&#x21c6;"; // ⇆
     } else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");

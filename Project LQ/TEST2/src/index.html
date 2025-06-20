@@ -5,26 +5,23 @@
   <title>Quotidienne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  
 </head>
 
 <body>
-
   <header>
-      <!-- ИКОНКА МЕНЮ -->
+    <!-- ИКОНКИ МЕНЮ, ДОМОЙ, ЛОГО -->
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-      <!-- ИКОНКА ДОМОЙ -->
-    <div class="home-icon" onclick="goHome()">&#8962;</div> <!-- Юникод домика -->
-      <!-- ЛОГО -->
+    <div class="home-icon" onclick="goHome()">&#8962;</div>
     <span class="logo-title" id="pageTitle">Main</span>
 
+    <!-- Кнопка перехода внутрь switch-wrapper -->
     <div class="switch-wrapper">
-      <!-- 🔵 Кнопка перехода внутрь switch-wrapper -->
-      <a id="cornerButton" class="corner-button-header" href="#">Inform</a>
+      <div id="cornerButton" class="info-button" title="Информация">&#8505;</div>
 
-      <label class="neon-switch" id="neonSwitch">
+      <!-- Минималистичный переключатель -->
+      <label class="classic-switch" id="neonSwitch">
         <input type="checkbox" id="toggleSwitch">
-        <span class="neon-slider"></span>
+        <span class="switch-box"></span>
       </label>
 
       <div class="switch-labels">
@@ -42,19 +39,18 @@
     </nav>
   </header>
 
-  <!-- 📦 Контейнер с подгружаемым контентом -->
-<div id="container" class="container" data-page="">
-  <div class="welcome-placeholder">
-    <h2>Добро пожаловать в Quotidienne</h2>
-    <p>Пожалуйста, выберите страницу из меню слева.</p>
+  <!-- Контейнер с подгружаемым контентом -->
+  <div id="container" class="container" data-page="">
+    <div class="welcome-placeholder">
+      <h2>Добро пожаловать в Quotidienne</h2>
+      <p>Пожалуйста, выберите страницу из меню слева.</p>
+    </div>
   </div>
-</div>
 
-  <!-- 🔵 Спиннер отдельно, а НЕ внутри контейнера! -->
+  <!-- Спиннер отдельно, а НЕ внутри контейнера! -->
   <div id="loadingSpinner" class="spinner hidden"></div>
 
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
 </body>
 </html>
