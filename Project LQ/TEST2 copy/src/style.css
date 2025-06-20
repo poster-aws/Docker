@@ -1,0 +1,428 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100vh;
+  font-family: sans-serif;
+  background: url('pic1.png') no-repeat center center fixed;
+  background-size: cover;
+  text-align: center;
+}
+
+/* Шапка */
+header {
+  height: clamp(60px, 8vh, 120px);  /* Адаптивная высота */
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  display: flex;                     /* ← БЕЗ ОШИБКИ! */
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 1em;
+  position: relative;
+}
+
+/* Иконка меню */
+.menu-icon {
+  font-size: 1.8em;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  left: 1em;
+}
+
+/* Иконка HOME */
+.home-icon {
+  font-size: 1.8em;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  left: 3em; /* немного правее бургера */
+}
+
+/* Обертка переклюка */
+.switch-wrapper {
+  position: absolute;
+  right: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+/* Надписи с права для переклюка */
+.switch-labels {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6em;
+  line-height: 1.2em;
+  text-align: left;
+}
+
+.switch-labels span {
+  color: gray;
+  transition: color 0.3s ease;
+}
+
+.active {
+  color: #00ff00 !important; 
+}
+
+/* Минималистичный переключатель (контур с бегунком) */
+.classic-switch {
+  display: inline-block;
+  width: 70px;                   /* общая ширина */
+  height: 40px;                  /* высота дорожки */
+  border: 6px solid #ffffff;     /* цвет контура */
+  border-radius: 30px;           /* скругление дорожки */
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s; /* плавная смена цвета */
+}
+
+/* Скрываем реальный checkbox — управляем только стилем */
+.classic-switch input {
+  display: none;
+}
+
+/* Бегунок внутри дорожки */
+.switch-box {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background-color: white;       /* цвет по умолчанию */
+  border-radius: 50%;            /* круг */
+  top: 1px;
+  left: 1px;                    /*  стартовая позиция слева */
+  transition: all 0.3s ease;
+}
+
+/* Перемещаем бегунок вправо и меняем цвет при включении */
+.classic-switch input:checked + .switch-box {
+  left: 31px;                    /* конечная позиция справа */
+}
+
+/* Серый стиль отключённого переключателя */
+.disabled-switch {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+ /* ВЫПАДАЮЩЕЕ МЕНЮ */
+.dropdown-menu {
+  position: absolute;
+  top: 8vh;
+  left: 0;
+  background-color: #444;
+  width: 200px;
+  display: none;
+  z-index: 1000;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu li {
+  border-bottom: 1px solid #555;
+}
+
+.dropdown-menu li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu li a {
+  font-size: 14px !important;
+  font-weight: normal !important;
+  font-family: Arial, sans-serif !important;
+  display: block;
+  padding: 0.8em 1em;
+  color: white;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background-color: #777;
+  border-bottom-right-radius: 10px;
+}
+
+/* Контейнер с таблицами */
+.container {
+  height: 92vh;
+  min-width: 50%; /* не обязательно но так работает Loading */
+  width: fit-content; 
+  background-color: rgba(173, 216, 230, 0.85);
+  border-radius: 10px;
+  padding: 1em;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  position: relative;
+  margin: 0 auto;
+}
+
+.tables-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: nowrap;
+  /* margin-top: 40px; */
+}
+
+/* Таблицы */
+.table-container,
+.combo-table-container,
+.number-stats-table {
+  flex: 0 0 auto;
+  width: max-content;
+  /* min-width: 250px; */
+  max-height: 88vh;
+  overflow: auto;
+  margin-inline: auto;
+  /* padding: 15px; */
+  border-radius: 12px;
+  border: 2px solid #a4a1a1;
+}
+
+.table-container {
+  background: #00000005;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.combo-table-container {
+  background: #00000005;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.number-stats-table {
+  background: #00000005;
+  min-width: 180px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.interactive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+  font-family: 'Shadows Into Light', cursive;
+  color: #000000;
+  /* scrollbar-width: none; */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(30, 0, 255) transparent;
+}
+
+.interactive-table thead th {
+  position: sticky;
+  padding: 9px;
+  top: 0;
+  background-color:rgb(163, 216, 234);;       /* linear-gradient(90deg, #fdf7c3, #f7e89a); */
+  z-index: 10;
+  border-bottom: 2px solid #888;
+}
+
+.interactive-table td {
+  padding: 9px;
+  border-bottom: 1px dashed #777777;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.interactive-table tr:hover {
+  background-color: rgba(161, 161, 161, 0.493);
+  transition: background-color 0.3s ease;
+}
+
+.interactive-table td:hover {
+  background-color: rgba(202, 202, 202, 0.485);
+}
+
+/* Подсветка строк по диапазонам */
+.number-stats-table tr.color-range-1 {
+  background-color: #d4f4dd7e; /* светло-зелёный */
+}
+
+.number-stats-table tr.color-range-2 {
+  background-color: #fff4a57e; /* светло-жёлтый */
+}
+
+.number-stats-table tr.color-range-3 {
+  background-color: #ffc4937f; /* персиковый */
+}
+
+.number-stats-table tr.color-range-4 {
+  background-color: #f9acac7d; /* светло-красный */
+}
+
+/* сортировка ▲ ▼ */
+.interactive-table th.sort-asc::after {
+  content: " ▲";
+  font-size: 0.8em;
+}
+
+.interactive-table th.sort-desc::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
+
+/* Скролл бар */
+
+/* Скрываем вертикальный скроллбар, но оставляем прокрутку */
+.number-stats-table::-webkit-scrollbar,
+.combo-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* скрываем фон скроллбара */
+} 
+
+/* Для Firefox */
+.number-stats-table,
+.combo-table-container,
+.table-container {
+  scrollbar-width: none; /* скрывает скроллбар */
+  -ms-overflow-style: none; /*IE 10+*/
+}
+
+.circle {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 50%;
+  background-color: #7eb0ea;
+  color: #000000;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+}
+
+/* Минималистичная кнопка-инфо с ℹ */
+.info-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 6px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  display: flex;                   /* Включаем flex-контейнер */
+  align-items: center;             /* Центровка по вертикали */
+  justify-content: center;         /* Центровка по горизонтали */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.info-button:hover {
+  border: 6px solid rgb(209, 244, 255);
+  color: rgb(209, 244, 255);
+}
+
+
+/* Подсветка строки в Q3 и Q4 для основной таблицы */
+.highlight-row {
+    /* background-color: #8888882d; светло-жёлтый, можно другой */
+    background-color: rgba(221, 221, 221, 0.493);
+}
+
+/* Подсветка строки в Q4 для основной таблицы */
+.outline-zero {
+  outline: 2px dashed rgb(14, 0, 210);
+  outline-offset: -2px; /* чтобы обводка была внутри ячеек */
+}
+
+.zero-fois {
+  background-color: #befbcfb8 !important; /* или любой другой цвет */
+  color: rgb(0, 0, 0) !important;
+  /* box-shadow: 0 0 3px rgba(0, 0, 0, 0.4); */
+  /* border: 1px solid #444; */
+}
+
+.welcome-placeholder {
+  margin-top: 20%;
+  text-align: center;
+  font-size: 1.3em;
+  color: #333;
+}
+
+/* Спинер загрузки страницы */
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border: 6px solid rgba(255, 255, 255, 0.3);
+  border-top: 6px solid #00ffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 2000;
+  background: transparent;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.hidden {
+  display: none;
+}
+
+/* Адаптивность */
+
+/* Планшеты и средние экраны */
+@media (max-width: 1024px) {
+  .container {
+    width: 90%;
+  }
+}
+
+/* Мобильные устройства (768px и меньше) */
+@media (max-width: 768px) {
+  header {
+    font-size: 1.5em;
+  }
+
+  .container {
+    width: 95%;
+    padding: 0.8em;
+  }
+
+  .tables-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .table-container,
+  .combo-table-container,
+  .number-stats-table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+/* Очень маленькие экраны (меньше 480px) */
+@media (max-width: 480px) {
+  header {
+    font-size: 1.2em;
+    height: 12vh;
+  }
+}

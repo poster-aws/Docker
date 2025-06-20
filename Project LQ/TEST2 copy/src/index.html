@@ -4,68 +4,52 @@
   <meta charset="UTF-8">
   <title>Quotidienne</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- 1. Главные стили только для index -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- 2. Общие стили для Q2/Q3/Q4 -->
-  <link rel="stylesheet" href="quotidienne/quotidienne.css">
 </head>
 
 <body>
-
-  <!-- 2. Верхняя панель со всеми элементами -->
   <header>
-    <!-- 2.1 Иконка меню-бургера -->
+    <!-- ИКОНКИ МЕНЮ, ДОМОЙ, ЛОГО -->
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-
-    <!-- 2.2 Иконка “домой” -->
     <div class="home-icon" onclick="goHome()">&#8962;</div>
-
-    <!-- 2.3 Заголовок страницы (динамически меняется) -->
     <span class="logo-title" id="pageTitle">Main</span>
 
-    <!-- 2.4 Блок переключателя + info-кнопка -->
+    <!-- Кнопка перехода внутрь switch-wrapper -->
     <div class="switch-wrapper">
-      <!-- 2.4.1 Кнопка ℹ -->
       <div id="cornerButton" class="info-button" title="Информация">&#8505;</div>
 
-      <!-- 2.4.2 Минималистичный переключатель Order/N'import -->
+      <!-- Минималистичный переключатель -->
       <label class="classic-switch" id="neonSwitch">
         <input type="checkbox" id="toggleSwitch">
         <span class="switch-box"></span>
       </label>
 
-      <!-- 2.4.3 Надписи по бокам от переключателя -->
       <div class="switch-labels">
         <span id="labelOrder">Order</span>
         <span id="labelNimport">N'import</span>
       </div>
     </div>
 
-    <!-- 2.5 Выпадающее меню страниц -->
     <nav>
       <ul id="dropdownMenu" class="dropdown-menu">
-        <li><a href="#" onclick="loadPage('quotidienne/q2.php')">Quotidienne2</a></li>
-        <li><a href="#" onclick="loadPage('quotidienne/q3.php')">Quotidienne3</a></li>
-        <li><a href="#" onclick="loadPage('quotidienne/q4.php')">Quotidienne4</a></li>
+        <li><a href="#" onclick="loadPage('q2.php')">Quotidienne2</a></li>
+        <li><a href="#" onclick="loadPage('q3.php')">Quotidienne3</a></li>
+        <li><a href="#" onclick="loadPage('q4.php')">Quotidienne4</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- 3. Контейнер с основным контентом -->
+  <!-- Контейнер с подгружаемым контентом -->
   <div id="container" class="container" data-page="">
-    <!-- 3.1 Заглушка, отображается по умолчанию -->
     <div class="welcome-placeholder">
       <h2>Добро пожаловать в Quotidienne</h2>
       <p>Пожалуйста, выберите страницу из меню слева.</p>
     </div>
   </div>
 
-  <!-- 4. Спиннер загрузки (всегда поверх) -->
+  <!-- Спиннер отдельно, а НЕ внутри контейнера! -->
   <div id="loadingSpinner" class="spinner hidden"></div>
 
-  <!-- 5. JS-скрипты -->
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>

@@ -4,7 +4,6 @@ function toggleMenu() {
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
 
-// Закрытие меню при клике вне
 document.addEventListener('click', function (e) {
   const menu = document.getElementById("dropdownMenu");
   const icon = document.querySelector('.menu-icon');
@@ -13,7 +12,6 @@ document.addEventListener('click', function (e) {
   }
 });
 
-// 🔁 Сортировка таблиц
 function makeTablesSortable() {
   const tables = document.querySelectorAll(".interactive-table");
 
@@ -52,7 +50,6 @@ function makeTablesSortable() {
 
 let isAltView = false;
 
-// 📥 Загрузка страниц (Q2, Q3, Q4)
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
@@ -72,7 +69,6 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // обновлённый путь
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -107,7 +103,6 @@ function loadPage(page) {
     });
 }
 
-// ⚙️ Стили переключателя Order/N'import
 function updateToggleStyles() {
   const toggle = document.getElementById("toggleSwitch");
   const labelOrder = document.getElementById("labelOrder");
@@ -138,7 +133,7 @@ function goHome() {
     `;
     container.setAttribute("data-page", "");
     document.getElementById("pageTitle").textContent = "Main";
-    cornerButton.innerHTML = "&#8505;";
+    cornerButton.innerHTML = "&#8505;"; // ℹ
     toggleSwitch.disabled = false;
     neonSwitch.classList.remove("disabled-switch");
     updateToggleStyles();
@@ -177,15 +172,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (currentPage.includes("q2")) {
         container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+          <iframe src="QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
         `;
       } else if (currentPage.includes("q3")) {
         container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+          <iframe src="QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
         `;
       } else if (currentPage.includes("q4")) {
         container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+          <iframe src="QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
         `;
       }
 
@@ -197,6 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+
   updateToggleStyles();
-  // loadPage("quotidienne/q2.php"); // ← для автостарта можно раскомментировать
+  // loadPage("q2.php"); // Загрузка первоначальная
 });

@@ -1,0 +1,177 @@
+/* === Стили таблиц Quotidienne2, 3, 4 === */
+
+/* 📦 Общий контейнер таблиц */
+.tables-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+/* 🔳 Обёртки таблиц */
+.table-container,
+.combo-table-container,
+.number-stats-table {
+  flex: 0 0 auto;
+  width: max-content;
+  /* min-width: 250px; */
+  max-height: 88vh;
+  overflow: auto;
+  margin-inline: auto;
+  /* padding: 15px; */
+  border-radius: 12px;
+  border: 2px solid #a4a1a1;
+}
+
+.table-container {
+  background: #00000005;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.combo-table-container {
+  background: #00000005;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.number-stats-table {
+  background: #00000005;
+  min-width: 180px;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 📊 Общий стиль таблиц */
+.interactive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+  font-family: 'Shadows Into Light', cursive;
+  color: #000000;
+  /* scrollbar-width: none; */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(30, 0, 255) transparent;
+}
+
+/* 📌 Закреплённые заголовки */
+.interactive-table thead th {
+  position: sticky;
+  padding: 9px;
+  top: 0;
+  background-color: rgb(163, 216, 234);
+  z-index: 10;
+  border-bottom: 2px solid #888;
+}
+
+/* 📋 Ячейки */
+.interactive-table td {
+  padding: 9px;
+  border-bottom: 1px dashed #777777;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🖱️ Подсветка строк */
+.interactive-table tr:hover {
+  background-color: rgba(161, 161, 161, 0.493);
+  transition: background-color 0.3s ease;
+}
+
+.interactive-table td:hover {
+  background-color: rgba(202, 202, 202, 0.485);
+}
+
+/* 🧮 Подсветка дней (только number-stats) */
+.number-stats-table tr.color-range-1 {
+  background-color: #d4f4dd7e; /* светло-зелёный */
+}
+
+.number-stats-table tr.color-range-2 {
+  background-color: #fff4a57e; /* светло-жёлтый */
+}
+
+.number-stats-table tr.color-range-3 {
+  background-color: #ffc4937f; /* персиковый */
+}
+
+.number-stats-table tr.color-range-4 {
+  background-color: #f9acac7d; /* светло-красный */
+}
+
+/* 🔽 Сортировка */
+.interactive-table th.sort-asc::after {
+  content: " ▲";
+  font-size: 0.8em;
+}
+
+.interactive-table th.sort-desc::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
+
+/* Скролл бар */
+
+/* Скрываем вертикальный скроллбар, но оставляем прокрутку */
+.number-stats-table::-webkit-scrollbar,
+.combo-table-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* скрываем фон скроллбара */
+} 
+
+/* Для Firefox */
+.number-stats-table,
+.combo-table-container,
+.table-container {
+  scrollbar-width: none; /* скрывает скроллбар */
+  -ms-overflow-style: none; /*IE 10+*/
+}
+
+/* 🔵 Шарик */
+.circle {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 50%;
+  background-color: #7eb0ea;
+  color: #000000;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+}
+
+/* 🔘 Специальная подсветка строк */
+.highlight-row {
+  background-color: rgba(221, 221, 221, 0.493);
+}
+
+.outline-zero {
+  outline: 2px dashed rgb(14, 0, 210);
+  outline-offset: -2px;
+}
+
+.zero-fois {
+  background-color: #befbcfb8 !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+/* 📉 Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .tables-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .table-container,
+  .combo-table-container,
+  .number-stats-table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
