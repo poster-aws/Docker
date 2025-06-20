@@ -56,63 +56,7 @@ header {
   gap: 1em;
 }
 
-/* НЕОНОВЫЙ ПЕРЕКЛЮЧАТЕЛЬ */
-.neon-switch {
-  display: block;
-  position: relative;
-  width: 75px;
-  height: 36px;
-}
-
-/* Скрываем стандартный checkbox */
-.neon-switch input {
-  display: none;          
-}
-
-/* Бегунок (дорожка всегда чёрная)   */
-.neon-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #111;
-  border-radius: 36px;
-  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
-  cursor: pointer;
-  transition: box-shadow 0.3s ease;
-}
-
-/* Бегунок (голубой по умолчанию)    */
-.neon-slider::before {
-  content: "";
-  position: absolute;
-  top: 4.5px;
-  left: 4.5px;
-  width: 27px;
-  height: 27px;
-  background: #0ff;
-  border-radius: 50%;
-  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
-}
-
-/* Сдвиг бегунка */
-.neon-switch input:checked + .neon-slider::before {
-  transform: translateX(39px);
-}
-
-/* Активное состояние — зелёное свечение и бегунок */
-.neon-switch.active .neon-slider {
-  box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
-}
-
-.neon-switch.active .neon-slider::before {
-  background: #ff0;
-  box-shadow: 0 0 8px #ff0, 0 0 16px #ff0;
-}
-
-/* Надписи для переклюка */
+/* Надписи с права для переклюка */
 .switch-labels {
   display: flex;
   flex-direction: column;
@@ -127,13 +71,7 @@ header {
 }
 
 .active {
-  color: #00ff00 !important;
-}
-
-/* Серый стиль отключённого переключателя */
-.disabled-switch {
-  opacity: 0.4;
-  pointer-events: none;
+  color: #00ff00 !important; 
 }
 
 /* Минималистичный переключатель (контур с бегунком) */
@@ -171,7 +109,11 @@ header {
   left: 31px;                    /* конечная позиция справа */
 }
 
-
+/* Серый стиль отключённого переключателя */
+.disabled-switch {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
  /* ВЫПАДАЮЩЕЕ МЕНЮ */
 .dropdown-menu {
@@ -366,26 +308,6 @@ header {
   text-align: center;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   font-family: Arial, sans-serif;
-}
-
-/* Кнопка перехода */
-.corner-button-header {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: #0ff;
-  color: #000;
-  font-weight: bold;
-  font-size: 0.9em;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 0 8px #0ff, 0 0 16px #0ff;
-  transition: background-color 0.3s, color 0.3s;
-  margin-right: 1em; /* 🔵 добавили небольшой отступ справа */
-}
-
-.corner-button-header:hover {
-  background-color: #00ccff;
-  color: #fff;
 }
 
 /* Минималистичная кнопка-инфо с ℹ */
