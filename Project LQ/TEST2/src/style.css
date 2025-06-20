@@ -33,7 +33,7 @@ header {
 
 /* 🍔 Иконка меню */
 .menu-icon {
-  font-size: 1.8em;
+  font-size: 1.9em;
   cursor: pointer;
   user-select: none;
   position: absolute;
@@ -42,7 +42,7 @@ header {
 
 /* 🏠 Иконка домой */
 .home-icon {
-  font-size: 1.8em;
+  font-size: 1.9em;
   color: white;
   cursor: pointer;
   user-select: none;
@@ -59,24 +59,6 @@ header {
   gap: 1em;
 }
 
-/* 💬 Надписи по бокам переключателя */
-.switch-labels {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.6em;
-  line-height: 1.2em;
-  text-align: left;
-}
-
-.switch-labels span {
-  color: gray;
-  transition: color 0.3s ease;
-}
-
-.active {
-  color: #00ff00 !important;
-}
-
 /* 🎛️ Минималистичный переключатель */
 .classic-switch {
   display: inline-block;
@@ -85,6 +67,7 @@ header {
   border: 6px solid #ffffff;
   border-radius: 30px;
   position: relative;
+  right: 3em;
   cursor: pointer;
   transition: border-color 0.3s;
 }
@@ -116,6 +99,24 @@ header {
 .disabled-switch {
   opacity: 0.4;
   pointer-events: none;
+}
+
+/* 💬 Надписи по бокам переключателя */
+.switch-labels {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6em;
+  line-height: 1.2em;
+  text-align: left;
+}
+
+.switch-labels span {
+  color: gray;
+  transition: color 0.3s ease;
+}
+
+.active {
+  color: #00ff00 !important;
 }
 
 /* 📂 Выпадающее меню */
@@ -158,6 +159,30 @@ header {
 .dropdown-menu a:hover {
   background-color: #777;
   border-bottom-right-radius: 10px;
+}
+
+/* 🖱️ Info-кнопка */
+.info-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 6px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  position: absolute;
+  right: 3em; /* немного правее бургера */
+}
+
+.info-button:hover {
+  border: 6px solid rgb(209, 244, 255);
+  color: rgb(209, 244, 255);
 }
 
 /* 📦 Контейнер содержимого */
@@ -207,38 +232,16 @@ header {
   display: none;
 }
 
-/* 🖱️ Info-кнопка */
-.info-button {
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
-  background-color: transparent;
-  border: 6px solid white;
-  color: white;
-  font-weight: bold;
-  font-size: 1.2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.info-button:hover {
-  border: 6px solid rgb(209, 244, 255);
-  color: rgb(209, 244, 255);
-}
-
 /* 📱 Адаптивность */
 
-/* Планшеты */
+/* Планшеты и средние экраны */
 @media (max-width: 1024px) {
   .container {
     width: 90%;
   }
 }
 
-/* Смартфоны */
+/* Мобильные устройства (768px и меньше) */
 @media (max-width: 768px) {
   header {
     font-size: 1.5em;
@@ -248,9 +251,23 @@ header {
     width: 95%;
     padding: 0.8em;
   }
+
+  .tables-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .table-container,
+  .combo-table-container,
+  .number-stats-table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
-/* Очень маленькие экраны */
+/* Очень маленькие экраны (меньше 480px) */
 @media (max-width: 480px) {
   header {
     font-size: 1.2em;
