@@ -33,27 +33,29 @@ header {
 
 /* 🍔 Иконка меню */
 .menu-icon {
-  font-size: 1.9em;
+  font-size: 2.1em;
   cursor: pointer;
   user-select: none;
   position: absolute;
-  left: 1em;
+  left: 0.5em;
 }
 
 /* 🏠 Иконка домой */
 .home-icon {
-  font-size: 1.9em;
+  font-size: 2.1em;
   color: white;
   cursor: pointer;
   user-select: none;
   position: absolute;
-  left: 3em; /* немного правее бургера */
+  left: 1.8em; /* немного правее бургера */
 }
 
 /* 🎚 Блок переключателя и инфо */
 .switch-wrapper {
   position: absolute;
   right: 1em;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 1em;
@@ -61,15 +63,13 @@ header {
 
 /* 🎛️ Минималистичный переключатель */
 .classic-switch {
-  display: inline-block;
-  width: 70px;
-  height: 40px;
-  border: 6px solid #ffffff;
-  border-radius: 30px;
   position: relative;
-  right: 3em;
+  width: 2.2em;
+  height: 1.2em;
+  border: 0.19em solid white;
+  border-radius: 2em;
   cursor: pointer;
-  transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
 /* 📦 Скрытие самого checkbox */
@@ -79,20 +79,20 @@ header {
 
 /* ⚪ Бегунок */
 .switch-box {
-  content: "";
   position: absolute;
-  width: 26px;
-  height: 26px;
+  top: 50%;
+  left: 0.03em;
+  transform: translateY(-50%);
+  width: 0.8em;
+  height: 0.8em;
   background-color: white;
   border-radius: 50%;
-  top: 1px;
-  left: 1px;
   transition: all 0.3s ease;
 }
 
 /* ➡️ Перемещение вправо при включении */
 .classic-switch input:checked + .switch-box {
-  left: 31px;
+  left: calc(100% - 0.83em);
 }
 
 /* 🚫 Отключённый переключатель */
@@ -163,26 +163,24 @@ header {
 
 /* 🖱️ Info-кнопка */
 .info-button {
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
+  width: 1.6em;
+  height: 1.6em;
+  font-size: 0.91em;
+  border-radius: 0.4em;
   background-color: transparent;
-  border: 6px solid white;
+  border: 0.2em solid white;
   color: white;
   font-weight: bold;
-  font-size: 1.2em;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
-  position: absolute;
-  right: 3em; /* немного правее бургера */
 }
 
 .info-button:hover {
-  border: 6px solid rgb(209, 244, 255);
-  color: rgb(209, 244, 255);
+  border-color: rgba(173, 216, 230, 0.85);
+  color: rgb(147, 255, 172);
 }
 
 /* 📦 Контейнер содержимого */
