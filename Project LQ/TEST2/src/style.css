@@ -64,12 +64,13 @@ header {
 /* 🎛️ Минималистичный переключатель */
 .classic-switch {
   position: relative;
-  width: 2.2em;
-  height: 1.2em;
-  border: 0.19em solid white;
+  width: 2.1em;
+  height: 1.3em;
+  border: 0.2em solid white;
   border-radius: 2em;
   cursor: pointer;
   box-sizing: border-box;
+  background-color: transparent;
 }
 
 /* 📦 Скрытие самого checkbox */
@@ -81,18 +82,18 @@ header {
 .switch-box {
   position: absolute;
   top: 50%;
-  left: 0.03em;
+  left: 0.05em;
   transform: translateY(-50%);
-  width: 0.8em;
-  height: 0.8em;
-  background-color: white;
+  width: 0.85em;
+  height: 0.85em;
+  background-color: rgb(255, 255, 255);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 /* ➡️ Перемещение вправо при включении */
 .classic-switch input:checked + .switch-box {
-  left: calc(100% - 0.83em);
+  left: calc(100% - 0.05em - 0.82em); /* правый край с учётом ширины */
 }
 
 /* 🚫 Отключённый переключатель */
@@ -163,13 +164,13 @@ header {
 
 /* 🖱️ Info-кнопка */
 .info-button {
-  width: 1.6em;
-  height: 1.6em;
+  width: 1.7em;
+  height: 1.7em;
   font-size: 0.91em;
-  border-radius: 0.4em;
+  border-radius: 0.5em;
   background-color: transparent;
   border: 0.2em solid white;
-  color: white;
+  color: rgb(167, 255, 147);
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -178,10 +179,10 @@ header {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.info-button:hover {
+/* .info-button:hover {
   border-color: rgba(173, 216, 230, 0.85);
   color: rgb(147, 255, 172);
-}
+} */
 
 /* 📦 Контейнер содержимого */
 .container {

@@ -154,9 +154,14 @@
   outline-offset: -2px;
 }
 
-.zero-fois {
-  background-color: #befbcfb8 !important;
-  color: rgb(0, 0, 0) !important;
+.une-fois {
+  background-color: #c0ff73 !important;
+  color: #000 !important;
+}
+
+.deux-fois {
+  background-color: #b5fceb !important;
+  color: #000 !important;
 }
 
 /* 📉 Адаптивность для мобильных */

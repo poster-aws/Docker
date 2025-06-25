@@ -2,9 +2,8 @@
 // Специфичная логика для страниц Q2/Q3/Q4
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 📌 Инициализация при загрузке
   applyRowHighlights();
-  applyZeroFoisHighlight();
+  applyFoisCircleColors(); // ✅ только для первой таблицы
 });
 
 // 🔦 Подсветка строк с уникальными числами (пример для Q3/Q4)
@@ -25,28 +24,29 @@ function applyRowHighlights() {
   });
 }
 
-// 🟢 Подсветка комбинаций с Fois = 0
-function applyZeroFoisHighlight() {
-  const comboTable = document.querySelector(".combo-table-container table");
-  if (!comboTable) return;
+// 🎨 Подсветка .circle в первой таблице по Fois = 1 или 2
+function applyFoisCircleColors() {
+  const table = document.querySelector(".table-container table");
+  if (!table) return;
 
-  const rows = comboTable.querySelectorAll("tbody tr");
+  const rows = table.querySelectorAll("tbody tr");
 
   rows.forEach(row => {
     const cells = row.querySelectorAll("td");
-    const foisCell = cells[cells.length - 1]; // обычно последний столбец
+    const foisCell = cells[cells.length - 2]; // Предпоследняя ячейка — Fois
+    const fois = foisCell?.textContent.trim();
 
-    if (foisCell && foisCell.textContent.trim() === "0") {
-      row.classList.add("zero-fois");
+    cells.forEach(cell => {
+      const circle = cell.querySelector(".circle");
+      if (!circle) return;
 
-      // Опционально: сделать кружочки внутри зелёными
-      cells.forEach(cell => {
-        const span = cell.querySelector(".circle");
-        if (span) {
-          span.style.backgroundColor = "#a0ffc8";
-          span.style.color = "#000";
-        }
-      });
-    }
+      if (fois === "1") {
+        circle.style.backgroundColor = "#ffe08a"; // 🟡 жёлтый
+        circle.style.color = "#000";
+      } else if (fois === "2") {
+        circle.style.backgroundColor = "#f79ba5"; // 🔴 розовый
+        circle.style.color = "#000";
+      }
+    });
   });
 }

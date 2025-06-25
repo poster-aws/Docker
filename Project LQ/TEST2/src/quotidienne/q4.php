@@ -85,11 +85,10 @@ $tableHTML = '';
 foreach ($data as $row) {
     $nums = [$row['n1'], $row['n2'], $row['n3'], $row['n4']];
     $isAllUnique = count(array_unique($nums)) === 4;
-    $hasZeroFois = isset($row['fois']) && (int)$row['fois'] === 1;
+    $fois = isset($row['fois']) ? (int)$row['fois'] : 0;
 
     $classes = [];
     if ($isAllUnique) $classes[] = 'highlight-row';
-    // if ($hasZeroFois) $classes[] = 'outline-zero';
 
     $rowClass = $classes ? " class='" . implode(' ', $classes) . "'" : "";
 
@@ -97,13 +96,13 @@ foreach ($data as $row) {
     foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max'] as $key) {
         $cell = $row[$key];
         if (in_array($key, ['n1','n2','n3','n4'])) {
-    $circleClass = 'circle';
-    
-    if ($hasZeroFois) $circleClass .= ' zero-fois';
-    $tableHTML .= "<td><span class='$circleClass'>$cell</span></td>";
-} else {
-    $tableHTML .= "<td>$cell</td>";
-}
+            $circleClass = 'circle';
+            if ($fois === 1) $circleClass .= ' une-fois';
+            elseif ($fois === 2) $circleClass .= ' deux-fois';
+            $tableHTML .= "<td><span class='$circleClass'>$cell</span></td>";
+        } else {
+            $tableHTML .= "<td>$cell</td>";
+        }
     }
     $tableHTML .= '</tr>';
 }
