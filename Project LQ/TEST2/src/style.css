@@ -64,8 +64,8 @@ header {
 /* 🎛️ Минималистичный переключатель */
 .classic-switch {
   position: relative;
-  width: 2.1em;
-  height: 1.3em;
+  width: 2.05em;
+  height: 1.25em;
   border: 0.2em solid white;
   border-radius: 2em;
   cursor: pointer;
@@ -82,18 +82,18 @@ header {
 .switch-box {
   position: absolute;
   top: 50%;
-  left: 0.05em;
+  left: 0.05em; /* одинаковый отступ с обеих сторон */
   transform: translateY(-50%);
-  width: 0.85em;
-  height: 0.85em;
-  background-color: rgb(255, 255, 255);
+  width: 0.8em;
+  height: 0.8em;
+  background-color: white;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 /* ➡️ Перемещение вправо при включении */
 .classic-switch input:checked + .switch-box {
-  left: calc(100% - 0.05em - 0.82em); /* правый край с учётом ширины */
+  left: calc(100% - 0.05em - 0.8em); /* симметричный отступ справа */
 }
 
 /* 🚫 Отключённый переключатель */

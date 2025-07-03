@@ -95,11 +95,16 @@ foreach ($data as $row) {
     $tableHTML .= "<tr$rowClass>";
     foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max'] as $key) {
         $cell = $row[$key];
+
         if (in_array($key, ['n1','n2','n3','n4'])) {
-            $circleClass = 'circle';
-            if ($fois === 1) $circleClass .= ' une-fois';
-            elseif ($fois === 2) $circleClass .= ' deux-fois';
-            $tableHTML .= "<td><span class='$circleClass'>$cell</span></td>";
+            $tableHTML .= "<td><span class='circle'>$cell</span></td>";
+        } elseif ($key === 'fois') {
+            if ($fois === 1 || $fois === 2) {
+                $class = $fois === 1 ? 'star-box star-1' : 'star-box star-2';
+                $tableHTML .= "<td><span class='$class'>$fois</span></td>";
+            } else {
+                $tableHTML .= "<td>$cell</td>";
+            }
         } else {
             $tableHTML .= "<td>$cell</td>";
         }

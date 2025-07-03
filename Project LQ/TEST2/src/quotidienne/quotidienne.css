@@ -154,14 +154,26 @@
   outline-offset: -2px;
 }
 
-.une-fois {
-  background-color: #c0ff73 !important;
-  color: #000 !important;
+.star-box {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%,
+    68% 57%, 79% 91%, 50% 70%,
+    21% 91%, 32% 57%, 2% 35%,
+    39% 35%
+  );
+  text-align: center;
+  line-height: 30px;
 }
 
-.deux-fois {
-  background-color: #b5fceb !important;
-  color: #000 !important;
+.star-1 {
+  background-color: #ff00007c;
+}
+
+.star-2 {
+  background-color: #ffffff;
 }
 
 /* 📉 Адаптивность для мобильных */
