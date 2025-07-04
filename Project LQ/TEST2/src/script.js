@@ -95,16 +95,15 @@ function loadPage(page) {
       else if (page.includes("q3")) {
         const metaDiv = container.querySelector("#q3-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Quotidienne3<br><span id="subTitle" style="font-size: 0.6em; font-weight: normal;">${count} tirages — depuis 06 juin 1983</span>`;
+        pageTitle.innerHTML = `Quotidienne3<br>` +
+          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
       else if (page.includes("q4")) {
         const metaDiv = container.querySelector("#q4-meta");
         const count = metaDiv?.dataset.count || "?";
         const jamais = metaDiv?.dataset.jamais || "?";
-        pageTitle.innerHTML =
-          `Quotidienne4<br>` +
-          `<span id="subTitle" style="display:block; font-size: 0.4em; font-weight: normal; line-height: 1.1;">${count} tirages — depuis 19 mai 2016</span>` +
-          `<span style="display:block; font-size: 0.4em; font-weight: normal; line-height: 1.1;">${jamais} combinaisons jamais sorties</span>`;
+        pageTitle.innerHTML = `Quotidienne4<br>` +
+          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
 
       cornerButton.innerHTML = "&#8505;"; // ℹ
