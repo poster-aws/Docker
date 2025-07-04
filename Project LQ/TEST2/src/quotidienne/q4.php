@@ -1,6 +1,20 @@
 <?php
-// === Q4.PHP ===
 require_once "db.php";
+
+// Подсчёт количества тиражей в Q4
+$countResult = $conn->query("SELECT COUNT(*) as total FROM Q4");
+$q4count = 0;
+if ($countResult && $row = $countResult->fetch_assoc()) {
+    $q4count = (int)$row['total'];
+}
+
+// Подсчёт количества невыпавших комбинаций
+$freeCombResult = $conn->query("SELECT COUNT(*) as total FROM Q4_free_comb_order");
+$q4freecount = 0;
+if ($freeCombResult && $row = $freeCombResult->fetch_assoc()) {
+    $q4freecount = (int)$row['total'];
+}
+
 
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q4_stats_norder' : 'Q4_stats_order';

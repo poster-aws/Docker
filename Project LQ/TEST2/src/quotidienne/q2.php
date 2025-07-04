@@ -1,6 +1,14 @@
 <?php
 require_once "db.php";
 
+// Подсчёт количества записей в Q2 для заголовка
+$countQuery = "SELECT COUNT(*) as total FROM Q2";
+$countResult = $conn->query($countQuery);
+$q2count = 0;
+if ($countResult && $row = $countResult->fetch_assoc()) {
+    $q2count = (int)$row['total'];
+}
+
 // Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $tableMain  = $isNorder ? 'Q2_stats_norder'      : 'Q2_stats_order';

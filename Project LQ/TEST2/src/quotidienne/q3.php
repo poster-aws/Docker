@@ -1,6 +1,12 @@
 <?php
-// === Q3.PHP ===
 require_once "db.php";
+
+// Подсчёт количества записей в Q3 для заголовка
+$countResult = $conn->query("SELECT COUNT(*) as total FROM Q3");
+$q3count = 0;
+if ($countResult && $row = $countResult->fetch_assoc()) {
+    $q3count = (int)$row['total'];
+}
 
 // Режим переключателя
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
