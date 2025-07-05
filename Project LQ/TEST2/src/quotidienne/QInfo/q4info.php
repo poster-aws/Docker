@@ -19,8 +19,9 @@ function getComboType($nums) {
     return 'other';
 }
 
-$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_stats_order WHERE Fois = 1");
-$freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_order");
+$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 1");
+// $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_order");
+$freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0");
 $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
 ?>
 <!DOCTYPE html>
@@ -53,22 +54,21 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
       width: max-content;
       max-height: 85vh;
       overflow-x: auto;
-      overflow-y: auto; /* ← ЭТО изменено */
+      overflow-y: auto;
       margin-inline: auto;
       border-radius: 12px;
       border: 2px solid #a4a1a1;
       background: #00000005;
       box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-      scrollbar-width: none; /* скрыть скролл в Firefox */
+      scrollbar-width: none;
     }
 
-/* Chrome/Safari */
-.table-container::-webkit-scrollbar,
-.combo-table-container::-webkit-scrollbar,
-.number-stats-table::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
+    .table-container::-webkit-scrollbar,
+    .combo-table-container::-webkit-scrollbar,
+    .number-stats-table::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
 
     .interactive-table {
       width: 100%;
@@ -104,6 +104,25 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
     .interactive-table tr:hover {
       background-color: rgba(161, 161, 161, 0.493);
       transition: background-color 0.3s ease;
+    }
+
+    .interactive-table thead tr {
+      line-height: 1;
+      padding: 0;
+      margin: 0;
+    }
+
+    .interactive-table thead th {
+      border-collapse: collapse;
+      margin: 0;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .interactive-table thead tr:nth-child(2) th {
+      padding-top: 0;
+      padding-bottom: 4px;
+      border-top: none;
     }
 
     .highlight-row {
@@ -169,7 +188,7 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
   <div class="table-container">
     <table class="interactive-table" id="statsOrderTable">
       <thead>
-        <tr><th colspan="4">Q4_stats_order — Fois = 1</th></tr>
+        <tr><th colspan="4">Q4_stats_order — Fois = 1 <span id="statsOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('statsOrderTable', this.value)">
             <option value="all">Все</option>
@@ -199,7 +218,7 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
   <div class="combo-table-container">
     <table class="interactive-table" id="freeOrderTable">
       <thead>
-        <tr><th colspan="4">Q4_free_comb_order</th></tr>
+        <tr><th colspan="4">Q4_free_comb_order <span id="freeOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('freeOrderTable', this.value)">
             <option value="all">Все</option>
@@ -271,12 +290,30 @@ function getComboType(nums) {
 }
 
 function applyFilter(tableId, filterValue) {
-  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+  const table = document.getElementById(tableId);
+  const rows = table.querySelectorAll("tbody tr");
+  let count = 0;
+
   rows.forEach(row => {
     const type = row.dataset.comboType;
-    row.style.display = (filterValue === 'all' || filterValue === type) ? '' : 'none';
+    const visible = (filterValue === 'all' || filterValue === type);
+    row.style.display = visible ? '' : 'none';
+    if (visible) count++;
   });
+
+  // Обновление счётчика в заголовке
+  const header = table.querySelector("thead tr:first-child th");
+  const baseTitle = tableId === "statsOrderTable"
+    ? " Sorti une fois : "
+    : " Jamais sorti : ";
+  header.textContent = `${baseTitle} ${count} comb. `;
 }
+
+// Инициализация при загрузке
+window.addEventListener('DOMContentLoaded', () => {
+  applyFilter('statsOrderTable', 'all');
+  applyFilter('freeOrderTable', 'all');
+});
 </script>
 </body>
 </html>
