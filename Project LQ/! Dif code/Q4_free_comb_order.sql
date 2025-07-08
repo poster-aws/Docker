@@ -1,0 +1,34 @@
+-- Создание таблицы ниразу не выпадавших комбинаций Q4 в order
+-- Или когда fois=1 и order
+
+BEGIN
+    -- Удалим и создадим заново таблицу
+    DROP TABLE IF EXISTS Q4_free_comb_order;
+
+    CREATE TABLE Q4_free_comb_order (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        n1 TINYINT UNSIGNED NOT NULL,
+        n2 TINYINT UNSIGNED NOT NULL,
+        n3 TINYINT UNSIGNED NOT NULL,
+        n4 TINYINT UNSIGNED NOT NULL
+    );
+
+    -- Вставим все 10,000 комбинаций
+    INSERT INTO Q4_free_comb_order (n1, n2, n3, n4)
+    SELECT a.num, b.num, c.num, d.num
+    FROM
+      (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a,
+      (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b,
+      (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c,
+      (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d;
+
+    -- Удалим комбинации, которые уже есть в Q4 (точное совпадение по порядку)
+    DELETE fc
+    FROM Q4_free_comb_order fc
+    JOIN Q4 q
+      ON fc.n1 = q.n1 AND fc.n2 = q.n2 AND fc.n3 = q.n3 AND fc.n4 = q.n4;
+END

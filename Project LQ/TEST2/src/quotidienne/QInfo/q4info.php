@@ -19,10 +19,15 @@ function getComboType($nums) {
     return 'other';
 }
 
-$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 1");
-// $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_order");
+$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois ");  //WHERE Fois = 1
 $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0");
-$freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
+$freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0 and n1=n2 and n2=n3 and n3=n4");
+// Все комбинации norder уже выпали, за исключением 1111 и 2222 поэтому берем из Q4_fois
+// $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_order");
+// $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
+// Q4_free_comb_order - подсчет комбинаций которые никогда не выпадали в order
+// 4_free_comb_norder - подсчет комбинаций которые никогда не выпадали в norder
+
 ?>
 
 <!DOCTYPE html>
@@ -115,6 +120,15 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
       transition: background-color 0.3s ease;
     }
 
+    .interactive-table thead tr:nth-child(2) th {
+      position: sticky;
+      top: 38px;
+      background-color: rgb(163, 216, 234); /* тот же, что у select */
+      z-index: 11;
+      padding: 2px 4px;
+      border-top: none;
+    }
+
     .highlight-row {
       background-color: rgba(221, 221, 221, 0.493);
     }
@@ -140,19 +154,35 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
       font-size: 16px;
       border-radius: 6px;
       border: 1px solid #007BFF;
-      background-color: #f1f9ff;
+      background-color: rgb(163, 216, 234);
       color: #000;
       box-sizing: border-box;
     }
 
-    #infoBlock {
+    #infoBlock.info-list {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px;
+      gap: 8px;
+      font-size: 0.95em;
       max-width: 800px;
       margin: 30px auto;
-      padding: 8px 16px;
-      border-left: 4px solid #007BFF;
-      font-size: 0.95em;
-      line-height: 1.3;
+      background: rgba(255,255,255,0.03);
       color: #333;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid #FF8C00;
+      padding-left: 10px;
+      background: rgba(255, 255, 255, 0.26);
+      border-radius: 6px;
+    }
+
+    .info-text {
+      font-size: 0.95em;
     }
 
     .digit {
@@ -178,14 +208,14 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
   <div class="table-container">
     <table class="interactive-table" id="statsOrderTable">
       <thead>
-        <tr><th colspan="4">Q4_stats_order — Fois = 1 <span id="statsOrderCount"></span></th></tr>
+        <tr><th colspan="4"> <span id="statsOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('statsOrderTable', this.value)">
-            <option value="all">Все</option>
-            <option value="unique">Все цифры разные</option>
-            <option value="onepair">Одна пара</option>
-            <option value="twopairs">Две пары</option>
-            <option value="triplet">Тройка</option>
+            <option value="all">*Dans l'ordre (toutes)</option>
+            <option value="unique">- Tous les numéros sont différents</option>
+            <option value="onepair">- Une paire</option>
+            <option value="twopairs">- Deux paires</option>
+            <option value="triplet">- Trois identiques + Un différent</option>
           </select>
         </th></tr>
       </thead>
@@ -209,14 +239,14 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
   <div class="combo-table-container">
     <table class="interactive-table" id="freeOrderTable">
       <thead>
-        <tr><th colspan="4">Q4_free_comb_order <span id="freeOrderCount"></span></th></tr>
+        <tr><th colspan="4"> <span id="freeOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('freeOrderTable', this.value)">
-            <option value="all">Все</option>
-            <option value="unique">Все цифры разные</option>
-            <option value="onepair">Одна пара</option>
-            <option value="twopairs">Две пары</option>
-            <option value="triplet">Тройка</option>
+            <option value="all">*Dans l'ordre (toutes)</option>
+            <option value="unique">- Tous les numéros sont différents</option>
+            <option value="onepair">- Une paire</option>
+            <option value="twopairs">- Deux paires</option>
+            <option value="triplet">- Trois identiques + Un différent</option>
           </select>
         </th></tr>
       </thead>
@@ -240,7 +270,7 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
   <div class="number-stats-table">
     <table class="interactive-table">
       <thead>
-        <tr><th colspan="4">Q4_free_comb_norder</th></tr>
+        <tr><th colspan="4">Jamais sorti <br> n'inport quel ordre</th></tr>
       </thead>
       <tbody>
         <?php while ($row = $freeNorder->fetch_assoc()): ?>
@@ -259,16 +289,59 @@ $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_free_comb_norder");
 
 </div>
 
+
 <!-- Информационный блок -->
-<div id="infoBlock">
-  <p>
-    <span class="digit">8</span>
-    <span class="digit">8</span>
-    <span class="digit">8</span>
-    <span class="digit">8</span>
-    L'information à venir
-  </p>
+<div id="infoBlock" class="info-list">
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">9</span><span class="circle">9</span><span class="circle">9</span><span class="circle">9</span>
+    </div>
+    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>10'000</b> </div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">3</span><span class="circle">4</span>
+    </div>
+    <div class="info-text">Dans l'Order - Tous les numéros sont différents : <b>5'040</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">1</span><span class="circle">2</span><span class="circle">3</span>
+    </div>
+    <div class="info-text">Dans l'Order - Une paire : <b>4'320</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">2</span>
+    </div>
+    <div class="info-text">Dans l'Order - Deux paires : <b>270</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">1</span><span class="circle">1</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">Dans l'Order - Trois identiques + Une différent : <b>360</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">N'importe – sans doublons – <b>120</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">N'importe – seulement doublons – <b>90</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">Trois identiques – <b>10</b> combinaisons</div>
+  </div>
 </div>
+<!-- Информационный блок конец-->
 
 <script>
 function applyFilter(tableId, filterValue) {
@@ -287,7 +360,7 @@ function applyFilter(tableId, filterValue) {
   const baseTitle = tableId === "statsOrderTable"
     ? "Sorti une fois : "
     : "Jamais sorti : ";
-  header.innerHTML = `${baseTitle} <span>${count} combs.</span>`;
+  header.innerHTML = `${baseTitle} <span> <strong>${count}</strong> combs.</span>`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -295,5 +368,6 @@ window.addEventListener('DOMContentLoaded', () => {
   applyFilter('freeOrderTable', 'all');
 });
 </script>
+
 </body>
 </html>

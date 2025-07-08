@@ -181,9 +181,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isAltView = !isAltView;
 
-    if (isAltView) {
-      toggleSwitch.disabled = true;
-      neonSwitch.classList.add("disabled-switch");
+      if (isAltView) {
+        toggleSwitch.disabled = true;
+        neonSwitch.classList.add("disabled-switch");
 
       if (currentPage.includes("q2")) {
         container.innerHTML = `

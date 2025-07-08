@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InfoBlock Preview</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #1e1e2f;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    h2 {
+      margin-top: 2em;
+      font-size: 1.4em;
+      border-bottom: 1px solid #555;
+      padding-bottom: 4px;
+    }
+
+    /* Вариант 1: Карточки */
+    #infoBlockGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      padding: 12px 0;
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-left: 4px solid #007BFF;
+      padding: 10px 14px;
+      border-radius: 10px;
+    }
+
+    .info-card .digits {
+      font-size: 1.3em;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+
+    .info-card .digits span {
+      background: rgba(255,255,255,0.12);
+      padding: 3px 7px;
+      margin-right: 5px;
+      border-radius: 4px;
+    }
+
+    .info-card .desc {
+      font-size: 0.95em;
+    }
+
+    /* Вариант 2: Табличный */
+    #infoBlockList {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 0;
+      gap: 8px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid #FF8C00;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .info-digits span {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-right: 3px;
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .info-text {
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💠 Вариант 1: Карточки (Grid)</h2>
+  <div id="infoBlockGrid">
+    <div class="info-card">
+      <div class="digits"><span>8</span><span>8</span><span>8</span><span>8</span></div>
+      <div class="desc">Dans l'Order – <b>10'000</b> combinaisons</div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>1</span><span>2</span><span>3</span></div>
+      <div class="desc">Toutes comb. – <b>1'000</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>4</span><span>5</span><span>6</span></div>
+      <div class="desc">Sans doublons ni triples – <b>720</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>1</span><span>1</span><span>2</span></div>
+      <div class="desc">Seulement doublons – <b>270</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>1</span><span>2</span><span>1</span></div>
+      <div class="desc">N'importe – avec doublons/triples – <b>220</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>3</span><span>1</span><span>2</span></div>
+      <div class="desc">N'importe – sans doublons – <b>120</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>1</span><span>2</span><span>1</span></div>
+      <div class="desc">N'importe – seulement doublons – <b>90</b></div>
+    </div>
+    <div class="info-card">
+      <div class="digits"><span>7</span><span>7</span><span>7</span></div>
+      <div class="desc">Trois identiques – <b>10</b> combinaisons</div>
+    </div>
+  </div>
+
+  <h2>📋 Вариант 2: Табличный (List)</h2>
+  <div id="infoBlockList">
+    <div class="info-row">
+      <div class="info-digits"><span>8</span><span>8</span><span>8</span><span>8</span></div>
+      <div class="info-text">Dans l'Order – <b>10'000</b> combinaisons</div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>1</span><span>2</span><span>3</span></div>
+      <div class="info-text">Toutes comb. – <b>1'000</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>4</span><span>5</span><span>6</span></div>
+      <div class="info-text">Sans doublons ni triples – <b>720</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>1</span><span>1</span><span>2</span></div>
+      <div class="info-text">Seulement doublons – <b>270</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>1</span><span>2</span><span>1</span></div>
+      <div class="info-text">N'importe – avec doublons/triples – <b>220</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>3</span><span>1</span><span>2</span></div>
+      <div class="info-text">N'importe – sans doublons – <b>120</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>1</span><span>2</span><span>1</span></div>
+      <div class="info-text">N'importe – seulement doublons – <b>90</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits"><span>7</span><span>7</span><span>7</span></div>
+      <div class="info-text">Trois identiques – <b>10</b> combinaisons</div>
+    </div>
+  </div>
+
+</body>
+</html>

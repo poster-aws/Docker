@@ -94,17 +94,47 @@ label[for="norderToggle"] {
   text-align: center;
 }
 
+    .circle {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      border-radius: 50%;
+      background-color: #7eb0ea;
+      color: #000;
+      font-weight: bold;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin: 0 3px;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    }
+
 /* Информационный блок под таблицей: ограниченная ширина, серый фон и цветной бордер */
-#infoBlock {
-  max-width: 800px;
-  margin: 14px auto;
-  padding: 8px 16px;
-  background:rgba(245, 245, 245, 0);
-  border-left: 4px solid #007BFF;
-  font-size: 0.95em;
-  line-height: 1.3;
-  color: #333;
-}
+#infoBlock.info-list {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px;
+      gap: 8px;
+      font-size: 0.95em;
+      max-width: 800px;
+      margin: 30px auto;
+      background: rgba(255,255,255,0.03);
+      color: #333;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid #FF8C00;
+      padding-left: 10px;
+      background: rgba(255, 255, 255, 0.26);
+      border-radius: 6px;
+    }
+
+    .info-text {
+      font-size: 0.95em;
+    }
 
   .digit {
     display: inline-flex;
@@ -166,19 +196,31 @@ label[for="norderToggle"] {
     <tbody id="statsBody"></tbody>
   </table>
 
-  <!-- Информационный блок -->
-<div id="infoBlock">
-  <span class="digit">1</span>
-  <span class="digit">2</span>
-  Dans l'Order (toutes comb.) – <b>100</b> combinaisons<br>
-  <span class="digit">2</span>
-  <span class="digit">1</span>
-  Dans N'importe quel order sans Doublons – <b>45</b> combinaisons<br>
-  <span class="digit">0</span>
-  <span class="digit">0</span>
-  Doublons – <b>10</b> combinaisons
+<!-- Информационный блок -->
+<div id="infoBlock" class="info-list">
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span>
+      <span class="circle">2</span>
+    </div>
+    <div class="info-text">Dans l'Order (toutes comb.) – <b>100</b> combinaisons</div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">2</span>
+      <span class="circle">1</span>
+    </div>
+    <div class="info-text">N'importe quel order sans doublons – <b>45</b> combinaisons</div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">0</span>
+      <span class="circle">0</span>
+    </div>
+    <div class="info-text">Doublons – <b>10</b> combinaisons</div>
+  </div>
 </div>
-
+  <!-- Информационный блок конец-->
 
   <script>
     let chart;
