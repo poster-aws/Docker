@@ -12,17 +12,21 @@
 
     .tables-wrapper {
       display: flex;
+      flex-direction: row;
       justify-content: space-between;
-      gap: 30px;
-      margin: 2px auto 0 auto;
-      max-width: 95%;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: nowrap;
+      max-width: 100%;
     }
 
     .table-container,
     .combo-table-container {
+      flex: 0 0 auto;
       width: max-content;
-      max-height: 80vh;
+      max-height: 88vh;
       overflow: auto;
+      margin-inline: auto;
       border-radius: 12px;
       border: 2px solid #a4a1a1;
       background: #00000005;
@@ -32,11 +36,10 @@
     
 
     .number-stats-table {
-      width: max-content;
-      max-height: none;
-      height: fit-content;
-      display: inline-block; /* добавлено */
-      overflow: hidden; /* либо auto, если хочешь скролл при переполнении */
+      flex: 0 0 auto;
+      min-width: 180px;
+      max-height: 88vh;
+      overflow: auto;
       border-radius: 12px;
       border: 2px solid #a4a1a1;
       background: #00000005;
@@ -134,7 +137,7 @@
       padding: 14px 16px;
       gap: 8px;
       font-size: 0.95em;
-      /* max-width: 800px; */
+      /* max-width: 600px;*/
       margin: 30px auto;
       background: rgba(255,255,255,0.03);
       color: #333;
@@ -217,7 +220,7 @@
   <div class="number-stats-table">
     <table class="interactive-table">
       <thead>
-        <tr><th>Jamais sorti <br> N'importe quel ordre</th></tr>
+        <tr><th>Jamais sorti<br>N'importe quel ordre</th></tr>
       </thead>
       <tbody>
         <!--NORDER_PLACEHOLDER-->
