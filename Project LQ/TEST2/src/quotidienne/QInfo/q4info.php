@@ -37,11 +37,11 @@ function generateTableRows($result) {
         $comboType = getComboType([$row['n1'], $row['n2'], $row['n3'], $row['n4']]);
         $highlight = isUniqueCombo($row['n1'], $row['n2'], $row['n3'], $row['n4']) ? 'highlight-row' : '';
         $html .= "<tr data-combo-type=\"$comboType\" class=\"$highlight\">";
-    $html .= "<td>";
-    foreach (['n1', 'n2', 'n3', 'n4'] as $k) {
-        $html .= "<span class=\"circle\">{$row[$k]}</span>";
-    }
-    $html .= "</td></tr>";
+        $html .= "<td>";
+        foreach (['n1', 'n2', 'n3', 'n4'] as $k) {
+            $html .= "<span class=\"circle\">{$row[$k]}</span>";
+        }
+        $html .= "</td></tr>";
     }
     return $html;
 }

@@ -31,8 +31,12 @@ function makeTablesSortable() {
         headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
 
         const sortedRows = rows.sort((a, b) => {
-          const aText = a.children[columnIndex].innerText.trim();
-          const bText = b.children[columnIndex].innerText.trim();
+          const aCell = a.children[columnIndex];
+          const bCell = b.children[columnIndex];
+          if (!aCell || !bCell) return 0;
+
+          const aText = aCell.innerText.trim();
+          const bText = bCell.innerText.trim();
 
           const aVal = isNaN(aText) ? aText : parseFloat(aText);
           const bVal = isNaN(bText) ? bText : parseFloat(bText);
@@ -52,9 +56,31 @@ function makeTablesSortable() {
   });
 }
 
+// 🔎 Фильтрация таблиц по типу комбинаций
+function applyFilter(tableId, filterValue) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  const rows = table.querySelectorAll("tbody tr");
+  let count = 0;
+
+  rows.forEach(row => {
+    const type = row.dataset.comboType;
+    const show = filterValue === 'all' || filterValue === type;
+    row.style.display = show ? '' : 'none';
+    if (show) count++;
+  });
+
+  const countSpan = document.getElementById(
+    tableId === 'statsOrderTable' ? 'statsOrderCount' :
+    tableId === 'freeOrderTable' ? 'freeOrderCount' : null
+  );
+  if (countSpan) countSpan.textContent = count;
+}
+
 let isAltView = false;
 
-// 📥 Загрузка страниц (Q2, Q3, Q4)
+// 📥 Загрузка страниц (Q2, Q3, Q4, q4info)
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
@@ -74,7 +100,6 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // обновлённый путь
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -106,6 +131,19 @@ function loadPage(page) {
         const jamais = metaDiv?.dataset.jamais || "?";
         pageTitle.innerHTML = `Quotidienne4<br>` +
           `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
+      }
+
+      if (page.includes("q4info")) {
+        applyFilter("statsOrderTable", "all");
+        applyFilter("freeOrderTable", "all");
+
+        const selects = container.querySelectorAll("select");
+        selects.forEach(select => {
+          select.addEventListener("change", function () {
+            const tableId = this.closest("table").id;
+            applyFilter(tableId, this.value);
+          });
+        });
       }
 
       cornerButton.innerHTML = "&#8505;"; // ℹ
@@ -196,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
           <iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
         `;
       } else if (currentPage.includes("q4")) {
-        // 🔁 Q4INFO теперь загружается через fetch как обычная страница
         loadPage("quotidienne/QInfo/q4info.php");
       }
 
@@ -209,7 +246,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   updateToggleStyles();
-  // loadPage("quotidienne/q2.php"); // ← для автостарта можно раскомментировать
 });
-
-// END of script.js

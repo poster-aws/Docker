@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
       margin: 0;
@@ -89,14 +89,20 @@
     }
 
     select {
-      width: 100%;
-      padding: 4px 8px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #007BFF;
-      background-color: rgb(163, 216, 234);
-      color: #000;
-      box-sizing: border-box;
+    width: 100%;
+    padding: 4px 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #007BFF;
+    background-color: rgb(163, 216, 234);
+    color: #000;
+    box-sizing: border-box;
+
+    /* 🔽 Скрытие стандартной стрелки */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
     }
 
     #infoBlock.info-list {
@@ -145,13 +151,12 @@
 
 <div class="tables-wrapper">
 
-  <!-- Fois = 1 -->
   <div class="table-container">
     <table class="interactive-table" id="statsOrderTable">
       <thead>
-        <tr><th colspan="4">Sorti une fois : <span id="statsOrderCount">0</span></th></tr>
+        <tr><th colspan="4">Sorti une fois : <span id="statsOrderCount"></span></th></tr>
         <tr><th colspan="4">
-          <select onchange="applyFilter('statsOrderTable', this.value)">
+          <select data-table="statsOrderTable">
             <option value="all">*Dans l'ordre (toutes)</option>
             <option value="unique">- Tous les numéros sont différents</option>
             <option value="onepair">- Une paire</option>
@@ -166,18 +171,17 @@
     </table>
   </div>
 
-  <!-- Fois = 0 -->
   <div class="combo-table-container">
     <table class="interactive-table" id="freeOrderTable">
       <thead>
-        <tr><th colspan="4">Jamais sorti : <span id="freeOrderCount">0</span></th></tr>
+        <tr><th colspan="4">Jamais sorti : <span id="freeOrderCount"></span></th></tr>
         <tr><th colspan="4">
-          <select onchange="applyFilter('freeOrderTable', this.value)">
+          <select data-table="freeOrderTable">
             <option value="all">*Dans l'ordre (toutes)</option>
             <option value="unique">- Tous les numéros sont différents</option>
             <option value="onepair">- Une paire</option>
             <option value="twopairs">- Deux paires</option>
-            <option value="triplet">- Trois identiques + Un différent</option>
+            <option value="triplet">- Trois идентичны + Un différent</option>
           </select>
         </th></tr>
       </thead>
@@ -187,7 +191,6 @@
     </table>
   </div>
 
-  <!-- Fois = 0 + tous chiffres равны -->
   <div class="number-stats-table">
     <table class="interactive-table">
       <thead>
@@ -202,30 +205,56 @@
 </div>
 
 <!-- Информационный блок -->
-<!-- ... остаётся без изменений ... -->
-
-<script>
-function applyFilter(tableId, filterValue) {
-  const table = document.getElementById(tableId);
-  const rows = table.querySelectorAll("tbody tr");
-  let count = 0;
-
-  rows.forEach(row => {
-    const type = row.dataset.comboType;
-    const visible = (filterValue === 'all' || filterValue === type);
-    row.style.display = visible ? '' : 'none';
-    if (visible) count++;
-  });
-
-  const countSpan = document.getElementById(tableId === 'statsOrderTable' ? 'statsOrderCount' : 'freeOrderCount');
-  if (countSpan) countSpan.innerHTML = `<strong>${count}</strong> combs.`;
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  applyFilter('statsOrderTable', 'all');
-  applyFilter('freeOrderTable', 'all');
-});
-</script>
+<div id="infoBlock" class="info-list">
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">9</span><span class="circle">9</span><span class="circle">9</span><span class="circle">9</span>
+    </div>
+    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>10'000</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">3</span><span class="circle">4</span>
+    </div>
+    <div class="info-text">Tous différents : <b>5'040</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">1</span><span class="circle">2</span><span class="circle">3</span>
+    </div>
+    <div class="info-text">Une paire : <b>4'320</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">2</span>
+    </div>
+    <div class="info-text">Deux paires : <b>270</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">1</span><span class="circle">1</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">Trois identiques + 1 autre : <b>360</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">N'importe – sans doublons – <b>120</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">N'importe – seulement doublons – <b>90</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+    </div>
+    <div class="info-text">Trois identiques – <b>10</b> combinaisons</div>
+  </div>
+</div>
 
 </body>
 </html>
