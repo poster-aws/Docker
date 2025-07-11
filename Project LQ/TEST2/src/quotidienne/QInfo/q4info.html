@@ -149,7 +149,7 @@
   <div class="table-container">
     <table class="interactive-table" id="statsOrderTable">
       <thead>
-        <tr><th colspan="4">Sorti une fois : <span id="statsOrderCount"></span></th></tr>
+        <tr><th colspan="4">Sorti une fois : <span id="statsOrderCount">0</span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('statsOrderTable', this.value)">
             <option value="all">*Dans l'ordre (toutes)</option>
@@ -170,7 +170,7 @@
   <div class="combo-table-container">
     <table class="interactive-table" id="freeOrderTable">
       <thead>
-        <tr><th colspan="4">Jamais sorti : <span id="freeOrderCount"></span></th></tr>
+        <tr><th colspan="4">Jamais sorti : <span id="freeOrderCount">0</span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('freeOrderTable', this.value)">
             <option value="all">*Dans l'ordre (toutes)</option>
@@ -217,10 +217,8 @@ function applyFilter(tableId, filterValue) {
     if (visible) count++;
   });
 
-  const header = table.querySelector("thead tr:first-child th span");
-  if (header) {
-    header.innerHTML = `<strong>${count}</strong> combs.`;
-  }
+  const countSpan = document.getElementById(tableId === 'statsOrderTable' ? 'statsOrderCount' : 'freeOrderCount');
+  if (countSpan) countSpan.innerHTML = `<strong>${count}</strong> combs.`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
