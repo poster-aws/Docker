@@ -1,4 +1,4 @@
-// script.js
+// === script.js ===
 
 // Переключение отображения меню
 function toggleMenu() {
@@ -183,9 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isAltView = !isAltView;
 
-      if (isAltView) {
-        toggleSwitch.disabled = true;
-        neonSwitch.classList.add("disabled-switch");
+    if (isAltView) {
+      toggleSwitch.disabled = true;
+      neonSwitch.classList.add("disabled-switch");
 
       if (currentPage.includes("q2")) {
         container.innerHTML = `
@@ -196,9 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
           <iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
         `;
       } else if (currentPage.includes("q4")) {
-        container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-        `;
+        // 🔁 Q4INFO теперь загружается через fetch как обычная страница
+        loadPage("quotidienne/QInfo/q4info.php");
       }
 
       cornerButton.innerHTML = "&#x21c6;"; // ⇆
