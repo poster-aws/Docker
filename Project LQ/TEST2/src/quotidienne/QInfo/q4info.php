@@ -1,3 +1,5 @@
+<!-- q4info.php -->
+
 <?php
 require_once "../db.php";
 error_reporting(E_ALL);
@@ -19,7 +21,7 @@ function getComboType($nums) {
     return 'other';
 }
 
-$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois ");  //WHERE Fois = 1
+$fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 1");  
 $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0");
 $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0 and n1=n2 and n2=n3 and n3=n4");
 // Все комбинации norder уже выпали, за исключением 1111 и 2222 поэтому берем из Q4_fois
@@ -371,3 +373,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
+<!-- END of q4info.php -->

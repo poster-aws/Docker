@@ -1,3 +1,5 @@
+<!-- q4.php -->
+
 <?php
 require_once "db.php";
 
@@ -159,3 +161,5 @@ echo str_replace(
   [$tableHTML, $comboHTML, $numberStatsHTML, $script],
   $template
 );
+
+// END of q4.php 

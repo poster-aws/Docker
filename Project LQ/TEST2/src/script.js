@@ -1,3 +1,5 @@
+// script.js
+
 // Переключение отображения меню
 function toggleMenu() {
   const menu = document.getElementById("dropdownMenu");
@@ -210,3 +212,5 @@ document.addEventListener("DOMContentLoaded", () => {
   updateToggleStyles();
   // loadPage("quotidienne/q2.php"); // ← для автостарта можно раскомментировать
 });
+
+// END of script.js

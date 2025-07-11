@@ -1,3 +1,5 @@
+/* style.css */
+
 /* 🔧 Сброс и общие настройки */
 * {
   margin: 0;
@@ -273,3 +275,5 @@ header {
     height: 12vh;
   }
 }
+
+/* END of style.css */
