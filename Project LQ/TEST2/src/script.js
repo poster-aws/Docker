@@ -109,7 +109,9 @@ function loadPage(page) {
       container.innerHTML = html;
       container.setAttribute("data-page", page);
       updateToggleStyles();
-      makeTablesSortable();
+      if (!page.includes("q4info")) {
+        makeTablesSortable();
+      }
 
       const pageTitle = document.getElementById("pageTitle");
 
