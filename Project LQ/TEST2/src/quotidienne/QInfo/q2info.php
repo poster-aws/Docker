@@ -50,9 +50,16 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
 
 /* Убираем отступы по умолчанию и задаем шрифт всей странице */
 html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 /* Заголовок h2 по центру с уменьшенными вертикальными отступами */

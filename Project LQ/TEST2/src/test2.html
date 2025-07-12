@@ -1,175 +1,149 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>InfoBlock Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Варианты скролла</title>
   <style>
     body {
-      margin: 0;
-      padding: 20px;
-      background: #1e1e2f;
-      color: white;
       font-family: sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+      color: #333;
     }
 
     h2 {
-      margin-top: 2em;
-      font-size: 1.4em;
-      border-bottom: 1px solid #555;
-      padding-bottom: 4px;
-    }
-
-    /* ===== Вариант A: Чистая таблица ===== */
-    .info-table.clean .info-row {
-      display: flex;
-      padding: 6px 8px;
-      border-bottom: 1px solid #444;
-      align-items: center;
-    }
-
-    .info-table.clean .col.digits {
-      min-width: 80px;
-      font-weight: bold;
-    }
-
-    .info-table.clean .digits span {
-      background: #333;
-      margin-right: 4px;
-      padding: 2px 6px;
-      border-radius: 3px;
-    }
-
-    .info-table.clean .text {
-      font-size: 0.95em;
-    }
-
-    /* ===== Вариант B: С иконками ===== */
-    .info-table.icons .info-row {
-      display: flex;
-      align-items: center;
-      padding: 8px;
-      border-left: 4px solid #00bcd4;
-      background: rgba(255, 255, 255, 0.04);
-      margin-bottom: 6px;
-      border-radius: 6px;
-    }
-
-    .info-table.icons .col.icon {
-      width: 30px;
-      text-align: center;
+      margin-top: 40px;
       font-size: 1.2em;
     }
 
-    .info-table.icons .digits span {
-      background: #444;
-      color: #fff;
-      padding: 3px 6px;
-      margin-right: 4px;
+    .scroll-area {
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+      background: white;
+    }
+
+    /* Примерный контент */
+    .content p {
+      margin: 0 0 6px;
+    }
+
+    /* 2. Узкий и аккуратный */
+    .scroll-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scroll-thin::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 3px;
+    }
+    .scroll-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* 3. Кастомный тёмный */
+    .scroll-dark {
+      background: #111;
+      color: #eee;
+      scrollbar-width: thin;
+      scrollbar-color: #888 #222;
+    }
+    .scroll-dark::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scroll-dark::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 8px;
+      border: 2px solid #222;
+    }
+    .scroll-dark::-webkit-scrollbar-track {
+      background-color: #222;
+    }
+
+    /* 4. Скрытый скролл */
+    .scroll-hidden {
+      scrollbar-width: none;
+    }
+    .scroll-hidden::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 5. Минималистичный */
+    .scroll-minimal::-webkit-scrollbar {
+      width: 10px;
+    }
+    .scroll-minimal::-webkit-scrollbar-thumb {
+      background-color: rgba(100, 100, 100, 0.6);
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .scroll-minimal::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(100, 100, 100, 0.9);
+    }
+
+    /* 6. Цветной акцент */
+    .scroll-color::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scroll-color::-webkit-scrollbar-thumb {
+      background-color: #007BFF;
       border-radius: 4px;
-      font-weight: bold;
+    }
+    .scroll-color::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
     }
 
-    .info-table.icons .text {
-      font-size: 0.95em;
-    }
-
-    /* ===== Вариант C: Цветовые маркеры ===== */
-    .info-table.color-tagged .info-row {
-      display: flex;
-      align-items: center;
-      padding: 6px 10px;
-      margin-bottom: 6px;
-      border-left: 5px solid;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.05);
-    }
-
-    .info-table.color-tagged .info-row[data-type="order"] {
-      border-color: #4caf50;
-    }
-
-    .info-table.color-tagged .info-row[data-type="norder"] {
-      border-color: #f44336;
-    }
-
-    .info-table.color-tagged .digits span {
-      background: #333;
-      color: white;
-      padding: 3px 6px;
-      border-radius: 4px;
-      margin-right: 3px;
-      font-weight: bold;
-    }
-
-    .info-table.color-tagged .text {
-      font-size: 0.95em;
-    }
   </style>
 </head>
 <body>
 
-  <h2>📐 Вариант A — Чистый табличный стиль</h2>
-  <div class="info-table clean">
-    <div class="info-row">
-      <div class="col digits"><span>8</span><span>8</span><span>8</span><span>8</span></div>
-      <div class="col text">Dans l'Order – <b>10'000</b> combinaisons</div>
-    </div>
-    <div class="info-row">
-      <div class="col digits"><span>1</span><span>2</span><span>3</span></div>
-      <div class="col text">Toutes comb. – <b>1'000</b></div>
-    </div>
-    <div class="info-row">
-      <div class="col digits"><span>1</span><span>1</span><span>2</span></div>
-      <div class="col text">Seulement doublons – <b>270</b></div>
-    </div>
-    <div class="info-row">
-      <div class="col digits"><span>7</span><span>7</span><span>7</span></div>
-      <div class="col text">Trois identiques – <b>10</b></div>
+  <h2>1. Классический скролл</h2>
+  <div class="scroll-area">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
   </div>
 
-  <h2>🔖 Вариант B — С иконками</h2>
-  <div class="info-table icons">
-    <div class="info-row">
-      <div class="col icon">🎯</div>
-      <div class="col digits"><span>8</span><span>8</span><span>8</span><span>8</span></div>
-      <div class="col text">Dans l'Order – <b>10'000</b></div>
-    </div>
-    <div class="info-row">
-      <div class="col icon">📦</div>
-      <div class="col digits"><span>1</span><span>2</span><span>3</span></div>
-      <div class="col text">Toutes comb. – <b>1'000</b></div>
-    </div>
-    <div class="info-row">
-      <div class="col icon">🔁</div>
-      <div class="col digits"><span>1</span><span>2</span><span>1</span></div>
-      <div class="col text">N’importe – <b>220</b></div>
-    </div>
-    <div class="info-row">
-      <div class="col icon">🎲</div>
-      <div class="col digits"><span>7</span><span>7</span><span>7</span></div>
-      <div class="col text">Trois identiques – <b>10</b></div>
+  <h2>2. Узкий и аккуратный</h2>
+  <div class="scroll-area scroll-thin">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
   </div>
 
-  <h2>🟢 Вариант C — Цветовая метка по типу</h2>
-  <div class="info-table color-tagged">
-    <div class="info-row" data-type="order">
-      <div class="col digits"><span>8</span><span>8</span><span>8</span><span>8</span></div>
-      <div class="col text">Dans l'Order – <b>10'000</b></div>
+  <h2>3. Кастомный тёмный</h2>
+  <div class="scroll-area scroll-dark">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
-    <div class="info-row" data-type="order">
-      <div class="col digits"><span>4</span><span>5</span><span>6</span></div>
-      <div class="col text">Sans doublons – <b>720</b></div>
+  </div>
+
+  <h2>4. Скрытый скролл (прокрутка работает)</h2>
+  <div class="scroll-area scroll-hidden">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
-    <div class="info-row" data-type="norder">
-      <div class="col digits"><span>1</span><span>2</span><span>1</span></div>
-      <div class="col text">N’importe – avec doublons – <b>220</b></div>
+  </div>
+
+  <h2>5. Минималистичный плавный</h2>
+  <div class="scroll-area scroll-minimal">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
-    <div class="info-row" data-type="norder">
-      <div class="col digits"><span>7</span><span>7</span><span>7</span></div>
-      <div class="col text">Trois identiques – <b>10</b></div>
+  </div>
+
+  <h2>6. Цветной акцентный (синий)</h2>
+  <div class="scroll-area scroll-color">
+    <div class="content">
+      <p>Строка 1</p><p>Строка 2</p><p>Строка 3</p><p>Строка 4</p>
+      <p>Строка 5</p><p>Строка 6</p><p>Строка 7</p><p>Строка 8</p>
     </div>
   </div>
 

@@ -29,10 +29,16 @@ $conn->close();
   <title>Q3 Grid</title>
   <style>
     html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
       font-family: sans-serif;
-      background: rgba(245, 245, 245, 0);
+      overflow-y: auto;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    body::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
     }
 
     h2 {

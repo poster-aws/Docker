@@ -187,6 +187,7 @@ header {
 } */
 
 /* 📦 Контейнер содержимого */
+
 .container {
   height: 92vh;
   min-width: 50%; /* не обязательно но так работает Loading */
@@ -198,7 +199,14 @@ header {
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   position: relative;
   margin: 0 auto;
+
+  scrollbar-width: none; /* Firefox */
 }
+
+.container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 
 /* 👋 Приветственная заглушка */
 .welcome-placeholder {
