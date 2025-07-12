@@ -78,9 +78,12 @@ function applyFilter(tableId, filterValue) {
   if (countSpan) countSpan.textContent = count;
 }
 
-let isAltView = false;
+const altViewState = {
+  q2: { isAlt: false },
+  q3: { isAlt: false },
+  q4: { isAlt: false, prev: "" }
+};
 
-// 📥 Загрузка страниц (Q2, Q3, Q4, q4info)
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
@@ -92,7 +95,6 @@ function loadPage(page) {
   const spinner = document.getElementById("loadingSpinner");
   const cornerButton = document.getElementById("cornerButton");
 
-  isAltView = false;
   spinner.classList.remove("hidden");
 
   const toggleSwitch = document.getElementById("toggleSwitch");
@@ -118,21 +120,16 @@ function loadPage(page) {
       if (page.includes("q2")) {
         const metaDiv = container.querySelector("#q2-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Quotidienne2<br>` +
-          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;"> ${count} - Tirages depuis 19 mai 2016 </span>`;
-      } 
-      else if (page.includes("q3")) {
+        pageTitle.innerHTML = `Quotidienne2<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;"> ${count} - Tirages depuis 19 mai 2016 </span>`;
+      } else if (page.includes("q3")) {
         const metaDiv = container.querySelector("#q3-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Quotidienne3<br>` +
-          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
-      }
-      else if (page.includes("q4")) {
+        pageTitle.innerHTML = `Quotidienne3<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
+      } else if (page.includes("q4")) {
         const metaDiv = container.querySelector("#q4-meta");
         const count = metaDiv?.dataset.count || "?";
         const jamais = metaDiv?.dataset.jamais || "?";
-        pageTitle.innerHTML = `Quotidienne4<br>` +
-          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
+        pageTitle.innerHTML = `Quotidienne4<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
 
       if (page.includes("q4info")) {
@@ -148,7 +145,7 @@ function loadPage(page) {
         });
       }
 
-      cornerButton.innerHTML = "&#8505;"; // ℹ
+      document.getElementById("cornerButton").innerHTML = "&#8505;";
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -159,7 +156,6 @@ function loadPage(page) {
     });
 }
 
-// ⚙️ Стили переключателя Order/N'import
 function updateToggleStyles() {
   const toggle = document.getElementById("toggleSwitch");
   const labelOrder = document.getElementById("labelOrder");
@@ -172,7 +168,6 @@ function updateToggleStyles() {
   neonSwitch.classList.toggle("active", isChecked);
 }
 
-// 🏠 Функция возврата на главную
 function goHome() {
   const container = document.getElementById("container");
   const spinner = document.getElementById("loadingSpinner");
@@ -182,12 +177,7 @@ function goHome() {
 
   spinner.classList.remove("hidden");
   setTimeout(() => {
-    container.innerHTML = `
-      <div class="welcome-placeholder">
-        <h2>Добро пожаловать в Quotidienne</h2>
-        <p>Пожалуйста, выберите страницу из меню слева.</p>
-      </div>
-    `;
+    container.innerHTML = `<div class="welcome-placeholder"><h2>Добро пожаловать в Quotidienne</h2><p>Пожалуйста, выберите страницу из меню слева.</p></div>`;
     container.setAttribute("data-page", "");
     document.getElementById("pageTitle").textContent = "Main";
     cornerButton.innerHTML = "&#8505;";
@@ -198,7 +188,6 @@ function goHome() {
   }, 300);
 }
 
-// === DOMContentLoaded ===
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleSwitch");
   const cornerButton = document.getElementById("cornerButton");
@@ -207,43 +196,76 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleStyles();
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
-    if (currentPage && !isAltView) {
+    if (currentPage && !altViewState.q4.isAlt) {
       loadPage(currentPage);
     }
   });
 
   cornerButton.addEventListener("click", (e) => {
     e.preventDefault();
+
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
     const toggleSwitch = document.getElementById("toggleSwitch");
     const neonSwitch = document.getElementById("neonSwitch");
+    const cornerButton = document.getElementById("cornerButton");
 
     if (!currentPage) return;
 
-    isAltView = !isAltView;
+    if (currentPage.includes("q2")) {
+      const state = altViewState.q2;
+      state.isAlt = !state.isAlt;
+      toggleSwitch.disabled = state.isAlt;
+      neonSwitch.classList.toggle("disabled-switch", state.isAlt);
 
-    if (isAltView) {
+      if (state.isAlt) {
+        container.innerHTML = `<iframe src="quotidienne/QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
+        cornerButton.innerHTML = "&#x21c6;";
+      } else {
+        loadPage("quotidienne/q2.php");
+        cornerButton.innerHTML = "&#8505;";
+      }
+      return;
+    }
+
+    if (currentPage.includes("q3")) {
+      const state = altViewState.q3;
+      state.isAlt = !state.isAlt;
+      toggleSwitch.disabled = state.isAlt;
+      neonSwitch.classList.toggle("disabled-switch", state.isAlt);
+
+      if (state.isAlt) {
+        container.innerHTML = `<iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
+        cornerButton.innerHTML = "&#x21c6;";
+      } else {
+        loadPage("quotidienne/q3.php");
+        cornerButton.innerHTML = "&#8505;";
+      }
+      return;
+    }
+
+    if (currentPage.includes("q4info")) {
+      const prev = altViewState.q4.prev;
+      if (prev) {
+        loadPage(prev);
+        container.setAttribute("data-page", prev);
+        cornerButton.innerHTML = "&#8505;";
+        altViewState.q4.prev = "";
+        altViewState.q4.isAlt = false;
+      }
+      return;
+    }
+
+    if (currentPage.includes("q4")) {
+      altViewState.q4.prev = currentPage;
+      altViewState.q4.isAlt = true;
+
       toggleSwitch.disabled = true;
       neonSwitch.classList.add("disabled-switch");
-
-      if (currentPage.includes("q2")) {
-        container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-        `;
-      } else if (currentPage.includes("q3")) {
-        container.innerHTML = `
-          <iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
-        `;
-      } else if (currentPage.includes("q4")) {
-        loadPage("quotidienne/QInfo/q4info.php");
-      }
-
-      cornerButton.innerHTML = "&#x21c6;"; // ⇆
-    } else {
-      toggleSwitch.disabled = false;
-      neonSwitch.classList.remove("disabled-switch");
-      loadPage(currentPage);
+      loadPage("quotidienne/QInfo/q4info.php");
+      container.setAttribute("data-page", "q4info");
+      cornerButton.innerHTML = "&#x21c6;";
+      return;
     }
   });
 
