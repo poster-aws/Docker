@@ -1,4 +1,4 @@
-// === script.js ===
+// script.js
 
 // Переключение отображения меню
 function toggleMenu() {
@@ -31,12 +31,8 @@ function makeTablesSortable() {
         headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
 
         const sortedRows = rows.sort((a, b) => {
-          const aCell = a.children[columnIndex];
-          const bCell = b.children[columnIndex];
-          if (!aCell || !bCell) return 0;
-
-          const aText = aCell.innerText.trim();
-          const bText = bCell.innerText.trim();
+          const aText = a.children[columnIndex].innerText.trim();
+          const bText = b.children[columnIndex].innerText.trim();
 
           const aVal = isNaN(aText) ? aText : parseFloat(aText);
           const bVal = isNaN(bText) ? bText : parseFloat(bText);
@@ -56,34 +52,9 @@ function makeTablesSortable() {
   });
 }
 
-// 🔎 Фильтрация таблиц по типу комбинаций
-function applyFilter(tableId, filterValue) {
-  const table = document.getElementById(tableId);
-  if (!table) return;
+let isAltView = false;
 
-  const rows = table.querySelectorAll("tbody tr");
-  let count = 0;
-
-  rows.forEach(row => {
-    const type = row.dataset.comboType;
-    const show = filterValue === 'all' || filterValue === type;
-    row.style.display = show ? '' : 'none';
-    if (show) count++;
-  });
-
-  const countSpan = document.getElementById(
-    tableId === 'statsOrderTable' ? 'statsOrderCount' :
-    tableId === 'freeOrderTable' ? 'freeOrderCount' : null
-  );
-  if (countSpan) countSpan.textContent = count;
-}
-
-const altViewState = {
-  q2: { isAlt: false },
-  q3: { isAlt: false },
-  q4: { isAlt: false, prev: "" }
-};
-
+// 📥 Загрузка страниц (Q2, Q3, Q4)
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = isOrdered ? "norder=1" : "";
@@ -95,6 +66,7 @@ function loadPage(page) {
   const spinner = document.getElementById("loadingSpinner");
   const cornerButton = document.getElementById("cornerButton");
 
+  isAltView = false;
   spinner.classList.remove("hidden");
 
   const toggleSwitch = document.getElementById("toggleSwitch");
@@ -102,6 +74,7 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
+  // обновлённый путь
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -111,41 +84,31 @@ function loadPage(page) {
       container.innerHTML = html;
       container.setAttribute("data-page", page);
       updateToggleStyles();
-      if (!page.includes("q4info")) {
-        makeTablesSortable();
-      }
+      makeTablesSortable();
 
       const pageTitle = document.getElementById("pageTitle");
 
       if (page.includes("q2")) {
         const metaDiv = container.querySelector("#q2-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Quotidienne2<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;"> ${count} - Tirages depuis 19 mai 2016 </span>`;
-      } else if (page.includes("q3")) {
+        pageTitle.innerHTML = `Quotidienne2<br>` +
+          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;"> ${count} - Tirages depuis 19 mai 2016 </span>`;
+      } 
+      else if (page.includes("q3")) {
         const metaDiv = container.querySelector("#q3-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Quotidienne3<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
-      } else if (page.includes("q4")) {
+        pageTitle.innerHTML = `Quotidienne3<br>` +
+          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
+      }
+      else if (page.includes("q4")) {
         const metaDiv = container.querySelector("#q4-meta");
         const count = metaDiv?.dataset.count || "?";
         const jamais = metaDiv?.dataset.jamais || "?";
-        pageTitle.innerHTML = `Quotidienne4<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
+        pageTitle.innerHTML = `Quotidienne4<br>` +
+          `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
 
-      if (page.includes("q4info")) {
-        applyFilter("statsOrderTable", "all");
-        applyFilter("freeOrderTable", "all");
-
-        const selects = container.querySelectorAll("select");
-        selects.forEach(select => {
-          select.addEventListener("change", function () {
-            const tableId = this.closest("table").id;
-            applyFilter(tableId, this.value);
-          });
-        });
-      }
-
-      document.getElementById("cornerButton").innerHTML = "&#8505;";
+      cornerButton.innerHTML = "&#8505;"; // ℹ
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -156,6 +119,7 @@ function loadPage(page) {
     });
 }
 
+// ⚙️ Стили переключателя Order/N'import
 function updateToggleStyles() {
   const toggle = document.getElementById("toggleSwitch");
   const labelOrder = document.getElementById("labelOrder");
@@ -168,6 +132,7 @@ function updateToggleStyles() {
   neonSwitch.classList.toggle("active", isChecked);
 }
 
+// 🏠 Функция возврата на главную
 function goHome() {
   const container = document.getElementById("container");
   const spinner = document.getElementById("loadingSpinner");
@@ -177,7 +142,12 @@ function goHome() {
 
   spinner.classList.remove("hidden");
   setTimeout(() => {
-    container.innerHTML = `<div class="welcome-placeholder"><h2>Добро пожаловать в Quotidienne</h2><p>Пожалуйста, выберите страницу из меню слева.</p></div>`;
+    container.innerHTML = `
+      <div class="welcome-placeholder">
+        <h2>Добро пожаловать в Quotidienne</h2>
+        <p>Пожалуйста, выберите страницу из меню слева.</p>
+      </div>
+    `;
     container.setAttribute("data-page", "");
     document.getElementById("pageTitle").textContent = "Main";
     cornerButton.innerHTML = "&#8505;";
@@ -188,6 +158,7 @@ function goHome() {
   }, 300);
 }
 
+// === DOMContentLoaded ===
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleSwitch");
   const cornerButton = document.getElementById("cornerButton");
@@ -196,78 +167,50 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleStyles();
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
-    if (currentPage && !altViewState.q4.isAlt) {
+    if (currentPage && !isAltView) {
       loadPage(currentPage);
     }
   });
 
   cornerButton.addEventListener("click", (e) => {
     e.preventDefault();
-
     const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
     const toggleSwitch = document.getElementById("toggleSwitch");
     const neonSwitch = document.getElementById("neonSwitch");
-    const cornerButton = document.getElementById("cornerButton");
 
     if (!currentPage) return;
 
-    if (currentPage.includes("q2")) {
-      const state = altViewState.q2;
-      state.isAlt = !state.isAlt;
-      toggleSwitch.disabled = state.isAlt;
-      neonSwitch.classList.toggle("disabled-switch", state.isAlt);
+    isAltView = !isAltView;
 
-      if (state.isAlt) {
-        container.innerHTML = `<iframe src="quotidienne/QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
-        cornerButton.innerHTML = "&#x21c6;";
-      } else {
-        loadPage("quotidienne/q2.php");
-        cornerButton.innerHTML = "&#8505;";
+      if (isAltView) {
+        toggleSwitch.disabled = true;
+        neonSwitch.classList.add("disabled-switch");
+
+      if (currentPage.includes("q2")) {
+        container.innerHTML = `
+          <iframe src="quotidienne/QInfo/q2info.php?table=Q2_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
+      } else if (currentPage.includes("q3")) {
+        container.innerHTML = `
+          <iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
+      } else if (currentPage.includes("q4")) {
+        container.innerHTML = `
+          <iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>
+        `;
       }
-      return;
-    }
 
-    if (currentPage.includes("q3")) {
-      const state = altViewState.q3;
-      state.isAlt = !state.isAlt;
-      toggleSwitch.disabled = state.isAlt;
-      neonSwitch.classList.toggle("disabled-switch", state.isAlt);
-
-      if (state.isAlt) {
-        container.innerHTML = `<iframe src="quotidienne/QInfo/q3info.php?table=Q3_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
-        cornerButton.innerHTML = "&#x21c6;";
-      } else {
-        loadPage("quotidienne/q3.php");
-        cornerButton.innerHTML = "&#8505;";
-      }
-      return;
-    }
-
-    if (currentPage.includes("q4info")) {
-      const prev = altViewState.q4.prev;
-      if (prev) {
-        loadPage(prev);
-        container.setAttribute("data-page", prev);
-        cornerButton.innerHTML = "&#8505;";
-        altViewState.q4.prev = "";
-        altViewState.q4.isAlt = false;
-      }
-      return;
-    }
-
-    if (currentPage.includes("q4")) {
-      altViewState.q4.prev = currentPage;
-      altViewState.q4.isAlt = true;
-
-      toggleSwitch.disabled = true;
-      neonSwitch.classList.add("disabled-switch");
-      loadPage("quotidienne/QInfo/q4info.php");
-      container.setAttribute("data-page", "q4info");
-      cornerButton.innerHTML = "&#x21c6;";
-      return;
+      cornerButton.innerHTML = "&#x21c6;"; // ⇆
+    } else {
+      toggleSwitch.disabled = false;
+      neonSwitch.classList.remove("disabled-switch");
+      loadPage(currentPage);
     }
   });
 
   updateToggleStyles();
+  // loadPage("quotidienne/q2.php"); // ← для автостарта можно раскомментировать
 });
+
+// END of script.js
