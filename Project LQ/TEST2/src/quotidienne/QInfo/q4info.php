@@ -25,10 +25,14 @@ $fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 1");
 $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0");
 $freeNorder = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0 and n1=n2 and n2=n3 and n3=n4");
 
-// Загружаем шаблон
-ob_start();
-include "q4info.html";
-$template = ob_get_clean();
+// Статистика
+$q4count = $conn->query("SELECT COUNT(*) AS c FROM Q4")->fetch_assoc()['c'];
+$q4freecount = $freeOrder->num_rows;
+
+$metaDiv = '<div id="q4-meta" data-count="' . $q4count . '" data-jamais="' . $q4freecount . '"></div>';
+
+// Блок для заголовка
+$metaDiv = '<div id="q4-meta" data-count="' . $q4count . '" data-jamais="' . $q4freecount . '"></div>';
 
 // Генерация HTML для каждой таблицы
 function generateTableRows($result) {
@@ -50,10 +54,15 @@ $tableFois1 = generateTableRows($fois1);
 $tableFois0 = generateTableRows($freeOrder);
 $tableNorder = generateTableRows($freeNorder);
 
-// Вставляем в шаблон
+// Загружаем шаблон
+ob_start();
+include "q4info.html";
+$template = ob_get_clean();
+
+// Вставляем блок с meta + данные в шаблон
 echo str_replace(
     ['<!--FOIS1_PLACEHOLDER-->', '<!--FOIS0_PLACEHOLDER-->', '<!--NORDER_PLACEHOLDER-->'],
-    [$tableFois1, $tableFois0, $tableNorder],
+    [$metaDiv . $tableFois1, $tableFois0, $tableNorder],
     $template
 );
 
