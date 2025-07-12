@@ -53,6 +53,7 @@ function makeTablesSortable() {
 }
 
 let isAltView = false;
+let originalHomeContent = null;
 
 // 📥 Загрузка страниц (Q2, Q3, Q4)
 function loadPage(page) {
@@ -74,7 +75,6 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // обновлённый путь
   fetch(`${page}?${mode}`)
     .then(response => {
       if (!response.ok) throw new Error("Ошибка загрузки страницы");
@@ -108,7 +108,7 @@ function loadPage(page) {
           `<span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
 
-      cornerButton.innerHTML = "&#8505;"; // ℹ
+      cornerButton.innerHTML = "&#8505;";
     })
     .catch(err => {
       container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
@@ -141,13 +141,12 @@ function goHome() {
   const cornerButton = document.getElementById("cornerButton");
 
   spinner.classList.remove("hidden");
+
   setTimeout(() => {
-    container.innerHTML = `
-      <div class="welcome-placeholder">
-        <h2>Добро пожаловать в Quotidienne</h2>
-        <p>Пожалуйста, выберите страницу из меню слева.</p>
-      </div>
-    `;
+    if (originalHomeContent) {
+      container.innerHTML = originalHomeContent;
+    }
+
     container.setAttribute("data-page", "");
     document.getElementById("pageTitle").textContent = "Main";
     cornerButton.innerHTML = "&#8505;";
@@ -162,10 +161,13 @@ function goHome() {
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("toggleSwitch");
   const cornerButton = document.getElementById("cornerButton");
+  const container = document.getElementById("container");
+
+  // Сохраняем оригинальный HTML-контент
+  originalHomeContent = container.innerHTML;
 
   toggle.addEventListener("change", () => {
     updateToggleStyles();
-    const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
     if (currentPage && !isAltView) {
       loadPage(currentPage);
@@ -174,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cornerButton.addEventListener("click", (e) => {
     e.preventDefault();
-    const container = document.getElementById("container");
     const currentPage = container.getAttribute("data-page");
     const toggleSwitch = document.getElementById("toggleSwitch");
     const neonSwitch = document.getElementById("neonSwitch");
@@ -183,9 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     isAltView = !isAltView;
 
-      if (isAltView) {
-        toggleSwitch.disabled = true;
-        neonSwitch.classList.add("disabled-switch");
+    if (isAltView) {
+      toggleSwitch.disabled = true;
+      neonSwitch.classList.add("disabled-switch");
 
       if (currentPage.includes("q2")) {
         container.innerHTML = `
@@ -201,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
 
-      cornerButton.innerHTML = "&#x21c6;"; // ⇆
+      cornerButton.innerHTML = "&#x21c6;";
     } else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
@@ -210,7 +211,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   updateToggleStyles();
-  // loadPage("quotidienne/q2.php"); // ← для автостарта можно раскомментировать
 });
-
-// END of script.js
