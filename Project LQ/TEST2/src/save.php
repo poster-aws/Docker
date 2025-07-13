@@ -1,9 +1,8 @@
 <?php
-require_once "quotidienne\db.php";
+require_once "quotidienne/db.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Обработка формы
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = $_POST['date'];
     $n1 = $_POST['n1'];
@@ -16,31 +15,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $n8 = $_POST['n8'];
     $n9 = $_POST['n9'];
 
-    $inserted = false;
+    // Проверка: существует ли уже запись с такой датой во всех таблицах
+    $q2_exists = $conn->query("SELECT 1 FROM Q2 WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
+    $q3_exists = $conn->query("SELECT 1 FROM Q3 WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
+    $q4_exists = $conn->query("SELECT 1 FROM Q4 WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
 
-    // Q2
-    $stmt = $conn->prepare("INSERT INTO Q2 (Tirage, n1, n2) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2)");
-    $stmt->bind_param("sii", $date, $n1, $n2);
-    $stmt->execute();
-    if ($stmt->affected_rows > 0) $inserted = true;
-    $stmt->close();
+    if ($q2_exists && $q3_exists && $q4_exists) {
+        // Дата уже есть везде — ничего не делаем
+        $msg = ['class' => 'error', 'text' => "⚠️ Данные не были изменены."];
+    } else {
+        // Вставка новых данных
 
-    // Q3
-    $stmt = $conn->prepare("INSERT INTO Q3 (Tirage, n1, n2, n3) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2), n3 = VALUES(n3)");
-    $stmt->bind_param("siii", $date, $n3, $n4, $n5);
-    $stmt->execute();
-    if ($stmt->affected_rows > 0) $inserted = true;
-    $stmt->close();
+        // Q2
+        $stmt = $conn->prepare("REPLACE INTO Q2 (Tirage, n1, n2) VALUES (?, ?, ?)");
+        $stmt->bind_param("sii", $date, $n1, $n2);
+        $stmt->execute();
+        $stmt->close();
 
-    // Q4
-    $stmt = $conn->prepare("INSERT INTO Q4 (Tirage, n1, n2, n3, n4) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2), n3 = VALUES(n3), n4 = VALUES(n4)");
-    $stmt->bind_param("siiii", $date, $n6, $n7, $n8, $n9);
-    $stmt->execute();
-    if ($stmt->affected_rows > 0) $inserted = true;
-    $stmt->close();
+        // Q3
+        $stmt = $conn->prepare("REPLACE INTO Q3 (Tirage, n1, n2, n3) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("siii", $date, $n3, $n4, $n5);
+        $stmt->execute();
+        $stmt->close();
 
-    // Вызов процедур, если были изменения
-    if ($inserted) {
+        // Q4
+        $stmt = $conn->prepare("REPLACE INTO Q4 (Tirage, n1, n2, n3, n4) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("siiii", $date, $n6, $n7, $n8, $n9);
+        $stmt->execute();
+        $stmt->close();
+
+        // Вызов процедур
         $procedures = [
             'fill_Q2_stats_order',
             'fill_Q2_stats_norder',
@@ -48,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'fill_Q3_stats_order',
             'fill_Q3_stats_norder',
             'fill_Q3_combo_stats_order',
+            'fill_Q4_fois',
             'fill_Q4_stats_order',
             'fill_Q4_stats_norder',
             'fill_Q4_combo_stats_order'
@@ -55,9 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($procedures as $proc) {
             $conn->query("CALL $proc()");
         }
+
         $msg = ['class' => 'success', 'text' => "✅ Данные успешно сохранены и обновлены."];
-    } else {
-        $msg = ['class' => 'error', 'text' => "⚠️ Данные не были изменены."];
     }
 
     $conn->close();
@@ -74,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     html, body {
       height: 100vh;
       font-family: sans-serif;
-      background: #f0f0f0;
+      background:rgb(49, 0, 165);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -85,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       align-items: flex-start;
       gap: 16px;
       padding: 20px 30px;
-      background: white;
+      background: rgb(149, 149, 149);
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       min-width: 320px;
@@ -116,6 +120,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
   <form class="center-container" method="post">
+
+    <p style="font-weight: bold; margin-bottom: 0.5em; text-align: center; width: 100%;">Добавление одного дня</p>
+
     <?php if (!empty($msg)): ?>
       <div class="msg <?= $msg['class'] ?>"><?= $msg['text'] ?></div>
     <?php endif; ?>
@@ -125,24 +132,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <div class="row">
-      <label>Q2:</label>
-      <select name="n1" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n2" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
+    <label>Q2:</label>
+    <select name="n1" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n2" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
     </div>
 
     <div class="row">
-      <label>Q3:</label>
-      <select name="n3" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n4" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n5" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
+    <label>Q3:</label>
+    <select name="n3" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n4" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n5" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
     </div>
 
     <div class="row">
-      <label>Q4:</label>
-      <select name="n6" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n7" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n8" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
-      <select name="n9" required><option value="">0–9</option><?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'>$i</option>"; ?></select>
+    <label>Q4:</label>
+    <select name="n6" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n7" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n8" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
+    <select name="n9" required>
+        <?php for ($i = 0; $i <= 9; $i++) echo "<option value='$i'" . ($i === 0 ? " selected" : "") . ">$i</option>"; ?>
+    </select>
     </div>
 
     <button type="submit">Отправить</button>
