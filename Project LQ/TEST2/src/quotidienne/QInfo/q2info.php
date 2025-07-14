@@ -210,21 +210,21 @@ label[for="norderToggle"] {
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">Dans l'Order (toutes comb.) – <b>100</b> combinaisons</div>
+    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>100</b> </div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">2</span>
       <span class="circle">1</span>
     </div>
-    <div class="info-text">N'importe quel order sans doublons – <b>45</b> combinaisons</div>
+    <div class="info-text">N'Importe quel Order - Sans doublons : <b>45</b> </div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">0</span>
       <span class="circle">0</span>
     </div>
-    <div class="info-text">Doublons – <b>10</b> combinaisons</div>
+    <div class="info-text">Doublons : <b>10</b> </div>
   </div>
 </div>
   <!-- Информационный блок конец-->

@@ -220,7 +220,7 @@ $conn->close();
       <span class="circle">2</span>
       <span class="circle">3</span>
     </div>
-    <div class="info-text">Dans l'Order (toutes comb.) – <b>1 000</b> combinaisons</div>
+    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>1'000</b> </div>
   </div>
 
   <div class="info-row">
@@ -229,7 +229,7 @@ $conn->close();
       <span class="circle">5</span>
       <span class="circle">6</span>
     </div>
-    <div class="info-text">Dans l'Order <b>sans</b> doublons et trois numéros identiques – <b>720</b> combinaisons</div>
+    <div class="info-text">Dans l'Order - Tous les numéros sont différents : <b>720</b> </div>
   </div>
 
   <div class="info-row">
@@ -238,16 +238,7 @@ $conn->close();
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">Dans l'Order <b>seulement</b> les doublons – <b>270</b> combinaisons</div>
-  </div>
-
-  <div class="info-row">
-    <div class="info-digits">
-      <span class="circle">1</span>
-      <span class="circle">2</span>
-      <span class="circle">1</span>
-    </div>
-    <div class="info-text">N'importe quel order <b>avec</b> doublons et trois numéros identiques – <b>220</b> combinaisons</div>
+    <div class="info-text">Dans l'Order - Une paire : <b>270</b> </div>
   </div>
 
   <div class="info-row">
@@ -256,7 +247,16 @@ $conn->close();
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">N'importe quel order <b>sans</b> doublons et trois numéros identiques – <b>120</b> combinaisons</div>
+    <div class="info-text">N'Importe quel Order - Toutes les combinaisons : <b>220</b> </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">3</span>
+      <span class="circle">1</span>
+      <span class="circle">2</span>
+    </div>
+    <div class="info-text">N'Importe quel Order - Tous les numéros sont différents : <b>120</b> </div>
   </div>
 
   <div class="info-row">
@@ -265,7 +265,7 @@ $conn->close();
       <span class="circle">2</span>
       <span class="circle">1</span>
     </div>
-    <div class="info-text">N'importe quel order <b>seulement</b> les doublons – <b>90</b> combinaisons</div>
+    <div class="info-text">N'Importe quel Order - Une paire : <b>90</b> </div>
   </div>
 
   <div class="info-row">
@@ -274,7 +274,7 @@ $conn->close();
       <span class="circle">7</span>
       <span class="circle">7</span>
     </div>
-    <div class="info-text">Trois numéros identiques – <b>10</b> combinaisons</div>
+    <div class="info-text">Trois numéros identiques : <b>10</b> </div>
   </div>
 </div>
 

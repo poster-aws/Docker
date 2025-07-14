@@ -224,7 +224,7 @@ body::-webkit-scrollbar {
             <option value="unique">- Tous les numéros sont différents</option>
             <option value="onepair">- Une paire</option>
             <option value="twopairs">- Deux paires</option>
-            <option value="triplet">- Trois identiques + Un différent</option>
+            <option value="triplet">- Trois identiques</option>
           </select>
         </th></tr>
       </thead>
@@ -255,7 +255,7 @@ body::-webkit-scrollbar {
             <option value="unique">- Tous les numéros sont différents</option>
             <option value="onepair">- Une paire</option>
             <option value="twopairs">- Deux paires</option>
-            <option value="triplet">- Trois identiques + Un différent</option>
+            <option value="triplet">- Trois identiques</option>
           </select>
         </th></tr>
       </thead>
@@ -279,7 +279,7 @@ body::-webkit-scrollbar {
   <div class="number-stats-table">
     <table class="interactive-table">
       <thead>
-        <tr><th colspan="4">Jamais sorti <br> n'inport quel ordre</th></tr>
+        <tr><th colspan="4">Jamais sorti <br> N'Inport quel Ordre</th></tr>
       </thead>
       <tbody>
         <?php while ($row = $freeNorder->fetch_assoc()): ?>
@@ -329,25 +329,43 @@ body::-webkit-scrollbar {
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">1</span><span class="circle">1</span><span class="circle">8</span>
     </div>
-    <div class="info-text">Dans l'Order - Trois identiques + Une différent : <b>360</b></div>
+    <div class="info-text">Dans l'Order - Trois identiques : <b>360</b></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
     </div>
-    <div class="info-text">N'importe – sans doublons – <b>120</b></div>
+    <div class="info-text">N'Importe quel Order - Toutes les combinaisons : <b>715</b></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
-      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+      <span class="circle">4</span><span class="circle">3</span><span class="circle">2</span><span class="circle">1</span>
     </div>
-    <div class="info-text">N'importe – seulement doublons – <b>90</b></div>
+    <div class="info-text">N'Importe quel Order - Tous les numéros sont différents : <b>210</b></div>
+  </div>
+<div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">3</span><span class="circle">1</span>
+    </div>
+    <div class="info-text">N'Importe quel Order - Une paire : <b>360</b></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
-      <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">2</span>
     </div>
-    <div class="info-text">Trois identiques – <b>10</b> combinaisons</div>
+    <div class="info-text">N'Importe quel Order - Deux paires : <b>45</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">1</span>
+    </div>
+    <div class="info-text">N'Importe quel Order - Trois identiques : <b>90</b></div>
+  </div>
+  <div class="info-row">
+    <div class="info-digits">
+      <span class="circle">7</span><span class="circle">7</span><span class="circle">7</span><span class="circle">7</span>
+    </div>
+    <div class="info-text">Quatre identiques – <b>10</b> </div>
   </div>
 </div>
 <!-- Информационный блок конец-->
