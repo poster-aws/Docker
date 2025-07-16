@@ -178,7 +178,7 @@ label[for="norderToggle"] {
 
   <div id="toggleWrapper">
     <input type="checkbox" id="norderToggle">
-    <label for="norderToggle">Dans N'importe quel order</label>
+    <label for="norderToggle">Dans N'Importe quel Order</label>
   </div>
 
   <div id="selectWrapper">

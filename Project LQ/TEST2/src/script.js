@@ -148,7 +148,7 @@ function goHome() {
     }
 
     container.setAttribute("data-page", "");
-    document.getElementById("pageTitle").textContent = "Main";
+    document.getElementById("pageTitle").textContent = "Page principalle";
     cornerButton.innerHTML = "&#8505;";
     toggleSwitch.disabled = false;
     neonSwitch.classList.remove("disabled-switch");
