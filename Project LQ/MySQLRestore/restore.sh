@@ -1,31 +1,46 @@
 #!/bin/sh
 
-# Настройки
-DB_NAME="quotidienne2"
+# === Настройки ===
 DB_USER="user"
 DB_PASS="user"
 DB_HOST="db"
 BACKUP_DIR="/backups"
 
-# Находим последний бэкап-файл для этой базы
-LATEST_BACKUP=$(ls -t $BACKUP_DIR/$DB_NAME-*.sql | head -n 1)
+export MYSQL_PWD="$DB_PASS"
 
-if [ -z "$LATEST_BACKUP" ]; then
-    echo "Ошибка: Файл резервной копии не найден!"
-    exit 1
-fi
+# === Список баз для восстановления ===
+DATABASES=("quotidienne2" "toutourien")
 
-echo "Обнаружен последний бэкап: $LATEST_BACKUP"
+# === Функция восстановления одной базы ===
+restore_database() {
+  DB_NAME="$1"
+  echo "🔍 Поиск последнего бэкапа для базы $DB_NAME..."
 
-# Ожидание доступности MySQL
-echo "Ожидание доступности MySQL..."
-until mysqladmin ping -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --silent; do
-    sleep 2
+  LATEST_BACKUP=$(ls -t "$BACKUP_DIR/${DB_NAME}-"*.sql 2>/dev/null | head -n 1)
+
+  if [ -z "$LATEST_BACKUP" ]; then
+    echo "❌ Бэкап не найден для базы $DB_NAME!"
+    return 1
+  fi
+
+  echo "✅ Найден бэкап: $LATEST_BACKUP"
+
+  echo "⏳ Ожидание доступности MySQL..."
+  until mysqladmin ping -h"$DB_HOST" -u"$DB_USER" --silent; do
+      sleep 2
+  done
+
+  echo "📦 Восстановление базы $DB_NAME из $LATEST_BACKUP..."
+  mysql -h "$DB_HOST" -u "$DB_USER" "$DB_NAME" < "$LATEST_BACKUP"
+
+  if [ $? -eq 0 ]; then
+    echo "✅ Восстановление базы $DB_NAME завершено: $(date)"
+  else
+    echo "❌ Ошибка при восстановлении базы $DB_NAME!"
+  fi
+}
+
+# === Цикл восстановления всех баз ===
+for DB in "${DATABASES[@]}"; do
+  restore_database "$DB"
 done
-
-echo "MySQL доступен. Восстанавливаем данные..."
-
-# Восстановление данных
-mysql -h $DB_HOST -u $DB_USER -p$DB_PASS $DB_NAME < "$LATEST_BACKUP"
-
-echo "Восстановление завершено $(date)"

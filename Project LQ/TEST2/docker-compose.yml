@@ -4,12 +4,12 @@ services:
     container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: quotidienne2  # Создаем БД
+      # MYSQL_DATABASE: quotidienne2  # Создаем БД
       MYSQL_USER: user
       MYSQL_PASSWORD: user  
-    # volumes:
+    volumes:
       # - ./DB:/var/lib/mysql/  # Для персистентности данных
-      # - ./sql:/docker-entrypoint-initdb.d # Загрузка SQL скриптов при старте
+      - ./sql:/docker-entrypoint-initdb.d # Загрузка SQL скриптов при старте
     ports:
       - "3306:3306"
     networks:
