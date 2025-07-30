@@ -1,9 +1,9 @@
 <?php
 
 // Подключение к БД toutourien
-$conn = new mysqli("db", "user", "user", "toutourien");
-$conn->set_charset("utf8");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require_once "db.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Лимит по GET
 $allowedLimits = [50, 100, 200, 500];
@@ -49,8 +49,9 @@ $conn->close();
     }
 
     .table-wrapper {
-      width: 95%;
-      max-height: 70vh;
+      /* width: max-content; */
+      max-width: 95%;
+      max-height: 90vh;
       overflow: auto;
       margin: 0 auto;
       border: 1px solid #ccc;
@@ -83,14 +84,6 @@ $conn->close();
 
     .digit-grid td.hit {
       background-color: #7eb0ea;
-    }
-
-    .digit-grid td.repeat-2 {
-      background-color: #f8c471;
-    }
-
-    .digit-grid td.repeat-3 {
-      background-color: #e74c3c;
     }
 
     .digit-grid td:first-child,
@@ -131,12 +124,12 @@ $conn->close();
         <?php for ($digit = 1; $digit <= 24; $digit++): ?>
           <tr>
             <td><?= $digit ?></td>
-            <?php foreach ($tirages as $t):
-              $count = array_count_values($t['nums'])[$digit] ?? 0;
-              $class = $count === 3 ? 'repeat-3' : ($count === 2 ? 'repeat-2' : ($count === 1 ? 'hit' : ''));
-            ?>
-              <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
-            <?php endforeach; ?>
+          <?php foreach ($tirages as $t):
+            $count = array_count_values($t['nums'])[$digit] ?? 0;
+            $class = $count === 1 ? 'hit' : '';
+          ?>
+            <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
+          <?php endforeach; ?>
           </tr>
         <?php endfor; ?>
       </tbody>
