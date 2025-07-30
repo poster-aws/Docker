@@ -1,0 +1,24 @@
+<!-- tout.html — как Q3info -->
+
+<!-- выпадающее меню лимита -->
+<div style="text-align: right; margin-bottom: 0.5em;">
+  <label for="limitSelect">Tirages : </label>
+  <select id="limitSelect" onchange="location.href='tout.php?limit=' + this.value;">
+    <option value="100">100</option>
+    <option value="200">200</option>
+    <option value="500">500</option>
+  </select>
+</div>
+
+<!-- таблица: строки = 1..24, колонки = tirage -->
+<table class="interactive-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <!--TIRAGE_HEADERS-->
+    </tr>
+  </thead>
+  <tbody>
+    <!--TIRAGE_ROWS-->
+  </tbody>
+</table>
