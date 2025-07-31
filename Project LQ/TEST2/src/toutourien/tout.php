@@ -1,31 +1,43 @@
 <?php
-
-// Подключение к БД toutourien
 require_once "db.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Лимит по GET
+$conn = new mysqli("db", "user", "user", "toutourien");
+$conn->set_charset("utf8");
+if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+
+// Лимит
 $allowedLimits = [50, 100, 200, 500];
 $limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits) ? (int)$_GET['limit'] : 50;
 
-// Получение данных
-$sqlGrid = "SELECT Tirage, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12 FROM Tout ORDER BY Tirage DESC LIMIT $limit";
-$resGrid = $conn->query($sqlGrid);
+// Данные из БД
+$sql = "SELECT Tirage, n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12 FROM Tout ORDER BY Tirage DESC LIMIT $limit";
+$res = $conn->query($sql);
 $tirages = [];
-if ($resGrid && $resGrid->num_rows > 0) {
-    while ($r = $resGrid->fetch_assoc()) {
-        $tirages[] = [
-            'Tirage' => $r['Tirage'],
-            'nums' => array_map('intval', [
-                $r['n1'], $r['n2'], $r['n3'], $r['n4'],
-                $r['n5'], $r['n6'], $r['n7'], $r['n8'],
-                $r['n9'], $r['n10'], $r['n11'], $r['n12']
-            ])
-        ];
-    }
+if ($res && $res->num_rows > 0) {
+  while ($r = $res->fetch_assoc()) {
+    $tirages[] = [
+      'Tirage' => $r['Tirage'],
+      'nums' => array_map('intval', [
+        $r['n1'], $r['n2'], $r['n3'], $r['n4'],
+        $r['n5'], $r['n6'], $r['n7'], $r['n8'],
+        $r['n9'], $r['n10'], $r['n11'], $r['n12']
+      ])
+    ];
+  }
 }
 $conn->close();
+
+// Подсчёт Tot
+$totals = array_fill(1, 24, 0);
+foreach ($tirages as $t) {
+  foreach ($t['nums'] as $num) {
+    if ($num >= 1 && $num <= 24) {
+      $totals[$num]++;
+    }
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +48,6 @@ $conn->close();
   <title>Tout Grid</title>
   <style>
     html, body {
-      height: 100%;
       margin: 0;
       padding: 0;
       font-family: sans-serif;
@@ -49,8 +60,7 @@ $conn->close();
     }
 
     .table-wrapper {
-      /* width: max-content; */
-      max-width: 95%;
+      max-width: 98%;
       max-height: 90vh;
       overflow: auto;
       margin: 0 auto;
@@ -65,9 +75,10 @@ $conn->close();
       font-size: 12px;
     }
 
-    .digit-grid td, .digit-grid th {
-      width: 20px;
-      height: 20px;
+    .digit-grid th,
+    .digit-grid td {
+      width: 22px;
+      height: 22px;
       text-align: center;
       border: 1px solid #ccc;
       padding: 0;
@@ -86,13 +97,41 @@ $conn->close();
       background-color: #7eb0ea;
     }
 
-    .digit-grid td:first-child,
-    .digit-grid th:first-child {
-      background-color: #eee;
-      font-weight: bold;
+    /* sticky: объединённая колонка */
+    .digit-grid th:first-child,
+    .digit-grid td.sticky-label {
       position: sticky;
       left: 0;
-      z-index: 1;
+      background-color: #eee;
+      z-index: 2;
+      width: 40px;
+      font-weight: normal;
+      font-size: 0.95em;
+      text-align: left;
+      padding-left: 2px;
+      white-space: nowrap;
+    }
+
+    .sticky-label .tot {
+      color: red;
+      font-weight: normal;
+    }
+    .sticky-label .digit-num {
+      font-weight: bold !important;
+      color: black;
+    }
+
+    .sticky-label .tot.low {
+      color: #999;
+    }
+
+    .sticky-label .tot.medium {
+      color: #e67e22;
+    }
+
+    .sticky-label .tot.high {
+      color: #c0392b;
+      font-weight: bold;
     }
 
     .filter-form {
@@ -114,7 +153,7 @@ $conn->close();
     <table class="digit-grid">
       <thead>
         <tr>
-          <th></th>
+          <th>Tot #</th>
           <?php foreach ($tirages as $t): ?>
             <th><?= htmlspecialchars($t['Tirage']) ?></th>
           <?php endforeach; ?>
@@ -123,13 +162,17 @@ $conn->close();
       <tbody>
         <?php for ($digit = 1; $digit <= 24; $digit++): ?>
           <tr>
-            <td><?= $digit ?></td>
-          <?php foreach ($tirages as $t):
-            $count = array_count_values($t['nums'])[$digit] ?? 0;
-            $class = $count === 1 ? 'hit' : '';
-          ?>
-            <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
-          <?php endforeach; ?>
+            <?php
+              $val = $totals[$digit];
+              $classTot = $val >= ($limit * 0.6) ? 'high' : ($val >= ($limit * 0.3) ? 'medium' : 'low');
+            ?>
+            <td class="sticky-label"><span class="tot <?= $classTot ?>">+<?= $val ?></span> <span class="digit-num"><?= $digit ?></span></td>
+            <?php foreach ($tirages as $t):
+              $count = array_count_values($t['nums'])[$digit] ?? 0;
+              $class = $count === 1 ? 'hit' : '';
+            ?>
+              <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
+            <?php endforeach; ?>
           </tr>
         <?php endfor; ?>
       </tbody>
@@ -142,7 +185,7 @@ $conn->close();
 <form class="filter-form" method="get">
   Dernières
   <select name="limit" onchange="this.form.submit()">
-    <?php foreach ([50, 100, 200, 500] as $opt): ?>
+    <?php foreach ($allowedLimits as $opt): ?>
       <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
     <?php endforeach; ?>
   </select> tirages
