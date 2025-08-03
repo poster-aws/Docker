@@ -3,9 +3,13 @@ require_once "db.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$conn = new mysqli("db", "user", "user", "toutourien");
-$conn->set_charset("utf8");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+$toutConn = new mysqli("db", "user", "user", "toutourien");
+$toutConn->set_charset("utf8");
+if ($toutConn->connect_error) die("Connection failed: " . $toutConn->connect_error);
+
+// Общее количество тиражей (всего)
+$totalRes = $toutConn->query("SELECT COUNT(*) AS total FROM Tout");
+$totalCount = ($totalRes && $row = $totalRes->fetch_assoc()) ? $row['total'] : '?';
 
 // Лимит
 $allowedLimits = [50, 100, 200, 500];
@@ -13,7 +17,7 @@ $limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits) 
 
 // Данные из БД
 $sql = "SELECT Tirage, n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12 FROM Tout ORDER BY Tirage DESC LIMIT $limit";
-$res = $conn->query($sql);
+$res = $toutConn->query($sql);
 $tirages = [];
 if ($res && $res->num_rows > 0) {
   while ($r = $res->fetch_assoc()) {
@@ -27,7 +31,7 @@ if ($res && $res->num_rows > 0) {
     ];
   }
 }
-$conn->close();
+$toutConn->close();
 
 // Подсчёт Tot
 $totals = array_fill(1, 24, 0);
@@ -148,6 +152,8 @@ foreach ($tirages as $t) {
 </head>
 <body>
 
+<div id="tout-meta" data-count="<?= $totalCount ?>"></div>
+
 <div class="table-wrapper">
   <?php if (!empty($tirages)): ?>
     <table class="digit-grid">
@@ -160,11 +166,16 @@ foreach ($tirages as $t) {
         </tr>
       </thead>
       <tbody>
+        <?php
+          $maxTot = max($totals);
+          $thresholdHigh = $maxTot * 0.66;
+          $thresholdMedium = $maxTot * 0.33;
+        ?>
         <?php for ($digit = 1; $digit <= 24; $digit++): ?>
           <tr>
             <?php
               $val = $totals[$digit];
-              $classTot = $val >= ($limit * 0.6) ? 'high' : ($val >= ($limit * 0.3) ? 'medium' : 'low');
+              $classTot = $val >= $thresholdHigh ? 'high' : ($val >= $thresholdMedium ? 'medium' : 'low');
             ?>
             <td class="sticky-label"><span class="tot <?= $classTot ?>">+<?= $val ?></span> <span class="digit-num"><?= $digit ?></span></td>
             <?php foreach ($tirages as $t):
