@@ -5,7 +5,7 @@
 $servername = "db";       // Имя сервера (например: "localhost", "127.0.0.1", или docker-сервис "db")
 $username   = "user";     // Имя пользователя MySQL
 $password   = "user";     // Пароль пользователя
-$dbname     = "quotidienne2";  // Название базы данных
+$dbname     = "quotidienne";  // Название базы данных
 
 // Включение отображения ошибок (на время разработки)
 error_reporting(E_ALL);

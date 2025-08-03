@@ -51,7 +51,7 @@ if response.status_code == 200:
         try:
             connection = mysql.connector.connect(
                 host=os.getenv('DB_HOST', 'db'),
-                database=os.getenv('DB_NAME', 'quotidienne2'),
+                database=os.getenv('DB_NAME', 'quotidienne'),
                 user=os.getenv('DB_USER', 'user'),
                 password=os.getenv('DB_PASSWORD', 'user')
             )

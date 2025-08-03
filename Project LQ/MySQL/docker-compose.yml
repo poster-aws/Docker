@@ -5,7 +5,7 @@ services:
     container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: quotidienne2  # Создаем БД
+      MYSQL_DATABASE: quotidienne  # Создаем БД
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     # volumes:

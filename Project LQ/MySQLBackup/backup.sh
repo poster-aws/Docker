@@ -35,7 +35,7 @@ backup_database() {
 
   # JSON экспорт таблицы (если задано)
   if [ -n "$TABLE_TO_JSON" ]; then
-    JSON_FILE="$BACKUP_DIR/${DB_NAME}_${TABLE_TO_JSON}-${DATE}.json"
+    JSON_FILE="$BACKUP_DIR/${TABLE_TO_JSON}-${DATE}.json"
     TMP_FILE="/tmp/${DB_NAME}_${TABLE_TO_JSON}_export.tsv"
     echo "📦 Экспорт таблицы $TABLE_TO_JSON в JSON: $JSON_FILE"
 
@@ -57,7 +57,7 @@ backup_database() {
       echo "✅ JSON экспорт завершён: $JSON_FILE"
 
       # Обновление index.json
-      INDEX_FILE="$BACKUP_DIR/${DB_NAME}_index.json"
+      INDEX_FILE="$BACKUP_DIR/index.json"
       echo "{
   \"latest\": \"$(basename "$JSON_FILE")\"
 }" > "$INDEX_FILE"
@@ -68,8 +68,8 @@ backup_database() {
   fi
 }
 
-# === Бэкап базы quotidienne2 с JSON ===
-backup_database "quotidienne2" "Q2"
+# === Бэкап базы quotidienne с JSON ===
+backup_database "quotidienne" "Q2"
 
 # === Бэкап базы toutourien без JSON ===
 backup_database "toutourien" ""
