@@ -13,4 +13,5 @@ RUN pip install beautifulsoup4 requests
 RUN pip install mysql-connector-python
 
 # Выполнение main.py, а затем init.sh
-CMD ["python", "main.py"]
+# CMD ["python", "main.py"]
+CMD ["sh", "-c", "python3 quotidienne.py && python3 toutourien.py"]

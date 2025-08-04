@@ -11,7 +11,7 @@ try:
     response = requests.get(url, timeout=10)
     response.raise_for_status()
 except requests.RequestException as e:
-    print("Ошибка при выполнении HTTP-запроса:", e)
+    print("* Ошибка при выполнении HTTP-запроса:", e)
     exit()
 
 if response.status_code == 200:
@@ -20,7 +20,7 @@ if response.status_code == 200:
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
 
-    print("\n Исходный код сохранен в 'page_source.html'.")
+    print("\n- Исходный код сохранен в 'page_source.html'.")
 
     soup = BeautifulSoup(page_source, 'html.parser')
 
@@ -28,18 +28,18 @@ if response.status_code == 200:
     date_elem = soup.find('div', id='dateAffichee')
     date_str = date_elem.text.strip() if date_elem else None
     if date_str:
-        print(f"Дата извлечена: {date_str}")
+        print(f"- Дата извлечена: {date_str}")
     else:
-        print("Дата не найдена.")
+        print("* Дата не найдена.")
 
     # Извлекаем номера
     numeros = soup.find_all('span', class_='num')
-    print(f"Найдено номеров: {len(numeros)}")
+    print(f"- Найдено номеров: {len(numeros)}")
 
     try:
         values = [int(span.text.strip().replace(' ', '')) for span in numeros[:9]]
     except ValueError:
-        print("Ошибка при преобразовании номеров.")
+        print("* Ошибка при преобразовании номеров.")
         values = []
 
     if len(values) == 9 and date_str:
@@ -50,15 +50,18 @@ if response.status_code == 200:
 
         try:
             connection = mysql.connector.connect(
-                host=os.getenv('DB_HOST', 'db'),
-                database=os.getenv('DB_NAME', 'quotidienne'),
-                user=os.getenv('DB_USER', 'user'),
-                password=os.getenv('DB_PASSWORD', 'user')
-            )
+            host='db',
+            database='quotidienne',  # <-- без getenv
+            user='user',
+            password='user'
+        )
 
             if connection.is_connected():
                 cursor = connection.cursor()
                 inserted = False
+                cursor.execute("SELECT DATABASE()")
+                current_db = cursor.fetchone()[0]
+                print(f"- Подключен к базе: {current_db}")
 
                 # Q2
                 cursor.execute("""
@@ -118,7 +121,7 @@ if response.status_code == 200:
                 connection.commit()
 
                 if inserted:
-                    print(f"\nДанные добавлены/обновлены:")
+                    print(f"\n- Данные добавлены:")
                     print(f"  Q2: {date_str} — {n1}, {n2}")
                     print(f"  Q3: {date_str} — {n3}, {n4}, {n5}")
                     print(f"  Q4: {date_str} — {n6}, {n7}, {n8}, {n9}")
@@ -140,21 +143,26 @@ if response.status_code == 200:
                         try:
                             cursor.callproc(proc)
                             connection.commit()
-                            print(f"Процедура {proc} выполнена.")
+                            print(f"- Процедура {proc} выполнена.")
                         except Error as e:
-                            print(f"Ошибка в {proc}:", e)
+                            print(f"* Ошибка в {proc}:", e)
                 else:
-                    print("Данные уже существуют. Процедуры не запущены.")
+                    print("- Данные уже существуют! Процедуры не запущены.")
 
         except Error as e:
-            print("Ошибка при подключении к MySQL:", e)
+            print("* Ошибка при подключении к MySQL:", e)
 
         finally:
-            if 'connection' in locals() and connection.is_connected():
-                cursor.close()
-                connection.close()
-                print("Соединение с базой данных закрыто.")
+            try:
+                if 'cursor' in locals() and cursor:
+                    cursor.close()
+                if 'connection' in locals() and connection.is_connected():
+                    connection.close()
+                print("- Соединение с базой данных полностью закрыто.")
+            except Exception as cleanup_error:
+                print("* Ошибка при закрытии соединения:", cleanup_error)
+
     else:
-        print("Недостаточно номеров или дата не извлечена.")
+        print("* Недостаточно номеров или дата не извлечена.")
 else:
-    print(f"Ошибка при получении страницы: {response.status_code}")
+    print(f"* Ошибка при получении страницы: {response.status_code}")
