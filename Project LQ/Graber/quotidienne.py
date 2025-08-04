@@ -8,7 +8,10 @@ import os
 url = "https://loteries.lotoquebec.com/fr/loteries/la-quotidienne"
 
 try:
-    response = requests.get(url, timeout=10)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+    response = requests.get(url, timeout=30, headers=headers)
     response.raise_for_status()
 except requests.RequestException as e:
     print("* Ошибка при выполнении HTTP-запроса:", e)

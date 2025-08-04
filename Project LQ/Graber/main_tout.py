@@ -1,18 +1,22 @@
+
 import requests
 from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import Error
-from datetime import datetime
 import os
+import locale
+from datetime import datetime
 
-# URL новой страницы (без SSL-проблем)
+# Локаль для французской даты
+try:
+    locale.setlocale(locale.LC_TIME, 'fr_CA.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+
 url = "https://loteries.lotoquebec.com/fr/loteries/tout-ou-rien"
 
 try:
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
-    response = requests.get(url, timeout=30, headers=headers)
+    response = requests.get(url, timeout=10)
     response.raise_for_status()
 except requests.RequestException as e:
     print("* Ошибка при выполнении HTTP-запроса:", e)
@@ -20,27 +24,25 @@ except requests.RequestException as e:
 
 if response.status_code == 200:
     page_source = response.text
-
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
-
     print("\n- Исходный код сохранен в 'page_source.html'.")
 
     soup = BeautifulSoup(page_source, 'html.parser')
 
     # Извлекаем дату
     date_elem = soup.find('div', id='dateAffichee')
-    date_str = date_elem.text.strip() if date_elem else None
-    if date_str:
-        print(f"- Дата извлечена: {date_str}")
+    raw_date_str = date_elem.text.strip() if date_elem else None
+    try:
+        date_obj = datetime.strptime(raw_date_str, "%A %d %B %Y").date()
+    except ValueError:
         try:
-            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            date_obj = datetime.strptime(raw_date_str, "%d %B %Y").date()
         except ValueError:
-            print("* Ошибка: неверный формат даты.")
+            print("* Невозможно преобразовать дату:", raw_date_str)
             exit()
-    else:
-        print("* Дата не найдена.")
-        exit()
+
+    print(f"- Дата преобразована: {date_obj}")
 
     # Извлекаем номера
     numeros = soup.find_all('span', class_='num')
@@ -64,6 +66,7 @@ if response.status_code == 200:
                 user='user',
                 password='user'
             )
+
             if connection.is_connected():
                 cursor = connection.cursor()
                 cursor.execute("SELECT DATABASE()")
@@ -91,12 +94,12 @@ if response.status_code == 200:
                         VALUES (%s, %s, %s, %s, %s, %s, %s,
                                 %s, %s, %s, %s, %s, %s)
                     """, (date_obj, n1, n2, n3, n4, n5, n6,
-                          n7, n8, n9, n10, n11, n12))
+                           n7, n8, n9, n10, n11, n12))
                     connection.commit()
                     print(f"- Тираж {date_obj} успешно добавлен.")
 
         except Error as e:
-            print("* Ошибка при подключении к MySQL:", e)
+            print("; Ошибка при подключении к MySQL:", e)
 
         finally:
             try:
@@ -107,6 +110,6 @@ if response.status_code == 200:
                 print("* Ошибка при закрытии:", cleanup_error)
 
     else:
-        print("- Недостаточно номеров.")
+        print("- Недостаточно номеров или дата не извлечена.")
 else:
     print(f"- Ошибка при получении страницы: {response.status_code}")
