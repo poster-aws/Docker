@@ -60,7 +60,7 @@ if response.status_code == 200:
         try:
             connection = mysql.connector.connect(
                 host='db',
-                database='toutourien',
+                database='toutourien',  # <-- без getenv
                 user='user',
                 password='user'
             )
@@ -83,7 +83,7 @@ if response.status_code == 200:
                 exists = cursor.fetchone()[0] > 0
 
                 if exists:
-                    print(f"- Данные для {date_obj} уже существуют.")
+                    print(f"- Данные для {date_obj} уже существуют!")
                 else:
                     cursor.execute("""
                         INSERT INTO Tout (Tirage, n1, n2, n3, n4, n5, n6,

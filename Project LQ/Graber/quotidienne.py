@@ -150,7 +150,7 @@ if response.status_code == 200:
                         except Error as e:
                             print(f"* Ошибка в {proc}:", e)
                 else:
-                    print("- Данные уже существуют! Процедуры не запущены.")
+                    print("- Данные для {date_str} уже существуют! Процедуры не запущены.")
 
         except Error as e:
             print("* Ошибка при подключении к MySQL:", e)
