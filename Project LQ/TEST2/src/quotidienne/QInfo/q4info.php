@@ -22,7 +22,17 @@ function getComboType($nums) {
 }
 
 $fois1      = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 1");  
+
 $freeOrder  = $conn->query("SELECT n1, n2, n3, n4 FROM Q4_fois WHERE Fois = 0");
+
+// Fetch "all digits the same" with Fois = 0
+$allSameZero = $conn->query("
+  SELECT n1
+  FROM Q4_fois
+  WHERE Fois = 0 AND n1 = n2 AND n2 = n3 AND n3 = n4
+  GROUP BY n1
+  ORDER BY n1
+");
 
 /* === Вариант А: группы среди fois=0, где есть минимум 2 перестановки одной мультикомбинации ===
    rep_key  — любой представитель группы (минимальная строка n1n2n3n4);
@@ -150,13 +160,14 @@ select {
 
   border: 1px solid #0b6efd;
   border-radius: 8px;
-  background: #e7f0ff;
+  background: #f0f0f0;
   cursor: pointer;
   font-weight: 700;
 
   padding: 0;
   line-height: 1;
 }
+.count-btn[disabled] { opacity: 0.6; cursor: default; }
 .dropdown {
   position: relative; display: inline-block;
 }
@@ -184,7 +195,7 @@ select {
   overflow-y: auto;
   overflow-x: auto;            /* на всякий случай, если контент широкий */
 
-  background: #fff;
+  background: #f0f0f0; /* Светло-серый цвет выпадающего меню */
   border: 1px solid #aaa;
   border-radius: 10px;
   padding: 6px 8px;            /* чуть меньше, чтобы не раздувать */
@@ -290,6 +301,25 @@ select {
         </tr> -->
       </thead>
       <tbody>
+        <?php
+        // Render "all digits the same" with Fois=0 at the top
+        ?>
+        <?php if (isset($allSameZero) && $allSameZero && $allSameZero->num_rows > 0): ?>
+          <?php while ($s = $allSameZero->fetch_assoc()):
+            $d = (int)$s['n1']; ?>
+            <tr>
+              <td>
+                <span class="circle"><?= $d ?></span>
+                <span class="circle"><?= $d ?></span>
+                <span class="circle"><?= $d ?></span>
+                <span class="circle"><?= $d ?></span>
+              </td>
+              <td>
+                <button class="count-btn" disabled>-</button>
+              </td>
+            </tr>
+          <?php endwhile; ?>
+        <?php endif; ?>
         <?php
         $rowIndex = 0;
         while ($r = $dupsA->fetch_assoc()):
