@@ -2,8 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// require_once "db.php"; // при необходимости общий конфиг
-
+// === Подключение к БД ===
 $toutConn = new mysqli("db", "user", "user", "toutourien");
 $toutConn->set_charset("utf8");
 if ($toutConn->connect_error) die("Connection failed: " . $toutConn->connect_error);
@@ -32,7 +31,6 @@ if ($res && $res->num_rows > 0) {
     $tirages[] = [
       'Tirage' => $r['Tirage'],
       'nums'   => $nums,
-      // ⚡ быстрый lookup: isset($flip[$digit])
       'flip'   => array_flip($nums),
     ];
   }
@@ -52,7 +50,7 @@ foreach ($tirages as $t) {
 
 <div class="table-wrapper tout-grid-wrapper">
   <?php if (!empty($tirages)): ?>
-    <table class="digit-grid">
+    <table class="digit-grid" id="toutGrid">
       <thead>
         <tr>
           <th class="sticky-left">Tot #</th>
@@ -78,7 +76,7 @@ foreach ($tirages as $t) {
               <span class="digit-num"><?= $digit ?></span>
             </td>
             <?php foreach ($tirages as $t):
-              $isHit = isset($t['flip'][$digit]); // быстрее, чем array_count_values + проверка
+              $isHit = isset($t['flip'][$digit]);
             ?>
               <td class="<?= $isHit ? 'hit' : '' ?>"><?= $isHit ? $digit : '' ?></td>
             <?php endforeach; ?>
@@ -89,4 +87,73 @@ foreach ($tirages as $t) {
   <?php else: ?>
     <p class="no-data">Нет данных для отображения.</p>
   <?php endif; ?>
+</div>
+
+<!-- Якорь для «закрыть» -->
+<span id="tout-root"></span>
+
+<!-- ===== КНОПКА ПОД ТАБЛИЦЕЙ ===== -->
+<div style="max-width:98%; margin:10px auto 20px; text-align:center;">
+  <a href="#verifierModal" style="
+    display:inline-block; padding:8px 14px; border:1px solid #bdbdbd; border-radius:10px;
+    background:#e6f0ff; cursor:pointer; font-size:14px; text-decoration:none; color:#000;">
+    Проверить комбинацию
+  </a>
+</div>
+
+<!-- ===== МОДАЛКА БЕЗ JS (через :target) ===== -->
+<style>
+  /* По умолчанию скрыто */
+  #verifierModal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center; justify-content: center;
+    padding: 20px; z-index: 9999;
+  }
+  /* Показать, когда #verifierModal в адресной строке (…#verifierModal) */
+  #verifierModal:target { display: flex; }
+
+  #verifierModal .modal-dialog {
+  background: rgba(255, 255, 255, 0.46); /* полупрозрачный белый */
+  border-radius: 12px;
+  width: min(490px, 48vw);   /* в 2 раза меньше */
+  height: min(350px, 46vh);  /* в 2 раза меньше */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+  #verifierModal .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-bottom: 1px solid #eee; background: #f8f9fb;
+  }
+  #verifierModal .modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+  #verifierModal .modal-close {
+    text-decoration: none; border: none; background: transparent;
+    font-size: 22px; line-height: 1; cursor: pointer; color: #000;
+  }
+  #verifierModal .modal-body { flex: 1; overflow: hidden; }
+  #verifierModal .modal-body iframe {
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    background: transparent !important; /* прозрачный фон iframe */
+    display: block;
+  }
+</style>
+
+<div id="verifierModal" role="dialog" aria-modal="true" aria-labelledby="verifierTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 id="verifierTitle">Проверка комбинации</h3>
+      <!-- Закрыть: возвращаемся к #tout-root (любой элемент-якорь в этом фрагменте) -->
+      <a href="#tout-root" class="modal-close" aria-label="Закрыть">×</a>
+    </div>
+    <div class="modal-body">
+      <!-- Код грузится напрямую из verifier.php -->
+      <iframe src="../outis/verifier.php" loading="lazy" referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
 </div>

@@ -76,3 +76,97 @@ table.digit-grid {
 
 /* Сообщение «нет данных» */
 .no-data { text-align: center; color: red; margin: 12px 0; }
+
+
+
+/* ===== Tout ou Rien grid ===== */
+.tout-page { margin: 0; padding: 0; font-family: sans-serif; }
+
+/* Панель управления */
+.tout-toolbar {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center;
+  padding: 8px 10px; margin: 6px auto 6px; max-width: 98%;
+  border: 1px solid #cfcfcf; background: #f7f7f7; border-radius: 10px;
+}
+.tout-toolbar .controls-left, .tout-toolbar .controls-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tout-toolbar label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+.tout-toolbar select, .tout-toolbar input[type="date"], .tout-toolbar input[type="number"] {
+  height: 30px; padding: 2px 6px; border: 1px solid #bdbdbd; border-radius: 8px; background: #fff;
+}
+.btn { border: 1px solid #bdbdbd; background: #e9e9e9; border-radius: 10px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
+.btn:hover { filter: brightness(0.98); }
+.btn:active { transform: translateY(1px); }
+.btn-light { background: #f4f4f4; }
+.btn-primary { background: #e6f0ff; border-color: #a9c7ff; }
+
+/* Металиния */
+.tout-meta-line { max-width: 98%; margin: 4px auto 6px; font-size: 14px; color: #333; }
+.tout-meta-line .sep { margin: 0 6px; color: #999; }
+
+/* Контейнер таблицы */
+.table-wrapper.tout-grid-wrapper {
+  max-width: 98%; max-height: 90vh; overflow: auto; margin: 0 auto 16px;
+  border: 1px solid #ccc; background: rgba(173, 216, 230, 0.85); border-radius: 10px;
+}
+
+/* Таблица */
+table.digit-grid { width: max-content; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+.digit-grid th, .digit-grid td {
+  width: 22px; height: 22px; text-align: center; border: 1px solid #ccc; padding: 0; box-sizing: border-box;
+}
+
+/* Шапка */
+.digit-grid thead th {
+  height: 60px; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 0.7em; background: #eee; position: sticky; top: 0; z-index: 3;
+}
+
+/* Попадания */
+.digit-grid td.hit { background-color: #7eb0ea; }
+
+/* Липкая левая колонка */
+.digit-grid .sticky-left, .digit-grid th.sticky-left, .digit-grid td.sticky-left {
+  position: sticky; left: 0; background-color: #eee; z-index: 4;
+  width: 52px !important; text-align: left; padding-left: 4px; white-space: nowrap; font-weight: normal; font-size: 0.95em;
+}
+
+/* Подписи */
+.sticky-label .tot { color: red; font-weight: normal; }
+.sticky-label .digit-num { font-weight: bold; color: #000; }
+
+/* Градация Tot */
+.sticky-label .tot.low { color: #999; }
+.sticky-label .tot.medium { color: #e67e22; }
+.sticky-label .tot.high { color: #c0392b; font-weight: bold; }
+
+/* Подсветки */
+.row-highlight { outline: 2px solid #ff9f43; animation: fadeRow 1.2s ease forwards; }
+@keyframes fadeRow { 0% { outline-color:#ff9f43;} 100% { outline-color: transparent;} }
+.col-highlight { background: #ffeaa7 !important; }
+
+/* Нет данных */
+.no-data { text-align: center; color: red; margin: 12px 0; }
+
+/* === NEW: Модалка проверяльщика === */
+.modal-backdrop[hidden] { display: none !important; }
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  z-index: 9999;
+}
+.modal-dialog {
+  background: #ffffff; border-radius: 12px; width: min(980px, 96vw); height: min(700px, 92vh);
+  display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.35); overflow: hidden;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid #eee; background: #f8f9fb;
+}
+.modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.modal-close {
+  border: none; background: transparent; font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 6px;
+}
+.modal-body { flex: 1; overflow: hidden; }
+.modal-body iframe {
+  width: 100%; height: 100%; border: none; display: block; background: #fff;
+}
