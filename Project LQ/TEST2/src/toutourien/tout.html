@@ -1,18 +1,25 @@
+<!-- src/toutourien/tout.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <title>Tout ou Rien</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <!-- Стили специально не подключаем здесь, вы грузите их глобально из src/index.html -->
 </head>
 <body>
-  <main><div id="content"></div></main>
+  <main class="tout-page">
+    <div id="content"></div>
+  </main>
 
-  <script src="script.js"></script>
+  <!-- ВАЖНО: путь к глобальному скрипту из подкаталога -->
+  <script src="../script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      loadPage("tout.php"); // подставляет PHP-контент так же, как в Q2.html
+      // Файл в той же папке -> относительный путь короче и без дубля /toutourien/
+      loadPage("./tout.php");
+      // если нужна «анти-кеш» версия при разработке:
+      // loadPage(`./tout.php?v=${Date.now()}`);
     });
   </script>
 </body>
