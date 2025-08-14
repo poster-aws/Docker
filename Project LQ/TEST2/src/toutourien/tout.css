@@ -79,7 +79,7 @@ table.digit-grid {
 
 
 
-/* ===== Tout ou Rien grid ===== */
+/* ===== Tout ou Rien grid (дубликат секции для совместимости) ===== */
 .tout-page { margin: 0; padding: 0; font-family: sans-serif; }
 
 /* Панель управления */
@@ -148,6 +148,11 @@ table.digit-grid { width: max-content; border-collapse: collapse; table-layout: 
 .no-data { text-align: center; color: red; margin: 12px 0; }
 
 /* === NEW: Модалка проверяльщика === */
+
+#verifierModal .modal-header {
+  cursor: move; /* покажет, что можно тащить */
+}
+
 .modal-backdrop[hidden] { display: none !important; }
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
@@ -155,8 +160,25 @@ table.digit-grid { width: max-content; border-collapse: collapse; table-layout: 
   z-index: 9999;
 }
 .modal-dialog {
-  background: #ffffff; border-radius: 12px; width: min(980px, 96vw); height: min(700px, 92vh);
-  display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.35); overflow: hidden;
+  background: rgba(255, 255, 255, 0.46);
+  border-radius: 12px;
+  width: min(420px, 48vw);
+  height: min(390px, 46vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px)));
+
+  /* центрируем при первом открытии */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+  overflow: auto;
 }
 .modal-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -169,4 +191,11 @@ table.digit-grid { width: max-content; border-collapse: collapse; table-layout: 
 .modal-body { flex: 1; overflow: hidden; }
 .modal-body iframe {
   width: 100%; height: 100%; border: none; display: block; background: #fff;
+}
+
+/* Ограничение области перемещения модального окна */
+.modal-drag-boundary {
+  position: fixed;
+  inset: 10px;
+  pointer-events: none;
 }

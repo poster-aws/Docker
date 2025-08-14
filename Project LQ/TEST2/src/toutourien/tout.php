@@ -94,7 +94,7 @@ foreach ($tirages as $t) {
 
 <!-- ===== КНОПКА ПОД ТАБЛИЦЕЙ ===== -->
 <div style="max-width:98%; margin:10px auto 20px; text-align:center;">
-  <a href="#verifierModal" style="
+  <a href="#verifierModal" onclick="(function(){const d=document.querySelector('#verifierModal .modal-dialog'); if(d){d.style.setProperty('--tx','0px'); d.style.setProperty('--ty','0px');}})()" style="
     display:inline-block; padding:8px 14px; border:1px solid #bdbdbd; border-radius:10px;
     background:#e6f0ff; cursor:pointer; font-size:14px; text-decoration:none; color:#000;">
     Проверить комбинацию
@@ -108,45 +108,134 @@ foreach ($tirages as $t) {
     display: none;
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.45);
-    align-items: center; justify-content: center;
-    padding: 20px; z-index: 9999;
+    /* расположение контейнера модалки: сверху по центру */
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 20px;
+    z-index: 9999;
   }
   /* Показать, когда #verifierModal в адресной строке (…#verifierModal) */
   #verifierModal:target { display: flex; }
 
   #verifierModal .modal-dialog {
-  background: rgba(255, 255, 255, 0.46); /* полупрозрачный белый */
-  border-radius: 12px;
-  width: min(490px, 48vw);   /* в 2 раза меньше */
-  height: min(350px, 46vh);  /* в 2 раза меньше */
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-}
+    background: rgba(255, 255, 255, 0.46); /* полупрозрачный белый */
+    border-radius: 12px;
+    width: min(420px, 48vw);
+    height: min(390px, 46vh);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+
+    /* центр по умолчанию — чтобы всегда возвращалась в центр при открытии */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px)));
+    margin: 0;
+
+    /* страхующие ограничения размеров */
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    overflow: auto;
+  }
 
   #verifierModal .modal-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 14px; border-bottom: 1px solid #eee; background: #f8f9fb;
+    cursor: move; /* можно тянуть за шапку */
   }
   #verifierModal .modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
   #verifierModal .modal-close {
     text-decoration: none; border: none; background: transparent;
     font-size: 22px; line-height: 1; cursor: pointer; color: #000;
   }
+
   #verifierModal .modal-body { flex: 1; overflow: hidden; }
   #verifierModal .modal-body iframe {
-    width: 100%; 
-    height: 100%; 
-    border: none; 
+    width: 100%;
+    height: 100%;
+    border: none;
     background: transparent !important; /* прозрачный фон iframe */
     display: block;
+    pointer-events: auto;
   }
 </style>
 
 <div id="verifierModal" role="dialog" aria-modal="true" aria-labelledby="verifierTitle">
   <div class="modal-dialog">
-    <div class="modal-header">
+    <div class="modal-header" onmousedown="(function(e){
+    if (e.button !== 0) return;                // только ЛКМ
+    if (e.target.closest('.modal-close')) return;
+    const d=document.querySelector('#verifierModal .modal-dialog');
+    if(!d) return;
+
+    let dragging = false;
+    const startX = e.clientX, startY = e.clientY;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const dlgW = d.offsetWidth, dlgH = d.offsetHeight;
+    const margin = 10;
+    const THRESH = 3; // пикселей для начала драга
+
+    // Текущие смещения по CSS-переменным
+    const cs = getComputedStyle(d);
+    const baseTx = parseFloat(cs.getPropertyValue('--tx')) || 0;
+    const baseTy = parseFloat(cs.getPropertyValue('--ty')) || 0;
+
+    function clampLeftTop(left, top){
+      const minL = margin, minT = margin;
+      const maxL = Math.max(minL, vw - dlgW - margin);
+      const maxT = Math.max(minT, vh - dlgH - margin);
+      if (left < minL) left = minL;
+      if (top  < minT) top  = minT;
+      if (left > maxL) left = maxL;
+      if (top  > maxT) top  = maxT;
+      return [left, top];
+    }
+
+    function mm(ev){
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+
+      if (!dragging) {
+        if (Math.abs(dx) < THRESH && Math.abs(dy) < THRESH) return;
+        dragging = true;
+        document.body.style.userSelect='none';
+        e.currentTarget.style.cursor='grabbing';
+      }
+
+      // Базовая «центровка»: левый верх при translate(-50%,-50%)
+      const baseLeft = (vw - dlgW) / 2;
+      const baseTop  = (vh - dlgH) / 2;
+
+      // Желаемая новая позиция с учётом прошлого смещения и текущего dx/dy
+      let left = baseLeft + baseTx + dx;
+      let top  = baseTop  + baseTy + dy;
+
+      // Ограничиваем в пределах вьюпорта
+      [left, top] = clampLeftTop(left, top);
+
+      // Конвертируем обратно в смещения относительно центра
+      const newTx = left - baseLeft;
+      const newTy = top  - baseTop;
+
+      d.style.setProperty('--tx', newTx + 'px');
+      d.style.setProperty('--ty', newTy + 'px');
+    }
+
+    function mu(){
+      document.removeEventListener('mousemove', mm);
+      window.removeEventListener('mouseup', mu);
+      if (dragging) {
+        document.body.style.userSelect='';
+        e.currentTarget.style.cursor='move';
+      }
+    }
+
+    document.addEventListener('mousemove', mm);
+    window.addEventListener('mouseup', mu);
+    // Не делаем preventDefault на mousedown — не ломаем клики в iframe
+  })(event)">
       <h3 id="verifierTitle">Проверка комбинации</h3>
       <!-- Закрыть: возвращаемся к #tout-root (любой элемент-якорь в этом фрагменте) -->
       <a href="#tout-root" class="modal-close" aria-label="Закрыть">×</a>
