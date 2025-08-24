@@ -94,7 +94,11 @@ foreach ($tirages as $t) {
 
 <!-- ===== КНОПКА ПОД ТАБЛИЦЕЙ ===== -->
 <div style="max-width:98%; margin:10px auto 20px; text-align:center;">
-  <a href="#verifierModal" onclick="(function(){const d=document.querySelector('#verifierModal .modal-dialog'); if(d){d.style.setProperty('--tx','0px'); d.style.setProperty('--ty','0px');}})()" style="
+  <a href="#verifierModal" onclick="(function(){
+    const d=document.querySelector('#verifierModal .modal-dialog');
+    if(d){ d.style.setProperty('--tx','0px'); d.style.setProperty('--ty','0px'); }
+    setTimeout(function(){ const m=document.getElementById('verifierModal'); if(m){ if(!m.hasAttribute('tabindex')) m.setAttribute('tabindex','-1'); m.focus({preventScroll:true}); }}, 0);
+  })()" style="
     display:inline-block; padding:8px 14px; border:1px solid #bdbdbd; border-radius:10px;
     background:#e6f0ff; cursor:pointer; font-size:14px; text-decoration:none; color:#000;">
     Проверить комбинацию
@@ -162,7 +166,7 @@ foreach ($tirages as $t) {
   }
 </style>
 
-<div id="verifierModal" role="dialog" aria-modal="true" aria-labelledby="verifierTitle">
+<div id="verifierModal" role="dialog" aria-modal="true" aria-labelledby="verifierTitle" tabindex="-1" onkeydown="if(event.key==='Escape'||event.key==='Esc'){location.hash='#tout-root';}">
   <div class="modal-dialog">
     <div class="modal-header" onmousedown="(function(e){
     if (e.button !== 0) return;                // только ЛКМ
@@ -242,7 +246,39 @@ foreach ($tirages as $t) {
     </div>
     <div class="modal-body">
       <!-- Код грузится напрямую из verifier.php -->
-      <iframe src="../outis/verifier.php" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <iframe src="../outis/verifier.php" loading="lazy" referrerpolicy="no-referrer" onload="try{var w=this.contentWindow,d=w.document;d.addEventListener('keydown',function(ev){if(ev.key==='Escape'||ev.key==='Esc'){parent.location.hash='#tout-root';}},true);}catch(e){}"></iframe>
     </div>
   </div>
 </div>
+<script>
+(function(){
+  const MOD = '#verifierModal';
+  function isOpen(){ return location.hash === MOD; }
+  function close(){ location.hash = '#tout-root'; }
+  function focusModal(){
+    const m=document.getElementById('verifierModal');
+    if(m){
+      if(!m.hasAttribute('tabindex')) m.setAttribute('tabindex','-1');
+      m.focus({preventScroll:true});
+    }
+  }
+  // Esc в родителе
+  document.addEventListener('keydown', function(ev){
+    if ((ev.key === 'Escape' || ev.key === 'Esc') && isOpen()){
+      close();
+    }
+  }, true);
+  // Фокус при открытии по хэшу
+  window.addEventListener('hashchange', function(){
+    if (isOpen()) focusModal();
+  });
+  // Сообщение от iframe (если Esc в нём)
+  window.addEventListener('message', function(ev){
+    if (ev && ev.data && ev.data.type === 'closeVerifier') {
+      close();
+    }
+  });
+  // Если уже открыто при загрузке
+  if (isOpen()) focusModal();
+})();
+</script>
