@@ -7,6 +7,7 @@ $resultMessage = '';
 $resultColor = ''; // green | orange | red
 $selectedNums = [];
 
+/** Валидация ровно 12 разных чисел 1..24 */
 function validate_numbers(array $nums, &$errMsg) {
     if (count($nums) !== 12) { $errMsg = "Нужно выбрать ровно 12 чисел."; return false; }
     $uniq = array_unique($nums);
@@ -15,6 +16,14 @@ function validate_numbers(array $nums, &$errMsg) {
         if (!is_int($n) || $n < 1 || $n > 24) { $errMsg = "Допустимы только числа от 1 до 24."; return false; }
     }
     return true;
+}
+
+/** Предзаполнение из GET ?pre=1,2,... (не обязательно) */
+if (!empty($_GET['pre'])) {
+    $pre = array_map('intval', explode(',', $_GET['pre']));
+    $pre = array_values(array_unique(array_filter($pre, fn($x) => $x >= 1 && $x <= 24)));
+    // ограничимся максимумом 12 для корректной подсветки
+    $selectedNums = array_slice($pre, 0, 12);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
@@ -31,15 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
         } else {
             $conn->set_charset("utf8");
             $safeList = implode(',', array_map('intval', $numbers));
-            // Проверка множественного совпадения (каждая колонка в выборке)
+
+            // Более строгая проверка: все 12 полей должны входить в набор (сумма булевых IN == 12)
             $sql = "
                 SELECT 1
                 FROM Tout
-                WHERE n1 IN ($safeList) AND n2 IN ($safeList) AND n3 IN ($safeList) AND n4 IN ($safeList)
-                  AND n5 IN ($safeList) AND n6 IN ($safeList) AND n7 IN ($safeList) AND n8 IN ($safeList)
-                  AND n9 IN ($safeList) AND n10 IN ($safeList) AND n11 IN ($safeList) AND n12 IN ($safeList)
+                WHERE ((n1  IN ($safeList)) + (n2  IN ($safeList)) + (n3  IN ($safeList)) + (n4  IN ($safeList)) +
+                       (n5  IN ($safeList)) + (n6  IN ($safeList)) + (n7  IN ($safeList)) + (n8  IN ($safeList)) +
+                       (n9  IN ($safeList)) + (n10 IN ($safeList)) + (n11 IN ($safeList)) + (n12 IN ($safeList))) = 12
                 LIMIT 1
             ";
+
             $res = $conn->query($sql);
             if ($res && $res->num_rows > 0) {
                 $resultMessage = "✅ Найдена";
@@ -66,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       padding: 1em;
       background: transparent; /* прозрачный фон внутри iframe */
     }
-
     h2 { margin: 0.2em 0 0.6em; }
 
     .number-grid {
@@ -76,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       justify-content: center;
       margin: 12px 0 10px;
     }
-
     .circle {
       width: 45px;
       height: 45px;
@@ -91,11 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       transition: 0.15s;
     }
     .circle:hover { transform: translateY(-1px); }
-    .circle.selected {
-      background-color: #007BFF;
-      color: white;
-      font-weight: bold;
-    }
+    .circle.selected { background-color: #007BFF; color: white; font-weight: bold; }
     .circle.locked { opacity: 0.45; cursor: not-allowed; }
 
     .row {
@@ -118,21 +123,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       min-width: 150px;
     }
     .btn:hover { filter: brightness(0.98); }
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    /* Цвета результата прямо на кнопке */
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-success { background: #e8f6ee; border-color: #bfe6cf; }
     .btn-warning { background: #fff4e5; border-color: #ffd19b; }
     .btn-error   { background: #fdecec; border-color: #f5b5b5; }
-
-    /* убрали блок результата под формой */
   </style>
 </head>
 <body>
-
-<!-- <h2>Проверка комбинации Tout ou Rien</h2> -->
 
 <form method="POST" onsubmit="return prepareSubmit()">
   <input type="hidden" name="numbers" id="numbersInput">
@@ -145,16 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
 
   <div class="row">
     <div id="counter" class="muted">Выбрано: <?= count(array_unique($selectedNums)) ?>/12</div>
-    <!-- <div class="muted">Допустимы только 12 разных чисел 1–24</div> -->
   </div>
 
   <div class="row">
     <?php
-      // Настроим параметры кнопки «Проверить» в зависимости от ответа
-      $btnLabel   = $resultMessage ? $resultMessage : 'Проверить';
-      $btnDisabled= $resultMessage ? 'disabled' : '';
-      $btnClass   = '';
-      if ($resultColor === 'green')  $btnClass = 'btn-success';
+      $btnLabel    = $resultMessage ? $resultMessage : 'Проверить';
+      $btnDisabled = $resultMessage ? 'disabled' : '';
+      $btnClass    = '';
+      if ($resultColor === 'green')      $btnClass = 'btn-success';
       elseif ($resultColor === 'orange') $btnClass = 'btn-warning';
       elseif ($resultColor === 'red')    $btnClass = 'btn-error';
     ?>
@@ -162,13 +157,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       <?= htmlspecialchars($btnLabel, ENT_QUOTES) ?>
     </button>
 
-    <button type="button" class="btn" onclick="resetSelection()">Сбросить</button>
+    <button type="button" class="btn" id="resetBtn" onclick="resetSelection()">Сбросить</button>
   </div>
 </form>
 
 <script>
   const preselected = <?= json_encode(array_values(array_unique($selectedNums))) ?>;
   const selected = new Set(preselected);
+
+// Fallback: прочитать ?pre= из URL внутри iframe, если сервер не заполнил preselected
+(function applyPreFromQueryIfEmpty(){
+  if (selected.size > 0) return;
+  try {
+    const usp = new URLSearchParams(window.location.search);
+    const pre = (usp.get('pre') || '').split(',').map(s => parseInt(s, 10)).filter(n => Number.isInteger(n) && n >= 1 && n <= 24);
+    const uniq = Array.from(new Set(pre)).slice(0, 12);
+    if (uniq.length) {
+      uniq.forEach(n => selected.add(n));
+    }
+  } catch(e) {}
+})();
+  
   const grid = document.getElementById("grid");
   const counterEl = document.getElementById("counter");
   const checkBtn = document.getElementById("checkBtn");
@@ -203,28 +212,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
   });
 
   function resetSelection() {
-    // Полный сброс: выбор, счётчик, и кнопка «Проверить» возвращается в исходное состояние
     selected.clear();
-    grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected"));
+    grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected", "locked"));
     updateCounter();
-
+    // Полный сброс состояния кнопки
     checkBtn.disabled = false;
     checkBtn.textContent = 'Проверить';
     checkBtn.classList.remove('btn-success','btn-warning','btn-error');
   }
 
   function prepareSubmit() {
-    // Если кнопка уже «заблокирована» (после результата), не отправляем повторно
-    if (checkBtn.disabled) return false;
-
+    if (checkBtn.disabled) return false; // не отправляем повторно прежний результат
     if (selected.size !== 12) {
       alert("Нужно выбрать ровно 12 разных чисел (1–24).");
       return false;
     }
     const arr = Array.from(selected);
     document.getElementById("numbersInput").value = arr.join(',');
-    return true; // отправляем форму — после ответа сервер отрисует результат прямо в кнопке и заблокирует её
+    return true;
   }
+
+  // Клавиатурные шорткаты: Esc — сброс; Ctrl/⌘+Enter — проверка
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      resetSelection();
+    } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      if (!checkBtn.disabled) {
+        if (prepareSubmit()) {
+          checkBtn.form.submit();
+        }
+      }
+    }
+  });
 
   // первичная отрисовка
   updateCounter();
