@@ -55,20 +55,13 @@ foreach ($tirages as $t) {
         <tr>
           <th class="sticky-left">Tot #</th>
           <?php foreach ($tirages as $t): ?>
-            <th>
-              <a href="#verifierModal"
-                 class="open-verifier"
-                 data-pre="<?= htmlspecialchars(implode(',', $t['nums']), ENT_QUOTES) ?>"
-                 title="Проверить тираж <?= htmlspecialchars($t['Tirage'], ENT_QUOTES) ?>">
-                 <?= htmlspecialchars($t['Tirage'], ENT_QUOTES) ?>
-              </a>
-            </th>
+            <th><?= htmlspecialchars($t['Tirage'], ENT_QUOTES) ?></th>
           <?php endforeach; ?>
         </tr>
       </thead>
       <tbody>
         <?php
-          $maxTot = $totals ? max($totals) : 0;
+          $maxTot = max($totals);
           $thresholdHigh = $maxTot * 0.66;
           $thresholdMedium = $maxTot * 0.33;
         ?>
@@ -104,8 +97,6 @@ foreach ($tirages as $t) {
   <a href="#verifierModal" onclick="(function(){
     const d=document.querySelector('#verifierModal .modal-dialog');
     if(d){ d.style.setProperty('--tx','0px'); d.style.setProperty('--ty','0px'); }
-    var f=document.querySelector('#verifierModal iframe');
-    if(f){ f.src='../outis/verifier.php'; }
     setTimeout(function(){ const m=document.getElementById('verifierModal'); if(m){ if(!m.hasAttribute('tabindex')) m.setAttribute('tabindex','-1'); m.focus({preventScroll:true}); }}, 0);
   })()" style="
     display:inline-block; padding:8px 14px; border:1px solid #bdbdbd; border-radius:10px;
@@ -255,7 +246,7 @@ foreach ($tirages as $t) {
     </div>
     <div class="modal-body">
       <!-- Код грузится напрямую из verifier.php -->
-      <iframe id="verifierFrame" src="../outis/verifier.php" loading="lazy" referrerpolicy="no-referrer" onload="try{var w=this.contentWindow,d=w.document;d.addEventListener('keydown',function(ev){if(ev.key==='Escape'||ev.key==='Esc'){parent.location.hash='#tout-root';}},true);}catch(e){}"></iframe>
+      <iframe src="../outis/verifier.php" loading="lazy" referrerpolicy="no-referrer" onload="try{var w=this.contentWindow,d=w.document;d.addEventListener('keydown',function(ev){if(ev.key==='Escape'||ev.key==='Esc'){parent.location.hash='#tout-root';}},true);}catch(e){}"></iframe>
     </div>
   </div>
 </div>
@@ -289,23 +280,6 @@ foreach ($tirages as $t) {
   });
   // Если уже открыто при загрузке
   if (isOpen()) focusModal();
-
-  // Открытие модалки с предзаполнением из заголовка-колонки
-  document.addEventListener('click', function(ev){
-    const a = ev.target.closest('a.open-verifier');
-    if(!a) return;
-    ev.preventDefault();
-    const pre = a.getAttribute('data-pre') || '';
-    const f = document.getElementById('verifierFrame');
-    if (f) {
-      // Сбрасываем позицию окна и задаём src с pre-подсветкой
-      const d = document.querySelector('#verifierModal .modal-dialog');
-      if (d){ d.style.setProperty('--tx','0px'); d.style.setProperty('--ty','0px'); }
-      f.src = '../outis/verifier.php' + (pre ? ('?pre=' + encodeURIComponent(pre)) : '');
-    }
-    // Открываем модалку и фокусируем
-    location.hash = '#verifierModal';
-    setTimeout(focusModal, 0);
-  }, true);
 })();
 </script>
+
