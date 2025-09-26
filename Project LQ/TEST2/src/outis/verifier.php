@@ -6,6 +6,8 @@ ini_set('display_errors', 1);
 $resultMessage = '';
 $resultColor = ''; // green | orange | red
 $selectedNums = [];
+$distributionRows = []; // данные для таблицы (k, cnt)
+$comboForTable   = [];  // сейчас не показываем «Комбинация:», но оставим для совместимости
 
 /** Валидация ровно 12 разных чисел 1..24 */
 function validate_numbers(array $nums, &$errMsg) {
@@ -41,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
             $conn->set_charset("utf8");
             $safeList = implode(',', array_map('intval', $numbers));
 
-            // Более строгая проверка: все 12 полей должны входить в набор (сумма булевых IN == 12)
-            $sql = "
+            // Строгая проверка: все 12 полей должны входить в набор (сумма булевых IN == 12)
+            $sqlExact = "
                 SELECT 1
                 FROM Tout
                 WHERE ((n1  IN ($safeList)) + (n2  IN ($safeList)) + (n3  IN ($safeList)) + (n4  IN ($safeList)) +
@@ -51,17 +53,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
                 LIMIT 1
             ";
 
-            $res = $conn->query($sql);
-            if ($res && $res->num_rows > 0) {
+            $resExact = $conn->query($sqlExact);
+            if ($resExact && $resExact->num_rows > 0) {
                 $resultMessage = "✅ Найдена";
                 $resultColor = "green";
             } else {
                 $resultMessage = "❌ Нет";
                 $resultColor = "orange";
             }
+
+            // === РАСПРЕДЕЛЕНИЕ СОВПАДЕНИЙ (всё локально) ===
+            $comboForTable = $numbers;
+
+            $distributionSql = "
+              SELECT
+                b.k AS matches,
+                COALESCE(a.draws_count, 0) AS cnt
+              FROM
+                ( SELECT 0 AS k UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3
+                  UNION ALL SELECT 4 UNION ALL SELECT 8 UNION ALL SELECT 9
+                  UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
+                ) b
+              LEFT JOIN (
+                SELECT matches, COUNT(*) AS draws_count
+                FROM (
+                  SELECT (
+                    (n1  IN ($safeList)) +
+                    (n2  IN ($safeList)) +
+                    (n3  IN ($safeList)) +
+                    (n4  IN ($safeList)) +
+                    (n5  IN ($safeList)) +
+                    (n6  IN ($safeList)) +
+                    (n7  IN ($safeList)) +
+                    (n8  IN ($safeList)) +
+                    (n9  IN ($safeList)) +
+                    (n10 IN ($safeList)) +
+                    (n11 IN ($safeList)) +
+                    (n12 IN ($safeList))
+                  ) AS matches
+                  FROM Tout
+                ) mm
+                GROUP BY matches
+              ) a
+              ON a.matches = b.k
+              ORDER BY b.k
+            ";
+
+            if ($resDist = $conn->query($distributionSql)) {
+                while ($row = $resDist->fetch_assoc()) {
+                    $distributionRows[] = [
+                        'matches' => (int)$row['matches'], // 0,1,2,3,4,8,9,10,11,12
+                        'cnt'     => (int)$row['cnt'],
+                    ];
+                }
+                $resDist->free();
+            }
+
             $conn->close();
         }
     }
+}
+
+/** Выигрышная шкала для нужных корзин */
+function prize_for_matches(int $k): ?string {
+    $map = [
+        0  => '250 000$',
+        1  => '1 000$',
+        2  => '25$',
+        3  => '10$',
+        4  => '2$',
+        8  => '2$',
+        9  => '10$',
+        10 => '25$',
+        11 => '1 000$',
+        12 => '250 000$',
+    ];
+    return $map[$k] ?? null;
 }
 ?>
 <!DOCTYPE html>
@@ -76,15 +143,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       text-align: center;
       padding: 1em;
       background: transparent; /* прозрачный фон внутри iframe */
+      margin: 0;
     }
-    h2 { margin: 0.2em 0 0.6em; }
+    /* h2 { margin: 0.2em 0 0.6em; } */
 
     .number-grid {
       display: grid;
       grid-template-columns: repeat(6, 50px);
       gap: 10px;
       justify-content: center;
-      margin: 12px 0 10px;
+      /* margin: 12px 0 10px; */
     }
     .circle {
       width: 45px;
@@ -127,6 +195,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
     .btn-success { background: #e8f6ee; border-color: #bfe6cf; }
     .btn-warning { background: #fff4e5; border-color: #ffd19b; }
     .btn-error   { background: #fdecec; border-color: #f5b5b5; }
+
+    /* === Окно таблицы === */
+    .dist-wrap {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .dist-card {
+      width: min(680px, 95%);
+      border: 1px solid #d7d7d7;
+      border-radius: 12px;
+      padding: 10px 14px 14px;
+      background: #fafafa;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      text-align: left;
+    }
+    .counter-line {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #667;
+      font-size: 0.95em;
+    }
+    table.dist {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+      background: white;
+      border: 1px solid #e2e2e2;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table.dist td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    table.dist tr:last-child td { border-bottom: none; }
+    table.dist td:nth-child(1) { width: 25%; text-align: center; font-weight: 600; }
+    table.dist td:nth-child(2) { width: 40%; text-align: right; }
+    table.dist td:nth-child(3) { width: 35%; text-align: right; font-weight: 600; }
+    .note-empty { display:none; } /* по ТЗ никаких надписей в пустом состоянии */
   </style>
 </head>
 <body>
@@ -138,10 +246,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
     <?php for ($i = 1; $i <= 24; $i++): ?>
       <div class="circle <?= in_array($i, $selectedNums, true) ? 'selected' : '' ?>" data-num="<?= $i ?>"><?= $i ?></div>
     <?php endfor; ?>
-  </div>
-
-  <div class="row">
-    <div id="counter" class="muted">Выбрано: <?= count(array_unique($selectedNums)) ?>/12</div>
   </div>
 
   <div class="row">
@@ -161,6 +265,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
   </div>
 </form>
 
+<!-- === Окно таблицы (без заголовков/надписей) === -->
+<div class="dist-wrap">
+  <div class="dist-card">
+    <div id="counter" class="counter-line">Выбрано: <?= count(array_unique($selectedNums)) ?>/12</div>
+
+    <div id="distTableContainer">
+    <?php if (!empty($distributionRows)): ?>
+      <table class="dist">
+        <tbody>
+          <?php foreach ($distributionRows as $r): ?>
+            <tr>
+              <td><?= (int)$r['matches'] ?>/12</td>
+              <td><?= (int)$r['cnt'] ?></td>
+              <td>
+                <?php
+                  $pr = prize_for_matches((int)$r['matches']);
+                  echo $pr !== null ? htmlspecialchars($pr, ENT_QUOTES) : '';
+                ?>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+    </div>
+  </div>
+</div>
+
 <script>
   const preselected = <?= json_encode(array_values(array_unique($selectedNums))) ?>;
   const selected = new Set(preselected);
@@ -172,9 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
     const usp = new URLSearchParams(window.location.search);
     const pre = (usp.get('pre') || '').split(',').map(s => parseInt(s, 10)).filter(n => Number.isInteger(n) && n >= 1 && n <= 24);
     const uniq = Array.from(new Set(pre)).slice(0, 12);
-    if (uniq.length) {
-      uniq.forEach(n => selected.add(n));
-    }
+    if (uniq.length) { uniq.forEach(n => selected.add(n)); }
   } catch(e) {}
 })();
   
@@ -183,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
   const checkBtn = document.getElementById("checkBtn");
 
   function updateCounter() {
-    counterEl.textContent = `Выбрано: ${selected.size}/12`;
+    if (counterEl) counterEl.textContent = `Выбрано: ${selected.size}/12`;
     const lock = selected.size >= 12;
     grid.querySelectorAll(".circle").forEach(c => {
       if (!c.classList.contains("selected")) {
@@ -211,15 +341,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
     });
   });
 
-  function resetSelection() {
-    selected.clear();
-    grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected", "locked"));
-    updateCounter();
-    // Полный сброс состояния кнопки
-    checkBtn.disabled = false;
-    checkBtn.textContent = 'Проверить';
-    checkBtn.classList.remove('btn-success','btn-warning','btn-error');
-  }
+function resetSelection() {
+  selected.clear();
+  grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected", "locked"));
+  updateCounter();
+
+  // Полный сброс состояния кнопки
+  checkBtn.disabled = false;
+  checkBtn.textContent = 'Проверить';
+  checkBtn.classList.remove('btn-success','btn-warning','btn-error');
+
+  // Очистка таблицы результатов
+  const distContainer = document.getElementById("distTableContainer");
+  if (distContainer) distContainer.innerHTML = "";
+}
 
   function prepareSubmit() {
     if (checkBtn.disabled) return false; // не отправляем повторно прежний результат
@@ -238,9 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
       resetSelection();
     } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       if (!checkBtn.disabled) {
-        if (prepareSubmit()) {
-          checkBtn.form.submit();
-        }
+        if (prepareSubmit()) { checkBtn.form.submit(); }
       }
     }
   });
