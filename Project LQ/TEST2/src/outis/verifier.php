@@ -3,11 +3,14 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$resultMessage = '';
-$resultColor = ''; // green | orange | red
-$selectedNums = [];
+$resultMessage   = '';
+$resultColor     = ''; // green | orange | red
+$selectedNums    = [];
 $distributionRows = []; // данные для таблицы (k, cnt)
-$comboForTable   = [];  // сейчас не показываем «Комбинация:», но оставим для совместимости
+$comboForTable    = []; // совместимость
+
+// Набор "корзин" (строк таблицы)
+$ALL_BUCKETS = [0,1,2,3,4,8,9,10,11,12];
 
 /** Валидация ровно 12 разных чисел 1..24 */
 function validate_numbers(array $nums, &$errMsg) {
@@ -24,7 +27,6 @@ function validate_numbers(array $nums, &$errMsg) {
 if (!empty($_GET['pre'])) {
     $pre = array_map('intval', explode(',', $_GET['pre']));
     $pre = array_values(array_unique(array_filter($pre, fn($x) => $x >= 1 && $x <= 24)));
-    // ограничимся максимумом 12 для корректной подсветки
     $selectedNums = array_slice($pre, 0, 12);
 }
 
@@ -43,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
             $conn->set_charset("utf8");
             $safeList = implode(',', array_map('intval', $numbers));
 
-            // Строгая проверка: все 12 полей должны входить в набор (сумма булевых IN == 12)
+            // Строгая проверка наличия комбинации (порядок не важен)
             $sqlExact = "
                 SELECT 1
                 FROM Tout
@@ -52,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
                        (n9  IN ($safeList)) + (n10 IN ($safeList)) + (n11 IN ($safeList)) + (n12 IN ($safeList))) = 12
                 LIMIT 1
             ";
-
             $resExact = $conn->query($sqlExact);
             if ($resExact && $resExact->num_rows > 0) {
                 $resultMessage = "✅ Найдена";
@@ -62,9 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
                 $resultColor = "orange";
             }
 
-            // === РАСПРЕДЕЛЕНИЕ СОВПАДЕНИЙ (всё локально) ===
+            // === РАСПРЕДЕЛЕНИЕ СОВПАДЕНИЙ ===
             $comboForTable = $numbers;
-
             $distributionSql = "
               SELECT
                 b.k AS matches,
@@ -98,11 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
               ON a.matches = b.k
               ORDER BY b.k
             ";
-
             if ($resDist = $conn->query($distributionSql)) {
                 while ($row = $resDist->fetch_assoc()) {
                     $distributionRows[] = [
-                        'matches' => (int)$row['matches'], // 0,1,2,3,4,8,9,10,11,12
+                        'matches' => (int)$row['matches'],
                         'cnt'     => (int)$row['cnt'],
                     ];
                 }
@@ -114,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numbers'])) {
     }
 }
 
-/** Выигрышная шкала для нужных корзин */
+/** Выигрышная шкала */
 function prize_for_matches(int $k): ?string {
     $map = [
         0  => '250 000$',
@@ -130,6 +129,27 @@ function prize_for_matches(int $k): ?string {
     ];
     return $map[$k] ?? null;
 }
+
+/** Построение массива строк таблицы (либо реальные counts, либо прочерки) */
+function build_table_rows(array $ALL_BUCKETS, array $distributionRows): array {
+    // Индекс реальных значений по k
+    $byK = [];
+    foreach ($distributionRows as $r) {
+        $byK[(int)$r['matches']] = (int)$r['cnt'];
+    }
+    $rows = [];
+    foreach ($ALL_BUCKETS as $k) {
+        $rows[] = [
+            'k'   => $k,
+            'cnt' => array_key_exists($k, $byK) ? $byK[$k] : null, // null => покажем прочерк
+            'pr'  => prize_for_matches($k),
+        ];
+    }
+    return $rows;
+}
+
+$tableRows = build_table_rows($ALL_BUCKETS, $distributionRows);
+$hasRealData = !empty($distributionRows); // для JS «сброса» знать, что вернуть к прочеркам
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -145,14 +165,12 @@ function prize_for_matches(int $k): ?string {
       background: transparent; /* прозрачный фон внутри iframe */
       margin: 0;
     }
-    /* h2 { margin: 0.2em 0 0.6em; } */
 
     .number-grid {
       display: grid;
       grid-template-columns: repeat(6, 50px);
       gap: 10px;
       justify-content: center;
-      /* margin: 12px 0 10px; */
     }
     .circle {
       width: 45px;
@@ -179,7 +197,6 @@ function prize_for_matches(int $k): ?string {
       margin-top: 6px;
       flex-wrap: wrap;
     }
-    .muted { color: #667; font-size: 0.95em; }
 
     .btn {
       padding: 8px 16px;
@@ -196,45 +213,45 @@ function prize_for_matches(int $k): ?string {
     .btn-warning { background: #fff4e5; border-color: #ffd19b; }
     .btn-error   { background: #fdecec; border-color: #f5b5b5; }
 
-    /* === Окно таблицы === */
+    /* === Окно таблицы (компактнее) === */
     .dist-wrap {
-      margin-top: 16px;
+      margin-top: 14px;
       display: flex;
       justify-content: center;
     }
     .dist-card {
-      width: min(680px, 95%);
-      border: 1px solid #d7d7d7;
-      border-radius: 12px;
-      padding: 10px 14px 14px;
+      width: min(640px, 95%);       /* чуть уже */
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      padding: 8px 10px 10px;       /* меньше отступ */
       background: #fafafa;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
       text-align: left;
     }
     .counter-line {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: #667;
-      font-size: 0.95em;
+      font-size: 0.9em;             /* компактнее */
     }
     table.dist {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95em;
+      font-size: 0.9em;             /* компактнее */
       background: white;
-      border: 1px solid #e2e2e2;
+      border: 1px solid #e6e6e6;
       border-radius: 8px;
       overflow: hidden;
     }
     table.dist td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 6px 8px;             /* компактнее */
+      border-bottom: 1px solid #f2f2f2;
+      white-space: nowrap;
     }
     table.dist tr:last-child td { border-bottom: none; }
-    table.dist td:nth-child(1) { width: 25%; text-align: center; font-weight: 600; }
-    table.dist td:nth-child(2) { width: 40%; text-align: right; }
-    table.dist td:nth-child(3) { width: 35%; text-align: right; font-weight: 600; }
-    .note-empty { display:none; } /* по ТЗ никаких надписей в пустом состоянии */
+    table.dist td:nth-child(1) { width: 28%; text-align: center; font-weight: 600; }
+    table.dist td:nth-child(2) { width: 36%; text-align: right; color: #222; }
+    table.dist td:nth-child(3) { width: 36%; text-align: right; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -265,31 +282,39 @@ function prize_for_matches(int $k): ?string {
   </div>
 </form>
 
-<!-- === Окно таблицы (без заголовков/надписей) === -->
+<!-- === Окно таблицы: ВСЕГДА видна === -->
 <div class="dist-wrap">
   <div class="dist-card">
     <div id="counter" class="counter-line">Выбрано: <?= count(array_unique($selectedNums)) ?>/12</div>
 
     <div id="distTableContainer">
-    <?php if (!empty($distributionRows)): ?>
       <table class="dist">
         <tbody>
-          <?php foreach ($distributionRows as $r): ?>
-            <tr>
-              <td><?= (int)$r['matches'] ?>/12</td>
-              <td><?= (int)$r['cnt'] ?></td>
-              <td>
-                <?php
-                  $pr = prize_for_matches((int)$r['matches']);
-                  echo $pr !== null ? htmlspecialchars($pr, ENT_QUOTES) : '';
-                ?>
-              </td>
-            </tr>
-          <?php endforeach; ?>
+        <?php foreach ($tableRows as $r): ?>
+          <tr>
+            <td><?= (int)$r['k'] ?>/12</td>
+            <td><?= ($r['cnt'] === null) ? '-' : (int)$r['cnt'] ?></td>
+            <td><?= htmlspecialchars($r['pr'] ?? '', ENT_QUOTES) ?></td>
+          </tr>
+        <?php endforeach; ?>
         </tbody>
       </table>
-    <?php endif; ?>
     </div>
+
+    <!-- Шаблон «инициализированной» таблицы (прочерки), чтобы JS мог восстановить после сброса -->
+    <template id="table-placeholder-template">
+      <table class="dist">
+        <tbody>
+        <?php foreach ($ALL_BUCKETS as $k): ?>
+          <tr>
+            <td><?= (int)$k ?>/12</td>
+            <td>-</td>
+            <td><?= htmlspecialchars(prize_for_matches((int)$k) ?? '', ENT_QUOTES) ?></td>
+          </tr>
+        <?php endforeach; ?>
+        </tbody>
+      </table>
+    </template>
   </div>
 </div>
 
@@ -297,20 +322,25 @@ function prize_for_matches(int $k): ?string {
   const preselected = <?= json_encode(array_values(array_unique($selectedNums))) ?>;
   const selected = new Set(preselected);
 
-// Fallback: прочитать ?pre= из URL внутри iframe, если сервер не заполнил preselected
-(function applyPreFromQueryIfEmpty(){
-  if (selected.size > 0) return;
-  try {
-    const usp = new URLSearchParams(window.location.search);
-    const pre = (usp.get('pre') || '').split(',').map(s => parseInt(s, 10)).filter(n => Number.isInteger(n) && n >= 1 && n <= 24);
-    const uniq = Array.from(new Set(pre)).slice(0, 12);
-    if (uniq.length) { uniq.forEach(n => selected.add(n)); }
-  } catch(e) {}
-})();
-  
+  // Fallback: прочитать ?pre= из URL внутри iframe, если сервер не заполнил preselected
+  (function applyPreFromQueryIfEmpty(){
+    if (selected.size > 0) return;
+    try {
+      const usp = new URLSearchParams(window.location.search);
+      const pre = (usp.get('pre') || '').split(',')
+        .map(s => parseInt(s, 10))
+        .filter(n => Number.isInteger(n) && n >= 1 && n <= 24);
+      const uniq = Array.from(new Set(pre)).slice(0, 12);
+      if (uniq.length) { uniq.forEach(n => selected.add(n)); }
+    } catch(e) {}
+  })();
+
   const grid = document.getElementById("grid");
   const counterEl = document.getElementById("counter");
   const checkBtn = document.getElementById("checkBtn");
+  const distContainer = document.getElementById("distTableContainer");
+  const placeholderTpl = document.getElementById("table-placeholder-template");
+  const hasRealData = <?= $hasRealData ? 'true' : 'false' ?>;
 
   function updateCounter() {
     if (counterEl) counterEl.textContent = `Выбрано: ${selected.size}/12`;
@@ -341,23 +371,26 @@ function prize_for_matches(int $k): ?string {
     });
   });
 
-function resetSelection() {
-  selected.clear();
-  grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected", "locked"));
-  updateCounter();
+  function resetSelection() {
+    selected.clear();
+    grid.querySelectorAll(".circle").forEach(c => c.classList.remove("selected", "locked"));
+    updateCounter();
 
-  // Полный сброс состояния кнопки
-  checkBtn.disabled = false;
-  checkBtn.textContent = 'Проверить';
-  checkBtn.classList.remove('btn-success','btn-warning','btn-error');
+    // Полный сброс состояния кнопки
+    checkBtn.disabled = false;
+    checkBtn.textContent = 'Проверить';
+    checkBtn.classList.remove('btn-success','btn-warning','btn-error');
 
-  // Очистка таблицы результатов
-  const distContainer = document.getElementById("distTableContainer");
-  if (distContainer) distContainer.innerHTML = "";
-}
+    // Таблица должна оставаться, но вернуться к "прочеркам"
+    if (placeholderTpl && distContainer) {
+      distContainer.innerHTML = ""; // очистить
+      const clone = placeholderTpl.content.cloneNode(true);
+      distContainer.appendChild(clone);
+    }
+  }
 
   function prepareSubmit() {
-    if (checkBtn.disabled) return false; // не отправляем повторно прежний результат
+    if (checkBtn.disabled) return false; // защита от повторной отправки
     if (selected.size !== 12) {
       alert("Нужно выбрать ровно 12 разных чисел (1–24).");
       return false;
@@ -377,6 +410,13 @@ function resetSelection() {
       }
     }
   });
+
+  // Если данных ещё не было (первая загрузка без POST), гарантируем «прочерки»
+  if (!hasRealData && placeholderTpl && distContainer) {
+    distContainer.innerHTML = "";
+    const clone = placeholderTpl.content.cloneNode(true);
+    distContainer.appendChild(clone);
+  }
 
   // первичная отрисовка
   updateCounter();

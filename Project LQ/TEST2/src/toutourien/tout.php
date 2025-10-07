@@ -125,7 +125,7 @@ foreach ($tirages as $t) {
     background: rgba(255, 255, 255, 0.46); /* полупрозрачный белый */
     border-radius: 12px;
     width: min(420px, 48vw);
-    height: min(390px, 46vh);
+    height: min(687px, 76vh);
     display: flex;
     flex-direction: column;
     overflow: hidden;
