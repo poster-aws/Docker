@@ -199,3 +199,86 @@ table.digit-grid { width: max-content; border-collapse: collapse; table-layout: 
   inset: 10px;
   pointer-events: none;
 }
+
+/* Инфо-Блок */
+#infoBlock.info-list {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 8px;
+  font-size: 0.95em;
+  max-width: 800px;
+  margin: 30px auto;
+  background: rgba(255,255,255,0.03);
+  color: #333;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #FF8C00;
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.26);
+  border-radius: 6px;
+}
+
+.info-text {
+  font-size: 0.95em;
+}
+
+
+/* Отступы между строками инфоблока */
+.info-list .info-row {
+  margin-bottom: 8px;
+}
+.info-list .info-row:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Центрирование и оформление всех инфоблоков */
+#infoBlock.info-list, #repeatsBlock.info-list {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 8px;
+  font-size: 0.95em;
+  max-width: 800px;
+  margin: 10px auto;
+  background: rgba(255,255,255,0.03);
+  color: #333;
+}
+
+#infoBlock.info-list .info-row, #repeatsBlock.info-list .info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #FF8C00;
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.26);
+  border-radius: 6px;
+}
+
+#infoBlock.info-list .info-text, #repeatsBlock.info-list .info-text {
+  font-size: 0.95em;
+}
+
+#repeatsBlock .info-text { word-break: break-word; }
+
+
+/* Стили квадратов комбинаций в блоке повторений */
+.combo-square {
+  display: inline-block;
+  min-width: 24px;
+  height: 24px;
+  line-height: 24px;
+  margin: 0 2px;
+  text-align: center;
+  border-radius: 4px;
+  background: rgba(126,176,234,0.8); /* цвет из таблицы */
+  color: #000;
+  font-weight: 600;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
