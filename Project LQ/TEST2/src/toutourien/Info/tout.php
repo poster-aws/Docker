@@ -42,6 +42,21 @@ foreach ($tirages as $t) {
     }
   }
 }
+
+/* === НОВЫЙ КОД: построение сводной таблицы Analyse === */
+$positionMatrix = [];
+for ($i = 1; $i <= 12; $i++) {
+  $posKey = 'n' . $i;
+  $positionMatrix[$posKey] = array_fill(1, 24, 0);
+}
+foreach ($tirages as $t) {
+  foreach ($t['nums'] as $i => $val) {
+    $posKey = 'n' . ($i + 1);
+    if ($val >= 1 && $val <= 24) {
+      $positionMatrix[$posKey][$val]++;
+    }
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -148,6 +163,37 @@ foreach ($tirages as $t) {
       padding: 6px 10px;
       font-size: 14px;
     }
+
+    /* === CSS: для второй таблицы Analyse ===  */
+
+.analyse-grid {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.analyse-grid th,
+.analyse-grid td {
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+.analyse-grid td.sticky-label {
+  position: sticky;
+  left: 0;
+  background-color: #f0f0f0;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
   </style>
 </head>
 <body>
@@ -201,6 +247,32 @@ foreach ($tirages as $t) {
     <?php endforeach; ?>
   </select> tirages
 </form>
+
+<!-- === ОБНОВЛЁННЫЙ HTML: таблица Analyse ниже фильтра === -->
+<?php if (!empty($positionMatrix)): ?>
+  <div class="table-wrapper" style="margin: 10px auto; text-align: center;">
+    <table class="analyse-grid" style="margin: 0 auto;">
+      <thead>
+        <tr>
+          <th></th>
+          <?php for ($n = 1; $n <= 24; $n++): ?>
+            <th><?= $n ?></th>
+          <?php endfor; ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($positionMatrix as $pos => $counts): ?>
+          <tr>
+            <td class="sticky-label"><?= strtoupper($pos) ?></td>
+            <?php foreach ($counts as $val): ?>
+              <td><?= $val === 0 ? '–' : $val ?></td>
+            <?php endforeach; ?>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+<?php endif; ?>
 
 </body>
 </html>
