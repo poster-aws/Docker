@@ -2,15 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import Error
-import os
+from datetime import datetime
 
-# URL страницы
+# URL страницы (La Quotidienne)
 url = "https://loteries.lotoquebec.com/fr/loteries/la-quotidienne"
 
+# === 1. Получаем HTML ===
 try:
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     response = requests.get(url, timeout=30, headers=headers)
     response.raise_for_status()
 except requests.RequestException as e:
@@ -20,22 +19,27 @@ except requests.RequestException as e:
 if response.status_code == 200:
     page_source = response.text
 
+    # Сохраняем HTML для отладки
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
-
-    print("\n- Исходный код сохранен в 'page_source.html'.")
+    print("\n- Исходный код сохранён в 'page_source.html'.")
 
     soup = BeautifulSoup(page_source, 'html.parser')
 
-    # Извлекаем дату
+    # === 2. Извлекаем дату ===
     date_elem = soup.find('div', id='dateAffichee')
-    date_str = date_elem.text.strip() if date_elem else None
-    if date_str:
-        print(f"- Дата извлечена: {date_str}")
-    else:
+    if not date_elem:
         print("* Дата не найдена.")
+        exit()
 
-    # Извлекаем номера
+    try:
+        date_obj = datetime.strptime(date_elem.text.strip(), "%Y-%m-%d").date()
+        print(f"- Дата извлечена: {date_obj}")
+    except ValueError:
+        print("* Ошибка: неверный формат даты.")
+        exit()
+
+    # === 3. Извлекаем 9 чисел ===
     numeros = soup.find_all('span', class_='num')
     print(f"- Найдено номеров: {len(numeros)}")
 
@@ -45,127 +49,94 @@ if response.status_code == 200:
         print("* Ошибка при преобразовании номеров.")
         values = []
 
-    if len(values) == 9 and date_str:
-        n1, n2, n3, n4, n5, n6, n7, n8, n9 = values
-        print(f"Q2: {n1}, {n2}")
-        print(f"Q3: {n3}, {n4}, {n5}")
-        print(f"Q4: {n6}, {n7}, {n8}, {n9}")
+    if len(values) != 9:
+        print("* Недостаточно номеров.")
+        exit()
 
-        try:
-            connection = mysql.connector.connect(
+    print(f"Q2: {values[0]}, {values[1]}")
+    print(f"Q3: {values[2]}, {values[3]}, {values[4]}")
+    print(f"Q4: {values[5]}, {values[6]}, {values[7]}, {values[8]}")
+
+    # === 4. Подключение к базе и вставка ===
+    try:
+        connection = mysql.connector.connect(
             host='db',
-            database='quotidienne',  # <-- без getenv
+            database='quotidienne',
             user='user',
             password='user'
         )
 
-            if connection.is_connected():
-                cursor = connection.cursor()
-                inserted = False
-                cursor.execute("SELECT DATABASE()")
-                current_db = cursor.fetchone()[0]
-                print(f"- Подключен к базе: {current_db}")
+        if connection.is_connected():
+            cursor = connection.cursor()
+            cursor.execute("SELECT DATABASE()")
+            current_db = cursor.fetchone()[0]
+            print(f"- Подключен к БД: {current_db}")
 
-                # Q2
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS Q2 (
-                        Tirage VARCHAR(50) PRIMARY KEY,
-                        n1 INT,
-                        n2 INT
+            inserted = False
+
+            # === 5. Обработка всех таблиц циклом ===
+            configs = [
+                ('Q2', ['n1', 'n2'], values[0:2]),
+                ('Q3', ['n1', 'n2', 'n3'], values[2:5]),
+                ('Q4', ['n1', 'n2', 'n3', 'n4'], values[5:9])
+            ]
+
+            for table, fields, nums in configs:
+                # Создание таблицы
+                field_defs = ",\n    ".join([f"{f} INT" for f in fields])
+                cursor.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {table} (
+                        Tirage DATE PRIMARY KEY,
+                        {field_defs}
                     )
                 """)
-                cursor.execute("""
-                    INSERT INTO Q2 (Tirage, n1, n2)
-                    VALUES (%s, %s, %s)
-                    ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2)
-                """, (date_str, n1, n2))
-                if cursor.rowcount:
-                    inserted = True
 
-                # Q3
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS Q3 (
-                        Tirage VARCHAR(50) PRIMARY KEY,
-                        n1 INT,
-                        n2 INT,
-                        n3 INT
+                # Проверка существования
+                cursor.execute(f"SELECT COUNT(*) FROM {table} WHERE Tirage = %s", (date_obj,))
+                if cursor.fetchone()[0] == 0:
+                    placeholders = ", ".join(["%s"] * len(nums))
+                    field_list = ", ".join(fields)
+                    cursor.execute(
+                        f"INSERT INTO {table} (Tirage, {field_list}) VALUES (%s, {placeholders})",
+                        (date_obj, *nums)
                     )
-                """)
-                cursor.execute("""
-                    INSERT INTO Q3 (Tirage, n1, n2, n3)
-                    VALUES (%s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE n1 = VALUES(n1), n2 = VALUES(n2), n3 = VALUES(n3)
-                """, (date_str, n3, n4, n5))
-                if cursor.rowcount:
                     inserted = True
+                    print(f"- {table}: новая запись добавлена.")
 
-                # Q4
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS Q4 (
-                        Tirage VARCHAR(50) PRIMARY KEY,
-                        n1 INT,
-                        n2 INT,
-                        n3 INT,
-                        n4 INT
-                    )
-                """)
-                cursor.execute("""
-                    INSERT INTO Q4 (Tirage, n1, n2, n3, n4)
-                    VALUES (%s, %s, %s, %s, %s)
-                    ON DUPLICATE KEY UPDATE
-                        n1 = VALUES(n1),
-                        n2 = VALUES(n2),
-                        n3 = VALUES(n3),
-                        n4 = VALUES(n4)
-                """, (date_str, n6, n7, n8, n9))
-                if cursor.rowcount:
-                    inserted = True
+            connection.commit()
 
-                connection.commit()
+            # === 6. Запускаем процедуры, если были вставки ===
+            if inserted:
+                print(f"\n- Новые данные добавлены за {date_obj}. Запускаем процедуры...")
 
-                if inserted:
-                    print(f"\n- Данные добавлены:")
-                    print(f"  Q2: {date_str} — {n1}, {n2}")
-                    print(f"  Q3: {date_str} — {n3}, {n4}, {n5}")
-                    print(f"  Q4: {date_str} — {n6}, {n7}, {n8}, {n9}")
+                procedures = [
+                    'fill_Q2_stats_order', 'fill_Q2_stats_norder', 'fill_Q2_combo_stats_order',
+                    'fill_Q3_stats_order', 'fill_Q3_stats_norder', 'fill_Q3_combo_stats_order',
+                    'fill_Q4_fois', 'fill_Q4_stats_order', 'fill_Q4_stats_norder', 'fill_Q4_combo_stats_order'
+                ]
 
-                    procedures = [
-                        'fill_Q2_stats_order',
-                        'fill_Q2_stats_norder',
-                        'fill_Q2_combo_stats_order',
-                        'fill_Q3_stats_order',
-                        'fill_Q3_stats_norder',
-                        'fill_Q3_combo_stats_order',
-                        'fill_Q4_fois',
-                        'fill_Q4_stats_order',
-                        'fill_Q4_stats_norder',
-                        'fill_Q4_combo_stats_order'
-                    ]
+                for proc in procedures:
+                    try:
+                        cursor.callproc(proc)
+                        connection.commit()
+                        print(f"- Процедура {proc} выполнена.")
+                    except Error as e:
+                        print(f"* Ошибка в {proc}: {e}")
+            else:
+                print(f"- Данные за {date_obj} уже были в базе. Вставка и процедуры пропущены.")
 
-                    for proc in procedures:
-                        try:
-                            cursor.callproc(proc)
-                            connection.commit()
-                            print(f"- Процедура {proc} выполнена.")
-                        except Error as e:
-                            print(f"* Ошибка в {proc}:", e)
-                else:
-                    print("- Данные для {date_str} уже существуют! Процедуры не запущены.")
+    except Error as e:
+        print("* Ошибка при подключении к MySQL:", e)
 
-        except Error as e:
-            print("* Ошибка при подключении к MySQL:", e)
+    finally:
+        try:
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+            if 'connection' in locals() and connection.is_connected():
+                connection.close()
+            print("- Соединение с базой данных закрыто.")
+        except Exception as cleanup_error:
+            print("* Ошибка при закрытии соединения:", cleanup_error)
 
-        finally:
-            try:
-                if 'cursor' in locals() and cursor:
-                    cursor.close()
-                if 'connection' in locals() and connection.is_connected():
-                    connection.close()
-                print("- Соединение с базой данных полностью закрыто.")
-            except Exception as cleanup_error:
-                print("* Ошибка при закрытии соединения:", cleanup_error)
-
-    else:
-        print("* Недостаточно номеров или дата не извлечена.")
 else:
     print(f"* Ошибка при получении страницы: {response.status_code}")
