@@ -73,3 +73,6 @@ backup_database "quotidienne" "Q2"
 
 # === Бэкап базы toutourien без JSON ===
 backup_database "toutourien" ""
+
+# === Бэкап базы banco без JSON ===
+backup_database "banco" ""
