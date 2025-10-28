@@ -37,13 +37,21 @@ table.digit-grid {
 /* Шапка: вертикальные даты + липкая сверху */
 .digit-grid thead th {
   height: 60px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
   font-size: 0.7em;
   background: #eee;
   position: sticky;
   top: 0;
   z-index: 3;
+}
+
+/* === Универсально корректное отображение вертикального текста === */
+.vertical-text {
+  writing-mode: vertical-rl;
+  transform: rotate(-180deg); /* было 180deg — Safari переворачивал вверх ногами */
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1;
+  text-orientation: mixed;
 }
 
 /* Подсветка попаданий */
@@ -117,7 +125,7 @@ table.digit-grid { width: max-content; border-collapse: collapse; table-layout: 
 
 /* Шапка */
 .digit-grid thead th {
-  height: 60px; writing-mode: vertical-rl; transform: rotate(180deg);
+  height: 60px; writing-mode: vertical-rl; /* transform: rotate(180deg); отключено */
   font-size: 0.7em; background: #eee; position: sticky; top: 0; z-index: 3;
 }
 

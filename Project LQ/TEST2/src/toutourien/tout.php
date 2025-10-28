@@ -101,7 +101,7 @@ arsort($repeatedCombos); // сортировка по убыванию
         <tr>
           <th class="sticky-left">Tot #</th>
           <?php foreach ($tirages as $t): ?>
-            <th><?= htmlspecialchars($t['Tirage'], ENT_QUOTES) ?></th>
+            <th><div class="vertical-text"><?= htmlspecialchars($t['Tirage'], ENT_QUOTES) ?></div></th>
           <?php endforeach; ?>
         </tr>
       </thead>
