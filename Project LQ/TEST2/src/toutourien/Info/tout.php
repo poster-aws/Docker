@@ -1,11 +1,5 @@
 <?php
 require_once "../db.php";
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-$toutConn = new mysqli("db", "user", "user", "toutourien");
-$toutConn->set_charset("utf8");
-if ($toutConn->connect_error) die("Connection failed: " . $toutConn->connect_error);
 
 // Общее количество тиражей (всего)
 $totalRes = $toutConn->query("SELECT COUNT(*) AS total FROM Tout");
@@ -83,8 +77,8 @@ foreach ($tirages as $t) {
       max-height: 90vh;
       overflow: auto;
       margin: 0 auto;
-      border: 1px solid #ccc;
-      background: rgba(173, 216, 230, 0.85);
+      /* border: 1px solid #ccc; */
+      background: rgba(173, 216, 230, 0);
     }
 
     table.digit-grid {
@@ -105,11 +99,17 @@ foreach ($tirages as $t) {
     }
 
     .digit-grid th {
-      height: 60px;
+      writing-mode: vertical-rl;
+      /* transform: rotate(180deg); */
+      white-space: nowrap;
+      height: 80px;
+      min-width: 20px;
+      background-color: #eee;
+    }
+    .vertical-text {
       writing-mode: vertical-rl;
       transform: rotate(180deg);
-      font-size: 0.7em;
-      background: #eee;
+      white-space: nowrap;
     }
 
     .digit-grid td.hit {
@@ -172,12 +172,13 @@ foreach ($tirages as $t) {
 
 .analyse-grid th,
 .analyse-grid td {
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
   font-size: 12px;
   text-align: center;
   vertical-align: middle;
-  background-color: #eee;
+  background-color: #eeeeee;
   border: 1px solid #ccc;
   padding: 0;
 }
@@ -187,18 +188,20 @@ foreach ($tirages as $t) {
   left: 0;
   background-color: #f0f0f0;
   z-index: 1;
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 25px;
   font-weight: bold;
   font-size: 12px;
   text-align: center;
 }
 
+.analyse-grid td.empty {
+  background-color: #dcdbdbff;
+}
+
   </style>
 </head>
 <body>
-
-<div id="tout-meta" data-count="<?= $totalCount ?>"></div>
 
 <div class="table-wrapper">
   <?php if (!empty($tirages)): ?>
@@ -207,7 +210,7 @@ foreach ($tirages as $t) {
         <tr>
           <th>Tot #</th>
           <?php foreach ($tirages as $t): ?>
-            <th><?= htmlspecialchars($t['Tirage']) ?></th>
+            <th><div class="vertical-text"><?= htmlspecialchars($t['Tirage']) ?></div></th>
           <?php endforeach; ?>
         </tr>
       </thead>
@@ -265,7 +268,11 @@ foreach ($tirages as $t) {
           <tr>
             <td class="sticky-label"><?= strtoupper($pos) ?></td>
             <?php foreach ($counts as $val): ?>
-              <td><?= $val === 0 ? '–' : $val ?></td>
+              <?php if ($val === 0): ?>
+                <td class="empty"></td>
+              <?php else: ?>
+                <td><?= $val ?></td>
+              <?php endif; ?>
             <?php endforeach; ?>
           </tr>
         <?php endforeach; ?>
