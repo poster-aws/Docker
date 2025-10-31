@@ -4,6 +4,8 @@ services:
     build: .
     image: graber
     container_name: graber
+    volumes:
+      - .:/app
     environment:
       - DB_HOST=db
       - DB_USER=user
