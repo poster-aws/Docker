@@ -133,5 +133,14 @@ if response.status_code == 200:
         except Exception as cleanup_error:
             print("* Ошибка при закрытии соединения:", cleanup_error)
 
+    # === 8. Удаляем временный файл page_source.html ===
+    import os
+    if os.path.exists("page_source.html"):
+        try:
+            os.remove("page_source.html")
+            print("- Временный файл 'page_source.html' удалён.")
+        except Exception as e:
+            print(f"* Ошибка при удалении файла page_source.html: {e}")
+
 else:
     print(f"* Ошибка при получении страницы: {response.status_code}")
