@@ -12,13 +12,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Подключение
-$toutConn = new mysqli($servername, $username, $password, $dbname);
+$bancoConn = new mysqli($servername, $username, $password, $dbname);
 
 // Установка кодировки
-$toutConn->set_charset("utf8");
+$bancoConn->set_charset("utf8");
 
 // Проверка соединения
-if ($toutConn->connect_error) {
-    die("Ошибка подключения: " . $toutConn->connect_error);
+if ($bancoConn->connect_error) {
+    die("Ошибка подключения: " . $bancoConn->connect_error);
 }
 ?>

@@ -1,8 +1,8 @@
 <?php
-require_once './db.php';  // db.php уже содержит готовое подключение $toutConn
+require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
 
 // Используем существующее соединение
-$db = $toutConn;
+$db = $bancoConn;
 
 // ==== 1. Фиксированный лимит: 50 последних тиражей
 $limit = 50;

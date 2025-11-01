@@ -37,6 +37,7 @@ table.digit-grid {
 /* Шапка: вертикальные даты + липкая сверху */
 .digit-grid thead th {
   height: 60px;
+  writing-mode: vertical-rl;
   font-size: 0.7em;
   background: #eee;
   position: sticky;
