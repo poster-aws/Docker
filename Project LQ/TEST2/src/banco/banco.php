@@ -64,7 +64,7 @@ for ($digit = 1; $digit <= 70; $digit++) {
     $totClass = ($tot >= $thresholdHigh) ? 'high' : (($tot >= $thresholdMedium) ? 'medium' : 'low');
 
     echo "<tr>
-        <td class='sticky-left tot-label $totClass'>$tot</td>
+        <td class='sticky-left tot-label $totClass'>{$tot}x</td>
         <td class='sticky-left digit-label'>$digit</td>";
     
     foreach ($tirages as $tirage) {
