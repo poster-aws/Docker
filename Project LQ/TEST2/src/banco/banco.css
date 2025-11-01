@@ -22,7 +22,7 @@
 table.digit-grid { 
   width: max-content; 
   border-collapse: collapse; 
-  table-layout: fixed; 
+  /* table-layout: fixed;  */
   font-size: 12px;
 }
 
@@ -37,10 +37,18 @@ table.digit-grid {
   box-sizing: border-box;
 }
 
+/* Override fixed width for the two sticky columns only (higher specificity) */
+.digit-grid td.tot-label,
+.digit-grid th.tot-label,
+.digit-grid td.digit-label,
+.digit-grid th.digit-label {
+  width: auto !important;   /* override 22px from .digit-grid td */
+  min-width: 30px;          /* ensure not too narrow */
+}
+
 .digit-grid td.hit {
   background-color: #7eb0ea;
   color: #000;
-  /* font-weight: bold; */
 }
 
 /* Шапка: вертикальные даты + липкая сверху */
@@ -54,7 +62,7 @@ table.digit-grid {
   z-index: 3;
 }
 
-/* === Универсально корректное отображение вертикального текста === */
+/* Вертикальный текст */
 .vertical-text {
   writing-mode: vertical-rl;
   transform: rotate(-180deg);
@@ -64,36 +72,47 @@ table.digit-grid {
   text-orientation: mixed;
 }
 
-/* Подсветка попаданий */
-.digit-grid td.hit { background-color: #7eb0ea; }
-
-/* Липкая левая колонка */
-.digit-grid .sticky-left,
-.digit-grid th.sticky-left,
-.digit-grid td.sticky-left {
+/* Липкая левая колонка: Tot */
+.tot-label {
   position: sticky;
   left: 0;
   background-color: #eee;
   z-index: 4;
-  width: 40px !important;
-  text-align: left;
-  padding-left: 2px;
   white-space: nowrap;
-  font-weight: normal;
+  /* padding: 0 6px; */
   font-size: 0.95em;
+  font-weight: 600;
+  text-align: center !important;
+  width: auto;
+  min-width: 30px;
 }
 
-/* Подписи Tot/номер строки */
-.sticky-label .tot { color: red; font-weight: normal; }
-.sticky-label .digit-num { font-weight: bold; color: #000;}
+/* Липкая левая колонка: цифры 1..70 */
+.digit-label {
+  position: sticky;
+  left: var(--tot-col-width, 50px); /* динамически от ширины tot */
+  background-color: #eee;
+  z-index: 4;
+  white-space: nowrap;
+  font-weight: 700;
+  text-align: center !important;
+  /* padding: 0 6px; */
+  font-size: 0.95em;
+  width: auto;
+  min-width: 30px;
+}
 
-/* Градация по частоте Tot */
-.sticky-label .tot.low    { color: #999; }
-.sticky-label .tot.medium { color: #e67e22; }
-.sticky-label .tot.high   { color: #c0392b; font-weight: bold; }
+/* Градация tot-label */
+.tot-label.low    { color: #999; }
+.tot-label.medium { color: #e67e22; }
+.tot-label.high   { color: #c0392b; font-weight: bold; }
 
 /* Сообщение «нет данных» */
-.no-data { text-align: center; color: red; margin: 12px 0; }
+.no-data {
+  text-align: center;
+  color: red;
+  margin: 12px 0;
+}
 
 /* Панель управления */
 .banco-toolbar {
