@@ -1,3 +1,5 @@
+<!-- src/banco/banco.css -->
+
 <?php
 require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
 
@@ -58,14 +60,14 @@ for ($digit = 1; $digit <= 70; $digit++) {
 
     echo "<tr>
             <td class='sticky-left sticky-label'>
-              <span class='digit-num'>$digit</span><br>
-              <span class='tot $totClass'>$tot</span>
+            <span class='tot $totClass'>$tot</span><span class='tot $totClass'>x</span>
+            <span class='digit-num'>$digit</span> 
             </td>";
 
     foreach ($tirages as $tirage) {
-        $isHit = in_array($digit, array_slice($tirage, 1));
-        echo "<td" . ($isHit ? " class='hit'" : "") . "></td>";
-    }
+    $isHit = in_array($digit, array_slice($tirage, 1));
+    echo "<td" . ($isHit ? " class='hit'" : "") . ">" . ($isHit ? $digit : "") . "</td>";
+}
 
     echo "</tr>";
 }
