@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Banco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Стили специально не подключаем здесь, вы грузите их глобально из src/index.html -->
+</head>
+<body>
+  <main class="tout-page">
+    <div id="content"></div>
+  </main>
+
+  <!-- ВАЖНО: путь к глобальному скрипту из подкаталога -->
+  <script src="../script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Загружаем banco.php из той же папки
+      loadPage(`./banco.php`);
+      // Если нужно принудительно обойти кэш:
+      // loadPage(`./banco.php?v=${Date.now()}`);
+    });
+  </script>
+</body>
+</html>
