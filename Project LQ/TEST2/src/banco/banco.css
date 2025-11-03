@@ -2,6 +2,8 @@
 
 /* === Banco grid === */
 .banco-page {
+  font-size: 13px;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
@@ -71,6 +73,7 @@ table.digit-grid {
   display: inline-block;
   line-height: 1;
   text-orientation: mixed;
+  font-size: inherit;
 }
 
 /* === Sticky Columns === */
@@ -87,7 +90,6 @@ table.digit-grid {
   width: auto;
   min-width: 30px;
   padding: 0 !important;
-  font-size: 0.95em;
 }
 
 .digit-label {
@@ -113,7 +115,6 @@ table.digit-grid {
   z-index: 10;
   writing-mode: horizontal-tb !important;
   transform: none !important;
-  font-size: 0.8em;
   background-color: #f4f4f4;
   text-align: center;
   height: 22px !important;
