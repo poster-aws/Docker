@@ -1,4 +1,4 @@
-<!-- src/banco/banco.css -->
+<!-- src/banco/banco.php -->
 
 <?php
 require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
@@ -11,7 +11,7 @@ $limit = 50;
 
 // ==== 2. Получаем последние 50 тиражей
 $query = "SELECT Tirage, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
-                 n11, n12, n13, n14, n15, n16, n17, n18, n19, n20
+                 n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, turbo
           FROM banco
           ORDER BY Tirage DESC
           LIMIT $limit";
@@ -50,11 +50,19 @@ echo "<div id='banco-meta' data-count='" . count($tirages) . "'></div>";
 // ==== 5. Построение сетки
 echo "<div class='table-wrapper banco-grid-wrapper'><table class='digit-grid'>";
 
-// ==== 5.1 Заголовки столбцов (даты)
+// ==== 5.1 Шапка: строка с датами
 echo "<thead><tr><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
 foreach ($tirages as $tirage) {
     $date = $tirage['Tirage']; // Предполагаем формат YYYY-MM-DD
     echo "<th><div class='vertical-text'>$date</div></th>";
+}
+echo "</tr>";
+
+// ==== 5.2 Шапка: строка turbo (ниже даты)
+echo "<tr class='turbo-row'><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
+foreach ($tirages as $tirage) {
+    $turbo = htmlspecialchars($tirage['turbo'] . 'x', ENT_QUOTES);
+    echo "<th>$turbo</th>";
 }
 echo "</tr></thead>";
 
@@ -76,3 +84,4 @@ for ($digit = 1; $digit <= 70; $digit++) {
 }
 
 echo "</table></div>";
+?>

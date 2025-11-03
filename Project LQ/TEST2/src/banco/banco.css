@@ -122,3 +122,15 @@ table.digit-grid {
   padding: 8px 10px; margin: 6px auto 6px; max-width: 98%;
   border: 1px solid #cfcfcf; background: #f7f7f7; border-radius: 10px;
 }
+
+/* Turbo-row styling: horizontal, centered text */
+.turbo-row th {
+  writing-mode: horizontal-tb !important;
+  transform: none !important;
+  font-size: 0.8em;
+  background-color: #f4f4f4;
+  text-align: center;
+  height: 22px !important;
+  line-height: 22px;        /* выравнивает текст по вертикали */
+  padding: 0 !important;
+}
