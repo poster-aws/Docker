@@ -57,9 +57,6 @@ table.digit-grid {
   writing-mode: vertical-rl;
   font-size: 0.7em; 
   background: #eee; 
-  position: sticky; 
-  top: 0; 
-  z-index: 5 !important;
 }
 
 /* Вертикальный текст */
@@ -76,8 +73,9 @@ table.digit-grid {
 .tot-label {
   position: sticky;
   left: 0;
+  top: 22px;
+  z-index: 9;
   background-color: #eee;
-  z-index: 4;
   white-space: nowrap;
   /* padding: 0 6px; */
   font-size: 0.95em;
@@ -92,8 +90,9 @@ table.digit-grid {
 .digit-label {
   position: sticky;
   left: var(--tot-col-width, 50px); /* динамически от ширины tot */
+  top: 22px;
+  z-index: 9;
   background-color: #eee;
-  z-index: 4;
   white-space: nowrap;
   font-weight: 700 !important;
   text-align: center !important;
@@ -125,6 +124,9 @@ table.digit-grid {
 
 /* Turbo-row styling: horizontal, centered text */
 .turbo-row th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   writing-mode: horizontal-tb !important;
   transform: none !important;
   font-size: 0.8em;
@@ -133,4 +135,17 @@ table.digit-grid {
   height: 22px !important;
   line-height: 22px;        /* выравнивает текст по вертикали */
   padding: 0 !important;
+}
+
+/* Sticky Date row stays under Turbo */
+.date-row th {
+  top: 22px; /* same height as Turbo row */
+  z-index: 8;
+}
+
+/* Ensure date row is NOT sticky */
+.date-row th {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
 }

@@ -51,7 +51,7 @@ echo "<div id='banco-meta' data-count='" . count($tirages) . "'></div>";
 echo "<div class='table-wrapper banco-grid-wrapper'><table class='digit-grid'>";
 
 // ==== 5.1 Шапка: строка с датами
-echo "<thead><tr><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
+echo "<thead><tr class='date-row'><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
 foreach ($tirages as $tirage) {
     $date = $tirage['Tirage']; // Предполагаем формат YYYY-MM-DD
     echo "<th><div class='vertical-text'>$date</div></th>";
