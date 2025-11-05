@@ -1,15 +1,37 @@
-<!-- src/banco/banco.php -->
-
 <?php
 require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
 
 // Используем существующее соединение
 $db = $bancoConn;
 
-// ==== 1. Фиксированный лимит: 50 последних тиражей
-$limit = 50;
+// ==== 1. Получаем лимит из GET-параметра или по умолчанию 50
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50;
+$validLimits = [50, 100, 200];
+if (!in_array($limit, $validLimits, true)) {
+    $limit = 50;
+}
 
-// ==== 2. Получаем последние 50 тиражей
+// ==== 1.1 Панель выбора лимита с динамической перегрузкой через loadPage()
+echo '<div class="banco-toolbar">';
+echo '<label for="limitSelect">Показать: </label>';
+echo '<select id="limitSelect">';
+foreach ($validLimits as $l) {
+    $selected = ($l === $limit) ? 'selected' : '';
+    echo "<option value=\"$l\" $selected>$l</option>";
+}
+echo '</select> тиражей';
+echo '<button id="applyLimitBtn" type="button">Применить</button>';
+echo '</div>';
+
+// Добавляем in-line JavaScript для обработки выбора
+echo "<script>
+document.getElementById('applyLimitBtn').addEventListener('click', function() {
+    const newLimit = document.getElementById('limitSelect').value;
+    loadPage(`./banco.php?limit=\${newLimit}`);
+});
+</script>";
+
+// ==== 2. Получаем последние N тиражей
 $query = "SELECT Tirage, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
                  n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, turbo
           FROM banco

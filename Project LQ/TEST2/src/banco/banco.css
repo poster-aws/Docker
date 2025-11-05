@@ -144,3 +144,11 @@ table.digit-grid {
   padding: 8px 10px; margin: 6px auto 6px; max-width: 98%;
   border: 1px solid #cfcfcf; background: #f7f7f7; border-radius: 10px;
 }
+
+.banco-toolbar select {
+  padding: 4px 8px;
+  font-size: 0.9em;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background-color: #fff;
+}
