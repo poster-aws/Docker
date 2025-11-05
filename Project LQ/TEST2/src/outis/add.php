@@ -1,3 +1,5 @@
+<!-- src/outis/add.php -->
+
 <?php
 require_once "../quotidienne/db.php";  // $conn для Q234
 require_once "../toutourien/db.php";   // $toutConn для Tout

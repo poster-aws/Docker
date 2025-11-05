@@ -1,4 +1,4 @@
-<!-- q4info.php -->
+<!-- src/quotidienne/QInfo/q4info.php -->
 
 <?php
 require_once "../db.php";

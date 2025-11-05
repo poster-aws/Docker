@@ -1,4 +1,4 @@
-// script.js
+// src/script.js
 
 // Переключение отображения меню
 function toggleMenu() {

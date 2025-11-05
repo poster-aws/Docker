@@ -1,3 +1,5 @@
+<!-- src/banco/banco.php -->
+
 <?php
 require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
 

@@ -1,3 +1,5 @@
+<!-- src/quotidienne/q2.php -->
+
 <?php
 require_once "db.php";
 
