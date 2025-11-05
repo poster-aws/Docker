@@ -243,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 
 <!-- Banco -->
-<form class="form-block banco-form" method="post" style="float: right; max-width: 400px;">
+<form class="form-block banco-form" method="post">
   <h2>Добавить Banco</h2>
   <div class="row">
     <label>Дата:</label>
