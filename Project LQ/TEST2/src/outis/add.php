@@ -1,11 +1,13 @@
 <?php
 require_once "../quotidienne/db.php";  // $conn для Q234
 require_once "../toutourien/db.php";   // $toutConn для Tout
+require_once "../banco/db.php";         // $bancoConn для Banco
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $msg = null;
 $toutMsg = null;
+$bancoMsg = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -74,8 +76,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
+  if (isset($_POST['banco-submit'])) {
+    $date = $_POST['banco_date'] ?? null;
+    $turbo = intval($_POST['banco_turbo']);
+    $selected = explode(',', $_POST['banco_selected'] ?? '');
+    $numbers = array_map('intval', $selected);
+    if (count($numbers) !== 20) {
+      $bancoMsg = ['class' => 'error', 'text' => '❌ Нужно выбрать ровно 20 чисел для Banco.'];
+    } else {
+      $exists = $bancoConn->query("SELECT 1 FROM banco WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
+      if ($exists) {
+        $bancoMsg = ['class' => 'error', 'text' => "⚠️ Запись на эту дату уже существует в Banco."];
+      } else {
+        $placeholders = implode(',', array_fill(0, 20, '?'));
+        $sql = "REPLACE INTO banco (Tirage, " . implode(',', array_map(fn($n) => "n$n", range(1,20))) . ", turbo)
+                VALUES (?, $placeholders, ?)";
+        $stmt = $bancoConn->prepare($sql);
+        if ($stmt) {
+          $types = "s" . str_repeat("i", 21); // 1 string (date) + 21 ints (20 numbers + turbo)
+          $params = array_merge([$date], $numbers, [$turbo]);
+          // bind_param requires references
+          $refs = [];
+          foreach ($params as $k => $v) {
+            $refs[$k] = &$params[$k];
+          }
+          array_unshift($refs, $types);
+          call_user_func_array([$stmt, 'bind_param'], $refs);
+
+          $stmt->execute();
+          $stmt->close();
+          $bancoMsg = ['class' => 'success', 'text' => "✅ Banco: данные добавлены."];
+        }
+      }
+    }
+  }
+
   $conn->close();
   $toutConn->close();
+  $bancoConn->close();
 }
 ?>
 
@@ -156,6 +194,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if (!empty($toutMsg)): ?>
   <div class="msg <?= $toutMsg['class'] ?>"><?= $toutMsg['text'] ?></div>
 <?php endif; ?>
+<?php if (!empty($bancoMsg)): ?>
+  <div class="msg <?= $bancoMsg['class'] ?>"><?= $bancoMsg['text'] ?></div>
+<?php endif; ?>
 
 <!-- Q2/Q3/Q4 -->
 <form class="form-block" method="post">
@@ -201,9 +242,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <button type="submit" name="tout-submit">Сохранить Tout</button>
 </form>
 
+<!-- Banco -->
+<form class="form-block banco-form" method="post" style="float: right; max-width: 400px;">
+  <h2>Добавить Banco</h2>
+  <div class="row">
+    <label>Дата:</label>
+    <input type="date" name="banco_date" required />
+  </div>
+  <div class="circles banco-circles">
+    <?php for ($i = 1; $i <= 70; $i++): ?>
+      <div class="circle" data-num="<?= $i ?>"><?= $i ?></div>
+    <?php endfor; ?>
+  </div>
+  <div class="row">
+    <label>Turbo:</label>
+    <select name="banco_turbo">
+      <?php for ($i = 1; $i <= 10; $i++) echo "<option>$i</option>"; ?>
+    </select>
+  </div>
+  <input type="hidden" name="banco_selected" id="banco_selected" required />
+  <button type="submit" name="banco-submit">Сохранить Banco</button>
+</form>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const circles = document.querySelectorAll('.circle');
+  /** === Tout logic === */
+  const circles = document.querySelectorAll('.circle:not(.banco-circles .circle)');
   const hiddenInput = document.getElementById('tout_selected');
 
   circles.forEach(circle => {
@@ -211,14 +275,34 @@ document.addEventListener('DOMContentLoaded', () => {
       if (circle.classList.contains('selected')) {
         circle.classList.remove('selected');
       } else {
-        const selected = document.querySelectorAll('.circle.selected');
+        const selected = document.querySelectorAll('.circles .circle.selected');
         if (selected.length >= 12) return;
         circle.classList.add('selected');
       }
 
-      const selectedValues = Array.from(document.querySelectorAll('.circle.selected'))
+      const selectedValues = Array.from(document.querySelectorAll('.circles .circle.selected'))
         .map(el => el.dataset.num);
       hiddenInput.value = selectedValues.join(',');
+    });
+  });
+
+  /** === Banco logic === */
+  const bancoCircles = document.querySelectorAll('.banco-circles .circle');
+  const bancoHiddenInput = document.getElementById('banco_selected');
+
+  bancoCircles.forEach(circle => {
+    circle.addEventListener('click', () => {
+      if (circle.classList.contains('selected')) {
+        circle.classList.remove('selected');
+      } else {
+        const selected = document.querySelectorAll('.banco-circles .circle.selected');
+        if (selected.length >= 20) return;
+        circle.classList.add('selected');
+      }
+
+      const selectedValues = Array.from(document.querySelectorAll('.banco-circles .circle.selected'))
+        .map(el => el.dataset.num);
+      bancoHiddenInput.value = selectedValues.join(',');
     });
   });
 });
