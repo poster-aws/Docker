@@ -139,11 +139,22 @@ function updateToggleStyles() {
   const labelOrder = document.getElementById("labelOrder");
   const labelNimport = document.getElementById("labelNimport");
   const neonSwitch = document.getElementById("neonSwitch");
+  const container = document.getElementById("container");
 
   const isChecked = toggle.checked;
   labelOrder.classList.toggle("active", !isChecked);
   labelNimport.classList.toggle("active", isChecked);
   neonSwitch.classList.toggle("active", isChecked);
+
+  // ✅ Изменяем подписи только для Banco
+  const currentPage = container.getAttribute("data-page");
+  if (currentPage && currentPage.includes("banco")) {
+    labelOrder.textContent = "50 Tirages";
+    labelNimport.textContent = "200 Tirages";
+  } else {
+    labelOrder.textContent = "Order";
+    labelNimport.textContent = "N'import";
+  }
 }
 
 // 🏠 На главную
