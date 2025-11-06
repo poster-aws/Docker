@@ -60,10 +60,13 @@ function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = "";
 
+  // 🧼 Сбрасываем wide-info перед загрузкой любой страницы
+  const container = document.getElementById("container");
+  container.classList.remove("wide-info");
+
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
 
-  const container = document.getElementById("container");
   const spinner = document.getElementById("loadingSpinner");
   const cornerButton = document.getElementById("cornerButton");
 
@@ -146,7 +149,6 @@ function updateToggleStyles() {
   labelNimport.classList.toggle("active", isChecked);
   neonSwitch.classList.toggle("active", isChecked);
 
-  // ✅ Изменяем подписи только для Banco
   const currentPage = container.getAttribute("data-page");
   if (currentPage && currentPage.includes("banco")) {
     labelOrder.textContent = "50 Tirages";
@@ -219,17 +221,18 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (currentPage.includes("q4")) {
         container.innerHTML = `<iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
       } else if (currentPage.includes("tout")) {
+        container.classList.add("wide-info");
         container.innerHTML = `<iframe src="toutourien/Info/tout.php?limit=100" style="width:100%; height:85vh; border:none;"></iframe>`;
-        container.style.maxWidth = "80vw";   // ✅ Увеличить ширину container только для tout.php
-        container.style.width = "80vw";
+      } else if (currentPage.includes("banco")) {
+        container.classList.add("wide-info");
+        container.innerHTML = `<iframe src="banco/Info/banco.php" style="width:100%; height:85vh; border:none;"></iframe>`;
       }
 
       cornerButton.innerHTML = "&#x21c6;";
     } else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
-      container.style.maxWidth = "";    // ✅ Сброс ширины
-      container.style.width = "";       // ✅ Сброс ширины
+      container.classList.remove("wide-info");
       loadPage(currentPage);
    }
   });

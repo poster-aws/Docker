@@ -181,11 +181,6 @@ header {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* .info-button:hover {
-  border-color: rgba(173, 216, 230, 0.85);
-  color: rgb(147, 255, 172);
-} */
-
 /* 📦 Контейнер содержимого */
 
 .container {
@@ -207,6 +202,10 @@ header {
   display: none; /* Chrome, Safari */
 }
 
+/* ❗ Новое правило: широкие инфо-контейнеры */
+.container.wide-info {
+  width: 80vw !important;
+}
 
 /* 👋 Приветственная заглушка */
 .welcome-placeholder {
