@@ -75,11 +75,12 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // === ⬅️ Новая логика для Banco и Tout: limit зависит от переключателя Order/N'import
+  // === ⬅️ Новая логика для Banco: limit зависит от переключателя Order/N'import
   let extraParam = "";
-if (page.includes("banco") || page.includes("tout")) {
-  extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
-}
+  if (page.includes("banco")) {
+    // если включен переключатель (N'import) — limit=200, иначе 50
+    extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
+  }
 
   fetch(`${page}?${mode}${extraParam}`)
     .then(response => {
@@ -145,10 +146,9 @@ function updateToggleStyles() {
   labelNimport.classList.toggle("active", isChecked);
   neonSwitch.classList.toggle("active", isChecked);
 
-  // ✅ Изменяем подписи Banco Tout
-const currentPage = container.getAttribute("data-page") || "";
-
-  if (currentPage.includes("banco") || currentPage.includes("tout")) {
+  // ✅ Изменяем подписи только для Banco
+  const currentPage = container.getAttribute("data-page");
+  if (currentPage && currentPage.includes("banco")) {
     labelOrder.textContent = "50 Tirages";
     labelNimport.textContent = "200 Tirages";
   } else {

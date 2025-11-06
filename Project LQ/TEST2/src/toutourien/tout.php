@@ -13,9 +13,8 @@ if ($toutConn->connect_error) die("Connection failed: " . $toutConn->connect_err
 $totalRes = $toutConn->query("SELECT COUNT(*) AS total FROM Tout");
 $totalCount = ($totalRes && $row = $totalRes->fetch_assoc()) ? (int)$row['total'] : 0;
 
-// Лимит — 50/200
-$allowedLimits = [50, 200];
-$limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits) ? (int)$_GET['limit'] : 50;
+// Лимит — жёстко 50
+$limit = 50;
 
 // Последние 50 тиражей
 $sql = "SELECT Tirage, n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12
