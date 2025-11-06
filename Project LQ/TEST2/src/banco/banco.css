@@ -142,3 +142,14 @@ table.digit-grid {
   color: red;
   margin: 12px 0;
 }
+
+/* === Ограничение размера таблицы, если показываем 200 тиражей === */
+.banco-grid-wrapper[data-limit='200'] {
+  max-width: 96vw;
+  max-height: 80vh;
+  overflow: auto;
+  border: 1px solid #bbb;
+  background: rgba(173, 216, 230, 0.85);
+  border-radius: 10px;
+  margin: 0 auto;
+}

@@ -58,7 +58,7 @@ let originalHomeContent = null;
 // 📥 Загрузка страниц
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
-  const mode = isOrdered ? "norder=1" : "";
+  const mode = "";
 
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
@@ -75,9 +75,16 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  fetch(`${page}?${mode}`)
+  // === ⬅️ Новая логика для Banco: limit зависит от переключателя Order/N'import
+  let extraParam = "";
+  if (page.includes("banco")) {
+    // если включен переключатель (N'import) — limit=200, иначе 50
+    extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
+  }
+
+  fetch(`${page}?${mode}${extraParam}`)
     .then(response => {
-      if (!response.ok) throw new Error("Ошибка загрузки страницы");
+      if (!response.ok) throw new Error("Erreur de chargement de la page");
       return response.text();
     })
     .then(html => {
@@ -110,14 +117,15 @@ function loadPage(page) {
       }
       else if (page.includes("banco")) {
         const metaDiv = container.querySelector("#banco-meta");
-        const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Banco<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 15 septembre 1989</span>`;
+        const total = metaDiv?.dataset.count || "?";
+        const shown = metaDiv?.dataset.limit || "50";
+        pageTitle.innerHTML = `Banco<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${total} - Tirages affichés: ${shown} derniers</span>`;
       }
 
       cornerButton.innerHTML = "&#8505;";
     })
     .catch(err => {
-      container.innerHTML = "<p>Не удалось загрузить страницу.</p>";
+      container.innerHTML = "<p>Impossible de charger la page.</p>";
       console.error(err);
     })
     .finally(() => {

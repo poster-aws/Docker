@@ -1,22 +1,20 @@
 <!-- src/banco/banco.php -->
 
 <?php
-require_once './db.php';  // db.php уже содержит готовое подключение $bancoConn
+require_once './db.php';  // подключение $bancoConn
 
 // Используем существующее соединение
 $db = $bancoConn;
 
-// Получаем общее количество тиражей (всего)
+// === 1. Получаем параметр limit (50 или 200) ===
+$allowedLimits = [50, 200];
+$limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits) ? (int)$_GET['limit'] : 50;
+
+// === 2. Получаем общее количество тиражей в БД ===
 $countRes = $db->query("SELECT COUNT(*) AS total FROM banco");
-$totalCount = ($countRes && $row = $countRes->fetch_assoc()) ? (int)$row['total'] : '?';
+$totalCount = ($countRes && $row = $countRes->fetch_assoc()) ? (int)$row['total'] : 0;
 
-// Мета-блок: общее количество тиражей
-echo "<div id='banco-meta' data-count='{$totalCount}'></div>";
-
-// ==== 1. Фиксированный лимит: 50 последних тиражей
-$limit = 50;
-
-// ==== 2. Получаем последние 50 тиражей
+// === 3. Получаем последние N тиражей ===
 $query = "SELECT Tirage, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
                  n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, turbo
           FROM banco
@@ -35,7 +33,7 @@ while ($row = $result->fetch_assoc()) {
     $tirages[] = $row;
 }
 
-// ==== 3. Подсчёт Tot (частота каждого числа 1..70)
+// === 4. Подсчёт Tot (частота каждого числа 1..70) ===
 $totals = array_fill(1, 70, 0);
 foreach ($tirages as $tirage) {
     for ($i = 1; $i <= 20; $i++) {
@@ -46,52 +44,49 @@ foreach ($tirages as $tirage) {
     }
 }
 
-// ==== 3.1 Динамические пороги для градации цвета Tot (как в tout)
+// === 5. Динамические пороги для градации цвета Tot
 $maxTot = max($totals);
 $thresholdHigh = $maxTot * 0.66;
 $thresholdMedium = $maxTot * 0.33;
 
-// ==== 4. Служебный мета-блок
-echo "<div id='banco-meta' data-count='" . count($tirages) . "'></div>";
+// === 6. Мета-блок с данными для JS (общее кол-во и лимит)
+echo "<div id='banco-meta' data-count='{$totalCount}' data-limit='{$limit}'></div>";
 
-// ==== 5. Построение сетки
-echo "<div class='table-wrapper banco-grid-wrapper'><table class='digit-grid'>";
+// === 7. Построение сетки
+echo "<div class='table-wrapper banco-grid-wrapper' data-limit='{$limit}'><table class='digit-grid'>";
 
-// ==== 5.1 Шапка: строка с датами
-echo "<thead><tr class='date-row'><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
+// 7.1 Шапка: строка с датами
+echo "<thead><tr class='date-row'><th class='sticky-left tot-label'></th><th class='digit-label'></th>";
 foreach ($tirages as $tirage) {
-    $date = $tirage['Tirage']; // Предполагаем формат YYYY-MM-DD
+    $date = $tirage['Tirage'];
     echo "<th><div class='vertical-text'>$date</div></th>";
 }
 echo "</tr>";
 
-// ==== 5.2 Шапка: строка turbo (ниже даты)
-echo "<tr class='turbo-row'><th class='sticky-left digit-label'></th><th class='sticky-left tot-label'></th>";
+// 7.2 Шапка: строка turbo (ниже дат)
+echo "<tr class='turbo-row'><th class='sticky-left tot-label'></th><th class='digit-label'></th>";
 foreach ($tirages as $tirage) {
     $turbo = htmlspecialchars($tirage['turbo'] . 'x', ENT_QUOTES);
     echo "<th>$turbo</th>";
 }
 echo "</tr></thead>";
 
-// ==== 5.2 Строки (1-70)
+// 7.3 Строки чисел
 for ($digit = 1; $digit <= 70; $digit++) {
     $tot = $totals[$digit];
     $totClass = ($tot >= $thresholdHigh) ? 'high' : (($tot >= $thresholdMedium) ? 'medium' : 'low');
 
-echo "<tr>
-    <td class='sticky-left tot-label $totClass'>{$tot}x</td>
-    <td class='digit-label'>$digit</td>";
+    echo "<tr>
+        <td class='sticky-left tot-label $totClass'>{$tot}x</td>
+        <td class='digit-label'>$digit</td>";
     
-foreach ($tirages as $tirage) {
-    // Берём только n1..n20
-    $nums = array_slice($tirage, 1, 20, true);
-    $isHit = in_array($digit, $nums);
-    
-    echo "<td" . ($isHit ? " class='hit'" : "") . ">" . ($isHit ? $digit : "") . "</td>";
-}
+    foreach ($tirages as $tirage) {
+        $nums = array_slice($tirage, 1, 20, true); // только n1..n20
+        $isHit = in_array($digit, $nums);
+        echo "<td" . ($isHit ? " class='hit'" : "") . ">" . ($isHit ? $digit : "") . "</td>";
+    }
     
     echo "</tr>";
 }
 
 echo "</table></div>";
-?>
