@@ -101,13 +101,17 @@ function loadPage(page) {
       else if (page.includes("q4")) {
         const metaDiv = container.querySelector("#q4-meta");
         const count = metaDiv?.dataset.count || "?";
-        const jamais = metaDiv?.dataset.jamais || "?";
         pageTitle.innerHTML = `Quotidienne4<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 06 juin 1983</span>`;
       }
       else if (page.includes("tout")) {
         const metaDiv = container.querySelector("#tout-meta");
         const count = metaDiv?.dataset.count || "?";
         pageTitle.innerHTML = `Tout ou Rien<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 17 novembre 2014</span>`;
+      }
+      else if (page.includes("banco")) {
+        const metaDiv = container.querySelector("#banco-meta");
+        const count = metaDiv?.dataset.count || "?";
+        pageTitle.innerHTML = `Banco<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 15 septembre 1989</span>`;
       }
 
       cornerButton.innerHTML = "&#8505;";
@@ -199,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `<iframe src="toutourien/Info/tout.php?limit=100" style="width:100%; height:85vh; border:none;"></iframe>`;
         container.style.maxWidth = "80vw";   // ✅ Увеличить ширину container только для tout.php
         container.style.width = "80vw";
-}
+      }
 
       cornerButton.innerHTML = "&#x21c6;";
     } else {

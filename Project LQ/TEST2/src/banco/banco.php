@@ -6,6 +6,13 @@ require_once './db.php';  // db.php уже содержит готовое по�
 // Используем существующее соединение
 $db = $bancoConn;
 
+// Получаем общее количество тиражей (всего)
+$countRes = $db->query("SELECT COUNT(*) AS total FROM banco");
+$totalCount = ($countRes && $row = $countRes->fetch_assoc()) ? (int)$row['total'] : '?';
+
+// Мета-блок: общее количество тиражей
+echo "<div id='banco-meta' data-count='{$totalCount}'></div>";
+
 // ==== 1. Фиксированный лимит: 50 последних тиражей
 $limit = 50;
 
