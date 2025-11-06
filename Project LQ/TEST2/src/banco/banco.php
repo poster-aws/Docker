@@ -6,34 +6,10 @@ require_once './db.php';  // db.php уже содержит готовое по�
 // Используем существующее соединение
 $db = $bancoConn;
 
-// ==== 1. Получаем лимит из GET-параметра или по умолчанию 50
-$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50;
-$validLimits = [50, 100, 200];
-if (!in_array($limit, $validLimits, true)) {
-    $limit = 50;
-}
+// ==== 1. Фиксированный лимит: 50 последних тиражей
+$limit = 50;
 
-// ==== 1.1 Панель выбора лимита с динамической перегрузкой через loadPage()
-echo '<div class="banco-toolbar">';
-echo '<label for="limitSelect">Показать: </label>';
-echo '<select id="limitSelect">';
-foreach ($validLimits as $l) {
-    $selected = ($l === $limit) ? 'selected' : '';
-    echo "<option value=\"$l\" $selected>$l</option>";
-}
-echo '</select> тиражей';
-echo '<button id="applyLimitBtn" type="button">Применить</button>';
-echo '</div>';
-
-// Добавляем in-line JavaScript для обработки выбора
-echo "<script>
-document.getElementById('applyLimitBtn').addEventListener('click', function() {
-    const newLimit = document.getElementById('limitSelect').value;
-    loadPage(`./banco.php?limit=\${newLimit}`);
-});
-</script>";
-
-// ==== 2. Получаем последние N тиражей
+// ==== 2. Получаем последние 50 тиражей
 $query = "SELECT Tirage, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
                  n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, turbo
           FROM banco
@@ -95,14 +71,17 @@ for ($digit = 1; $digit <= 70; $digit++) {
     $tot = $totals[$digit];
     $totClass = ($tot >= $thresholdHigh) ? 'high' : (($tot >= $thresholdMedium) ? 'medium' : 'low');
 
-    echo "<tr>
-        <td class='sticky-left tot-label $totClass'>{$tot}x</td>
-        <td class='sticky-left digit-label'>$digit</td>";
+echo "<tr>
+    <td class='sticky-left tot-label $totClass'>{$tot}x</td>
+    <td class='digit-label'>$digit</td>";
     
-    foreach ($tirages as $tirage) {
-        $isHit = in_array($digit, array_slice($tirage, 1));
-        echo "<td" . ($isHit ? " class='hit'" : "") . ">" . ($isHit ? $digit : "") . "</td>";
-    }
+foreach ($tirages as $tirage) {
+    // Берём только n1..n20
+    $nums = array_slice($tirage, 1, 20, true);
+    $isHit = in_array($digit, $nums);
+    
+    echo "<td" . ($isHit ? " class='hit'" : "") . ">" . ($isHit ? $digit : "") . "</td>";
+}
     
     echo "</tr>";
 }
