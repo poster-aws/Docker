@@ -60,13 +60,10 @@ function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
   const mode = "";
 
-  // 🧼 Сбрасываем wide-info перед загрузкой любой страницы
-  const container = document.getElementById("container");
-  container.classList.remove("wide-info");
-
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
 
+  const container = document.getElementById("container");
   const spinner = document.getElementById("loadingSpinner");
   const cornerButton = document.getElementById("cornerButton");
 
@@ -78,12 +75,11 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // === ⬅️ Новая логика для Banco: limit зависит от переключателя Order/N'import
+  // === ⬅️ Новая логика для Banco и Tout: limit зависит от переключателя Order/N'import
   let extraParam = "";
-  if (page.includes("banco")) {
-    // если включен переключатель (N'import) — limit=200, иначе 50
-    extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
-  }
+if (page.includes("banco") || page.includes("tout")) {
+  extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
+}
 
   fetch(`${page}?${mode}${extraParam}`)
     .then(response => {
@@ -149,8 +145,10 @@ function updateToggleStyles() {
   labelNimport.classList.toggle("active", isChecked);
   neonSwitch.classList.toggle("active", isChecked);
 
-  const currentPage = container.getAttribute("data-page");
-  if (currentPage && currentPage.includes("banco")) {
+  // ✅ Изменяем подписи Banco Tout
+const currentPage = container.getAttribute("data-page") || "";
+
+  if (currentPage.includes("banco") || currentPage.includes("tout")) {
     labelOrder.textContent = "50 Tirages";
     labelNimport.textContent = "200 Tirages";
   } else {
@@ -221,18 +219,17 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (currentPage.includes("q4")) {
         container.innerHTML = `<iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
       } else if (currentPage.includes("tout")) {
-        container.classList.add("wide-info");
         container.innerHTML = `<iframe src="toutourien/Info/tout.php?limit=100" style="width:100%; height:85vh; border:none;"></iframe>`;
-      } else if (currentPage.includes("banco")) {
-        container.classList.add("wide-info");
-        container.innerHTML = `<iframe src="banco/Info/banco.php" style="width:100%; height:85vh; border:none;"></iframe>`;
+        container.style.maxWidth = "80vw";   // ✅ Увеличить ширину container только для tout.php
+        container.style.width = "80vw";
       }
 
       cornerButton.innerHTML = "&#x21c6;";
     } else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
-      container.classList.remove("wide-info");
+      container.style.maxWidth = "";    // ✅ Сброс ширины
+      container.style.width = "";       // ✅ Сброс ширины
       loadPage(currentPage);
    }
   });
