@@ -11,7 +11,7 @@ $totalCount = ($totalRes && $row = $totalRes->fetch_assoc()) ? $row['total'] : '
 $allowedLimits = [50, 100, 200, 500];
 $limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits) ? (int)$_GET['limit'] : 50;
 
-// Данные из БД
+// Данные из БД для Analyse
 $sql = "SELECT Tirage, n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12 FROM Tout ORDER BY Tirage DESC LIMIT $limit";
 $res = $toutConn->query($sql);
 $tirages = [];
@@ -27,7 +27,6 @@ if ($res && $res->num_rows > 0) {
     ];
   }
 }
-$toutConn->close();
 
 /* === Построение сводной таблицы Analyse === */
 $positionMatrix = [];
@@ -44,6 +43,38 @@ foreach ($tirages as $t) {
     }
   }
 }
+
+/* === Подсчёт комбинаций из всей таблицы === */
+$sqlAll = "SELECT n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12 FROM Tout";
+$resAll = $toutConn->query($sqlAll);
+
+$comboSet = [];
+$comboCounts = [];
+$totalPossibleComb = 2704156; // задано как число всех возможных комбинаций
+
+if ($resAll && $resAll->num_rows > 0) {
+  while ($r = $resAll->fetch_assoc()) {
+    $nums = array_map('intval', [
+      $r['n1'], $r['n2'], $r['n3'], $r['n4'], $r['n5'], $r['n6'],
+      $r['n7'], $r['n8'], $r['n9'], $r['n10'], $r['n11'], $r['n12']
+    ]);
+    sort($nums);
+    $key = implode(',', $nums);
+
+    $comboSet[$key] = true;
+    if (!isset($comboCounts[$key])) $comboCounts[$key] = 0;
+    $comboCounts[$key]++;
+  }
+}
+
+// Подсчёт реально вышедших уникальных комбинаций
+$totalActualComb = count($comboSet);
+
+// Повторяющиеся комбинации
+$repeatedCombos = array_filter($comboCounts, fn($cnt) => $cnt > 1);
+arsort($repeatedCombos);
+
+$toutConn->close();
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +89,7 @@ foreach ($tirages as $t) {
     .filter-form {
       text-align: center;
       margin: 0;
-      padding: 10px 0;
+      padding: 5px 0;
     }
 
     .filter-form select {
@@ -66,7 +97,6 @@ foreach ($tirages as $t) {
       font-size: 14px;
     }
 
-    /* === CSS: таблица Analyse === */
     .analyse-grid {
       background-color: rgba(255, 255, 255, 0);
     }
@@ -107,18 +137,43 @@ foreach ($tirages as $t) {
       margin: 0 auto;
       background: rgba(173, 216, 230, 0);
     }
+
+    /* Перенесенные стили инфо-блока */
+    .info-list {
+      margin: 10px auto;
+      max-width: 800px;
+      font-size: 14px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-left: 4px solid #FF8C00;
+      background: rgba(255, 255, 255, 0.5);
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+
+    .info-text {
+      flex: 1;
+    }
+
+    .combo-square {
+      display: inline-block;
+      min-width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      margin-right: 4px;
+      background: rgba(126,176,234,0.8);
+      color: #000;
+      border-radius: 4px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
-
-<form class="filter-form" method="get">
-  Dernières
-  <select name="limit" onchange="this.form.submit()">
-    <?php foreach ($allowedLimits as $opt): ?>
-      <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
-    <?php endforeach; ?>
-  </select> tirages
-</form>
 
 <?php if (!empty($positionMatrix)): ?>
   <div class="table-wrapper" style="margin: 10px auto; text-align: center;">
@@ -150,6 +205,45 @@ foreach ($tirages as $t) {
 <?php else: ?>
   <p style="text-align:center; color: red;">Нет данных для отображения.</p>
 <?php endif; ?>
+
+<form class="filter-form" method="get">
+  Dernières
+  <select name="limit" onchange="this.form.submit()">
+    <?php foreach ($allowedLimits as $opt): ?>
+      <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
+    <?php endforeach; ?>
+  </select> tirages
+</form>
+
+<!-- === Инфо блок, перенесённый из tout.php === -->
+<div class="info-list">
+  <div class="info-row">
+    <div class="info-text">
+      Toutes les combinaisons possibles — <b><?= number_format($totalPossibleComb, 0, '.', ' ') ?></b>
+    </div>
+  </div>
+  <div class="info-row">
+    <div class="info-text">
+      Combinaisons sorties — <b><?= number_format($totalActualComb, 0, '.', ' ') ?></b>
+    </div>
+  </div>
+
+  <?php if (!empty($repeatedCombos)): ?>
+    <div class="info-row">
+      <div class="info-text">Combinaisons sorties plusieurs fois:</div>
+    </div>
+    <?php foreach ($repeatedCombos as $combo => $cnt): ?>
+      <div class="info-row">
+        <div class="info-text">
+          <?php foreach (explode(',', $combo) as $d): ?>
+            <span class="combo-square"><?= htmlspecialchars(trim($d)) ?></span>
+          <?php endforeach; ?>
+          — <b><?= $cnt ?></b>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</div>
 
 </body>
 </html>

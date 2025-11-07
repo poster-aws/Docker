@@ -154,39 +154,6 @@ arsort($repeatedCombos); // сортировка по убыванию
   </a>
 </div>
 
-<!-- ===== ОБЪЕДИНЁННЫЙ ИНФОБЛОК ===== -->
-<div class="info-list" style="max-width:800px; margin:10px auto;">
-  <div class="info-row">
-    <div class="info-text">
-      Toutes les combinaisons possibles — <b><?= number_format($totalPossibleComb, 0, '.', ' ') ?></b>
-    </div>
-  </div>
-  <div class="info-row">
-    <div class="info-text">
-      Combinaisons sorties — <b><?= number_format($totalActualComb, 0, '.', ' ') ?></b>
-    </div>
-  </div>
-
-  <?php if (!empty($repeatedCombos)): ?>
-    <div class="info-row">
-      <div class="info-text"> Combinaisons sorties plusieurs fois </div>
-    </div>
-    <?php foreach ($repeatedCombos as $combo => $cnt): ?>
-      <div class="info-row">
-        <div class="info-text">
-          <?php
-            $digits = explode(',', $combo);
-            foreach ($digits as $d) {
-              echo '<span class="combo-square">' . htmlspecialchars(trim($d)) . '</span>';
-            }
-          ?>
-          — <b><?= $cnt ?></b>
-        </div>
-      </div>
-    <?php endforeach; ?>
-  <?php endif; ?>
-</div>
-
 <!-- ===== МОДАЛКА БЕЗ JS (через :target) ===== -->
 <style>
   /* По умолчанию скрыто */

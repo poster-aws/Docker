@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `<iframe src="toutourien/Info/toutinfo.php?limit=${toggleSwitch.checked ? 200 : 50}" style="width:100%; height:85vh; border:none;"></iframe>`;
       }
 
-      cornerButton.innerHTML = "&#x21c6;";
+      cornerButton.innerHTML = "&#x21c6;"; // ✅ Вернуть иконку Info
     } 
 
    else {
