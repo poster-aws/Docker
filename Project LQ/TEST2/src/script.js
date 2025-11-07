@@ -219,13 +219,13 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (currentPage.includes("q4")) {
         container.innerHTML = `<iframe src="quotidienne/QInfo/q4info.php?table=Q4_stats_order" style="width:100%; height:85vh; border:none;"></iframe>`;
       } else if (currentPage.includes("tout")) {
-        container.innerHTML = `<iframe src="toutourien/Info/tout.php?limit=100" style="width:100%; height:85vh; border:none;"></iframe>`;
-        container.style.maxWidth = "80vw";   // ✅ Увеличить ширину container только для tout.php
-        container.style.width = "80vw";
+        container.innerHTML = `<iframe src="toutourien/Info/toutinfo.php?limit=${toggleSwitch.checked ? 200 : 50}" style="width:100%; height:85vh; border:none;"></iframe>`;
       }
 
       cornerButton.innerHTML = "&#x21c6;";
-    } else {
+    } 
+
+   else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
       container.style.maxWidth = "";    // ✅ Сброс ширины
