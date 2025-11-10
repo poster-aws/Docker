@@ -97,7 +97,7 @@ arsort($repeatedCombos); // сортировка по убыванию
 
 <div id="tout-meta" data-count="<?= htmlspecialchars((string)$totalCount, ENT_QUOTES) ?>"></div>
 
-<div class="table-wrapper tout-grid-wrapper">
+<div class="table-wrapper tout-grid-wrapper" data-limit="<?= $limit ?>">
   <?php if (!empty($tirages)): ?>
     <table class="digit-grid" id="toutGrid">
       <thead>
