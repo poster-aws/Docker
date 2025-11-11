@@ -58,7 +58,7 @@ let originalHomeContent = null;
 // 📥 Загрузка страниц
 function loadPage(page) {
   const isOrdered = document.getElementById("toggleSwitch").checked;
-  const mode = "";
+  const mode = isOrdered ? "norder=1" : "";
 
   const menu = document.getElementById("dropdownMenu");
   menu.style.display = "none";
