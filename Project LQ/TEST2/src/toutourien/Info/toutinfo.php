@@ -1,5 +1,3 @@
-<!-- src/toutourien/Info/toutinfo.php -->
-
 <?php
 require_once "../db.php";
 

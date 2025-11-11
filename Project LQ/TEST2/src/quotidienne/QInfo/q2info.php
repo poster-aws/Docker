@@ -1,5 +1,3 @@
-<!-- src/quotidienne/QInfo/q2info.php -->
-
 <?php
 require_once "../db.php";
 

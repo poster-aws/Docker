@@ -1,5 +1,3 @@
-<!-- src/quotidienne/db.php -->
-
 <?php
 // === db.php ===
 // Подключение к базе данных для всех страниц Quotidienne

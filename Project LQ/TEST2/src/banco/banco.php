@@ -1,5 +1,3 @@
-<!-- src/banco/banco.php -->
-
 <?php
 require_once './db.php';  // подключение $bancoConn
 
