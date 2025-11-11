@@ -12,8 +12,8 @@
 /* === Table Container === */
 /* Контейнер таблицы */
 .table-wrapper.banco-grid-wrapper {
-  max-width: 98%; 
-  max-height: 90vh;
+  max-width: 98%;
+  max-height: 88vh;
   overflow: auto;
   margin: 0 auto;
   border: 1px solid #ccc;
@@ -23,10 +23,9 @@
 
 /* === Table === */
 /* Таблица */
-table.digit-grid { 
-  width: max-content; 
-  border-collapse: collapse; 
-  /* table-layout: fixed;  */
+table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
   font-size: 12px;
 }
 
@@ -34,11 +33,11 @@ table.digit-grid {
 /* Ячейки */
 .digit-grid th,
 .digit-grid td {
-  width: 22px; 
-  height: 22px; 
+  width: 22px;
+  height: 22px;
   text-align: center;
   border: 1px solid #ccc;
-  padding: 0; 
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -47,8 +46,8 @@ table.digit-grid {
 .digit-grid th.tot-label,
 .digit-grid td.digit-label,
 .digit-grid th.digit-label {
-  width: auto !important;   /* override 22px from .digit-grid td */
-  min-width: 30px;          /* ensure not too narrow */
+  width: auto !important;
+  min-width: 30px;
 }
 
 .digit-grid td.hit {
@@ -61,8 +60,8 @@ table.digit-grid {
 .digit-grid thead th {
   height: 60px;
   writing-mode: vertical-rl;
-  font-size: 0.7em; 
-  background: #eee; 
+  font-size: 0.7em;
+  background: #eee;
 }
 
 /* Вертикальный текст */
@@ -77,12 +76,13 @@ table.digit-grid {
 }
 
 /* === Sticky Columns === */
-/* Липкая колонка: Tot */
+
+/* Липкая колонка Tot (слева, остаётся при горизонтальном скролле) */
 .tot-label {
   position: sticky;
   left: 0;
-  top: 22px;
-  z-index: 9;
+  top: 22px; /* только высота строки Турбо */
+  z-index: 9; /* ниже шапки */
   background-color: #eee;
   white-space: nowrap;
   font-weight: 600 !important;
@@ -90,30 +90,25 @@ table.digit-grid {
   min-width: 32px;
 }
 
-/* Обычная колонка: цифры 1..70 */
+/* Колонка с цифрами 1–70:
+   - липкая только по вертикали
+   - не липкая по горизонтали */
 .digit-label {
+  position: sticky;
+  top: 22px; /* под строкой Турбо */
+  z-index: 8;
   background-color: #f4f4f4;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   text-align: center !important;
 }
 
-.digit-label {
-  left: var(--tot-col-width, 50px); /* динамически от ширины tot */
-  font-weight: 700 !important;
-}
-
-.tot-label {
-  left: 0;
-  /* padding: 0 6px; */
-}
-
- /* Градация tot-label */
+/* Градация tot-label */
 .tot-label.low    { color: #009e25; }
 .tot-label.medium { color: #e67e22; }
 .tot-label.high   { color: #c0392b; font-weight: bold; }
 
 /* === Turbo-row styling === */
-/* Turbo-row styling: horizontal, centered text */
+/* Турбо — верхняя строка, остаётся при прокрутке */
 .turbo-row th {
   position: sticky;
   top: 0;
@@ -123,12 +118,12 @@ table.digit-grid {
   background-color: #f4f4f4;
   text-align: center;
   height: 22px !important;
-  line-height: 22px;        /* выравнивает текст по вертикали */
+  line-height: 22px;
   padding: 0 !important;
 }
 
 /* === Date Row === */
-/* Sticky Date row stays under Turbo */
+/* Строка с датами уходит вверх при прокрутке */
 .date-row th {
   position: static !important;
   top: auto !important;
@@ -146,7 +141,7 @@ table.digit-grid {
 /* === Ограничение размера таблицы, если показываем 200 тиражей === */
 .banco-grid-wrapper[data-limit='200'] {
   max-width: 96vw;
-  max-height: 80vh;
+  max-height: 88vh;
   overflow: auto;
   border: 1px solid #bbb;
   background: rgba(173, 216, 230, 0.85);
