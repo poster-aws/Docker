@@ -64,7 +64,7 @@ select {
 
   <!-- Инфо-блок -->
   <div class="info-placeholder">
-    <p><i>Bloc d’information — section temporaire (en développement).</i></p>
+    <p><i>Bloc d'information — section temporaire (en développement).</i></p>
   </div>
 
 </body>
