@@ -76,11 +76,22 @@ for (a, b), dates in pairs.items():
                     datetime.strptime(str(d1), "%Y-%m-%d")).days
         gaps.append(diff)
 
-    # Статистика промежутков
+    # --- Правильная статистика промежутков ---
     max_gap = max(gaps) if gaps else 0
-    days2 = gaps[-2] if len(gaps) >= 2 else 0
 
-    # Разница между последним выпадением и последним тиражом
+    # days2 = разница между последними двумя выпадениями (если хотя бы 2)
+    if len(dates) >= 2:
+        d_last = dates[-1]
+        d_prev = dates[-2]
+        if isinstance(d_last, datetime):
+            days2 = (d_last - d_prev).days
+        else:
+            days2 = (datetime.strptime(str(d_last), "%Y-%m-%d") -
+                     datetime.strptime(str(d_prev), "%Y-%m-%d")).days
+    else:
+        days2 = 0
+
+    # days = разница между последним тиражом базы и последним выпадением
     last_date = dates[-1]
     if isinstance(last_date, datetime):
         days = (last_global_date - last_date).days
