@@ -1,9 +1,36 @@
 <?php
 require_once "../db.php"; // $bancoConn
 
-// Загружаем данные comb2
+// -------------------------------
+// 1. Читаем параметры меню
+// -------------------------------
+$type  = isset($_GET['type'])  ? $_GET['type']  : 'c2';      // c2 | c3
+$scope = isset($_GET['scope']) ? $_GET['scope'] : 'dernier'; // dernier | tous
+
+// -------------------------------
+// 2. Определяем таблицу comb2 / comb3
+// -------------------------------
+if ($type === 'c2') {
+    $table = "comb2";
+    $fields = ['n1', 'n2'];
+} else {
+    $table = "comb3";
+    $fields = ['n1', 'n2', 'n3'];
+}
+
+// -------------------------------
+// 3. Строим SQL в зависимости от scope
+// -------------------------------
+if ($scope === 'dernier') {
+    $sql = "SELECT * FROM $table WHERE days = 0 ORDER BY Tirage DESC";
+} else {
+    $sql = "SELECT * FROM $table ORDER BY Tirage DESC";
+}
+
+// -------------------------------
+// 4. Загружаем данные
+// -------------------------------
 $rows = [];
-$sql = "SELECT * FROM comb2 ORDER BY Tirage DESC";
 $result = $bancoConn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($r = $result->fetch_assoc()) {
@@ -18,9 +45,10 @@ if ($result && $result->num_rows > 0) {
 <title>Banco Info</title>
 
 <style>
-/* ========================== */
-/* === СТИЛИ ИЗ Q2 (ПОЛНЫЕ) === */
-/* ========================== */
+
+/* =============================== */
+/* === ПОЛНЫЙ STYLING из Q2 ====== */
+/* =============================== */
 
 /* 📦 Общий контейнер таблиц */
 .tables-wrapper {
@@ -91,7 +119,18 @@ if ($result && $result->num_rows > 0) {
   background-color: rgba(202, 202, 202, 0.485);
 }
 
-/* 🔵 Шарик */
+/* 🔽 Сортировка */
+.interactive-table th.sort-asc::after {
+  content: " ▲";
+  font-size: 0.8em;
+}
+
+.interactive-table th.sort-desc::after {
+  content: " ▼";
+  font-size: 0.8em;
+}
+
+/* 🔵 Кружки (шарики) */
 .circle {
   display: inline-block;
   width: 28px;
@@ -106,26 +145,9 @@ if ($result && $result->num_rows > 0) {
   font-family: Arial, sans-serif;
 }
 
-/* 📉 Адаптивность */
-@media (max-width: 768px) {
-  .tables-wrapper {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-  }
-
-  .table-container,
-  .combo-table-container,
-  .number-stats-table {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-  }
-}
-
-/* ========================== */
-/* === Банко Инфо – базовое === */
-/* ========================== */
+/* =============================== */
+/* === Banco Info базовый CSS ==== */
+/* =============================== */
 
 .banco-info-page {
   font-family: sans-serif;
@@ -164,40 +186,45 @@ select {
   color: #333;
   font-size: 0.95em;
 }
+
 </style>
+
 </head>
 
 <body class="banco-info-page">
 
-  <!-- Меню выбора -->
+  <!-- Меню -->
   <div class="menu-row">
-    <select id="combinaisonSelect">
-      <option value="c2">Combinaison de 2</option>
-      <option value="c3">Combinaison de 3</option>
+
+    <select id="combinaisonSelect" onchange="updateParams()">
+      <option value="c2" <?= ($type==='c2'?'selected':'') ?>>Combinaison de 2</option>
+      <option value="c3" <?= ($type==='c3'?'selected':'') ?>>Combinaison de 3</option>
     </select>
 
-    <select id="tirageSelect">
-      <option value="dernier">Dernier tirage</option>
-      <option value="200">200 tirages</option>
-      <option value="tous">Tous les tirages</option>
+    <select id="tirageSelect" onchange="updateParams()">
+      <option value="dernier" <?= ($scope==='dernier'?'selected':'') ?>>Dernier tirage</option>
+      <option value="tous" <?= ($scope==='tous'?'selected':'') ?>>Tous les tirages</option>
     </select>
+
   </div>
 
-  <!-- Инфо-блок -->
+  <!-- Инфо -->
   <div class="info-placeholder">
     <p><i>Bloc d'information — section temporaire (en développement).</i></p>
   </div>
 
-  <!-- ░░░ Таблица COMB2 — оформлена как Q2 ░░░ -->
+  <!-- Таблица -->
   <div class="tables-wrapper">
     <div class="table-container">
-
       <table class="interactive-table">
         <thead>
           <tr>
             <th>Tirage</th>
-            <th>#</th>
-            <th>#</th>
+
+            <?php foreach ($fields as $f): ?>
+              <th>#</th>
+            <?php endforeach; ?>
+
             <th>Jours<br>passés</th>
             <th>L'avant<br>dernière</th>
             <th>Fois</th>
@@ -208,23 +235,32 @@ select {
         <tbody>
         <?php foreach ($rows as $r): ?>
           <tr>
+
             <td><?= htmlspecialchars($r['Tirage']) ?></td>
 
-            <td><span class="circle"><?= htmlspecialchars($r['n1']) ?></span></td>
-            <td><span class="circle"><?= htmlspecialchars($r['n2']) ?></span></td>
+            <?php foreach ($fields as $f): ?>
+              <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
+            <?php endforeach; ?>
 
             <td><?= htmlspecialchars($r['days']) ?></td>
             <td><?= htmlspecialchars($r['days2']) ?></td>
-
             <td><?= htmlspecialchars($r['fois']) ?></td>
             <td><?= htmlspecialchars($r['max']) ?></td>
+
           </tr>
         <?php endforeach; ?>
         </tbody>
-
       </table>
     </div>
   </div>
+
+<script>
+function updateParams() {
+    const type  = document.getElementById("combinaisonSelect").value;
+    const scope = document.getElementById("tirageSelect").value;
+    window.location.href = `?type=${type}&scope=${scope}`;
+}
+</script>
 
 </body>
 </html>
