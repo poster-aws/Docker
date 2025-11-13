@@ -37,6 +37,37 @@ if ($result && $result->num_rows > 0) {
         $rows[] = $r;
     }
 }
+
+// === Получаем последний тираж Banco (20 чисел) ===
+$lastNums = [];
+$sqlLast = "SELECT * FROM banco ORDER BY Tirage DESC LIMIT 1";
+$resLast = $bancoConn->query($sqlLast);
+if ($resLast && $resLast->num_rows > 0) {
+    $rowLast = $resLast->fetch_assoc();
+
+    // собрать n1 … n20
+    for ($i = 1; $i <= 20; $i++) {
+        $lastNums[] = $rowLast["n$i"];
+    }
+}
+
+// === Подбираем текст строки №2 ===
+$comboText = "";
+
+if ($type === "c2" && $scope === "dernier") {
+    $comboText = "Toutes les combinaisons – 190";
+}
+elseif ($type === "c2" && $scope === "tous") {
+    $comboText = "Toutes les combinaisons – 2 415";
+}
+elseif ($type === "c3" && $scope === "dernier") {
+    $comboText = "Toutes les combinaisons – 1 140";
+}
+elseif ($type === "c3" && $scope === "tous") {
+    $comboText = "Toutes les combinaisons – 54 740";
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -177,14 +208,24 @@ select {
 
 /* Инфо-блок */
 .info-placeholder {
-  max-width: 800px;
-  margin: 15px auto;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-left: 4px solid #007BFF;
-  border-radius: 6px;
-  color: #333;
-  font-size: 0.95em;
+    max-width: 850px;
+    margin: 15px auto;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border-left: 4px solid #007BFF;
+    border-radius: 6px;
+    font-size: 15px;
+    text-align: center;
+}
+
+/* Первый блок — зелёная полоса */
+.info-block-1 {
+    border-left-color: #28a745;
+}
+
+/* Второй блок — оранжевая полоса */
+.info-block-2 {
+    border-left-color: #FF8C00;
 }
 
 </style>
@@ -209,9 +250,13 @@ select {
   </div>
 
   <!-- Инфо -->
-  <div class="info-placeholder">
-    <p><i>Bloc d'information — section temporaire (en développement).</i></p>
-  </div>
+<div class="info-placeholder info-block-1">
+    <p><b><?= implode(" ", $lastNums) ?></b></p>
+</div>
+
+<div class="info-placeholder info-block-2">
+    <p><?= $comboText ?></p>
+</div>
 
   <!-- Таблица -->
   <div class="tables-wrapper">
