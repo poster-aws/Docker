@@ -163,17 +163,33 @@ elseif ($type === "c3" && $scope === "tous") {
 
 /* 🔵 Кружки (шарики) */
 .circle {
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  line-height: 28px;
-  border-radius: 50%;
-  background-color: #7eb0ea;
-  color: #000000;
-  font-weight: bold;
-  text-align: center;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-  font-family: Arial, sans-serif;
+    display: inline-block;
+    width: 22px;           /* как раньше */
+    height: 22px;          /* как раньше */
+    line-height: 22px;
+    background: #7eb0ea;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 6px;    /* ← вместо 50% теперь мягкие углы */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    font-family: Arial, sans-serif;
+    margin: 0 3px;
+}
+
+.square-transparent {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 6px;                 /* лёгкие скругления */
+    border: 1px solid #7eb0ea;          /* тонкая рамка, как оттенок обычных квадратов */
+    background: transparent;            /* полностью прозрачный */
+    color: #000000ff;                     /* цифра */
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    margin: 0 3px;
 }
 
 /* =============================== */
@@ -210,7 +226,7 @@ select {
 .info-placeholder {
     max-width: 850px;
     margin: 15px auto;
-    padding: 12px 16px;
+    padding: 1px 1px;
     background: rgba(255, 255, 255, 0.12);
     border-left: 4px solid #007BFF;
     border-radius: 6px;
@@ -251,7 +267,11 @@ select {
 
   <!-- Инфо -->
 <div class="info-placeholder info-block-1">
-    <p><b><?= implode(" ", $lastNums) ?></b></p>
+    <p>
+<?php foreach ($lastNums as $num): ?>
+    <span class="square-transparent"><?= $num ?></span>
+<?php endforeach; ?>
+</p>
 </div>
 
 <div class="info-placeholder info-block-2">
@@ -306,6 +326,54 @@ function updateParams() {
     window.location.href = `?type=${type}&scope=${scope}`;
 }
 </script>
+
+<script>
+// 🔁 Сортировка таблиц
+function makeTablesSortable() {
+  const tables = document.querySelectorAll(".interactive-table");
+
+  tables.forEach(table => {
+    const headers = table.querySelectorAll("th");
+    headers.forEach((th, columnIndex) => {
+      th.style.cursor = "pointer";
+
+      th.addEventListener("click", () => {
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const isAscending = th.classList.contains("sort-asc");
+
+        // Убираем старые индикаторы сортировки
+        headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
+
+        // Сортируем строки
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.children[columnIndex].innerText.trim();
+          const bText = b.children[columnIndex].innerText.trim();
+
+          const aVal = isNaN(aText) ? aText : parseFloat(aText);
+          const bVal = isNaN(bText) ? bText : parseFloat(bText);
+
+          if (aVal < bVal) return isAscending ? 1 : -1;
+          if (aVal > bVal) return isAscending ? -1 : 1;
+          return 0;
+        });
+
+        // Обновляем таблицу
+        tbody.innerHTML = '';
+        sortedRows.forEach(row => tbody.appendChild(row));
+
+        // Индикатор сортировки
+        th.classList.toggle("sort-asc", !isAscending);
+        th.classList.toggle("sort-desc", isAscending);
+      });
+    });
+  });
+}
+
+// Активировать сортировку после загрузки DOM
+document.addEventListener("DOMContentLoaded", makeTablesSortable);
+</script>
+
 
 </body>
 </html>
