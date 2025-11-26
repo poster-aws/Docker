@@ -250,6 +250,18 @@ select {
 
 <body class="banco-info-page">
 
+  <!-- Инфо -->
+<div class="info-placeholder info-block-1">
+    <p>
+<?php foreach ($lastNums as $num): ?>
+    <span class="square-transparent"><?= $num ?></span>
+<?php endforeach; ?>
+</p>
+</div>
+<div class="info-placeholder info-block-2">
+    <p><?= $comboText ?></p>
+</div>
+
   <!-- Меню -->
   <div class="menu-row">
 
@@ -264,19 +276,6 @@ select {
     </select>
 
   </div>
-
-  <!-- Инфо -->
-<div class="info-placeholder info-block-1">
-    <p>
-<?php foreach ($lastNums as $num): ?>
-    <span class="square-transparent"><?= $num ?></span>
-<?php endforeach; ?>
-</p>
-</div>
-
-<div class="info-placeholder info-block-2">
-    <p><?= $comboText ?></p>
-</div>
 
   <!-- Таблица -->
   <div class="tables-wrapper">
