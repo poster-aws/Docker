@@ -40,9 +40,14 @@ $resLast = $bancoConn->query($sqlLast);
 if ($resLast && $resLast->num_rows > 0) {
     $rowLast = $resLast->fetch_assoc();
     for ($i = 1; $i <= 20; $i++) {
-        $lastNums[] = $rowLast["n$i"];
+        if (!empty($rowLast["n$i"])) {
+            $lastNums[] = (int)$rowLast["n$i"];
+        }
     }
 }
+
+// для быстрого поиска: множество чисел последнего тиража
+$lastNumsSet = array_flip($lastNums);
 
 // === Текст строки №2 ===
 $comboText = "";
@@ -65,10 +70,19 @@ if ($scope === "dernier") {
   <!-- Инфо-блоки -->
   <div class="info-placeholder info-block-1">
     <p>
-      <?php foreach ($lastNums as $num): ?>
-        <span class="square-transparent"><?= $num ?></span>
-      <?php endforeach; ?>
+      <?php for ($i = 1; $i <= 70; $i++): 
+          $isLast = isset($lastNumsSet[$i]);
+      ?>
+        <span
+          class="square-transparent filter-num <?= $isLast ? 'in-last' : '' ?>"
+          data-num="<?= $i ?>"
+        ><?= $i ?></span>
+      <?php endfor; ?>
     </p>
+    <div class="info-actions">
+      <button id="executeFilter">Выполнить</button>
+      <button id="resetFilter">Сброс</button>
+    </div>
   </div>
 
   <div class="info-placeholder info-block-2">
@@ -174,7 +188,78 @@ function makeTablesSortable() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", makeTablesSortable);
+// === Фильтрация по выбранным числам из верхнего инфо-блока ===
+function initFilterUI() {
+  const squares = Array.from(document.querySelectorAll(".filter-num"));
+  const rows = Array.from(document.querySelectorAll(".interactive-table tbody tr"));
+  const executeBtn = document.getElementById("executeFilter");
+  const resetBtn   = document.getElementById("resetFilter");
+
+  let selectedNums = []; // максимум 2 числа
+
+  function updateSquaresVisual() {
+    squares.forEach(span => {
+      const num = parseInt(span.dataset.num, 10);
+      span.classList.toggle("selected", selectedNums.includes(num));
+    });
+  }
+
+  function applyFilter() {
+    if (selectedNums.length === 0) {
+      rows.forEach(row => row.style.display = "");
+      return;
+    }
+
+    rows.forEach(row => {
+      const numSpans = row.querySelectorAll(".circle");
+      const nums = Array.from(numSpans).map(s => parseInt(s.textContent.trim(), 10));
+
+      let show = false;
+
+      if (selectedNums.length === 1) {
+        show = nums.includes(selectedNums[0]);
+      } else if (selectedNums.length === 2) {
+        show = nums.includes(selectedNums[0]) && nums.includes(selectedNums[1]);
+      }
+
+      row.style.display = show ? "" : "none";
+    });
+  }
+
+  function resetFilter() {
+    selectedNums = [];
+    updateSquaresVisual();
+    rows.forEach(row => row.style.display = "");
+  }
+
+  squares.forEach(span => {
+    span.addEventListener("click", () => {
+      const num = parseInt(span.dataset.num, 10);
+      if (selectedNums.includes(num)) {
+        selectedNums = selectedNums.filter(n => n !== num);
+      } else {
+        if (selectedNums.length >= 2) {
+          selectedNums.shift();
+        }
+        selectedNums.push(num);
+      }
+      updateSquaresVisual();
+    });
+  });
+
+  if (executeBtn) {
+    executeBtn.addEventListener("click", applyFilter);
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetFilter);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  makeTablesSortable();
+  initFilterUI();
+});
 </script>
 
 </body>

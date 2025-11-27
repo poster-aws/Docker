@@ -1,5 +1,5 @@
 /* =============================== */
-/* === ПОЛНЫЙ STYLING из Q2 ====== */
+/* === ПОЛНЫЙ STYLING из Q2 ===== */
 /* =============================== */
 
 /* 📦 Общий контейнер таблиц */
@@ -82,41 +82,52 @@
   font-size: 0.8em;
 }
 
-/* 🔷 Квадраты для таблицы */
-.circle {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
-  background: #7eb0ea;
-  color: #000;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 6px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-  font-family: Arial, sans-serif;
-  margin: 0 3px;
-}
+/* ======================================================= */
+/* === КВАДРАТЫ ИНФО-БЛОКА (1–70) ======================== */
+/* ======================================================= */
 
-/* 🔳 Прозрачные квадраты для первого инфо-блока */
+/* Базовый квадрат */
 .square-transparent {
   display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
+  width: 32px;        /* Увеличенные квадраты */
+  height: 32px;
+  line-height: 32px;
   text-align: center;
-  border-radius: 6px;
-  border: 1px solid #7eb0ea;
+  border-radius: 8px;
+  border: 2px solid #7eb0ea;   /* стандартный голубой */
   background: transparent;
   color: #000000;
   font-weight: bold;
+  font-size: 16px;
   font-family: Arial, sans-serif;
-  margin: 0 3px;
+  margin: 2px 3px;
+  cursor: pointer;
+  transition: 0.15s ease;
 }
 
-/* =============================== */
-/* === Banco Info базовый CSS ==== */
-/* =============================== */
+/* Число в последнем тираже — зелёное */
+.square-transparent.in-last {
+  color: #22aa22;
+  font-weight: bold;
+}
+
+/* Выбранный пользователем квадрат — только подсвеченный ободок */
+.square-transparent.selected {
+  border-color: #ff8800;
+  background: transparent !important;
+  color: inherit;
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.6);
+}
+
+/* Выбранный квадрат, который также был в последнем тираже */
+.square-transparent.in-last.selected {
+  color: #22aa22 !important;
+  border-color: #ff8800 !important;
+}
+
+/* ======================================================= */
+/* === Инфо-блоки ========================================= */
+/* ======================================================= */
 
 .banco-info-page {
   font-family: sans-serif;
@@ -126,7 +137,56 @@
   background: transparent;
 }
 
-/* Меню выбора */
+/* Контейнер инфо-блока */
+.info-placeholder {
+  max-width: 900px;
+  margin: 15px auto;
+  padding: 10px 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-left: 4px solid #007BFF;
+  border-radius: 6px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Первый блок — зелёный акцент */
+.info-block-1 {
+  border-left-color: #28a745;
+}
+
+/* Второй блок — оранжевый акцент */
+.info-block-2 {
+  border-left-color: #FF8C00;
+}
+
+/* ======================================================= */
+/* === Кнопки Выполнить / Сброс ========================== */
+/* ======================================================= */
+.info-actions {
+  margin: 10px 0 5px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.info-actions button {
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+}
+
+.info-actions button:hover {
+  background: #e6f0ff;
+}
+
+
+/* ======================================================= */
+/* === Меню выбора ======================================= */
+/* ======================================================= */
+
 .menu-row {
   display: flex;
   justify-content: center;
@@ -142,26 +202,4 @@ select {
   border: 1px solid #ccc;
   background: rgba(255, 255, 255, 0.9);
   cursor: pointer;
-}
-
-/* Инфо-блок */
-.info-placeholder {
-  max-width: 850px;
-  margin: 15px auto;
-  padding: 1px 1px;
-  background: rgba(255, 255, 255, 0.12);
-  border-left: 4px solid #007BFF;
-  border-radius: 6px;
-  font-size: 15px;
-  text-align: center;
-}
-
-/* Первый блок — зелёная полоса */
-.info-block-1 {
-  border-left-color: #28a745;
-}
-
-/* Второй блок — оранжевая полоса */
-.info-block-2 {
-  border-left-color: #FF8C00;
 }
