@@ -107,7 +107,7 @@
 
 /* Число в последнем тираже — зелёное */
 .square-transparent.in-last {
-  color: #22aa22;
+  color: #239223;
   font-weight: bold;
 }
 
@@ -121,8 +121,24 @@
 
 /* Выбранный квадрат, который также был в последнем тираже */
 .square-transparent.in-last.selected {
-  color: #22aa22 !important;
+  color: #239223 !important;
   border-color: #ff8800 !important;
+}
+
+/* ========= Квадратики для n1 / n2 в таблице ========= */
+.circle {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    background: #7eb0ea;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 6px;    
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    font-family: Arial, sans-serif;
+    margin: 0 3px;
 }
 
 /* ======================================================= */
