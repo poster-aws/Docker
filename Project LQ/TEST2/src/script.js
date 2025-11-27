@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (currentPage.includes("tout")) {
         container.innerHTML = `<iframe src="toutourien/Info/toutinfo.php?limit=${toggleSwitch.checked ? 200 : 50}" style="width:100%; height:85vh; border:none;"></iframe>`;
       } else if (currentPage.includes("banco")) {
-        container.innerHTML = `<iframe src="banco/Info/bancoinfo.php" style="width:100%; height:85vh; border:none;"></iframe>`;
+        container.innerHTML = `<iframe src="banco/Info/bancoinfo2.php" style="width:100%; height:85vh; border:none;"></iframe>`;
       }
 
       cornerButton.innerHTML = "&#x21c6;"; // ✅ Вернуть иконку Info
