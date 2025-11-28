@@ -11,7 +11,7 @@
 .table-container {
   flex: 1 1 auto;
   width: 100%; /* тянется по ширине right-panel */
-  max-height: 96vh;
+  max-height: 99vh;
 
   /* важно: auto с отключёнными барами */
   overflow-x: auto;
@@ -130,7 +130,7 @@
   max-width: 100%;               /* без жёстного ограничения */
   box-sizing: border-box;
   margin: 0;
-  padding: 10px 10px 20px;
+  /* padding: 10px 10px 20px; */
 }
 
 /* Левая колонка — фиксированная ширина */
