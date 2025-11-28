@@ -67,76 +67,84 @@ if ($scope === "dernier") {
 
 <body class="banco-info-page">
 
-  <!-- Инфо-блоки -->
-  <div class="info-placeholder info-block-1">
-    <p>
-      <?php for ($i = 1; $i <= 70; $i++): 
-          $isLast = isset($lastNumsSet[$i]);
-      ?>
-        <span
-          class="square-transparent filter-num <?= $isLast ? 'in-last' : '' ?>"
-          data-num="<?= $i ?>"
-        ><?= $i ?></span>
-      <?php endfor; ?>
-    </p>
-    <div class="info-actions">
-      <button id="executeFilter">Выполнить</button>
-      <button id="resetFilter">Сброс</button>
+<div class="banco-info-layout">
+  <!-- ЛЕВАЯ КОЛОНКА: квадраты 1–70 + кнопки + меню + инфо-блок -->
+  <div class="left-panel">
+
+    <!-- Верхний инфо-блок: 1–70 + кнопки + меню -->
+    <div class="info-placeholder info-block-1">
+      <div class="numbers-grid">
+        <?php for ($i = 1; $i <= 70; $i++): 
+            $isLast = isset($lastNumsSet[$i]);
+        ?>
+          <span
+            class="square-transparent filter-num <?= $isLast ? 'in-last' : '' ?>"
+            data-num="<?= $i ?>"
+          ><?= $i ?></span>
+        <?php endfor; ?>
+      </div>
+
+      <div class="info-actions">
+        <button id="executeFilter">Выполнить</button>
+        <button id="resetFilter">Сброс</button>
+      </div>
+
+      <div class="menu-row">
+        <select id="combinaisonSelect" onchange="updateParams()">
+          <option value="c2" selected>Combinaison de 2</option>
+          <option value="c3">Combinaison de 3</option>
+        </select>
+
+        <select id="tirageSelect" onchange="updateParams()">
+          <option value="dernier" <?= ($scope==='dernier'?'selected':'') ?>>Dernier tirage</option>
+          <option value="tous" <?= ($scope==='tous'?'selected':'') ?>>Tous les tirages</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Нижний инфо-блок: текст о комбинациях -->
+    <div class="info-placeholder info-block-2">
+      <p><?= $comboText ?></p>
+    </div>
+
+  </div>
+
+  <!-- ПРАВАЯ КОЛОНКА: таблица -->
+  <div class="right-panel">
+    <div class="tables-wrapper">
+      <div class="table-container">
+        <table class="interactive-table">
+          <thead>
+            <tr>
+              <th>Tirage</th>
+              <?php foreach ($fields as $f): ?>
+                <th>#</th>
+              <?php endforeach; ?>
+              <th>Jours<br>passés</th>
+              <th>L'avant<br>dernière</th>
+              <th>Fois</th>
+              <th>Max<br>jours passés</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach ($rows as $r): ?>
+            <tr>
+              <td><?= htmlspecialchars($r['Tirage']) ?></td>
+              <?php foreach ($fields as $f): ?>
+                <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
+              <?php endforeach; ?>
+              <td><?= htmlspecialchars($r['days']) ?></td>
+              <td><?= htmlspecialchars($r['days2']) ?></td>
+              <td><?= htmlspecialchars($r['fois']) ?></td>
+              <td><?= htmlspecialchars($r['max']) ?></td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
-  <div class="info-placeholder info-block-2">
-    <p><?= $comboText ?></p>
-  </div>
-
-  <!-- Меню -->
-  <div class="menu-row">
-
-    <select id="combinaisonSelect" onchange="updateParams()">
-      <option value="c2" selected>Combinaison de 2</option>
-      <option value="c3">Combinaison de 3</option>
-    </select>
-
-    <select id="tirageSelect" onchange="updateParams()">
-      <option value="dernier" <?= ($scope==='dernier'?'selected':'') ?>>Dernier tirage</option>
-      <option value="tous" <?= ($scope==='tous'?'selected':'') ?>>Tous les tirages</option>
-    </select>
-
-  </div>
-
-  <!-- Таблица -->
-  <div class="tables-wrapper">
-    <div class="table-container">
-      <table class="interactive-table">
-        <thead>
-          <tr>
-            <th>Tirage</th>
-            <?php foreach ($fields as $f): ?>
-              <th>#</th>
-            <?php endforeach; ?>
-            <th>Jours<br>passés</th>
-            <th>L'avant<br>dernière</th>
-            <th>Fois</th>
-            <th>Max<br>jours passés</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($rows as $r): ?>
-          <tr>
-            <td><?= htmlspecialchars($r['Tirage']) ?></td>
-            <?php foreach ($fields as $f): ?>
-              <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
-            <?php endforeach; ?>
-            <td><?= htmlspecialchars($r['days']) ?></td>
-            <td><?= htmlspecialchars($r['days2']) ?></td>
-            <td><?= htmlspecialchars($r['fois']) ?></td>
-            <td><?= htmlspecialchars($r['max']) ?></td>
-          </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
+</div> <!-- /.banco-info-layout -->
 
 <script>
 function updateParams() {

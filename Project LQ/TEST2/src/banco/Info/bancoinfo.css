@@ -1,21 +1,14 @@
 /* =============================== */
-/* === ПОЛНЫЙ STYLING из Q2 ===== */
+/* === Таблицы (как в Q2) ======== */
 /* =============================== */
 
-/* 📦 Общий контейнер таблиц */
+/* 📦 Общий контейнер таблиц (в правой колонке) */
 .tables-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  flex-wrap: nowrap;
+  display: block;
 }
 
-/* 🔳 Обёртки таблиц */
-.table-container,
-.combo-table-container,
-.number-stats-table {
+/* 🔳 Обёртка таблицы */
+.table-container {
   flex: 0 0 auto;
   width: max-content;
   max-height: 88vh;
@@ -23,9 +16,6 @@
   margin-inline: auto;
   border-radius: 12px;
   border: 2px solid #a4a1a1;
-}
-
-.table-container {
   background: #00000005;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
@@ -42,25 +32,30 @@
 }
 
 /* 📌 Закреплённые заголовки */
+/* Компактная шапка таблицы */
 .interactive-table thead th {
   position: sticky;
-  padding: 9px;
+  padding: 2px 6px;          /* было 9px → стало меньше в ~3 раза */
   top: 0;
   background-color: rgb(163, 216, 234);
   z-index: 10;
   border-bottom: 2px solid #888;
+  line-height: 1.1;          /* уменьшаем лишнюю высоту */
+  font-size: 14px;           /* было 18px в таблице — уменьшаем для компактности */
 }
 
 /* 📋 Ячейки */
+/* Компактные строки таблицы */
 .interactive-table td {
-  padding: 9px;
+  padding: 3px 6px;                 /* было 9px → теперь меньше в 2–3 раза */
   border-bottom: 1px dashed #777777;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 15px;                  /* меньше визуального шума */
+  line-height: 1.2;
 }
-
 /* 🖱️ Подсветка строк */
 .interactive-table tr:hover {
   background-color: rgba(161, 161, 161, 0.493);
@@ -82,67 +77,24 @@
   font-size: 0.8em;
 }
 
-/* ======================================================= */
-/* === КВАДРАТЫ ИНФО-БЛОКА (1–70) ======================== */
-/* ======================================================= */
-
-/* Базовый квадрат */
-.square-transparent {
-  display: inline-block;
-  width: 32px;        /* Увеличенные квадраты */
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  border-radius: 8px;
-  border: 2px solid #7eb0ea;   /* стандартный голубой */
-  background: transparent;
-  color: #000000;
-  font-weight: bold;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  margin: 2px 3px;
-  cursor: pointer;
-  transition: 0.15s ease;
-}
-
-/* Число в последнем тираже — зелёное */
-.square-transparent.in-last {
-  color: #239223;
-  font-weight: bold;
-}
-
-/* Выбранный пользователем квадрат — только подсвеченный ободок */
-.square-transparent.selected {
-  border-color: #ff8800;
-  background: transparent !important;
-  color: inherit;
-  box-shadow: 0 0 6px rgba(255, 136, 0, 0.6);
-}
-
-/* Выбранный квадрат, который также был в последнем тираже */
-.square-transparent.in-last.selected {
-  color: #239223 !important;
-  border-color: #ff8800 !important;
-}
-
 /* ========= Квадратики для n1 / n2 в таблице ========= */
 .circle {
-    display: inline-block;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    background: #7eb0ea;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 6px;    
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    font-family: Arial, sans-serif;
-    margin: 0 3px;
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  background: #7eb0ea;
+  color: #000;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 6px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+  margin: 0 3px;
 }
 
 /* ======================================================= */
-/* === Инфо-блоки ========================================= */
+/* === Общий layout: слева фильтр, справа таблица =========*/
 /* ======================================================= */
 
 .banco-info-page {
@@ -153,10 +105,89 @@
   background: transparent;
 }
 
-/* Контейнер инфо-блока */
+.banco-info-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 18px;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 10px 10px 20px;
+}
+
+/* Левая колонка: квадраты, кнопки, меню, инфо-блок */
+.left-panel {
+  flex: 0 0 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Правая колонка: таблица */
+.right-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ======================================================= */
+/* === Квадраты 1–70 ===================================== */
+/* ======================================================= */
+
+/* Сетка 7 × 10 — компактнее */
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;                   /* расстояние уменьшено в 2 раза */
+  justify-items: center;
+  max-height: 240px;          /* можно чуть уменьшить */
+  overflow-y: auto;
+  padding: 2px 1px;
+}
+
+/* Компактные квадраты */
+.square-transparent {
+  display: inline-block;
+  width: 26px;               /* было 32px → меньше */
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+  border-radius: 6px;        /* чуть меньше радиус */
+  border: 2px solid #7eb0ea;
+  background: transparent;
+  color: #000000;
+  font-weight: bold;
+  font-size: 14px;           /* было 16px → меньше */
+  font-family: Arial, sans-serif;
+  margin: 1px 2px;           /* расстояние уменьшено */
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+/* Число в последнем тираже — зелёное */
+.square-transparent.in-last {
+  color: #22aa22;
+  font-weight: bold;
+}
+
+/* Выбранный пользователем квадрат — подсветка ободка */
+.square-transparent.selected {
+  border-color: #ff8800;
+  background: transparent !important;
+  box-shadow: 0 0 5px rgba(255, 136, 0, 0.6);
+}
+
+/* Если и выбран, и "последний" → цифра остаётся зелёной */
+.square-transparent.in-last.selected {
+  color: #22aa22 !important;
+}
+
+/* ======================================================= */
+/* === Инфо-блоки ========================================= */
+/* ======================================================= */
+
 .info-placeholder {
-  max-width: 900px;
-  margin: 15px auto;
+  max-width: 100%;
+  margin: 0 auto;
   padding: 10px 10px;
   background: rgba(255, 255, 255, 0.12);
   border-left: 4px solid #007BFF;
@@ -179,7 +210,7 @@
 /* === Кнопки Выполнить / Сброс ========================== */
 /* ======================================================= */
 .info-actions {
-  margin: 10px 0 5px;
+  margin: 8px 0 6px;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -198,7 +229,6 @@
   background: #e6f0ff;
 }
 
-
 /* ======================================================= */
 /* === Меню выбора ======================================= */
 /* ======================================================= */
@@ -207,11 +237,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  margin: 20px 0;
+  gap: 14px;
+  margin-top: 10px;
 }
 
-select {
+.menu-row select {
   font-size: 14px;
   padding: 6px 12px;
   border-radius: 6px;
