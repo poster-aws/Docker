@@ -1,29 +1,38 @@
+/* добавили, чтобы 100% высоты работали по цепочке */
+html, body {
+  height: 100%;
+}
+
 /* =============================== */
 /* === Таблицы (как в Q2) ======== */
 /* =============================== */
 
 /* 📦 Общий контейнер таблиц (в правой колонке) */
 .tables-wrapper {
-  display: block;
+  display: flex;
+  flex: 1 1 auto;          /* занимает всё доступное по высоте */
+  padding: 0;
 }
 
 /* 🔳 Обёртка таблицы */
 .table-container {
   flex: 1 1 auto;
-  width: 100%; /* тянется по ширине right-panel */
-  max-height: 88vh;
+  width: 100%;                /* тянется по ширине right-panel */
+  height: 100%;               /* ⬅️ было 88vh, теперь заполняет правую панель */
 
-  /* важно: auto с отключёнными барами */
+  display: flex;              /* делаем контейнер флексом */
+  flex-direction: column;     /* таблица будет тянуться по высоте */
+
   overflow-x: auto;
   overflow-y: auto;
 
-  margin-inline: 0; /* убираем центрирование — пусть прилегает */
+  margin: 0;                  /* убираем лишние внешние отступы */
+  padding: 0;                 /* внутри без дополнительных отступов */
   border-radius: 12px;
   border: 2px solid #a4a1a1;
   background: #00000005;
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
-
-  box-sizing: border-box;   /* вот это ключевой фикс */
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;     /* ширина учитывает бордеры */
 
   /* Firefox: скрыть ВСЕ полосы */
   scrollbar-width: none;
@@ -31,19 +40,21 @@
 
 /* Chrome / Safari / Edge */
 .table-container::-webkit-scrollbar {
-  width: 0px !important;    /* скрыть вертикальный */
-  height: 0px !important;   /* скрыть горизонтальный */
+  width: 0px !important;      /* скрыть вертикальный */
+  height: 0px !important;     /* скрыть горизонтальный */
 }
 
 /* 📊 Общий стиль таблиц */
 .interactive-table {
   width: 100%;
+  height: 100%;  
   border-collapse: collapse;
   font-size: 18px;
   font-family: 'Shadows Into Light', cursive;
   color: #000000;
   scrollbar-width: thin;
   scrollbar-color: rgb(30, 0, 255) transparent;
+  padding: 0;
 }
 
 /* 📌 Закреплённые заголовки */
@@ -127,10 +138,11 @@
   justify-content: flex-start;   /* не центр, а растяжение */
   gap: 16px;
   width: 100%;                   /* во всю ширину экрана */
-  max-width: 100%;               /* без жёстного ограничения */
+  max-width: 100%;               /* без жёсткого ограничения */
   box-sizing: border-box;
   margin: 0;
   padding: 10px 10px 20px;
+  min-height: 100%;              /* ⬅️ добавили, чтобы тянуться по высоте окна */
 }
 
 /* Левая колонка — фиксированная ширина */
@@ -146,7 +158,9 @@
 .right-panel {
   flex: 1 1 auto;
   min-width: 0;                  /* чтобы flex мог сжимать блок */
-  /* overflow-x: auto;              если таблица шире — горизонтальный скролл */
+  min-height: 0;                 /* ⬅️ важно для корректной высоты при flex */
+  display: flex;                 /* тянем таблицу по высоте */
+  flex-direction: column;
 }
 
 /* ======================================================= */
