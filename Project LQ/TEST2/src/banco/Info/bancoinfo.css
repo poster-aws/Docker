@@ -9,15 +9,30 @@
 
 /* 🔳 Обёртка таблицы */
 .table-container {
-  flex: 0 0 auto;
-  width: max-content;
+  flex: 1 1 auto;
+  width: 100%; /* тянется по ширине right-panel */
   max-height: 88vh;
-  overflow: auto;
-  margin-inline: auto;
+
+  /* важно: auto с отключёнными барами */
+  overflow-x: auto;
+  overflow-y: auto;
+
+  margin-inline: 0; /* убираем центрирование — пусть прилегает */
   border-radius: 12px;
   border: 2px solid #a4a1a1;
   background: #00000005;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+
+  box-sizing: border-box;   /* вот это ключевой фикс */
+
+  /* Firefox: скрыть ВСЕ полосы */
+  scrollbar-width: none;
+}
+
+/* Chrome / Safari / Edge */
+.table-container::-webkit-scrollbar {
+  width: 0px !important;    /* скрыть вертикальный */
+  height: 0px !important;   /* скрыть горизонтальный */
 }
 
 /* 📊 Общий стиль таблиц */
@@ -105,28 +120,33 @@
   background: transparent;
 }
 
+/* Общий layout: слева фильтр, справа таблица */
 .banco-info-layout {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  gap: 18px;
-  max-width: 1250px;
-  margin: 0 auto;
+  justify-content: flex-start;   /* не центр, а растяжение */
+  gap: 16px;
+  width: 100%;                   /* во всю ширину экрана */
+  max-width: 100%;               /* без жёстного ограничения */
+  box-sizing: border-box;
+  margin: 0;
   padding: 10px 10px 20px;
 }
 
-/* Левая колонка: квадраты, кнопки, меню, инфо-блок */
+/* Левая колонка — фиксированная ширина */
 .left-panel {
-  flex: 0 0 360px;
+  flex: 0 0 400px;               /* чуть компактнее и фиксировано */
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Правая колонка: таблица */
+/* Правая колонка — занимает всё остальное */
 .right-panel {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 0;                  /* чтобы flex мог сжимать блок */
+  /* overflow-x: auto;              если таблица шире — горизонтальный скролл */
 }
 
 /* ======================================================= */
