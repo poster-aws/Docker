@@ -49,13 +49,35 @@ if ($resLast && $resLast->num_rows > 0) {
 // для быстрого поиска: множество чисел последнего тиража
 $lastNumsSet = array_flip($lastNums);
 
-// === Текст строки №2 ===
-$comboText = "";
-if ($scope === "dernier") {
-    $comboText = "Toutes les combinaisons – 190";
-} else {
-    $comboText = "Toutes les combinaisons – 2 415";
+// === Статистика по comb2 (глобально по таблице) ===
+$statsMinFois = null;
+$statsMaxFois = null;
+$statsMaxDays = null;
+$statsMaxMax  = null;
+
+$sqlStats = "SELECT 
+    MIN(fois) AS minFois, 
+    MAX(fois) AS maxFois, 
+    MAX(days) AS maxDays,
+    MAX(`max`) AS maxMax
+FROM $table";
+
+$resStats = $bancoConn->query($sqlStats);
+if ($resStats && $resStats->num_rows > 0) {
+    $rowStats     = $resStats->fetch_assoc();
+    $statsMinFois = (int)$rowStats['minFois'];
+    $statsMaxFois = (int)$rowStats['maxFois'];
+    $statsMaxDays = (int)$rowStats['maxDays'];
+    $statsMaxMax  = (int)$rowStats['maxMax'];
 }
+
+// === Текст для инфо-блока ===
+$line1Text = "Toutes les combinaisons possibles 70/70 - 2 415";
+$line2Text = "Combinaisons par tirage 20/70 - 190";
+
+$line3Text = "Min/Max fois sorti- {$statsMinFois}/{$statsMaxFois}";
+$line4Text = "Max Jours passés - {$statsMaxDays}";
+$line5Text = "Max jours passés - {$statsMaxMax}";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -102,9 +124,13 @@ if ($scope === "dernier") {
       </div>
     </div>
 
-    <!-- Нижний инфо-блок: текст о комбинациях -->
+    <!-- Нижний инфо-блок: 5 строк -->
     <div class="info-placeholder info-block-2">
-      <p><?= $comboText ?></p>
+      <p><?= htmlspecialchars($line1Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line2Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line3Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line4Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line5Text, ENT_QUOTES, 'UTF-8') ?></p>
     </div>
 
   </div>
