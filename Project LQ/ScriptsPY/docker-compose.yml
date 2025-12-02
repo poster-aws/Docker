@@ -1,0 +1,18 @@
+services:
+
+  app:
+    build: .
+    image: scripts
+    container_name: scripts
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=user
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    external: true  # Используем уже созданную сеть
