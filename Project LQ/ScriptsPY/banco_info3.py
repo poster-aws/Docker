@@ -4,7 +4,7 @@ import itertools
 
 # === Настройки подключения ===
 DB_CONFIG = {
-    "host": "db",          # если запускаешь на хосте → "127.0.0.1"
+    "host": "db",
     "user": "user",
     "password": "user",
     "database": "banco",
@@ -15,7 +15,7 @@ print("🔄 Подключаемся к базе данных banco...")
 conn = mysql.connector.connect(**DB_CONFIG)
 cur = conn.cursor()
 
-# === 1. Загружаем все тиражи с числами ===
+# === 1. Загружаем все тиражи ===
 print("📥 Загружаем таблицу banco...")
 cur.execute("""
     SELECT Tirage,
@@ -27,27 +27,40 @@ cur.execute("""
 tirages = cur.fetchall()
 print(f"✅ Загружено {len(tirages)} тиражей.")
 
-# === 2. Определяем дату последнего тиража ===
+# === 2. Последняя дата ===
 cur.execute("SELECT MAX(Tirage) FROM banco;")
 last_global_date = cur.fetchone()[0]
-print(f"📅 Последний тираж в базе: {last_global_date}")
+print(f"📅 Последний тираж: {last_global_date}")
 
-# === 3. Формируем все комбинации из 3 чисел (n1 < n2 < n3) ===
-triplets = {}  # (n1,n2,n3) -> [список дат]
-print("🧮 Формируем комбинации из 3 чисел...")
+# === 3. Статистика по тройкам на лету ===
+# структура: (n1,n2,n3) -> [last, prev, max_gap, fois]
+stats = {}
+print("🧮 Считаем статистику 3-комбинаций...")
 
 for row in tirages:
     date = row[0]
     nums = [int(x) for x in row[1:] if x is not None]
-    for combo in itertools.combinations(sorted(nums), 3):
-        key = tuple(sorted(combo))
-        if key not in triplets:
-            triplets[key] = []
-        triplets[key].append(date)
 
-print(f"✅ Обнаружено {len(triplets)} уникальных комбинаций из 3 чисел.")
+    for n1, n2, n3 in itertools.combinations(sorted(nums), 3):
+        key = (n1, n2, n3)
+        if key not in stats:
+            stats[key] = [date, None, 0, 1]
+        else:
+            last, prev, max_gap, fois = stats[key]
 
-# === 4. Подготовка SQL для обновления comb3 ===
+            gap = (date - last).days
+            if gap > max_gap:
+                max_gap = gap
+
+            prev = last
+            last = date
+            fois += 1
+
+            stats[key] = [last, prev, max_gap, fois]
+
+print(f"✅ Обработано {len(stats)} комбинаций 3 чисел.")
+
+# === 4. Идеальный UPDATE по PRIMARY KEY ===
 update_sql = """
     UPDATE comb3
     SET Tirage = %s,
@@ -55,53 +68,21 @@ update_sql = """
         days2  = %s,
         fois   = %s,
         max    = %s
-    WHERE (n1=%s AND n2=%s AND n3=%s)
+    WHERE n1=%s AND n2=%s AND n3=%s
 """
 
-print("🧩 Вычисляем статистику и обновляем comb3...")
+print("🧩 Обновляем comb3...")
 
 updated = 0
-for (a, b, c), dates in triplets.items():
-    dates = sorted(dates)
-    fois = len(dates)
 
-    # Разрывы между последовательными появлениями
-    gaps = []
-    for i in range(1, len(dates)):
-        d1, d2 = dates[i - 1], dates[i]
-        if isinstance(d1, datetime):
-            diff = (d2 - d1).days
-        else:
-            diff = (datetime.strptime(str(d2), "%Y-%m-%d") -
-                    datetime.strptime(str(d1), "%Y-%m-%d")).days
-        gaps.append(diff)
+for (n1, n2, n3), (last, prev, max_gap, fois) in stats.items():
 
-    # --- Правильная статистика ---
-    max_gap = max(gaps) if gaps else 0
+    days2 = (last - prev).days if prev else 0
+    days  = (last_global_date - last).days
 
-    # days2 = разница между последними двумя выпадениями (если >= 2)
-    if len(dates) >= 2:
-        d_last = dates[-1]
-        d_prev = dates[-2]
-        if isinstance(d_last, datetime):
-            days2 = (d_last - d_prev).days
-        else:
-            days2 = (datetime.strptime(str(d_last), "%Y-%m-%d") -
-                     datetime.strptime(str(d_prev), "%Y-%m-%d")).days
-    else:
-        days2 = 0
-
-    # days = разница между последним тиражом базы и последним выпадением
-    last_date = dates[-1]
-    if isinstance(last_date, datetime):
-        days = (last_global_date - last_date).days
-    else:
-        days = (datetime.strptime(str(last_global_date), "%Y-%m-%d") -
-                datetime.strptime(str(last_date), "%Y-%m-%d")).days
-
-    # Обновление comb3
     cur.execute(update_sql, (
-        last_date, days, days2, fois, max_gap, a, b, c
+        last, days, days2, fois, max_gap,
+        n1, n2, n3
     ))
 
     updated += 1
@@ -110,9 +91,9 @@ for (a, b, c), dates in triplets.items():
         print(f"  ⏩ Обновлено {updated} комбинаций...")
 
 conn.commit()
-print(f"✅ Готово. Обновлено {updated} комбинаций в comb3.")
+print(f"🎉 Готово! Обновлено {updated} комбинаций в comb3.")
 
-# === 5. Проверка результата ===
+# === 5. Итоги ===
 cur.execute("SELECT COUNT(*) FROM comb3 WHERE fois > 0")
 seen = cur.fetchone()[0]
 cur.execute("SELECT COUNT(*) FROM comb3")

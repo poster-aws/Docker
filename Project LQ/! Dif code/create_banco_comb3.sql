@@ -4,16 +4,17 @@ USE banco;
 DROP TABLE IF EXISTS comb3;
 
 -- 2️⃣ Создаём таблицу для комбинаций из 3 чисел (1–70)
+
 CREATE TABLE comb3 (
   n1 TINYINT UNSIGNED NOT NULL,
   n2 TINYINT UNSIGNED NOT NULL,
   n3 TINYINT UNSIGNED NOT NULL,
   Tirage DATE DEFAULT NULL,
-  days INT DEFAULT NULL,
-  days2 INT DEFAULT NULL,
-  fois INT DEFAULT NULL,
-  max INT DEFAULT NULL,
-  UNIQUE KEY uniq_n1_n2_n3 (n1, n2, n3)
+  days SMALLINT DEFAULT NULL,
+  days2 SMALLINT DEFAULT NULL,
+  fois SMALLINT DEFAULT NULL,
+  max SMALLINT DEFAULT NULL,
+  PRIMARY KEY (n1, n2, n3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 3️⃣ Заполняем таблицу всеми уникальными комбинациями (n1 < n2 < n3)

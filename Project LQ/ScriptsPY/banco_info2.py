@@ -8,7 +8,7 @@ DB_CONFIG = {
     "user": "user",
     "password": "user",
     "database": "banco",
-    "charset": "utf8mb4"
+    "charset": "utf8mb4",
 }
 
 print("🔄 Подключаемся к базе данных banco...")
@@ -32,21 +32,37 @@ cur.execute("SELECT MAX(Tirage) FROM banco;")
 last_global_date = cur.fetchone()[0]
 print(f"📅 Последний тираж в базе: {last_global_date}")
 
-# === 3. Формируем ВСЕ пары (n1 < n2) ===
-pairs = {}   # (n1,n2) -> [даты]
-print("🧮 Формируем комбинации 2 из 20...")
+# === 3. Статистика по парам на лету ===
+# (n1, n2) -> [last_date, prev_last_date, max_gap, fois]
+stats = {}
+print("🧮 Считаем статистику для комбинаций 2 из 20...")
 
 for row in tirages:
-    date = row[0]
+    date = row[0]  # Tirage (DATE/DATETIME из MySQL)
     nums = [int(x) for x in row[1:] if x is not None]
 
-    # itertools.combinations уже гарантирует n1 < n2
+    # itertools.combinations(sorted(nums), 2) уже даёт n1 < n2
     for n1, n2 in itertools.combinations(sorted(nums), 2):
-        pairs.setdefault((n1, n2), []).append(date)
+        key = (n1, n2)
+        if key not in stats:
+            # первое появление пары
+            stats[key] = [date, None, 0, 1]   # last, prev, max_gap, fois
+        else:
+            last, prev, max_gap, fois = stats[key]
 
-print(f"✅ Обнаружено {len(pairs)} уникальных комбинаций 2 чисел.")
+            gap = (date - last).days          # оба — date/datetime, можно вычитать
+            if gap > max_gap:
+                max_gap = gap
 
-# === 4. SQL без OR (идеальный вариант!) ===
+            prev = last
+            last = date
+            fois += 1
+
+            stats[key] = [last, prev, max_gap, fois]
+
+print(f"✅ Обработано {len(stats)} комбинаций.")
+
+# === 4. UPDATE по PRIMARY KEY (n1, n2) ===
 update_sql = """
     UPDATE comb2
     SET Tirage = %s,
@@ -60,44 +76,21 @@ update_sql = """
 print("🧩 Обновляем comb2...")
 
 updated = 0
-for (n1, n2), dates in pairs.items():
-    dates.sort()
-    fois = len(dates)
 
-    # --- интервалы между появлениями ---
-    gaps = []
-    for i in range(1, len(dates)):
-        d1, d2 = dates[i - 1], dates[i]
-        if not isinstance(d1, datetime):
-            d1 = datetime.strptime(str(d1), "%Y-%m-%d")
-            d2 = datetime.strptime(str(d2), "%Y-%m-%d")
-        gaps.append((d2 - d1).days)
+for (n1, n2), (last, prev, max_gap, fois) in stats.items():
+    # days2 — между последними двумя появлениями
+    days2 = (last - prev).days if prev is not None else 0
 
-    max_gap = max(gaps) if gaps else 0
+    # days — от последнего тиража базы до последнего выпадения пары
+    days = (last_global_date - last).days
 
-    # --- разрыв между последними двумя ---
-    if len(dates) >= 2:
-        d_last = dates[-1]
-        d_prev = dates[-2]
-        if not isinstance(d_last, datetime):
-            d_last = datetime.strptime(str(d_last), "%Y-%m-%d")
-            d_prev = datetime.strptime(str(d_prev), "%Y-%m-%d")
-        days2 = (d_last - d_prev).days
-    else:
-        days2 = 0
-
-    # --- разница между последним тиражом и последним выпадением ---
-    last_date = dates[-1]
-    if not isinstance(last_date, datetime):
-        last_date = datetime.strptime(str(last_date), "%Y-%m-%d")
-    if not isinstance(last_global_date, datetime):
-        last_global_date = datetime.strptime(str(last_global_date), "%Y-%m-%d")
-
-    days = (last_global_date - last_date).days
-
-    # === идеальный UPDATE (индекс PRIMARY KEY(n1,n2)) ===
     cur.execute(update_sql, (
-        last_date, days, days2, fois, max_gap, n1, n2
+        last,      # Tirage
+        days,      # days
+        days2,     # days2
+        fois,      # fois
+        max_gap,   # max
+        n1, n2     # PK
     ))
 
     updated += 1
@@ -105,6 +98,7 @@ for (n1, n2), dates in pairs.items():
         conn.commit()
         print(f"  ⏩ Обновлено {updated} комбинаций...")
 
+# финальный commit
 conn.commit()
 print(f"🎉 Готово. Обновлено {updated} комбинаций в comb2.")
 
