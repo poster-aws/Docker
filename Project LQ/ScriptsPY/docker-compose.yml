@@ -9,9 +9,13 @@ services:
     environment:
       - DB_HOST=db
       - DB_USER=user
-      - DB_PASSWORD=user
+      - DB_PASSWORD=user 
     networks:
       - mysql_net
+    
+    stdin_open: true
+    tty: true
+    restart: "no"   # ← вот это важно
 
 networks:
   mysql_net:
