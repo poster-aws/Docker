@@ -12,6 +12,9 @@ RUN pip install --no-cache-dir requests
 RUN pip install beautifulsoup4 requests
 RUN pip install mysql-connector-python
 
+# Не схлопывается контейнер
+CMD ["tail", "-f", "/dev/null"]
+
 # Выполнение main.py, а затем init.sh
 # CMD ["python", "main.py"]
-CMD ["sh", "-c", "python3 banco_info2.py && python3 banco_info3.py"]
+# CMD ["sh", "-c", "python3 banco_info2.py && python3 banco_info3.py"]
