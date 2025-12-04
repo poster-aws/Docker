@@ -40,17 +40,45 @@ $resLast = $bancoConn->query($sqlLast);
 if ($resLast && $resLast->num_rows > 0) {
     $rowLast = $resLast->fetch_assoc();
     for ($i = 1; $i <= 20; $i++) {
-        $lastNums[] = $rowLast["n$i"];
+        if (!empty($rowLast["n$i"])) {
+            $lastNums[] = (int)$rowLast["n$i"];
+        }
     }
 }
 
-// === Текст строки №2 ===
-$comboText = "";
-if ($scope === "dernier") {
-    $comboText = "Toutes les combinaisons – 1 140";
-} else {
-    $comboText = "Toutes les combinaisons – 54 740";
+// для быстрого поиска: множество чисел последнего тиража
+$lastNumsSet = array_flip($lastNums);
+
+// === Статистика по comb3 (глобально по таблице) ===
+$statsMinFois = null;
+$statsMaxFois = null;
+$statsMaxDays = null;
+$statsMaxMax  = null;
+
+$sqlStats = "SELECT 
+    MIN(fois) AS minFois, 
+    MAX(fois) AS maxFois, 
+    MAX(days) AS maxDays,
+    MAX(`max`) AS maxMax
+FROM $table";
+
+$resStats = $bancoConn->query($sqlStats);
+if ($resStats && $resStats->num_rows > 0) {
+    $rowStats     = $resStats->fetch_assoc();
+    $statsMinFois = (int)$rowStats['minFois'];
+    $statsMaxFois = (int)$rowStats['maxFois'];
+    $statsMaxDays = (int)$rowStats['maxDays'];
+    $statsMaxMax  = (int)$rowStats['maxMax'];
 }
+
+// === Текст для инфо-блока ===
+// C(70,3) = 54 740, C(20,3) = 1 140
+$line1Text = "Toutes les combinaisons possibles 70/70 - 54 740";
+$line2Text = "Combinaisons par tirage 20/70 - 1 140";
+
+$line3Text = "Min/Max fois sorti- {$statsMinFois}/{$statsMaxFois}";
+$line4Text = "Max Jours passés - {$statsMaxDays}";
+$line5Text = "Max jours passés - {$statsMaxMax}";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -62,67 +90,88 @@ if ($scope === "dernier") {
 
 <body class="banco-info-page">
 
-  <!-- Инфо-блоки -->
-  <div class="info-placeholder info-block-1">
-    <p>
-      <?php foreach ($lastNums as $num): ?>
-        <span class="square-transparent"><?= $num ?></span>
-      <?php endforeach; ?>
-    </p>
+<div class="banco-info-layout">
+  <!-- ЛЕВАЯ КОЛОНКА: квадраты 1–70 + кнопки + меню + инфо-блок -->
+  <div class="left-panel">
+
+    <!-- Верхний инфо-блок: 1–70 + кнопки + меню -->
+    <div class="info-placeholder info-block-1">
+      <div class="numbers-grid">
+        <?php for ($i = 1; $i <= 70; $i++): 
+            $isLast = isset($lastNumsSet[$i]);
+        ?>
+          <span
+            class="square-transparent filter-num <?= $isLast ? 'in-last' : '' ?>"
+            data-num="<?= $i ?>"
+          ><?= $i ?></span>
+        <?php endfor; ?>
+      </div>
+
+      <div class="info-actions">
+        <button id="executeFilter">Выполнить</button>
+        <button id="resetFilter">Сброс</button>
+      </div>
+
+      <div class="menu-row">
+        <select id="combinaisonSelect" onchange="updateParams()">
+          <option value="c2">Combinaison de 2</option>
+          <option value="c3" selected>Combinaison de 3</option>
+        </select>
+
+        <select id="tirageSelect" onchange="updateParams()">
+          <option value="dernier" <?= ($scope==='dernier'?'selected':'') ?>>Dernier tirage</option>
+          <option value="tous" <?= ($scope==='tous'?'selected':'') ?>>Tous les tirages</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Нижний инфо-блок: 5 строк -->
+    <div class="info-placeholder info-block-2">
+      <p><?= htmlspecialchars($line1Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line2Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line3Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line4Text, ENT_QUOTES, 'UTF-8') ?></p>
+      <p><?= htmlspecialchars($line5Text, ENT_QUOTES, 'UTF-8') ?></p>
+    </div>
+
   </div>
 
-  <div class="info-placeholder info-block-2">
-    <p><?= $comboText ?></p>
-  </div>
-
-  <!-- Меню -->
-  <div class="menu-row">
-
-    <select id="combinaisonSelect" onchange="updateParams()">
-      <option value="c2">Combinaison de 2</option>
-      <option value="c3" selected>Combinaison de 3</option>
-    </select>
-
-    <select id="tirageSelect" onchange="updateParams()">
-      <option value="dernier" <?= ($scope==='dernier'?'selected':'') ?>>Dernier tirage</option>
-      <option value="tous" <?= ($scope==='tous'?'selected':'') ?>>Tous les tirages</option>
-    </select>
-
-  </div>
-
-  <!-- Таблица -->
-  <div class="tables-wrapper">
-    <div class="table-container">
-      <table class="interactive-table">
-        <thead>
-          <tr>
-            <th>Tirage</th>
-            <?php foreach ($fields as $f): ?>
-              <th>#</th>
-            <?php endforeach; ?>
-            <th>Jours<br>passés</th>
-            <th>L'avant<br>dernière</th>
-            <th>Fois</th>
-            <th>Max<br>jours passés</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($rows as $r): ?>
-          <tr>
-            <td><?= htmlspecialchars($r['Tirage']) ?></td>
-            <?php foreach ($fields as $f): ?>
-              <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
-            <?php endforeach; ?>
-            <td><?= htmlspecialchars($r['days']) ?></td>
-            <td><?= htmlspecialchars($r['days2']) ?></td>
-            <td><?= htmlspecialchars($r['fois']) ?></td>
-            <td><?= htmlspecialchars($r['max']) ?></td>
-          </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
+  <!-- ПРАВАЯ КОЛОНКА: таблица -->
+  <div class="right-panel">
+    <div class="tables-wrapper">
+      <div class="table-container">
+        <table class="interactive-table">
+          <thead>
+            <tr>
+              <th>Tirage</th>
+              <?php foreach ($fields as $f): ?>
+                <th>#</th>
+              <?php endforeach; ?>
+              <th>Jours<br>passés</th>
+              <th>L'avant<br>dernière</th>
+              <th>Fois</th>
+              <th>Max<br>jours passés</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach ($rows as $r): ?>
+            <tr>
+              <td><?= htmlspecialchars($r['Tirage']) ?></td>
+              <?php foreach ($fields as $f): ?>
+                <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
+              <?php endforeach; ?>
+              <td><?= htmlspecialchars($r['days']) ?></td>
+              <td><?= htmlspecialchars($r['days2']) ?></td>
+              <td><?= htmlspecialchars($r['fois']) ?></td>
+              <td><?= htmlspecialchars($r['max']) ?></td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+</div> <!-- /.banco-info-layout -->
 
 <script>
 function updateParams() {
@@ -174,7 +223,73 @@ function makeTablesSortable() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", makeTablesSortable);
+// === Фильтрация по выбранным числам из верхнего инфо-блока ===
+function initFilterUI() {
+  const squares = Array.from(document.querySelectorAll(".filter-num"));
+  const rows = Array.from(document.querySelectorAll(".interactive-table tbody tr"));
+  const executeBtn = document.getElementById("executeFilter");
+  const resetBtn   = document.getElementById("resetFilter");
+
+  let selectedNums = []; // максимум 3 числа
+
+  function updateSquaresVisual() {
+    squares.forEach(span => {
+      const num = parseInt(span.dataset.num, 10);
+      span.classList.toggle("selected", selectedNums.includes(num));
+    });
+  }
+
+  function applyFilter() {
+    if (selectedNums.length === 0) {
+      rows.forEach(row => row.style.display = "");
+      return;
+    }
+
+    rows.forEach(row => {
+      const numSpans = row.querySelectorAll(".circle");
+      const nums = Array.from(numSpans).map(s => parseInt(s.textContent.trim(), 10));
+
+      let show = true;
+      for (let sel of selectedNums) {
+        if (!nums.includes(sel)) {
+          show = false;
+          break;
+        }
+      }
+
+      row.style.display = show ? "" : "none";
+    });
+  }
+
+  function resetFilter() {
+    selectedNums = [];
+    updateSquaresVisual();
+    rows.forEach(row => row.style.display = "");
+  }
+
+  squares.forEach(span => {
+    span.addEventListener("click", () => {
+      const num = parseInt(span.dataset.num, 10);
+      if (selectedNums.includes(num)) {
+        selectedNums = selectedNums.filter(n => n !== num);
+      } else {
+        if (selectedNums.length >= 3) {
+          selectedNums.shift();
+        }
+        selectedNums.push(num);
+      }
+      updateSquaresVisual();
+    });
+  });
+
+  if (executeBtn) executeBtn.addEventListener("click", applyFilter);
+  if (resetBtn) resetBtn.addEventListener("click", resetFilter);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  makeTablesSortable();
+  initFilterUI();
+});
 </script>
 
 </body>
