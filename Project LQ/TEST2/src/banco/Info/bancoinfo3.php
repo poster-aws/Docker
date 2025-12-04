@@ -4,8 +4,8 @@ require_once "../db.php"; // $bancoConn
 // -------------------------------
 // 1. Параметры меню
 // -------------------------------
-$type  = 'c3';                                     // фиксировано: comb3
-$scope = isset($_GET['scope']) ? $_GET['scope'] : 'dernier'; // dernier | tous
+$type  = 'c3'; // фиксировано: comb3
+$scope = isset($_GET['scope']) ? $_GET['scope'] : 'dernier'; // 'dernier' | 'tous'
 
 // -------------------------------
 // 2. Таблица comb3
@@ -14,24 +14,71 @@ $table  = "comb3";
 $fields = ['n1', 'n2', 'n3'];
 
 // -------------------------------
-// 3. SQL по scope
+// 2a. Выбранные числа для фильтра (только для scope = 'tous')
+//     формат GET: ?scope=tous&sel=5,17,23
 // -------------------------------
-if ($scope === 'dernier') {
-    $sql = "SELECT * FROM $table WHERE days = 0 ORDER BY Tirage DESC";
-} else {
-    $sql = "SELECT * FROM $table ORDER BY Tirage DESC";
+$selectedNums = [];
+if ($scope === 'tous' && isset($_GET['sel']) && $_GET['sel'] !== '') {
+    $parts = explode(',', $_GET['sel']);
+    foreach ($parts as $p) {
+        $n = (int)trim($p);
+        if ($n >= 1 && $n <= 70) {
+            $selectedNums[] = $n;
+        }
+    }
+    $selectedNums = array_values(array_unique($selectedNums));
 }
 
 // -------------------------------
-// 4. Загружаем данные
+// 3–4. Загружаем данные
 // -------------------------------
 $rows = [];
-$result = $bancoConn->query($sql);
-if ($result && $result->num_rows > 0) {
-    while ($r = $result->fetch_assoc()) {
-        $rows[] = $r;
+
+if ($scope === 'dernier') {
+    // Dernier tirage: вытаскиваем все комбинации последнего тиража (days = 0)
+    $sql = "SELECT * FROM $table WHERE days = 0 ORDER BY Tirage DESC";
+    $result = $bancoConn->query($sql);
+    if ($result && $result->num_rows > 0) {
+        while ($r = $result->fetch_assoc()) {
+            $rows[] = $r;
+        }
+    }
+} elseif ($scope === 'tous' && !empty($selectedNums)) {
+    // Tous les tirages + есть выбранные числа → серверный фильтр
+    if (count($selectedNums) === 1) {
+        $a   = (int)$selectedNums[0];
+        $sql = "SELECT * FROM $table
+                WHERE n1 = $a OR n2 = $a OR n3 = $a
+                ORDER BY Tirage DESC";
+    } else {
+        // берем все строки, где хотя бы одно из выбранных чисел встречается
+        $inList = implode(',', array_map('intval', $selectedNums));
+        $sql = "SELECT * FROM $table
+                WHERE n1 IN ($inList)
+                   OR n2 IN ($inList)
+                   OR n3 IN ($inList)
+                ORDER BY Tirage DESC";
+    }
+
+    $result = $bancoConn->query($sql);
+    if ($result && $result->num_rows > 0) {
+        while ($r = $result->fetch_assoc()) {
+            $rowNums = [(int)$r['n1'], (int)$r['n2'], (int)$r['n3']];
+            $ok = true;
+            // оставляем только те строки, которые содержат ВСЕ выбранные числа
+            foreach ($selectedNums as $sn) {
+                if (!in_array($sn, $rowNums, true)) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) {
+                $rows[] = $r;
+            }
+        }
     }
 }
+// если scope='tous' и нет sel — $rows остаётся пустым, к comb3 вообще не обращаемся
 
 // === Последний тираж Banco (20 чисел) ===
 $lastNums = [];
@@ -79,6 +126,12 @@ $line2Text = "Combinaisons par tirage 20/70 - 1 140";
 $line3Text = "Min/Max fois sorti- {$statsMinFois}/{$statsMaxFois}";
 $line4Text = "Max Jours passés - {$statsMaxDays}";
 $line5Text = "Max jours passés - {$statsMaxMax}";
+
+// для сообщения "Zadayte filtr"
+$showFilterMessage = ($scope === 'tous' && empty($selectedNums));
+
+// передаём выбранные числа в JS для подсветки
+$jsSelectedNums = json_encode($selectedNums, JSON_NUMERIC_CHECK);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -140,8 +193,7 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
   <div class="right-panel">
     <div class="tables-wrapper">
       <div class="table-container">
-        <!-- Сообщение только для режима "Tous les tirages" -->
-        <p id="filterMessage" class="filter-message"<?= $scope === 'tous' ? '' : ' style="display:none"' ?>>
+        <p id="filterMessage" class="filter-message"<?= $showFilterMessage ? '' : ' style="display:none"' ?>>
           Zadayte filtr
         </p>
 
@@ -160,7 +212,7 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
           </thead>
           <tbody>
           <?php foreach ($rows as $r): ?>
-            <tr<?= $scope === 'tous' ? ' style="display:none"' : '' ?>>
+            <tr>
               <td><?= htmlspecialchars($r['Tirage']) ?></td>
               <?php foreach ($fields as $f): ?>
                 <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
@@ -179,18 +231,21 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
 </div> <!-- /.banco-info-layout -->
 
 <script>
+const scope          = "<?= $scope ?>";          // 'dernier' | 'tous'
+const initialSelected = <?= $jsSelectedNums ?>;  // [..выбранные числа для scope=tous..] или []
+
 function updateParams() {
     const comb  = document.getElementById("combinaisonSelect").value;
-    const scope = document.getElementById("tirageSelect").value;
+    const sc    = document.getElementById("tirageSelect").value;
 
     if (comb === "c2") {
-        window.location.href = `bancoinfo2.php?scope=${scope}`;
+        window.location.href = `bancoinfo2.php?scope=${sc}`;
     } else {
-        window.location.href = `bancoinfo3.php?scope=${scope}`;
+        window.location.href = `bancoinfo3.php?scope=${sc}`;
     }
 }
 
-// 🔁 Сортировка таблиц
+// 🔁 Сортировка таблиц (как в bancoinfo2.php)
 function makeTablesSortable() {
   const tables = document.querySelectorAll(".interactive-table");
 
@@ -201,7 +256,7 @@ function makeTablesSortable() {
 
       th.addEventListener("click", () => {
         const tbody = table.querySelector("tbody");
-        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const rows  = Array.from(tbody.querySelectorAll("tr"));
         const isAscending = th.classList.contains("sort-asc");
 
         headers.forEach(h => h.classList.remove("sort-asc", "sort-desc"));
@@ -228,16 +283,15 @@ function makeTablesSortable() {
   });
 }
 
-// === Фильтрация по выбранным числам из верхнего инфо-блока ===
+// === Фильтрация / запуск фильтра ===
 function initFilterUI() {
   const squares    = Array.from(document.querySelectorAll(".filter-num"));
   const rows       = Array.from(document.querySelectorAll(".interactive-table tbody tr"));
   const executeBtn = document.getElementById("executeFilter");
   const resetBtn   = document.getElementById("resetFilter");
   const filterMsg  = document.getElementById("filterMessage");
-  const scope      = "<?= $scope ?>"; // 'dernier' или 'tous'
 
-  let selectedNums = []; // максимум 3 числа
+  let selectedNums = Array.isArray(initialSelected) ? initialSelected.slice() : []; // максимум 3 числа
 
   function updateSquaresVisual() {
     squares.forEach(span => {
@@ -246,27 +300,22 @@ function initFilterUI() {
     });
   }
 
-  function applyFilter() {
+  // Клиентский фильтр — только для scope='dernier'
+  function applyClientFilter() {
     if (selectedNums.length === 0) {
-      // Нет фильтра
-      if (scope === 'tous') {
-        rows.forEach(row => row.style.display = "none");
-        if (filterMsg) filterMsg.style.display = "block";
-      } else {
-        rows.forEach(row => row.style.display = "");
-        if (filterMsg) filterMsg.style.display = "none";
+      rows.forEach(row => row.style.display = "");
+      if (filterMsg && scope === 'tous') {
+        filterMsg.style.display = rows.length === 0 ? "block" : "none";
       }
       return;
     }
 
-    // Есть фильтр — надпись прячем
     if (filterMsg) filterMsg.style.display = "none";
 
     rows.forEach(row => {
       const numSpans = row.querySelectorAll(".circle");
       const nums = Array.from(numSpans).map(s => parseInt(s.textContent.trim(), 10));
 
-      // строка показывается, если содержит все выбранные числа
       let show = true;
       for (let sel of selectedNums) {
         if (!nums.includes(sel)) {
@@ -279,16 +328,33 @@ function initFilterUI() {
     });
   }
 
-  function resetFilter() {
+  function onExecuteClick() {
+    if (scope === 'tous') {
+      // серверная фильтрация: редирект с параметром sel
+      if (selectedNums.length === 0) {
+        // без фильтра – просто оставляем пустую таблицу и надпись
+        window.location.href = 'bancoinfo3.php?scope=tous';
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      params.set('scope', 'tous');
+      params.set('sel', selectedNums.join(','));
+      window.location.search = params.toString();
+    } else {
+      // scope='dernier' — фильтрация по уже загруженным строкам
+      applyClientFilter();
+    }
+  }
+
+  function onResetClick() {
     selectedNums = [];
     updateSquaresVisual();
 
     if (scope === 'tous') {
-      // Пусто + надпись
-      rows.forEach(row => row.style.display = "none");
-      if (filterMsg) filterMsg.style.display = "block";
+      // сброс фильтра — чистый режим "Zadayte filtr"
+      window.location.href = 'bancoinfo3.php?scope=tous';
     } else {
-      // Все строки видны, надпись скрыта
+      // Dernier tirage — показываем все строки
       rows.forEach(row => row.style.display = "");
       if (filterMsg) filterMsg.style.display = "none";
     }
@@ -309,8 +375,11 @@ function initFilterUI() {
     });
   });
 
-  if (executeBtn) executeBtn.addEventListener("click", applyFilter);
-  if (resetBtn)   resetBtn.addEventListener("click", resetFilter);
+  if (executeBtn) executeBtn.addEventListener("click", onExecuteClick);
+  if (resetBtn)   resetBtn.addEventListener("click", onResetClick);
+
+  // восстановим подсветку выбранных при scope=tous&sel=...
+  updateSquaresVisual();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
