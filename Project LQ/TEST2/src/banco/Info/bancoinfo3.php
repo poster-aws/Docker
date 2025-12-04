@@ -140,6 +140,11 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
   <div class="right-panel">
     <div class="tables-wrapper">
       <div class="table-container">
+        <!-- Сообщение только для режима "Tous les tirages" -->
+        <p id="filterMessage" class="filter-message"<?= $scope === 'tous' ? '' : ' style="display:none"' ?>>
+          Zadayte filtr
+        </p>
+
         <table class="interactive-table">
           <thead>
             <tr>
@@ -155,7 +160,7 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
           </thead>
           <tbody>
           <?php foreach ($rows as $r): ?>
-            <tr>
+            <tr<?= $scope === 'tous' ? ' style="display:none"' : '' ?>>
               <td><?= htmlspecialchars($r['Tirage']) ?></td>
               <?php foreach ($fields as $f): ?>
                 <td><span class="circle"><?= htmlspecialchars($r[$f]) ?></span></td>
@@ -225,10 +230,12 @@ function makeTablesSortable() {
 
 // === Фильтрация по выбранным числам из верхнего инфо-блока ===
 function initFilterUI() {
-  const squares = Array.from(document.querySelectorAll(".filter-num"));
-  const rows = Array.from(document.querySelectorAll(".interactive-table tbody tr"));
+  const squares    = Array.from(document.querySelectorAll(".filter-num"));
+  const rows       = Array.from(document.querySelectorAll(".interactive-table tbody tr"));
   const executeBtn = document.getElementById("executeFilter");
   const resetBtn   = document.getElementById("resetFilter");
+  const filterMsg  = document.getElementById("filterMessage");
+  const scope      = "<?= $scope ?>"; // 'dernier' или 'tous'
 
   let selectedNums = []; // максимум 3 числа
 
@@ -241,14 +248,25 @@ function initFilterUI() {
 
   function applyFilter() {
     if (selectedNums.length === 0) {
-      rows.forEach(row => row.style.display = "");
+      // Нет фильтра
+      if (scope === 'tous') {
+        rows.forEach(row => row.style.display = "none");
+        if (filterMsg) filterMsg.style.display = "block";
+      } else {
+        rows.forEach(row => row.style.display = "");
+        if (filterMsg) filterMsg.style.display = "none";
+      }
       return;
     }
+
+    // Есть фильтр — надпись прячем
+    if (filterMsg) filterMsg.style.display = "none";
 
     rows.forEach(row => {
       const numSpans = row.querySelectorAll(".circle");
       const nums = Array.from(numSpans).map(s => parseInt(s.textContent.trim(), 10));
 
+      // строка показывается, если содержит все выбранные числа
       let show = true;
       for (let sel of selectedNums) {
         if (!nums.includes(sel)) {
@@ -264,7 +282,16 @@ function initFilterUI() {
   function resetFilter() {
     selectedNums = [];
     updateSquaresVisual();
-    rows.forEach(row => row.style.display = "");
+
+    if (scope === 'tous') {
+      // Пусто + надпись
+      rows.forEach(row => row.style.display = "none");
+      if (filterMsg) filterMsg.style.display = "block";
+    } else {
+      // Все строки видны, надпись скрыта
+      rows.forEach(row => row.style.display = "");
+      if (filterMsg) filterMsg.style.display = "none";
+    }
   }
 
   squares.forEach(span => {
@@ -283,7 +310,7 @@ function initFilterUI() {
   });
 
   if (executeBtn) executeBtn.addEventListener("click", applyFilter);
-  if (resetBtn) resetBtn.addEventListener("click", resetFilter);
+  if (resetBtn)   resetBtn.addEventListener("click", resetFilter);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
