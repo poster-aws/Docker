@@ -196,11 +196,11 @@ foreach ($daysStats as $num => $daysAgo) {
     $circle = "<span class='circle'>{$num}</span>";
     $count  = $freqStats[$num] ?? 0;
 
-    $numberStatsHTML .= "<tr class='{$class}'>"
-        . "<td>{$circle}</td>"
-        . "<td>" . ($daysAgo ?? '-') . "</td>"
-        . "<td>{$count}</td>"
-        . "</tr>";
+$numberStatsHTML .= "<tr class='{$class}'>"
+    . "<td>{$circle}</td>"
+    . "<td>" . ($daysAgo ?? '-') . "</td>"
+    . "<td><span class='x-small'>x</span>{$count}</td>"
+    . "</tr>";
 }
 
 // --- JS-переключатель + выпадающее меню диапазона + отключение сортировки 3-й таблицы

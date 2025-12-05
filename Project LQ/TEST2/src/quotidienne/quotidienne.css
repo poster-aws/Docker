@@ -35,11 +35,23 @@
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/*
 .number-stats-table {
   background: #00000005;
   min-width: 180px;
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
+*/
+
+.number-stats-table #q2CountRange {
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  height: auto;
+  border: none;
+  background: transparent;
+}
+
 
 /* 📊 Общий стиль таблиц */
 .interactive-table {
@@ -174,6 +186,33 @@
 
 .star-2 {
   background-color: #ffffff;
+}
+
+/* Убираем подсветку строки для 3-го столбца */
+.number-stats-table tr.color-range-1 td:nth-child(3),
+.number-stats-table tr.color-range-2 td:nth-child(3),
+.number-stats-table tr.color-range-3 td:nth-child(3),
+.number-stats-table tr.color-range-4 td:nth-child(3) {
+    background: #cbcbcb !important;     /* белый фон */
+    border-left: 1px solid #666;
+    border-right: 1px solid #666;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Убрать боковые зазоры у третьего столбца */
+.number-stats-table td:nth-child(3),
+.number-stats-table th:nth-child(3) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Уменьшенный X в третьем столбце Q2 */
+.x-small {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-right: 2px;
+    vertical-align: middle;
 }
 
 /* 📉 Адаптивность для мобильных */
