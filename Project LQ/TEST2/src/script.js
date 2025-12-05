@@ -20,6 +20,11 @@ function makeTablesSortable() {
   const tables = document.querySelectorAll(".interactive-table");
 
   tables.forEach(table => {
+    // не сортируем таблицу дней (третья таблица Q2)
+    if (table.closest(".number-stats-table")) {
+      return;
+    }
+
     const headers = table.querySelectorAll("th");
     headers.forEach((th, columnIndex) => {
       th.style.cursor = "pointer";
@@ -54,6 +59,7 @@ function makeTablesSortable() {
 
 let isAltView = false;
 let originalHomeContent = null;
+let q2CountRange = 50; // диапазон для Q2 по умолчанию
 
 // 📥 Загрузка страниц
 function loadPage(page) {
@@ -75,13 +81,22 @@ function loadPage(page) {
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
 
-  // === ⬅️ Новая логика для Banco и Tout: limit зависит от переключателя Order/N'import
+  // === Параметры для разных страниц
   let extraParam = "";
-if (page.includes("banco") || page.includes("tout")) {
-  extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
-}
 
-  fetch(`${page}?${mode}${extraParam}`)
+  // Banco / Tout: limit зависит от переключателя Order/N'import
+  if (page.includes("banco") || page.includes("tout")) {
+    extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
+  }
+
+  // Q2: добавляем count_range
+  if (page.includes("q2")) {
+    extraParam += (extraParam ? "&" : "") + "count_range=" + (q2CountRange || 50);
+  }
+
+  const queryString = mode + (mode && extraParam ? "" : "") + extraParam;
+
+  fetch(`${page}?${queryString}`)
     .then(response => {
       if (!response.ok) throw new Error("Erreur de chargement de la page");
       return response.text();
@@ -91,6 +106,18 @@ if (page.includes("banco") || page.includes("tout")) {
       container.setAttribute("data-page", page);
       updateToggleStyles();
       makeTablesSortable();
+
+      // Q2: привязка выпадающего меню диапазона (10 / 20 / 50 / 100 / 365)
+      if (page.includes("q2")) {
+        const rangeSelect = container.querySelector("#q2CountRange");
+        if (rangeSelect) {
+          rangeSelect.value = String(q2CountRange || 50);
+          rangeSelect.addEventListener("change", () => {
+            q2CountRange = parseInt(rangeSelect.value, 10) || 50;
+            loadPage(page);
+          });
+        }
+      }
 
       const pageTitle = document.getElementById("pageTitle");
 
@@ -146,7 +173,7 @@ function updateToggleStyles() {
   neonSwitch.classList.toggle("active", isChecked);
 
   // ✅ Изменяем подписи Banco Tout
-const currentPage = container.getAttribute("data-page") || "";
+  const currentPage = container.getAttribute("data-page") || "";
 
   if (currentPage.includes("banco") || currentPage.includes("tout")) {
     labelOrder.textContent = "50 Tirages";
@@ -225,15 +252,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       cornerButton.innerHTML = "&#x21c6;"; // ✅ Вернуть иконку Info
-    } 
-
-   else {
+    } else {
       toggleSwitch.disabled = false;
       neonSwitch.classList.remove("disabled-switch");
       container.style.maxWidth = "";    // ✅ Сброс ширины
       container.style.width = "";       // ✅ Сброс ширины
       loadPage(currentPage);
-   }
+    }
   });
 
   updateToggleStyles();

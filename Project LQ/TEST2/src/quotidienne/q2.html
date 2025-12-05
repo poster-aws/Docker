@@ -46,7 +46,19 @@
   <div class="number-stats-table">
     <table class="interactive-table">
       <thead>
-        <tr><th>#</th><th>Jours<br>passés</th></tr>
+        <tr>
+          <th>#</th>
+          <th>Jours<br>passés</th>
+          <th>
+            <select id="q2CountRange">
+              <option value="10">10 tirages</option>
+              <option value="20">20 tirages</option>
+              <option value="50">50 tirages</option>
+              <option value="100">100 tirages</option>
+              <option value="365">365 tirages</option>
+            </select>
+          </th>
+        </tr>
       </thead>
       <tbody>
         <!--NUMBER_STATS_PLACEHOLDER-->
@@ -54,3 +66,6 @@
     </table>
   </div>
 </div>
+
+<!-- сюда PHP подставит наш JS -->
+<!--SCRIPT_PLACEHOLDER-->
