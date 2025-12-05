@@ -63,7 +63,8 @@ let q2CountRange = 50; // диапазон для Q2 по умолчанию
 
 // 📥 Загрузка страниц
 function loadPage(page) {
-  const isOrdered = document.getElementById("toggleSwitch").checked;
+  const toggleSwitch = document.getElementById("toggleSwitch");
+  const isOrdered = toggleSwitch.checked;
   const mode = isOrdered ? "norder=1" : "";
 
   const menu = document.getElementById("dropdownMenu");
@@ -76,7 +77,6 @@ function loadPage(page) {
   isAltView = false;
   spinner.classList.remove("hidden");
 
-  const toggleSwitch = document.getElementById("toggleSwitch");
   const neonSwitch = document.getElementById("neonSwitch");
   toggleSwitch.disabled = false;
   neonSwitch.classList.remove("disabled-switch");
@@ -86,7 +86,7 @@ function loadPage(page) {
 
   // Banco / Tout: limit зависит от переключателя Order/N'import
   if (page.includes("banco") || page.includes("tout")) {
-    extraParam = toggleSwitch.checked ? "&limit=200" : "&limit=50";
+    extraParam = "limit=" + (toggleSwitch.checked ? "200" : "50");
   }
 
   // Q2: добавляем count_range
@@ -94,9 +94,15 @@ function loadPage(page) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q2CountRange || 50);
   }
 
-  const queryString = mode + (mode && extraParam ? "" : "") + extraParam;
+  // Собираем queryString корректно
+  let queryParts = [];
+  if (mode) queryParts.push(mode);
+  if (extraParam) queryParts.push(extraParam);
+  const queryString = queryParts.join("&");
 
-  fetch(`${page}?${queryString}`)
+  const url = queryString ? `${page}?${queryString}` : page;
+
+  fetch(url)
     .then(response => {
       if (!response.ok) throw new Error("Erreur de chargement de la page");
       return response.text();

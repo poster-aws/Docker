@@ -196,75 +196,15 @@ foreach ($daysStats as $num => $daysAgo) {
     $circle = "<span class='circle'>{$num}</span>";
     $count  = $freqStats[$num] ?? 0;
 
-$numberStatsHTML .= "<tr class='{$class}'>"
-    . "<td>{$circle}</td>"
-    . "<td>" . ($daysAgo ?? '-') . "</td>"
-    . "<td><span class='x-small'>x</span>{$count}</td>"
-    . "</tr>";
+    $numberStatsHTML .= "<tr class='{$class}'>"
+        . "<td>{$circle}</td>"
+        . "<td>" . ($daysAgo ?? '-') . "</td>"
+        . "<td><span class='x-small'>x</span>{$count}</td>"
+        . "</tr>";
 }
 
-// --- JS-переключатель + выпадающее меню диапазона + отключение сортировки 3-й таблицы
-$script = "<script>
-  const toggle = document.getElementById('toggleSwitch');
-  const labelOrder = document.getElementById('labelOrder');
-  const labelNimport = document.getElementById('labelNimport');
-  const neonSwitch = document.getElementById('neonSwitch');
-  const countRangeSelect = document.getElementById('q2CountRange');
-
-  const setActiveLabels = () => {
-    if (!toggle) return;
-    const isChecked = toggle.checked;
-    if (labelOrder)  labelOrder.classList.toggle('active', !isChecked);
-    if (labelNimport) labelNimport.classList.toggle('active', isChecked);
-    if (neonSwitch) neonSwitch.classList.toggle('active', isChecked);
-  };
-
-  if (toggle) {
-    toggle.checked = " . ($isNorder ? 'true' : 'false') . ";
-  }
-  setActiveLabels();
-
-  if (countRangeSelect) {
-    countRangeSelect.value = '" . $countRange . "';
-  }
-
-  const applyFilters = () => {
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
-
-    if (toggle && toggle.checked) {
-      params.set('norder', '1');
-    } else {
-      params.delete('norder');
-    }
-
-    if (countRangeSelect) {
-      params.set('count_range', countRangeSelect.value);
-    }
-
-    const query = params.toString();
-    window.location.href = url.pathname + (query ? '?' + query : '');
-  };
-
-  if (toggle) {
-    toggle.addEventListener('change', applyFilters);
-  }
-
-  if (countRangeSelect) {
-    countRangeSelect.addEventListener('change', applyFilters);
-  }
-
-  // 🔒 Отключаем сортировку для 3-й таблицы (таблица дней)
-  const numberStatsTable = document.querySelector('.number-stats-table table');
-  if (numberStatsTable) {
-    const headers = numberStatsTable.querySelectorAll('th');
-    headers.forEach(th => {
-      th.style.cursor = 'default';
-      const clone = th.cloneNode(true);
-      th.parentNode.replaceChild(clone, th);
-    });
-  }
-</script>";
+// ❗ Локальный JS нам больше не нужен — всё делает глобальный script.js
+$script = "";
 
 // --- Вставка в шаблон
 echo str_replace(
