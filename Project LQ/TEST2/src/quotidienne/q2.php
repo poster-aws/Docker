@@ -20,18 +20,14 @@ $countRange = (isset($_GET['count_range']) && in_array((int)$_GET['count_range']
     ? (int)$_GET['count_range']
     : 50; // значение по умолчанию
 
-// --- Таблица 1 (основная)
-$tableHTML = '';
-foreach ($data as $row) {
-    $tableHTML .= '<tr>';
-    foreach ($row as $key => $cell) {
-        if ($key === 'n1' || $key === 'n2') {
-            $tableHTML .= '<td><span class="circle">' . htmlspecialchars($cell) . '</span></td>';
-        } else {
-            $tableHTML .= '<td>' . htmlspecialchars($cell) . '</td>';
-        }
+// 1. Основная таблица
+$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC";
+$result = $conn->query($sql);
+$data = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
     }
-    $tableHTML .= '</tr>';
 }
 
 // 2. Таблица комбинаций
@@ -165,7 +161,7 @@ foreach ($data as $row) {
     $tableHTML .= '<tr>';
     foreach ($row as $key => $cell) {
         if ($key === 'n1' || $key === 'n2') {
-            $tableHTML .= '<td><span class=\"circle\">' . htmlspecialchars($cell) . '</span></td>';
+            $tableHTML .= '<td><span class="circle">' . htmlspecialchars($cell) . '</span></td>';
         } else {
             $tableHTML .= '<td>' . htmlspecialchars($cell) . '</td>';
         }
