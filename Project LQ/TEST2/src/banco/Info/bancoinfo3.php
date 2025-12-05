@@ -169,6 +169,7 @@ $jsSelectedNums = json_encode($selectedNums, JSON_NUMERIC_CHECK);
         <select id="combinaisonSelect" onchange="updateParams()">
           <option value="c2">Combinaison de 2</option>
           <option value="c3" selected>Combinaison de 3</option>
+          <option value="c4">Combinaison de 4</option>
         </select>
 
         <select id="tirageSelect" onchange="updateParams()">
@@ -236,12 +237,14 @@ const initialSelected = <?= $jsSelectedNums ?>;  // [..выбранные чис
 
 function updateParams() {
     const comb  = document.getElementById("combinaisonSelect").value;
-    const sc    = document.getElementById("tirageSelect").value;
+    const scope = document.getElementById("tirageSelect").value;
 
     if (comb === "c2") {
-        window.location.href = `bancoinfo2.php?scope=${sc}`;
-    } else {
-        window.location.href = `bancoinfo3.php?scope=${sc}`;
+        window.location.href = `bancoinfo2.php?scope=${scope}`;
+    } else if (comb === "c3") {
+        window.location.href = `bancoinfo3.php?scope=${scope}`;
+    } else { // c4
+        window.location.href = `bancoinfo4.php?scope=${scope}`;
     }
 }
 

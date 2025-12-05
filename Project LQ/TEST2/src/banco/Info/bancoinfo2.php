@@ -115,6 +115,7 @@ $line5Text = "Max jours passés - {$statsMaxMax}";
         <select id="combinaisonSelect" onchange="updateParams()">
           <option value="c2" selected>Combinaison de 2</option>
           <option value="c3">Combinaison de 3</option>
+          <option value="c4">Combinaison de 4</option>
         </select>
 
         <select id="tirageSelect" onchange="updateParams()">
@@ -179,8 +180,10 @@ function updateParams() {
 
     if (comb === "c2") {
         window.location.href = `bancoinfo2.php?scope=${scope}`;
-    } else {
+    } else if (comb === "c3") {
         window.location.href = `bancoinfo3.php?scope=${scope}`;
+    } else { // c4
+        window.location.href = `bancoinfo4.php?scope=${scope}`;
     }
 }
 
