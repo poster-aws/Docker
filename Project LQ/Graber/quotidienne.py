@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
+import os
 
 # URL страницы (La Quotidienne)
-url = "https://loteries.lotoquebec.com/fr/loteries/la-quotidienne"
+url = "https://loteries.lotoquebec.com/fr/loteries/la-quotidienne-resultats#res"
 
 # === 1. Получаем HTML ===
 try:
@@ -139,7 +140,6 @@ if response.status_code == 200:
             print("* Ошибка при закрытии соединения:", cleanup_error)
 
     # === 8. Удаляем временный файл page_source.html ===
-    import os
     if os.path.exists("page_source.html"):
         try:
             os.remove("page_source.html")
