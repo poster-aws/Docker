@@ -20,8 +20,8 @@ $countRange = (isset($_GET['count_range']) && in_array((int)$_GET['count_range']
     ? (int)$_GET['count_range']
     : 50; // значение по умолчанию
 
-// 1. Основная таблица
-$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC";
+// 1. Основная таблица (ТОЛЬКО 365 последних)
+$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC LIMIT 365";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {
@@ -30,48 +30,53 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// 2. Таблица комбинаций
+// 2. Таблица комбинаций (добавляем max_jours_passés за всю историю)
 $comboRows = [];
 
 if ($isNorder) {
-    // Генерация комбинаций без учёта порядка (на лету)
-    $comboMap = [];
-    $comboCount = [];
 
-    foreach ($data as $row) {
-        $nums = [$row['n1'], $row['n2']];
-        sort($nums);
-        $key = implode('-', $nums);
+    // N'IMPORT: нормализуем пару (LEAST/GREATEST) и считаем:
+    // - jours (с последнего появления)
+    // - tirage (последняя дата)
+    // - max_fois (сколько раз выпадала)
+    // - max_jours (макс. разрыв между появлениями + разрыв до сегодня) по всей истории
+    $sqlCombo = "
+        WITH base AS (
+            SELECT
+                LEAST(n1, n2)    AS a,
+                GREATEST(n1, n2) AS b,
+                Tirage
+            FROM Q2
+        ),
+        gaps AS (
+            SELECT
+                a, b, Tirage,
+                DATEDIFF(Tirage, LAG(Tirage) OVER (PARTITION BY a, b ORDER BY Tirage)) AS gap_days
+            FROM base
+        ),
+        agg AS (
+            SELECT
+                a, b,
+                MAX(Tirage) AS last_tirage,
+                COUNT(*)    AS max_fois,
+                GREATEST(
+                    IFNULL(MAX(gap_days), 0),
+                    DATEDIFF(CURDATE(), MAX(Tirage))
+                ) AS max_jours
+            FROM gaps
+            GROUP BY a, b
+        )
+        SELECT
+            a AS n1,
+            b AS n2,
+            DATEDIFF(CURDATE(), last_tirage) AS jours,
+            last_tirage AS tirage,
+            max_jours,
+            max_fois
+        FROM agg
+        ORDER BY jours DESC
+    ";
 
-        if (!isset($comboCount[$key])) {
-            $comboCount[$key] = 0;
-        }
-        $comboCount[$key]++;
-
-        if (!isset($comboMap[$key]) || $comboMap[$key]['tirage'] < $row['Tirage']) {
-            $comboMap[$key] = [
-                'n1'    => $nums[0],
-                'n2'    => $nums[1],
-                'tirage'=> $row['Tirage']
-            ];
-        }
-    }
-
-    foreach ($comboMap as $key => $row) {
-        $days = (new DateTime($row['tirage']))->diff(new DateTime())->days;
-        $comboRows[] = [
-            'n1'       => $row['n1'],
-            'n2'       => $row['n2'],
-            'days'     => $days,
-            'date'     => $row['tirage'],
-            'max_fois' => $comboCount["{$row['n1']}-{$row['n2']}"] ?? 0
-        ];
-    }
-
-    usort($comboRows, fn($a, $b) => $b['days'] <=> $a['days']);
-} else {
-    // Комбинации из БД (порядок важен)
-    $sqlCombo = "SELECT n1, n2, jours, tirage, max_fois FROM $tableComb ORDER BY jours DESC";
     $resCombo = $conn->query($sqlCombo);
     if ($resCombo && $resCombo->num_rows > 0) {
         while ($r = $resCombo->fetch_assoc()) {
@@ -80,6 +85,53 @@ if ($isNorder) {
                 'n2'       => $r['n2'],
                 'days'     => $r['jours'],
                 'date'     => $r['tirage'],
+                'max_days' => $r['max_jours'],
+                'max_fois' => $r['max_fois']
+            ];
+        }
+    }
+
+} else {
+
+    // ORDER: берём jours/tirage/max_fois из таблицы combos,
+    // и добавляем max_jours (за всю историю) из Q2 через оконную функцию
+    $sqlCombo = "
+        WITH gaps AS (
+            SELECT
+                n1, n2, Tirage,
+                DATEDIFF(Tirage, LAG(Tirage) OVER (PARTITION BY n1, n2 ORDER BY Tirage)) AS gap_days
+            FROM Q2
+        ),
+        agg AS (
+            SELECT
+                n1, n2,
+                GREATEST(
+                    IFNULL(MAX(gap_days), 0),
+                    DATEDIFF(CURDATE(), MAX(Tirage))
+                ) AS max_jours
+            FROM gaps
+            GROUP BY n1, n2
+        )
+        SELECT
+            cs.n1, cs.n2,
+            cs.jours, cs.tirage,
+            a.max_jours,
+            cs.max_fois
+        FROM $tableComb cs
+        LEFT JOIN agg a
+               ON a.n1 = cs.n1 AND a.n2 = cs.n2
+        ORDER BY cs.jours DESC
+    ";
+
+    $resCombo = $conn->query($sqlCombo);
+    if ($resCombo && $resCombo->num_rows > 0) {
+        while ($r = $resCombo->fetch_assoc()) {
+            $comboRows[] = [
+                'n1'       => $r['n1'],
+                'n2'       => $r['n2'],
+                'days'     => $r['jours'],
+                'date'     => $r['tirage'],
+                'max_days' => $r['max_jours'] ?? 0,
                 'max_fois' => $r['max_fois'] ?? '-'
             ];
         }
@@ -111,11 +163,6 @@ if ($resLastNums && $resLastNums->num_rows > 0) {
 // 4. Частота появления цифр за N последних тиражей (всегда из оригинальной Q2)
 $freqStats = array_fill(0, 10, 0);
 
-/*
- * Логика:
- *   1) Сначала выбираем N последних строк из Q2 (по Tirage DESC LIMIT N).
- *   2) Уже из ЭТИХ строк считаем цифры n1 и n2 через UNION ALL.
- */
 $sqlFreq = "
     SELECT num AS digit, COUNT(*) AS cnt
     FROM (
@@ -155,11 +202,24 @@ ob_start();
 include 'q2.html';
 $template = ob_get_clean();
 
-// --- Таблица 1 (основная)
+// --- Таблица 1 (основная) — без колонки Max jours passés
 $tableHTML = '';
 foreach ($data as $row) {
     $tableHTML .= '<tr>';
     foreach ($row as $key => $cell) {
+
+        // ✅ колонку Max (какое бы имя ни было в таблице) не выводим в 1-й таблице
+        if (
+            $key === 'max' ||
+            $key === 'max_jours' ||
+            $key === 'max_jours_passes' ||
+            $key === 'max_jours_passés' ||
+            $key === 'maxjours' ||
+            $key === 'max_jours_passes_total'
+        ) {
+            continue;
+        }
+
         if ($key === 'n1' || $key === 'n2') {
             $tableHTML .= '<td><span class="circle">' . htmlspecialchars($cell) . '</span></td>';
         } else {
@@ -169,7 +229,7 @@ foreach ($data as $row) {
     $tableHTML .= '</tr>';
 }
 
-// --- Таблица 2 (комбинации)
+// --- Таблица 2 (комбинации) — с колонкой Max jours passés
 $comboHTML = '';
 foreach ($comboRows as $row) {
     $comboHTML .= '<tr>';
@@ -177,6 +237,7 @@ foreach ($comboRows as $row) {
     $comboHTML .= "<td><span class='circle'>{$row['n2']}</span></td>";
     $comboHTML .= "<td>{$row['days']}</td>";
     $comboHTML .= "<td>{$row['date']}</td>";
+    $comboHTML .= "<td>" . ($row['max_days'] ?? 0) . "</td>";
     $comboHTML .= "<td>{$row['max_fois']}</td>";
     $comboHTML .= '</tr>';
 }
