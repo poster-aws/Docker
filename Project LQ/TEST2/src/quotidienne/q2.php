@@ -22,7 +22,7 @@ $countRange = (isset($_GET['count_range']) && in_array((int)$_GET['count_range']
     : 50; // значение по умолчанию
 
 // 1. Основная таблица (LIMIT 365)
-$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC LIMIT 365";
+$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC ";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {
@@ -37,14 +37,14 @@ $comboRows = [];
 if ($isNorder) {
     // ✅ Комбинации N'import из БД
     $sqlCombo = "
-        SELECT n1, n2, jours, Tirage, max_fois
+        SELECT n1, n2, jours, Tirage, max_fois, max
         FROM Q2_combo_stats_norder
         ORDER BY jours DESC
     ";
 } else {
     // Комбинации ORDER из БД
     $sqlCombo = "
-        SELECT n1, n2, jours, Tirage, max_fois
+        SELECT n1, n2, jours, Tirage, max_fois, max
         FROM Q2_combo_stats_order
         ORDER BY jours DESC
     ";
@@ -58,7 +58,8 @@ if ($resCombo && $resCombo->num_rows > 0) {
             'n2'       => $r['n2'],
             'days'     => $r['jours'],
             'date'     => $r['Tirage'],
-            'max_fois' => $r['max_fois'] ?? '-'
+            'max_fois' => $r['max_fois'] ?? '-',
+            'max'      => $r['max'] ?? '-'
         ];
     }
 }
@@ -149,13 +150,14 @@ foreach ($data as $row) {
 // --- Таблица 2 (комбинации)
 $comboHTML = '';
 foreach ($comboRows as $row) {
-    $comboHTML .= '<tr>';
-    $comboHTML .= "<td><span class='circle'>{$row['n1']}</span></td>";
-    $comboHTML .= "<td><span class='circle'>{$row['n2']}</span></td>";
-    $comboHTML .= "<td>{$row['days']}</td>";
-    $comboHTML .= "<td>{$row['date']}</td>";
-    $comboHTML .= "<td>{$row['max_fois']}</td>";
-    $comboHTML .= '</tr>';
+        $comboHTML .= '<tr>';
+        $comboHTML .= "<td><span class='circle'>{$row['n1']}</span></td>";
+        $comboHTML .= "<td><span class='circle'>{$row['n2']}</span></td>";
+        $comboHTML .= "<td>{$row['days']}</td>";
+        $comboHTML .= "<td>{$row['date']}</td>";
+        $comboHTML .= "<td>{$row['max_fois']}</td>";
+        $comboHTML .= "<td>{$row['max']}</td>";
+        $comboHTML .= '</tr>';
 }
 
 // --- Таблица 3 (дни по цифрам + количество за N тиражей, с подсветкой)
