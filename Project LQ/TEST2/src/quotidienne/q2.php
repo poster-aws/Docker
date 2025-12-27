@@ -22,7 +22,7 @@ $countRange = (isset($_GET['count_range']) && in_array((int)$_GET['count_range']
     : 50; // значение по умолчанию
 
 // 1. Основная таблица (LIMIT 365)
-$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC ";
+$sql = "SELECT * FROM $tableMain ORDER BY Tirage DESC LIMIT 365";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {
