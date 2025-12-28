@@ -209,10 +209,17 @@ $conn->close();
     .digit-grid td:first-child,
     .digit-grid th:first-child {
       background-color: #eee;
-      font-weight: bold;
+      /* font-weight: bold; */
       position: sticky;
       left: 0;
       z-index: 1;
+    }
+
+    /* второй столбец (#) — такой же фон как у первого */
+    .digit-grid td:nth-child(2),
+    .digit-grid th:nth-child(2) {
+      background-color: #eee;
+      font-weight: bold;
     }
 
     .filter-form {
@@ -252,8 +259,8 @@ $conn->close();
       <table class="digit-grid">
         <thead>
           <tr>
+          <th>Σ</th>  
           <th>#</th>
-          <th>Σ</th>
           <?php foreach ($tirages as $t): ?>
           <th><?= htmlspecialchars($t['Tirage']) ?></th>
           <?php endforeach; ?>
@@ -262,8 +269,8 @@ $conn->close();
         <tbody>
           <?php for ($digit = 0; $digit <= 9; $digit++): ?>
             <tr>
+                <td>x<?= $digitSums[$digit] ?></td> <!-- --тут Х -->
                 <td><?= $digit ?></td>
-                <td><?= $digitSums[$digit] ?></td>
               <?php foreach ($tirages as $t):
                 $count = array_count_values($t['nums'])[$digit] ?? 0;
                 $class = ($count === 2) ? 'repeat-2' : (($count === 1) ? 'hit' : '');
