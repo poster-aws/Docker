@@ -221,6 +221,35 @@ $conn->close();
       padding: 6px 10px;
       font-size: 14px;
     }
+
+    /* ✅ Scroll hint (низ справа) */
+    #scrollHint {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(126, 176, 234, 0.85);
+      color: #000;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      z-index: 9999;
+      animation: scrollBounce 1.6s infinite;
+      box-shadow: 0 0 6px rgba(0,0,0,0.35);
+      transition: opacity 0.35s ease;
+      opacity: 1;
+    }
+
+    @keyframes scrollBounce {
+      0%   { transform: translateY(0);   opacity: 0.6; }
+      50%  { transform: translateY(6px); opacity: 1;   }
+      100% { transform: translateY(0);   opacity: 0.6; }
+    }
   </style>
 </head>
 
@@ -328,6 +357,9 @@ $conn->close();
     </div>
   </div>
   <!-- /Информационный блок -->
+
+  <!-- ✅ Scroll hint -->
+  <div id="scrollHint">⬇⬆</div>
 
   <script>
     let chart;
@@ -443,6 +475,7 @@ $conn->close();
 
     // initial render
     renderChart(<?php echo $json_data; ?>);
+
   </script>
 
 </body>
