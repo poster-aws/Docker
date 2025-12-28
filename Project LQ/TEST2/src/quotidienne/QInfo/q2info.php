@@ -4,6 +4,22 @@ require_once "../db.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// --------------------
+// 1) Режим переключателя (ORDER / N'import) для графика
+$isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
+$table = $isNorder ? "Q2_stats_norder" : "Q2_stats_order";
+
+// 2) LIMIT для графика (как у тебя)
+$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? intval($_GET['limit']) : 100;
+
+// 3) GRID LIMIT (как в Q3info, отдельный параметр)
+$allowedGridLimits = [50, 100, 365];
+$gridLimit = isset($_GET['grid_limit']) && in_array((int)$_GET['grid_limit'], $allowedGridLimits, true)
+    ? (int)$_GET['grid_limit']
+    : 50;
+
+// --------------------
+// Получение данных для графика/таблицы диапазонов
 $conn = new mysqli($servername, $username, $password, $dbname);
 $conn->set_charset("utf8");
 
@@ -11,11 +27,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// выбор таблицы
-$isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
-$table = $isNorder ? "Q2_stats_norder" : "Q2_stats_order";
-
-$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? intval($_GET['limit']) : 100;
 $sql = "SELECT n1, n2, days FROM $table ORDER BY Tirage DESC";
 if ($limit > 0) {
     $sql .= " LIMIT $limit";
@@ -23,19 +34,37 @@ if ($limit > 0) {
 
 $result = $conn->query($sql);
 $data = [];
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
 }
-$conn->close();
 
+// Если AJAX — возвращаем только данные (как у тебя)
 if (isset($_GET['ajax'])) {
+    $conn->close();
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
+
+// --------------------
+// Получение данных для GRID (как Q3info, но Q2)
+$sqlGrid = "SELECT Tirage, n1, n2 FROM Q2 ORDER BY Tirage DESC LIMIT $gridLimit";
+$resGrid = $conn->query($sqlGrid);
+
+$tirages = [];
+if ($resGrid && $resGrid->num_rows > 0) {
+    while ($r = $resGrid->fetch_assoc()) {
+        $tirages[] = [
+            'Tirage' => $r['Tirage'],
+            'nums'   => [(int)$r['n1'], (int)$r['n2']]
+        ];
+    }
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -43,63 +72,45 @@ $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <title>График данных</title> -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <style>
+    /* Убираем отступы по умолчанию и задаем шрифт всей странице */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      overflow-y: auto;
+      scrollbar-width: none; /* Firefox */
+    }
+    body::-webkit-scrollbar { display: none; /* Chrome, Safari */ }
 
-/* Убираем отступы по умолчанию и задаем шрифт всей странице */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
-}
+    /* Центрирование и уменьшение вертикальных отступов обёрток переключателя и селектора */
+    #toggleWrapper,
+    #selectWrapper {
+      text-align: center;
+      margin: 8px 0;
+    }
 
-body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
+    /* Стиль селектора и чекбокса */
+    #limitSelect, #norderToggle {
+      font-size: 1em;
+      margin-left: 6px;
+    }
+    label[for="norderToggle"] { margin-left: 8px; }
 
-/* Заголовок h2 по центру с уменьшенными вертикальными отступами */
-h2 {
-  text-align: center;
-  margin: 8px 0;
-  font-size: 1.1em; /* немного уменьшенный размер шрифта */
-}
-
-/* Центрирование и уменьшение вертикальных отступов обёрток переключателя и селектора */
-#toggleWrapper,
-#selectWrapper {
-  text-align: center;
-  margin: 8px 0;
-}
-
-/* Стиль селектора и чекбокса: шрифт и отступ слева */
-#limitSelect, #norderToggle {
-  font-size: 1em;
-  margin-left: 6px;
-}
-
-/* Дополнительный отступ между чекбоксом и его подписью */
-label[for="norderToggle"] {
-  margin-left: 8px;
-}
-
-/* Основная таблица: по центру, с ограниченной шириной и сжатым вертикальным отступом */
-#statsTable {
-  margin: 10px auto;
-  border-collapse: collapse;
-  width: 60%;
-}
-
-/* Ячейки таблицы: рамка, отступы внутри ячеек и выравнивание по центру */
-#statsTable th, #statsTable td {
-  border: 1px solid #999;
-  padding: 6px 10px;
-  text-align: center;
-}
+    /* Основная таблица: по центру */
+    #statsTable {
+      margin: 10px auto;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    #statsTable th, #statsTable td {
+      border: 1px solid #999;
+      padding: 6px 10px;
+      text-align: center;
+    }
 
     .circle {
       display: inline-block;
@@ -116,8 +127,8 @@ label[for="norderToggle"] {
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
 
-/* Информационный блок под таблицей: ограниченная ширина, серый фон и цветной бордер */
-#infoBlock.info-list {
+    /* Информационный блок */
+    #infoBlock.info-list {
       display: flex;
       flex-direction: column;
       padding: 14px 16px;
@@ -128,7 +139,6 @@ label[for="norderToggle"] {
       background: rgba(255,255,255,0.03);
       color: #333;
     }
-
     .info-row {
       display: flex;
       align-items: center;
@@ -138,57 +148,147 @@ label[for="norderToggle"] {
       background: rgba(255, 255, 255, 0.26);
       border-radius: 6px;
     }
+    .info-text { font-size: 0.95em; }
 
-    .info-text {
-      font-size: 0.95em;
+    .digit {
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background-color: #7eb0ea;
+      color: #000;
+      font-weight: bold;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
 
-  .digit {
-    display: inline-flex;
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-    border-radius: 50%;
-    background-color: #7eb0ea;
-    color: #000;
-    font-weight: bold;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+    /* --- GRID (как Q3info) --- */
+    .table-wrapper {
+      width: 95%;
+      max-height: 70vh;
+      overflow: auto;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      background: rgba(173, 216, 230, 0.85);
+    }
 
-  }
-      /* Скрытие полос прокрутки */
-  body {
-    overflow: auto;
-    scrollbar-width: none; /* Firefox */
-  }
+    table.digit-grid {
+      width: max-content;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+    }
 
-  body::-webkit-scrollbar {
-    display: none;
-  }
+    .digit-grid td, .digit-grid th {
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    .digit-grid th {
+      height: 60px;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 0.7em;
+      background: #eee;
+    }
+
+    .digit-grid td.hit { background-color: #7eb0ea; }
+    .digit-grid td.repeat-2 { background-color: #f8c471; } /* дубль в Q2 */
+
+    .digit-grid td:first-child,
+    .digit-grid th:first-child {
+      background-color: #eee;
+      font-weight: bold;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+
+    .filter-form {
+      text-align: center;
+      margin: 0;
+      padding: 10px 0;
+    }
+    .filter-form select {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
-  <!-- <h2>График количества дней с последнего появления комбинаций</h2> -->
+
+  <!-- GRID Q2 (как Q3info) -->
+  <div class="table-wrapper">
+    <?php if (!empty($tirages)): ?>
+      <table class="digit-grid">
+        <thead>
+          <tr>
+            <th></th>
+            <?php foreach ($tirages as $t): ?>
+              <th><?= htmlspecialchars($t['Tirage']) ?></th>
+            <?php endforeach; ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php for ($digit = 0; $digit <= 9; $digit++): ?>
+            <tr>
+              <td><?= $digit ?></td>
+              <?php foreach ($tirages as $t):
+                $count = array_count_values($t['nums'])[$digit] ?? 0;
+                $class = ($count === 2) ? 'repeat-2' : (($count === 1) ? 'hit' : '');
+              ?>
+                <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
+              <?php endforeach; ?>
+            </tr>
+          <?php endfor; ?>
+        </tbody>
+      </table>
+    <?php else: ?>
+      <p style="text-align:center; color: red;">Нет данных для отображения.</p>
+    <?php endif; ?>
+  </div>
+
+  <form class="filter-form" method="get">
+    <!-- сохраняем текущие параметры графика -->
+    <input type="hidden" name="limit" value="<?= htmlspecialchars($limit) ?>">
+    <?php if ($isNorder): ?>
+      <input type="hidden" name="norder" value="1">
+    <?php endif; ?>
+
+    Dernières
+    <select name="grid_limit" onchange="this.form.submit()">
+      <?php foreach ([50, 100, 365] as $opt): ?>
+        <option value="<?= $opt ?>" <?= ($gridLimit == $opt) ? 'selected' : '' ?>><?= $opt ?></option>
+      <?php endforeach; ?>
+    </select> tirages
+  </form>
+  <!-- /GRID Q2 -->
+
+  <!-- График -->
   <canvas id="myChart" width="400" height="200"></canvas>
 
   <div id="toggleWrapper">
-    <input type="checkbox" id="norderToggle">
+    <input type="checkbox" id="norderToggle" <?= $isNorder ? 'checked' : '' ?>>
     <label for="norderToggle">Dans N'Importe quel Order</label>
   </div>
 
   <div id="selectWrapper">
     <label for="limitSelect">Nombre de dernières tirages:</label>
     <select id="limitSelect">
-      <option value="100" selected>100</option>
-      <option value="200">200</option>
-      <option value="500">500</option>
-      <option value="1000">1000</option>
-      <option value="0">Tout</option>
+      <option value="100" <?= ($limit == 100 ? 'selected' : '') ?>>100</option>
+      <option value="200" <?= ($limit == 200 ? 'selected' : '') ?>>200</option>
+      <option value="500" <?= ($limit == 500 ? 'selected' : '') ?>>500</option>
+      <option value="1000" <?= ($limit == 1000 ? 'selected' : '') ?>>1000</option>
+      <option value="0" <?= ($limit == 0 ? 'selected' : '') ?>>Tout</option>
     </select>
   </div>
 
@@ -203,31 +303,31 @@ label[for="norderToggle"] {
     <tbody id="statsBody"></tbody>
   </table>
 
-<!-- Информационный блок -->
-<div id="infoBlock" class="info-list">
-  <div class="info-row">
-    <div class="info-digits">
-      <span class="circle">1</span>
-      <span class="circle">2</span>
+  <!-- Информационный блок (оставляем как есть, статический) -->
+  <div id="infoBlock" class="info-list">
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle">1</span>
+        <span class="circle">2</span>
+      </div>
+      <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>100</b></div>
     </div>
-    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>100</b> </div>
-  </div>
-  <div class="info-row">
-    <div class="info-digits">
-      <span class="circle">2</span>
-      <span class="circle">1</span>
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle">2</span>
+        <span class="circle">1</span>
+      </div>
+      <div class="info-text">N'Importe quel Order - Sans doublons : <b>45</b></div>
     </div>
-    <div class="info-text">N'Importe quel Order - Sans doublons : <b>45</b> </div>
-  </div>
-  <div class="info-row">
-    <div class="info-digits">
-      <span class="circle">0</span>
-      <span class="circle">0</span>
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle">0</span>
+        <span class="circle">0</span>
+      </div>
+      <div class="info-text">Doublons : <b>10</b></div>
     </div>
-    <div class="info-text">Doublons : <b>10</b> </div>
   </div>
-</div>
-  <!-- Информационный блок конец-->
+  <!-- /Информационный блок -->
 
   <script>
     let chart;
@@ -303,7 +403,7 @@ label[for="norderToggle"] {
       const body = document.getElementById('statsBody');
       body.innerHTML = '';
       for (const [label, count] of Object.entries(ranges)) {
-        const percent = ((count / total) * 100).toFixed(1);
+        const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
         body.innerHTML += `<tr><td>${label}</td><td>${count}</td><td>${percent}%</td></tr>`;
       }
     }
@@ -317,7 +417,7 @@ label[for="norderToggle"] {
 
     async function loadData(limit, isNorder) {
       try {
-        const response = await fetch(`q2info.php?limit=${limit}${isNorder ? '&norder=1' : ''}&ajax=1`);
+        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
