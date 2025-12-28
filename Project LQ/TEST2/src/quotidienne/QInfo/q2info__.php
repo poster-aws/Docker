@@ -64,15 +64,6 @@ if ($resGrid && $resGrid->num_rows > 0) {
     }
 }
 
-/* === ДОБАВЛЕНО: сумма выпадений цифр для GRID (с учетом дублей) === */
-$digitSums = array_fill(0, 10, 0);
-foreach ($tirages as $t) {
-    foreach ($t['nums'] as $num) {
-        $digitSums[$num]++;
-    }
-}
-/* === /ДОБАВЛЕНО === */
-
 $conn->close();
 ?>
 
@@ -84,28 +75,32 @@ $conn->close();
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* Убираем отступы по умолчанию и задаем шрифт всей странице */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
       font-family: sans-serif;
       overflow-y: auto;
-      scrollbar-width: none;
+      scrollbar-width: none; /* Firefox */
     }
-    body::-webkit-scrollbar { display: none; }
+    body::-webkit-scrollbar { display: none; /* Chrome, Safari */ }
 
+    /* Центрирование и уменьшение вертикальных отступов обёрток переключателя и селектора */
     #toggleWrapper,
     #selectWrapper {
       text-align: center;
       margin: 8px 0;
     }
 
+    /* Стиль селектора и чекбокса */
     #limitSelect, #norderToggle {
       font-size: 1em;
       margin-left: 6px;
     }
     label[for="norderToggle"] { margin-left: 8px; }
 
+    /* Основная таблица: по центру */
     #statsTable {
       margin: 10px auto;
       border-collapse: collapse;
@@ -132,6 +127,7 @@ $conn->close();
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
 
+    /* Информационный блок */
     #infoBlock.info-list {
       display: flex;
       flex-direction: column;
@@ -170,6 +166,7 @@ $conn->close();
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
 
+    /* --- GRID (как Q3info) --- */
     .table-wrapper {
       width: 95%;
       max-height: 70vh;
@@ -204,7 +201,7 @@ $conn->close();
     }
 
     .digit-grid td.hit { background-color: #7eb0ea; }
-    .digit-grid td.repeat-2 { background-color: #f8c471; }
+    .digit-grid td.repeat-2 { background-color: #f8c471; } /* дубль в Q2 */
 
     .digit-grid td:first-child,
     .digit-grid th:first-child {
@@ -220,7 +217,12 @@ $conn->close();
       margin: 0;
       padding: 10px 0;
     }
+    .filter-form select {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
 
+    /* ✅ Scroll hint (низ справа) */
     #scrollHint {
       position: fixed;
       right: 10px;
@@ -229,41 +231,46 @@ $conn->close();
       height: 36px;
       border-radius: 50%;
       background: rgba(126, 176, 234, 0.85);
+      color: #000;
       font-size: 20px;
       font-weight: bold;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: default;
+      z-index: 9999;
       animation: scrollBounce 1.6s infinite;
+      box-shadow: 0 0 6px rgba(0,0,0,0.35);
+      transition: opacity 0.35s ease;
+      opacity: 1;
     }
 
     @keyframes scrollBounce {
-      0% { transform: translateY(0); opacity: .6; }
-      50% { transform: translateY(6px); opacity: 1; }
-      100% { transform: translateY(0); opacity: .6; }
+      0%   { transform: translateY(0);   opacity: 0.6; }
+      50%  { transform: translateY(6px); opacity: 1;   }
+      100% { transform: translateY(0);   opacity: 0.6; }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- GRID Q2 (как Q3info) -->
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>
       <table class="digit-grid">
         <thead>
           <tr>
-          <th>#</th>
-          <th>Σ</th>
-          <?php foreach ($tirages as $t): ?>
-          <th><?= htmlspecialchars($t['Tirage']) ?></th>
-          <?php endforeach; ?>
+            <th></th>
+            <?php foreach ($tirages as $t): ?>
+              <th><?= htmlspecialchars($t['Tirage']) ?></th>
+            <?php endforeach; ?>
           </tr>
         </thead>
         <tbody>
           <?php for ($digit = 0; $digit <= 9; $digit++): ?>
             <tr>
-                <td><?= $digit ?></td>
-                <td><?= $digitSums[$digit] ?></td>
+              <td><?= $digit ?></td>
               <?php foreach ($tirages as $t):
                 $count = array_count_values($t['nums'])[$digit] ?? 0;
                 $class = ($count === 2) ? 'repeat-2' : (($count === 1) ? 'hit' : '');
@@ -280,6 +287,7 @@ $conn->close();
   </div>
 
   <form class="filter-form" method="get">
+    <!-- сохраняем текущие параметры графика -->
     <input type="hidden" name="limit" value="<?= htmlspecialchars($limit) ?>">
     <?php if ($isNorder): ?>
       <input type="hidden" name="norder" value="1">
@@ -292,7 +300,9 @@ $conn->close();
       <?php endforeach; ?>
     </select> tirages
   </form>
+  <!-- /GRID Q2 -->
 
+  <!-- График -->
   <canvas id="myChart" width="400" height="200"></canvas>
 
   <div id="toggleWrapper">
@@ -322,6 +332,7 @@ $conn->close();
     <tbody id="statsBody"></tbody>
   </table>
 
+  <!-- Информационный блок (оставляем как есть, статический) -->
   <div id="infoBlock" class="info-list">
     <div class="info-row">
       <div class="info-digits">
@@ -345,7 +356,9 @@ $conn->close();
       <div class="info-text">Doublons : <b>10</b></div>
     </div>
   </div>
+  <!-- /Информационный блок -->
 
+  <!-- ✅ Scroll hint -->
   <div id="scrollHint">⬇⬆</div>
 
   <script>
@@ -460,7 +473,9 @@ $conn->close();
       loadData(getLimit(), getNorder());
     });
 
+    // initial render
     renderChart(<?php echo $json_data; ?>);
+
   </script>
 
 </body>
