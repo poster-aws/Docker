@@ -171,8 +171,13 @@ body::-webkit-scrollbar { display: none; }
 }
 
 select {
-  width: 100%; padding: 4px 8px; font-size: 16px; border-radius: 6px;
-  border: 1px solid #007BFF; background-color: rgb(163, 216, 234); color: #000; box-sizing: border-box;
+  padding: 4px 8px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #007BFF;
+  background-color: rgb(163, 216, 234);
+  color: #000;
+  box-sizing: border-box;
 }
 
 /* Кнопка-счётчик и выпадающее окно */
@@ -237,8 +242,6 @@ select {
 }
 .member-item:last-child { border-bottom: none; }
 .dropdown-panel.open { display: block; }
-.member-item { padding: 4px 0; border-bottom: 1px dashed #ccc; }
-.member-item:last-child { border-bottom: none; }
 
 #infoBlock.info-list {
   display: flex; flex-direction: column; padding: 14px 16px; gap: 8px; font-size: .95em;
@@ -306,19 +309,6 @@ table.digit-grid {
 .digit-grid td.repeat-3 { background-color:#e74c3c; }
 .digit-grid td.repeat-2 { background-color:#f8c471; }
 .digit-grid td.hit      { background-color:#7eb0ea; }
-
-/* === GRID filter на всю ширину === */
-.grid-filter-full {
-  width: 100%;
-  text-align: center;
-  margin: 8px 0;
-}
-
-.grid-filter-full select {
-  width: 100%;
-  max-width: none;
-  border-radius: 0;
-}
 
 .filter-form {
   display: flex;
