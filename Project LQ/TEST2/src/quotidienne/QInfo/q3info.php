@@ -19,6 +19,15 @@ if ($resGrid && $resGrid->num_rows > 0) {
         ];
     }
 }
+
+/* === ДОБАВЛЕНО: сумма выпадений цифр для Q3 GRID (с учетом дублей) === */
+$digitSums = array_fill(0, 10, 0);
+foreach ($tirages as $t) {
+    foreach ($t['nums'] as $num) {
+        $digitSums[$num]++;
+    }
+}
+
 $conn->close();
 ?>
 
@@ -168,6 +177,21 @@ $conn->close();
       font-family: Arial, sans-serif;
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
+
+    .digit-grid td:nth-child(1),
+    .digit-grid th:nth-child(1) {
+      background-color: #eee;
+      font-weight: bold;
+      color: #1f4fd8;
+    }
+
+    .digit-grid td:nth-child(2),
+    .digit-grid th:nth-child(2) {
+      background-color: #eee;
+      font-weight: bold;
+      /* color: #333; */
+    }
+
   </style>
 </head>
 <body>
@@ -180,6 +204,7 @@ $conn->close();
       <thead>
         <tr>
           <th></th>
+          <th></th>
           <?php foreach ($tirages as $t): ?>
             <th><?= htmlspecialchars($t['Tirage']) ?></th>
           <?php endforeach; ?>
@@ -188,6 +213,7 @@ $conn->close();
       <tbody>
         <?php for ($digit = 0; $digit <= 9; $digit++): ?>
           <tr>
+            <td>&nbsp;x<?= $digitSums[$digit] ?>&nbsp;</td> <!-- Х тут -->
             <td><?= $digit ?></td>
             <?php foreach ($tirages as $t):
               $count = array_count_values($t['nums'])[$digit] ?? 0;

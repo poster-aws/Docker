@@ -269,7 +269,7 @@ $conn->close();
         <tbody>
           <?php for ($digit = 0; $digit <= 9; $digit++): ?>
             <tr>
-                <td>x<?= $digitSums[$digit] ?></td> <!-- --тут Х -->
+                <td>&nbsp;x<?= $digitSums[$digit] ?>&nbsp;</td> <!-- --тут Х -->
                 <td><?= $digit ?></td>
               <?php foreach ($tirages as $t):
                 $count = array_count_values($t['nums'])[$digit] ?? 0;
