@@ -70,6 +70,7 @@ $conn->close();
       border-collapse: collapse;
       table-layout: fixed;
       font-size: 12px;
+      z-index: 5;
     }
 
     .digit-grid td, .digit-grid th {
@@ -87,6 +88,10 @@ $conn->close();
       transform: rotate(180deg);
       font-size: 0.7em;
       background: #eee;
+    }
+
+    .digit-grid thead th {
+      z-index: 5;
     }
 
     .digit-grid td.hit {
@@ -182,14 +187,19 @@ $conn->close();
     .digit-grid th:nth-child(1) {
       background-color: #eee;
       font-weight: bold;
-      color: #1f4fd8;
+      color: #000;   /* ← ЧЁРНЫЙ */
     }
 
-    .digit-grid td:nth-child(2),
-    .digit-grid th:nth-child(2) {
-      background-color: #eee;
+        /* липкий правый столбец (Σ) */
+    .digit-grid th:last-child,
+    .digit-grid td:last-child {
+      position: sticky;
+      right: 0;
+      background: #eee;
+      z-index: 6;
       font-weight: bold;
-      /* color: #333; */
+      border-left: 2px solid #aaa;
+      color: #1f4fd8;
     }
 
   </style>
@@ -199,35 +209,52 @@ $conn->close();
 <!-- <h2>Сетка появления цифр по тиражам</h2> -->
 
 <div class="table-wrapper">
-  <?php if (!empty($tirages)): ?>
-    <table class="digit-grid">
-      <thead>
+<?php if (!empty($tirages)): ?>
+  <table class="digit-grid">
+    <thead>
+      <tr>
+        <th>#</th>
+        <?php foreach ($tirages as $t): ?>
+          <th><?= htmlspecialchars($t['Tirage']) ?></th>
+        <?php endforeach; ?>
+        <th>Σ</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <?php for ($digit = 0; $digit <= 9; $digit++): ?>
         <tr>
-          <th></th>
-          <th></th>
-          <?php foreach ($tirages as $t): ?>
-            <th><?= htmlspecialchars($t['Tirage']) ?></th>
+          <!-- первый столбец: цифра -->
+          <td><?= $digit ?></td>
+
+          <!-- столбцы тиражей -->
+          <?php foreach ($tirages as $t):
+            $count = array_count_values($t['nums'])[$digit] ?? 0;
+
+            if ($count === 3) {
+              $class = 'repeat-3';
+            } elseif ($count === 2) {
+              $class = 'repeat-2';
+            } elseif ($count === 1) {
+              $class = 'hit';
+            } else {
+              $class = '';
+            }
+          ?>
+            <td class="<?= $class ?>">
+              <?= $count > 0 ? $digit : '' ?>
+            </td>
           <?php endforeach; ?>
+
+          <!-- последний столбец: сумма (липкий справа) -->
+          <td class="sum-col">&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td> <!-- Тут Х -->
         </tr>
-      </thead>
-      <tbody>
-        <?php for ($digit = 0; $digit <= 9; $digit++): ?>
-          <tr>
-            <td>&nbsp;x<?= $digitSums[$digit] ?>&nbsp;</td> <!-- Х тут -->
-            <td><?= $digit ?></td>
-            <?php foreach ($tirages as $t):
-              $count = array_count_values($t['nums'])[$digit] ?? 0;
-              $class = $count === 2 ? 'repeat-2' : ($count === 3 ? 'repeat-3' : ($count === 1 ? 'hit' : ''));
-            ?>
-              <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
-            <?php endforeach; ?>
-          </tr>
-        <?php endfor; ?>
-      </tbody>
-    </table>
-  <?php else: ?>
-    <p style="text-align:center; color: red;">Нет данных для отображения.</p>
-  <?php endif; ?>
+      <?php endfor; ?>
+    </tbody>
+  </table>
+<?php else: ?>
+  <p style="text-align:center; color:red;">Нет данных для отображения.</p>
+<?php endif; ?>
 </div>
 
 <form class="filter-form" method="get">
