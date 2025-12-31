@@ -104,6 +104,8 @@ foreach ($tiragesGrid as $t) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="qinfo.css">   <!-- == Scroll hint (bouncing ball) == -->
+  
   <style>
 html, body {
   height: 100%;
@@ -326,6 +328,7 @@ table.digit-grid {
   font-size: 14px;
   border-radius: 6px;
 }
+
   </style>
 </head>
 <body>
@@ -619,6 +622,9 @@ window.addEventListener('DOMContentLoaded', () => {
   applyFilter('freeOrderTable', 'all');
 });
 </script>
+
+
+<div id="scrollHint">⬇⬆</div>
 
 </body>
 </html>

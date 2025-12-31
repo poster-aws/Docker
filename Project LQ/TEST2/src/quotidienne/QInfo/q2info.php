@@ -82,6 +82,7 @@ $conn->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="qinfo.css">   <!-- == Scroll hint (bouncing ball) == -->
 
   <style>
     html, body {
@@ -228,27 +229,6 @@ $conn->close();
       padding: 10px 0;
     }
 
-    #scrollHint {
-      position: fixed;
-      right: 10px;
-      bottom: 10px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(126, 176, 234, 0.85);
-      font-size: 20px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: scrollBounce 1.6s infinite;
-    }
-
-    @keyframes scrollBounce {
-      0% { transform: translateY(0); opacity: .6; }
-      50% { transform: translateY(6px); opacity: 1; }
-      100% { transform: translateY(0); opacity: .6; }
-    }
   </style>
 </head>
 
@@ -352,8 +332,6 @@ $conn->close();
       <div class="info-text">Doublons : <b>10</b></div>
     </div>
   </div>
-
-  <div id="scrollHint">⬇⬆</div>
 
   <script>
     let chart;
@@ -469,6 +447,8 @@ $conn->close();
 
     renderChart(<?php echo $json_data; ?>);
   </script>
+
+  <div id="scrollHint">⬇⬆</div>
 
 </body>
 </html>
