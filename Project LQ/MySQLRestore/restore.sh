@@ -9,7 +9,7 @@ BACKUP_DIR="/backups"
 export MYSQL_PWD="$DB_PASS"
 
 # === Список баз для восстановления ===
-DATABASES=("quotidienne" "toutourien" "banco")
+DATABASES=("quotidienne" "toutourien" "banco" "astro" "vie")
 
 # === Функция восстановления одной базы ===
 restore_database() {

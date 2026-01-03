@@ -9,9 +9,8 @@ BACKUP_DIR="/backups"
 export MYSQL_PWD="$DB_PASS"
 
 # === Список баз для восстановления ===
-DATABASES=("quotidienne" "toutourien" "banco")
+DATABASES=("quotidienne" "toutourien" "banco" "astro" "vie")
 
-# === Функция восстановления одной базы ===
 restore_database() {
   DB_NAME="$1"
   echo "🔍 Поиск последнего бэкапа для базы $DB_NAME..."
@@ -29,6 +28,13 @@ restore_database() {
   until mysqladmin ping -h"$DB_HOST" -u"$DB_USER" --silent; do
       sleep 2
   done
+
+  echo "🗄️ Создание базы $DB_NAME (если не существует)..."
+  mysql -h "$DB_HOST" -u "$DB_USER" -e "
+    CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+  "
 
   echo "📦 Восстановление базы $DB_NAME из $LATEST_BACKUP..."
   mysql -h "$DB_HOST" -u "$DB_USER" "$DB_NAME" < "$LATEST_BACKUP"
