@@ -1,0 +1,28 @@
+
+-- Creation de DB
+CREATE DATABASE IF NOT EXISTS vie
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+-- Grant Privileges
+GRANT ALL PRIVILEGES ON vie.* TO 'user'@'%';
+FLUSH PRIVILEGES;
+
+
+-- Creation de Tabl
+USE vie;
+
+-- Drop Tabl if exist
+DROP TABLE IF EXISTS Vie;
+
+-- Создаём таблицу для комбинаций из 3 чисел (1–70)
+CREATE TABLE Vie (
+  Tirage DATE NOT NULL,
+  n1 TINYINT UNSIGNED NOT NULL,
+  n2 TINYINT UNSIGNED NOT NULL,
+  n3 TINYINT UNSIGNED NOT NULL,
+  n4 TINYINT UNSIGNED NOT NULL,
+  n5 TINYINT UNSIGNED NOT NULL,
+  GN TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (Tirage)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

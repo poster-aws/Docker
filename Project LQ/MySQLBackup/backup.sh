@@ -76,3 +76,9 @@ backup_database "toutourien" ""
 
 # === Бэкап базы banco без JSON ===
 backup_database "banco" ""
+
+# === Бэкап базы astro без JSON ===
+backup_database "astro" ""
+
+# === Бэкап базы vie без JSON ===
+backup_database "vie" ""

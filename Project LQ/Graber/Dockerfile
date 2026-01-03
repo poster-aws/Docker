@@ -14,4 +14,4 @@ RUN pip install mysql-connector-python
 
 # Выполнение main.py, а затем init.sh
 # CMD ["python", "main.py"]
-CMD ["sh", "-c", "python3 quotidienne.py && python3 toutourien.py && python3 banco.py"]
+CMD ["sh", "-c", "python3 quotidienne.py && python3 toutourien.py && python3 banco.py && python3 astro.py && python3 grandevie.py"]

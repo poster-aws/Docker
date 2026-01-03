@@ -1,0 +1,19 @@
+services:
+
+  app:
+    build: .
+    image: graber_vie
+    container_name: graber_vie
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=user
+      - DB_NAME=vie
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    external: true  # Используем уже созданную сеть
