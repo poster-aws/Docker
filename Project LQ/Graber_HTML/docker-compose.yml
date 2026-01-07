@@ -1,0 +1,8 @@
+services:
+
+  app:
+    build: .
+    image: graber_html
+    container_name: graber_html
+    volumes:
+      - .:/app
