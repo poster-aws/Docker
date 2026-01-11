@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 # URL страницы
-url = "https://loteries.lotoquebec.com/fr/loteries/quebec-max-resultats#res"
+url = "https://loteries.lotoquebec.com/fr/loteries/lotto-max-resultats#res"
 
 # === 1. Получаем HTML ===
 try:
@@ -22,7 +22,7 @@ if response.status_code == 200:
     with open("page_source.html", "w", encoding="utf-8") as file:
         file.write(page_source)
 
-    print("\n- Исходный код Astro сохранён в 'page_source.html'.")
+    print("\n- Исходный код сохранён в 'page_source.html'.")
 
     # Парсим HTML (пока без использования — задел на будущее)
     soup = BeautifulSoup(page_source, 'html.parser')
