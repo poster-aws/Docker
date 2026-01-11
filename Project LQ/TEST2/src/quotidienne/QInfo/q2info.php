@@ -234,6 +234,10 @@ $conn->close();
 
     .filter-form select {
       font-size: 1em;
+      border-radius: 6px;
+      font-size: 1em;           /* меньше, чем 16px */
+      padding: 2px 6px;         /* компактнее */
+      line-height: 1.2;
     }
 
   </style>

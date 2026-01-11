@@ -291,20 +291,22 @@ table.digit-grid {
   background: #eee;
 }
 
+/* Σ — ЕДИНСТВЕННЫЙ sticky */
 .digit-grid td:first-child,
 .digit-grid th:first-child {
   background-color: #eee;
   position: sticky;
   left: 0;
-  z-index: 2;
+  z-index: 1;
+  font-weight: bold;
+  color: #1f4fd8;
 }
 
-.digit-grid th:nth-child(2),
-.digit-grid td:nth-child(2) {
-  background-color: #fff;
-  position: sticky;
-  left: 20px;
-  z-index: 2;
+/* # — обычный */
+.digit-grid td:nth-child(2),
+.digit-grid th:nth-child(2) {
+  background-color: #eee;
+  font-weight: bold;
 }
 
 .digit-grid td.repeat-4 { background-color:#c0392b; color:#fff; }
@@ -313,20 +315,20 @@ table.digit-grid {
 .digit-grid td.hit      { background-color:#7eb0ea; }
 
 .filter-form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  margin: 8px 0;
-  padding: 0;
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
 }
 
+/* === Q2-style select для GRID === */
 .filter-form select {
-  width: auto;          /* 🔑 КЛЮЧЕВОЕ */
-  min-width: 80px;
-  padding: 4px 8px;
-  font-size: 14px;
+  background-color: #fff;      /* ← белый, как в Q2 */
+  border: 1px solid #999;      /* как у простого select */
+  color: #000;
   border-radius: 6px;
+  font-size: 1em;           /* меньше, чем 16px */
+  padding: 2px 6px;         /* компактнее */
+  line-height: 1.2;
 }
 
   </style>
@@ -336,44 +338,41 @@ table.digit-grid {
 <!-- === GRID Q4 (как Q2 / Q3) === -->
 <div class="table-wrapper">
 <?php if (!empty($tiragesGrid)): ?>
-  <table class="digit-grid">
-    <thead>
+<table class="digit-grid">
+  <thead>
+    <tr>
+      <th>Σ</th>
+      <th>#</th>
+      <?php foreach ($tiragesGrid as $t): ?>
+        <th><?= htmlspecialchars($t['Tirage']) ?></th>
+      <?php endforeach; ?>
+    </tr>
+  </thead>
+  <tbody>
+    <?php for ($digit = 0; $digit <= 9; $digit++): ?>
       <tr>
-        <th>#</th>
-        <th>Σ</th>
-        <?php foreach ($tiragesGrid as $t): ?>
-          <th><?= htmlspecialchars($t['Tirage']) ?></th>
+        <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td> <!-- --тут Х -->
+        <!-- # -->
+        <td><?= $digit ?></td>
+        <!-- столбцы тиражей -->
+        <?php foreach ($tiragesGrid as $t):
+          $cnt = array_count_values($t['nums'])[$digit] ?? 0;
+          if ($cnt === 4)      $class = 'repeat-4';
+          elseif ($cnt === 3)  $class = 'repeat-3';
+          elseif ($cnt === 2)  $class = 'repeat-2';
+          elseif ($cnt === 1)  $class = 'hit';
+          else                 $class = '';
+        ?>
+          <td class="<?= $class ?>"><?= $cnt ? $digit : '' ?></td>
         <?php endforeach; ?>
       </tr>
-    </thead>
-    <tbody>
-      <?php for ($digit = 0; $digit <= 9; $digit++): ?>
-        <tr>
-          <td><strong><?= $digit ?></strong></td>
-          <td style="background:#fff;"><strong>x&nbsp;<?= $digitSums[$digit] ?></strong></td>
-          <?php foreach ($tiragesGrid as $t):
-            $cnt = array_count_values($t['nums'])[$digit] ?? 0;
-              $class = '';
-              if ($cnt === 4) {
-                $class = 'repeat-4';
-              } elseif ($cnt === 3) {
-                $class = 'repeat-3';
-              } elseif ($cnt === 2) {
-                $class = 'repeat-2';
-              } elseif ($cnt === 1) {
-                $class = 'hit';
-              }
-          ?>
-            <td class="<?= $class ?>"><?= $cnt > 0 ? $digit : '' ?></td>
-          <?php endforeach; ?>
-        </tr>
-      <?php endfor; ?>
-    </tbody>
-  </table>
+    <?php endfor; ?>
+  </tbody>
+</table>
 <?php endif; ?>
 </div>
 
-<form class="filter-form grid-filter-full" method="get">
+<form class="filter-form" method="get">
   Dernières
   <select name="grid_limit" onchange="this.form.submit()">
     <?php foreach ([50,100,200,500] as $opt): ?>
