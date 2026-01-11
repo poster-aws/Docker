@@ -207,26 +207,33 @@ $conn->close();
     .digit-grid td.hit { background-color: #7eb0ea; }
     .digit-grid td.repeat-2 { background-color: #f8c471; }
 
+    /* первый столбец (Σ) — липкий слева */
     .digit-grid td:first-child,
     .digit-grid th:first-child {
       background-color: #eee;
-      /* font-weight: bold; */
       position: sticky;
       left: 0;
       z-index: 1;
+      font-weight: bold;
+      color: #1f4fd8
     }
 
-    /* второй столбец (#) — такой же фон как у первого */
+    /* второй столбец (#) */
     .digit-grid td:nth-child(2),
     .digit-grid th:nth-child(2) {
       background-color: #eee;
       font-weight: bold;
+      
     }
 
     .filter-form {
       text-align: center;
       margin: 0;
       padding: 10px 0;
+    }
+
+    .filter-form select {
+      font-size: 1em;
     }
 
   </style>
@@ -249,8 +256,11 @@ $conn->close();
         <tbody>
           <?php for ($digit = 0; $digit <= 9; $digit++): ?>
             <tr>
-                <td>&nbsp;x<?= $digitSums[$digit] ?>&nbsp;</td> <!-- --тут Х -->
+                <!-- Σ слева -->
+                <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td> <!-- --тут Х -->
+                <!-- # -->
                 <td><?= $digit ?></td>
+                <!-- столбцы тиражей -->
               <?php foreach ($tirages as $t):
                 $count = array_count_values($t['nums'])[$digit] ?? 0;
                 $class = ($count === 2) ? 'repeat-2' : (($count === 1) ? 'hit' : '');

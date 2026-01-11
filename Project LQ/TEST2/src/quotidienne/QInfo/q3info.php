@@ -20,7 +20,7 @@ if ($resGrid && $resGrid->num_rows > 0) {
     }
 }
 
-/* === ДОБАВЛЕНО: сумма выпадений цифр для Q3 GRID (с учетом дублей) === */
+/* === сумма выпадений цифр для Q3 GRID (с учетом дублей) === */
 $digitSums = array_fill(0, 10, 0);
 foreach ($tirages as $t) {
     foreach ($t['nums'] as $num) {
@@ -37,6 +37,7 @@ $conn->close();
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Q3 Grid</title>
+
   <style>
     html, body {
       height: 100%;
@@ -46,15 +47,7 @@ $conn->close();
       overflow-y: auto;
       scrollbar-width: none; /* Firefox */
     }
-
-    body::-webkit-scrollbar {
-      display: none; /* Chrome, Safari */
-    }
-
-    h2 {
-      text-align: center;
-      margin: 12px 0;
-    }
+    body::-webkit-scrollbar { display: none; }
 
     .table-wrapper {
       width: 95%;
@@ -70,7 +63,6 @@ $conn->close();
       border-collapse: collapse;
       table-layout: fixed;
       font-size: 12px;
-      z-index: 5;
     }
 
     .digit-grid td, .digit-grid th {
@@ -90,29 +82,27 @@ $conn->close();
       background: #eee;
     }
 
-    .digit-grid thead th {
-      z-index: 5;
-    }
+    .digit-grid td.hit { background-color: #7eb0ea; }
+    .digit-grid td.repeat-2 { background-color: #f8c471; }
+    .digit-grid td.repeat-3 { background-color: #e74c3c; }
 
-    .digit-grid td.hit {
-      background-color: #7eb0ea;
-    }
-
-    .digit-grid td.repeat-2 {
-      background-color: #f8c471;
-    }
-
-    .digit-grid td.repeat-3 {
-      background-color: #e74c3c;
-    }
-
+    /* первый столбец (Σ) — липкий слева */
     .digit-grid td:first-child,
     .digit-grid th:first-child {
       background-color: #eee;
-      font-weight: bold;
       position: sticky;
       left: 0;
       z-index: 1;
+      font-weight: bold;
+      color: #1f4fd8
+    }
+
+    /* второй столбец (#) */
+    .digit-grid td:nth-child(2),
+    .digit-grid th:nth-child(2) {
+      background-color: #eee;
+      font-weight: bold;
+      
     }
 
     .filter-form {
@@ -122,8 +112,7 @@ $conn->close();
     }
 
     .filter-form select {
-      padding: 6px 10px;
-      font-size: 14px;
+      font-size: 1em;
     }
 
     .circle {
@@ -141,7 +130,7 @@ $conn->close();
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
     }
 
-#infoBlock.info-list {
+    #infoBlock.info-list {
       display: flex;
       flex-direction: column;
       padding: 14px 16px;
@@ -163,91 +152,43 @@ $conn->close();
       border-radius: 6px;
     }
 
-    .info-text {
-      font-size: 0.95em;
-    }
-
-    .digit {
-      display: inline-flex;
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
-      border-radius: 50%;
-      background-color: #7eb0ea;
-      color: #000;
-      font-weight: bold;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    }
-
-    .digit-grid td:nth-child(1),
-    .digit-grid th:nth-child(1) {
-      background-color: #eee;
-      font-weight: bold;
-      color: #000;   /* ← ЧЁРНЫЙ */
-    }
-
-        /* липкий правый столбец (Σ) */
-    .digit-grid th:last-child,
-    .digit-grid td:last-child {
-      position: sticky;
-      right: 0;
-      background: #eee;
-      z-index: 6;
-      font-weight: bold;
-      border-left: 2px solid #aaa;
-      color: #1f4fd8;
-    }
-
+    .info-text { font-size: 0.95em; }
   </style>
 </head>
-<body>
 
-<!-- <h2>Сетка появления цифр по тиражам</h2> -->
+<body>
 
 <div class="table-wrapper">
 <?php if (!empty($tirages)): ?>
   <table class="digit-grid">
     <thead>
       <tr>
+        <th>Σ</th>
         <th>#</th>
         <?php foreach ($tirages as $t): ?>
           <th><?= htmlspecialchars($t['Tirage']) ?></th>
         <?php endforeach; ?>
-        <th>Σ</th>
       </tr>
     </thead>
 
     <tbody>
       <?php for ($digit = 0; $digit <= 9; $digit++): ?>
         <tr>
-          <!-- первый столбец: цифра -->
+          <!-- Σ слева -->
+          <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td>
+          <!-- # -->
           <td><?= $digit ?></td>
-
           <!-- столбцы тиражей -->
           <?php foreach ($tirages as $t):
             $count = array_count_values($t['nums'])[$digit] ?? 0;
 
-            if ($count === 3) {
-              $class = 'repeat-3';
-            } elseif ($count === 2) {
-              $class = 'repeat-2';
-            } elseif ($count === 1) {
-              $class = 'hit';
-            } else {
-              $class = '';
-            }
+            if ($count === 3)      $class = 'repeat-3';
+            elseif ($count === 2)  $class = 'repeat-2';
+            elseif ($count === 1)  $class = 'hit';
+            else                   $class = '';
           ?>
-            <td class="<?= $class ?>">
-              <?= $count > 0 ? $digit : '' ?>
-            </td>
+            <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
           <?php endforeach; ?>
-
-          <!-- последний столбец: сумма (липкий справа) -->
-          <td class="sum-col">&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td> <!-- Тут Х -->
         </tr>
       <?php endfor; ?>
     </tbody>
@@ -266,7 +207,6 @@ $conn->close();
   </select> tirages
 </form>
 
-<!-- Информационный блок -->
 <div id="infoBlock" class="info-list">
   <div class="info-row">
     <div class="info-digits">
