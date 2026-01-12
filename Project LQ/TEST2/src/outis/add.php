@@ -4,12 +4,14 @@
 require_once "../quotidienne/db.php";  // $conn для Q234
 require_once "../toutourien/db.php";   // $toutConn для Tout
 require_once "../banco/db.php";         // $bancoConn для Banco
+require_once "../astro/db.php"; // $astroConn для Astro
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $msg = null;
 $toutMsg = null;
 $bancoMsg = null;
+$astroMsg = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -113,9 +115,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
+if (isset($_POST['astro-submit'])) {
+  $date   = $_POST['astro_date'] ?? null;
+  $jour   = intval($_POST['astro_jour']);
+  $mois   = $_POST['astro_mois'] ?? null;
+  $annee  = intval($_POST['astro_annee']);
+  $signe  = $_POST['astro_signe'] ?? null;
+
+  if ($jour < 1 || $jour > 31 || $annee < 0 || $annee > 99) {
+    $astroMsg = ['class' => 'error', 'text' => '❌ Données Astro invalides.'];
+  } else {
+    $exists = $astroConn->query(
+      "SELECT 1 FROM Astro WHERE Tirage = '$date' LIMIT 1"
+    )->num_rows > 0;
+
+    if ($exists) {
+      $astroMsg = ['class' => 'error', 'text' => '⚠️ Astro: дата уже существует.'];
+    } else {
+      $stmt = $astroConn->prepare(
+        "REPLACE INTO Astro (Tirage, jour, mois, annee, signe)
+         VALUES (?, ?, ?, ?, ?)"
+      );
+      if ($stmt) {
+        $stmt->bind_param("sisis", $date, $jour, $mois, $annee, $signe);
+        $stmt->execute();
+        $stmt->close();
+        $astroMsg = ['class' => 'success', 'text' => '✅ Astro: данные добавлены.'];
+      }
+    }
+  }
+}
+
   $conn->close();
   $toutConn->close();
   $bancoConn->close();
+  $astroConn->close();
 }
 ?>
 
@@ -199,6 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php if (!empty($bancoMsg)): ?>
   <div class="msg <?= $bancoMsg['class'] ?>"><?= $bancoMsg['text'] ?></div>
 <?php endif; ?>
+<?php if (!empty($astroMsg)): ?>
+  <div class="msg <?= $astroMsg['class'] ?>"><?= $astroMsg['text'] ?></div>
+<?php endif; ?>
 
 <!-- Q2/Q3/Q4 -->
 <form class="form-block" method="post">
@@ -266,6 +303,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <button type="submit" name="banco-submit">Сохранить Banco</button>
 </form>
 
+<!-- Astro -->
+<form class="form-block" method="post">
+  <h2>Добавить Astro</h2>
+
+  <div class="row">
+    <label>Дата:</label>
+    <input type="date" name="astro_date" required>
+  </div>
+
+  <div class="row">
+    <label>Jour:</label>
+    <select name="astro_jour">
+      <?php for ($i=1;$i<=31;$i++) echo "<option>$i</option>"; ?>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>Mois:</label>
+    <select name="astro_mois">
+      <?php
+      $mois = [
+        "Janvier","Février","Mars","Avril","Mai","Juin",
+        "Juillet","Août","Septembre","Octobre","Novembre","Décembre"
+      ];
+      foreach ($mois as $m) echo "<option>$m</option>";
+      ?>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>Année:</label>
+    <input
+      type="text"
+      name="astro_annee"
+      maxlength="2"
+      pattern="[0-9]{2}"
+      placeholder="00"
+      required
+      style="width:60px; text-align:center;"
+    >
+  </div>
+
+  <div class="row">
+    <label>Signe:</label>
+    <select name="astro_signe">
+      <?php
+      $signes = [
+        "BÉLIER","TAUREAU","GÉMEAUX","CANCER","LION","VIERGE",
+        "BALANCE","SCORPION","SAGITTAIRE","CAPRICORNE","VERSEAU","POISSONS"
+      ];
+      foreach ($signes as $s) echo "<option>$s</option>";
+      ?>
+    </select>
+  </div>
+
+  <button type="submit" name="astro-submit">Сохранить Astro</button>
+</form>
+
+<!-- Scripts -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   /** === Tout logic === */
