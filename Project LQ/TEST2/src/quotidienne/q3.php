@@ -14,7 +14,7 @@ $table     = $isNorder ? 'Q3_stats_norder' : 'Q3_stats_order';
 $tableComb = 'Q3_combo_stats_order';
 
 // Основная таблица
-$sql = "SELECT * FROM $table ORDER BY Tirage DESC";
+$sql = "SELECT * FROM $table ORDER BY Tirage DESC LIMIT 365";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {

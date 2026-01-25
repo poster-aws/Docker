@@ -20,7 +20,7 @@ $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q4_stats_norder' : 'Q4_stats_order';
 $tableComb = 'Q4_combo_stats_order';
 
-$sql = "SELECT * FROM $table ORDER BY Tirage DESC";
+$sql = "SELECT * FROM $table ORDER BY Tirage DESC LIMIT 365";
 $result = $conn->query($sql);
 $data = [];
 if ($result && $result->num_rows > 0) {
