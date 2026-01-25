@@ -60,6 +60,8 @@ function makeTablesSortable() {
 let isAltView = false;
 let originalHomeContent = null;
 let q2CountRange = 50; // диапазон для Q2 по умолчанию
+let q3CountRange = 50; // диапазон для Q3 по умолчанию
+let q4CountRange = 50; // диапазон для Q4 по умолчанию
 
 // 📥 Загрузка страниц
 function loadPage(page) {
@@ -94,6 +96,15 @@ function loadPage(page) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q2CountRange || 50);
   }
 
+  // Q3: добавляем count_range
+  if (page.includes("q3")) {
+    extraParam += (extraParam ? "&" : "") + "count_range=" + (q3CountRange || 50);
+  }
+
+  if (page.includes("q4")) {
+    extraParam += (extraParam ? "&" : "") + "count_range=" + (q4CountRange || 50);
+  }
+
   // Собираем queryString корректно
   let queryParts = [];
   if (mode) queryParts.push(mode);
@@ -120,6 +131,30 @@ function loadPage(page) {
           rangeSelect.value = String(q2CountRange || 50);
           rangeSelect.addEventListener("change", () => {
             q2CountRange = parseInt(rangeSelect.value, 10) || 50;
+            loadPage(page);
+          });
+        }
+      }
+
+      // Q3: привязка выпадающего меню диапазона
+      if (page.includes("q3")) {
+        const rangeSelect = container.querySelector("#q3CountRange");
+        if (rangeSelect) {
+          rangeSelect.value = String(q3CountRange || 50);
+          rangeSelect.addEventListener("change", () => {
+            q3CountRange = parseInt(rangeSelect.value, 10) || 50;
+            loadPage(page);
+          });
+        }
+      }
+
+      // Q4: привязка выпадающего меню диапазона
+      if (page.includes("q4")) {
+        const rangeSelect = container.querySelector("#q4CountRange");
+        if (rangeSelect) {
+          rangeSelect.value = String(q4CountRange || 50);
+          rangeSelect.addEventListener("change", () => {
+            q4CountRange = parseInt(rangeSelect.value, 10) || 50;
             loadPage(page);
           });
         }
