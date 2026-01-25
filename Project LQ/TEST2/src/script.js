@@ -15,6 +15,24 @@ document.addEventListener('click', function (e) {
   }
 });
 
+// Переключение языка FR / EN
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".lang-btn");
+  if (!btn) return;
+
+  currentLang = btn.dataset.lang;
+  localStorage.setItem("lang", currentLang);
+  updateLangUI();
+
+  const container = document.getElementById("container");
+  const currentPage = container.getAttribute("data-page");
+
+  if (currentPage) {
+    loadPage(currentPage);
+  }
+});
+
+
 // 🔁 Сортировка таблиц
 function makeTablesSortable() {
   const tables = document.querySelectorAll(".interactive-table");
@@ -57,8 +75,16 @@ function makeTablesSortable() {
   });
 }
 
+function updateLangUI() {
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("lang-active", btn.dataset.lang === currentLang);
+  });
+}
+
+
 let isAltView = false;
 let originalHomeContent = null;
+let currentLang = localStorage.getItem("lang") || "fr";
 let q2CountRange = 50; // диапазон для Q2 по умолчанию
 let q3CountRange = 50; // диапазон для Q3 по умолчанию
 let q4CountRange = 50; // диапазон для Q4 по умолчанию
@@ -100,10 +126,12 @@ function loadPage(page) {
   if (page.includes("q3")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q3CountRange || 50);
   }
-
+  // Q4: добавляем count_range
   if (page.includes("q4")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q4CountRange || 50);
   }
+
+  extraParam += (extraParam ? "&" : "") + "lang=" + currentLang;
 
   // Собираем queryString корректно
   let queryParts = [];
@@ -302,5 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  updateLangUI();
   updateToggleStyles();
 });

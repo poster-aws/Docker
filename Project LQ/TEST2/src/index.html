@@ -24,11 +24,16 @@
 
   <!-- 2. Верхняя панель со всеми элементами -->
   <header>
-    <!-- 2.1 Иконка меню-бургера -->
+  <!-- 🔹 Левая группа иконок -->
+  <div class="left-icons">
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-
-    <!-- 2.2 Иконка “домой” -->
     <div class="home-icon" onclick="goHome()">&#8962;</div>
+
+    <div class="lang-switch">
+      <span class="lang-btn" data-lang="fr">FR</span>
+      <span class="lang-btn" data-lang="en">EN</span>
+    </div>
+  </div>
 
     <!-- 2.3 Заголовок страницы (динамически меняется) -->
     <span class="logo-title" id="pageTitle">Page principalle</span>
