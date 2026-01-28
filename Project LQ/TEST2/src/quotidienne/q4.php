@@ -176,14 +176,28 @@ $template = ob_get_clean();
 ================================ */
 $tableHTML = '';
 foreach ($data as $row) {
-    $nums = [$row['n1'],$row['n2'],$row['n3'],$row['n4']];
-    $highlight = count(array_unique($nums)) === 4 ? ' class="highlight-row"' : '';
+    $nums = [$row['n1'], $row['n2'], $row['n3'], $row['n4']];
+    $isAllUnique = count(array_unique($nums)) === 4;
+    $fois = isset($row['fois']) ? (int)$row['fois'] : 0;
 
-    $tableHTML .= "<tr$highlight>";
-    foreach (['Tirage','n1','n2','n3','n4','days','days2','fois','max'] as $key) {
-        $cell = htmlspecialchars($row[$key]);
-        if (in_array($key,['n1','n2','n3','n4'])) {
+    $classes = [];
+    if ($isAllUnique) $classes[] = 'highlight-row';
+
+    $rowClass = $classes ? " class='" . implode(' ', $classes) . "'" : "";
+
+    $tableHTML .= "<tr$rowClass>";
+    foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max'] as $key) {
+        $cell = $row[$key];
+
+        if (in_array($key, ['n1','n2','n3','n4'])) {
             $tableHTML .= "<td><span class='circle'>$cell</span></td>";
+        } elseif ($key === 'fois') {
+            if ($fois === 1 || $fois === 2) {
+                $class = $fois === 1 ? 'star-box star-1' : 'star-box star-2';
+                $tableHTML .= "<td><span class='$class'>$fois</span></td>";
+            } else {
+                $tableHTML .= "<td>$cell</td>";
+            }
         } else {
             $tableHTML .= "<td>$cell</td>";
         }
