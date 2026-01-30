@@ -2,9 +2,11 @@
 
 <?php
 require_once "../quotidienne/db.php";  // $conn для Q234
-require_once "../toutourien/db.php";   // $toutConn для Tout
-require_once "../banco/db.php";         // $bancoConn для Banco
-require_once "../astro/db.php"; // $astroConn для Astro
+require_once "../toutourien/db.php";  // $toutConn для Tout
+require_once "../banco/db.php";       // $bancoConn для Banco
+require_once "../astro/db.php";       // $astroConn для Astro
+require_once "../vie/db.php";         // $vieConn для Vie
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -12,9 +14,11 @@ $msg = null;
 $toutMsg = null;
 $bancoMsg = null;
 $astroMsg = null;
+$vieMsg = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+  /* ===================== Q2/Q3/Q4 ===================== */
   if (isset($_POST['submit_q'])) {
     $date = $_POST['date_q'];
     $n1 = $_POST['n1'];
@@ -54,10 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
+  /* ===================== Tout ===================== */
   if (isset($_POST['tout-submit'])) {
     $date = $_POST['tout_date'] ?? null;
     $selected = explode(',', $_POST['tout_selected'] ?? '');
     $numbers = array_map('intval', $selected);
+
     if (count($numbers) !== 12) {
       $toutMsg = ['class' => 'error', 'text' => '❌ Нужно выбрать ровно 12 чисел.'];
     } else {
@@ -69,22 +75,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         if ($stmt) {
           $stmt->bind_param("siiiiiiiiiiii",
-              $date,
-              $numbers[0], $numbers[1], $numbers[2], $numbers[3], $numbers[4], $numbers[5],
-              $numbers[6], $numbers[7], $numbers[8], $numbers[9], $numbers[10], $numbers[11]
+            $date,
+            $numbers[0], $numbers[1], $numbers[2], $numbers[3], $numbers[4], $numbers[5],
+            $numbers[6], $numbers[7], $numbers[8], $numbers[9], $numbers[10], $numbers[11]
           );
-          $stmt->execute(); $stmt->close();
+          $stmt->execute();
+          $stmt->close();
           $toutMsg = ['class' => 'success', 'text' => "✅ Tout: данные добавлены."];
         }
       }
     }
   }
 
+  /* ===================== Banco ===================== */
   if (isset($_POST['banco-submit'])) {
     $date = $_POST['banco_date'] ?? null;
     $turbo = intval($_POST['banco_turbo']);
     $selected = explode(',', $_POST['banco_selected'] ?? '');
     $numbers = array_map('intval', $selected);
+
     if (count($numbers) !== 20) {
       $bancoMsg = ['class' => 'error', 'text' => '❌ Нужно выбрать ровно 20 чисел для Banco.'];
     } else {
@@ -97,59 +106,109 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 VALUES (?, $placeholders, ?)";
         $stmt = $bancoConn->prepare($sql);
         if ($stmt) {
-          $types = "s" . str_repeat("i", 21); // 1 string (date) + 21 ints (20 numbers + turbo)
+          $types = "s" . str_repeat("i", 21); // 1 string + 21 ints (20 numbers + turbo)
           $params = array_merge([$date], $numbers, [$turbo]);
-          // bind_param requires references
+
+          // bind_param требует ссылки
           $refs = [];
           foreach ($params as $k => $v) {
             $refs[$k] = &$params[$k];
           }
           array_unshift($refs, $types);
-          call_user_func_array([$stmt, 'bind_param'], $refs);
 
+          call_user_func_array([$stmt, 'bind_param'], $refs);
           $stmt->execute();
           $stmt->close();
+
           $bancoMsg = ['class' => 'success', 'text' => "✅ Banco: данные добавлены."];
         }
       }
     }
   }
 
-if (isset($_POST['astro-submit'])) {
-  $date   = $_POST['astro_date'] ?? null;
-  $jour   = intval($_POST['astro_jour']);
-  $mois   = $_POST['astro_mois'] ?? null;
-  $annee  = intval($_POST['astro_annee']);
-  $signe  = $_POST['astro_signe'] ?? null;
+  /* ===================== Astro ===================== */
+  if (isset($_POST['astro-submit'])) {
+    $date   = $_POST['astro_date'] ?? null;
+    $jour   = intval($_POST['astro_jour']);
+    $mois   = $_POST['astro_mois'] ?? null;
+    $annee  = intval($_POST['astro_annee']);
+    $signe  = $_POST['astro_signe'] ?? null;
 
-  if ($jour < 1 || $jour > 31 || $annee < 0 || $annee > 99) {
-    $astroMsg = ['class' => 'error', 'text' => '❌ Données Astro invalides.'];
-  } else {
-    $exists = $astroConn->query(
-      "SELECT 1 FROM Astro WHERE Tirage = '$date' LIMIT 1"
-    )->num_rows > 0;
-
-    if ($exists) {
-      $astroMsg = ['class' => 'error', 'text' => '⚠️ Astro: дата уже существует.'];
+    if ($jour < 1 || $jour > 31 || $annee < 0 || $annee > 99) {
+      $astroMsg = ['class' => 'error', 'text' => '❌ Données Astro invalides.'];
     } else {
-      $stmt = $astroConn->prepare(
-        "REPLACE INTO Astro (Tirage, jour, mois, annee, signe)
-         VALUES (?, ?, ?, ?, ?)"
-      );
-      if ($stmt) {
-        $stmt->bind_param("sisis", $date, $jour, $mois, $annee, $signe);
-        $stmt->execute();
-        $stmt->close();
-        $astroMsg = ['class' => 'success', 'text' => '✅ Astro: данные добавлены.'];
+      $exists = $astroConn->query("SELECT 1 FROM Astro WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
+
+      if ($exists) {
+        $astroMsg = ['class' => 'error', 'text' => '⚠️ Astro: дата уже существует.'];
+      } else {
+        $stmt = $astroConn->prepare(
+          "REPLACE INTO Astro (Tirage, jour, mois, annee, signe)
+           VALUES (?, ?, ?, ?, ?)"
+        );
+        if ($stmt) {
+          $stmt->bind_param("sisis", $date, $jour, $mois, $annee, $signe);
+          $stmt->execute();
+          $stmt->close();
+          $astroMsg = ['class' => 'success', 'text' => '✅ Astro: данные добавлены.'];
+        }
       }
     }
   }
-}
+
+  /* ===================== Vie ===================== */
+  if (isset($_POST['vie-submit'])) {
+    $date = $_POST['vie_date'] ?? null;
+
+    $selected = explode(',', $_POST['vie_selected'] ?? '');
+    $numbers = array_map('intval', $selected);
+
+    $gn = isset($_POST['vie_gn']) ? intval($_POST['vie_gn']) : -1;
+
+    // базовая проверка
+    if (count($numbers) !== 5) {
+      $vieMsg = ['class' => 'error', 'text' => '❌ Нужно выбрать ровно 5 чисел (1–49).'];
+    } elseif (count(array_unique($numbers)) !== 5) {
+      $vieMsg = ['class' => 'error', 'text' => '❌ Числа Vie должны быть уникальны.'];
+    } elseif ($gn < 0 || $gn > 7) {
+      $vieMsg = ['class' => 'error', 'text' => '❌ GN должен быть от 0 до 7.'];
+    } else {
+
+      // проверка диапазона чисел
+      foreach ($numbers as $x) {
+        if ($x < 1 || $x > 49) {
+          $vieMsg = ['class' => 'error', 'text' => '❌ Числа Vie должны быть от 1 до 49.'];
+          break;
+        }
+      }
+
+      if ($vieMsg === null) {
+        $exists = $vieConn->query("SELECT 1 FROM Vie WHERE Tirage = '$date' LIMIT 1")->num_rows > 0;
+
+        if ($exists) {
+          $vieMsg = ['class' => 'error', 'text' => '⚠️ Vie: дата уже существует.'];
+        } else {
+          $stmt = $vieConn->prepare(
+            "REPLACE INTO Vie (Tirage, n1, n2, n3, n4, n5, GN)
+             VALUES (?, ?, ?, ?, ?, ?, ?)"
+          );
+          if ($stmt) {
+            $n1 = $numbers[0]; $n2 = $numbers[1]; $n3 = $numbers[2]; $n4 = $numbers[3]; $n5 = $numbers[4];
+            $stmt->bind_param("siiiiii", $date, $n1, $n2, $n3, $n4, $n5, $gn);
+            $stmt->execute();
+            $stmt->close();
+            $vieMsg = ['class' => 'success', 'text' => '✅ Vie: данные добавлены.'];
+          }
+        }
+      }
+    }
+  }
 
   $conn->close();
   $toutConn->close();
   $bancoConn->close();
   $astroConn->close();
+  $vieConn->close();
 }
 ?>
 
@@ -183,7 +242,7 @@ if (isset($_POST['astro-submit'])) {
       flex-wrap: wrap;
       margin-bottom: 15px;
     }
-    select, input[type="date"], button {
+    select, input[type="date"], button, input[type="text"] {
       padding: 6px 12px;
       font-size: 16px;
     }
@@ -198,6 +257,7 @@ if (isset($_POST['astro-submit'])) {
     }
     .success { background: #d4edda; color: #155724; }
     .error { background: #f8d7da; color: #721c24; }
+
     .circles {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -215,9 +275,19 @@ if (isset($_POST['astro-submit'])) {
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
+      user-select: none;
     }
     .circle.selected {
       background: #2e8b57;
+      color: white;
+    }
+
+    /* Vie: GN styles */
+    .circle.gn-zero {
+      background: #ffd966; /* выделяем 0 */
+    }
+    .circle.gn.selected {
+      background: #b45f06; /* выбранный GN */
       color: white;
     }
   </style>
@@ -235,6 +305,9 @@ if (isset($_POST['astro-submit'])) {
 <?php endif; ?>
 <?php if (!empty($astroMsg)): ?>
   <div class="msg <?= $astroMsg['class'] ?>"><?= $astroMsg['text'] ?></div>
+<?php endif; ?>
+<?php if (!empty($vieMsg)): ?>
+  <div class="msg <?= $vieMsg['class'] ?>"><?= $vieMsg['text'] ?></div>
 <?php endif; ?>
 
 <!-- Q2/Q3/Q4 -->
@@ -266,13 +339,13 @@ if (isset($_POST['astro-submit'])) {
 </form>
 
 <!-- Tout -->
-<form class="form-block" method="post">
+<form class="form-block tout-form" method="post">
   <h2>Добавить Tout ou Rien</h2>
   <div class="row">
     <label>Дата:</label>
     <input type="date" name="tout_date" required />
   </div>
-  <div class="circles">
+  <div class="circles tout-circles">
     <?php for ($i = 1; $i <= 24; $i++): ?>
       <div class="circle" data-num="<?= $i ?>"><?= $i ?></div>
     <?php endfor; ?>
@@ -304,7 +377,7 @@ if (isset($_POST['astro-submit'])) {
 </form>
 
 <!-- Astro -->
-<form class="form-block" method="post">
+<form class="form-block astro-form" method="post">
   <h2>Добавить Astro</h2>
 
   <div class="row">
@@ -361,26 +434,63 @@ if (isset($_POST['astro-submit'])) {
   <button type="submit" name="astro-submit">Сохранить Astro</button>
 </form>
 
+<!-- Vie -->
+<form class="form-block vie-form" method="post">
+  <h2>Добавить Vie</h2>
+
+  <div class="row">
+    <label>Дата:</label>
+    <input type="date" name="vie_date" required />
+  </div>
+
+  <div class="circles vie-circles" style="grid-template-columns: repeat(7, 1fr);">
+    <?php for ($i = 1; $i <= 49; $i++): ?>
+      <div class="circle" data-num="<?= $i ?>"><?= $i ?></div>
+    <?php endfor; ?>
+  </div>
+
+  <div class="row">
+    <label>GN:</label>
+  </div>
+  <!-- GN 1–7 -->
+  <div class="circles gn-circles" style="grid-template-columns: repeat(7, 1fr); margin-top: -5px;">
+    <?php for ($i = 1; $i <= 7; $i++): ?>
+      <div class="circle gn" data-gn="<?= $i ?>"><?= $i ?></div>
+    <?php endfor; ?>
+  </div>
+
+  <!-- GN 0 отдельно -->
+  <div class="circles gn-circles" style="grid-template-columns: 1fr; margin-top: 6px;">
+    <div class="circle gn gn-zero" data-gn="0">0</div>
+  </div>
+
+  <input type="hidden" name="vie_selected" id="vie_selected" required />
+  <input type="hidden" name="vie_gn" id="vie_gn" required />
+
+  <button type="submit" name="vie-submit">Сохранить Vie</button>
+</form>
+
 <!-- Scripts -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  /** === Tout logic === */
-  const circles = document.querySelectorAll('.circle:not(.banco-circles .circle)');
-  const hiddenInput = document.getElementById('tout_selected');
 
-  circles.forEach(circle => {
+  /** === Tout logic (только внутри .tout-circles) === */
+  const toutCircles = document.querySelectorAll('.tout-circles .circle');
+  const toutHiddenInput = document.getElementById('tout_selected');
+
+  toutCircles.forEach(circle => {
     circle.addEventListener('click', () => {
       if (circle.classList.contains('selected')) {
         circle.classList.remove('selected');
       } else {
-        const selected = document.querySelectorAll('.circles .circle.selected');
+        const selected = document.querySelectorAll('.tout-circles .circle.selected');
         if (selected.length >= 12) return;
         circle.classList.add('selected');
       }
 
-      const selectedValues = Array.from(document.querySelectorAll('.circles .circle.selected'))
+      const selectedValues = Array.from(document.querySelectorAll('.tout-circles .circle.selected'))
         .map(el => el.dataset.num);
-      hiddenInput.value = selectedValues.join(',');
+      toutHiddenInput.value = selectedValues.join(',');
     });
   });
 
@@ -403,6 +513,44 @@ document.addEventListener('DOMContentLoaded', () => {
       bancoHiddenInput.value = selectedValues.join(',');
     });
   });
+
+  /** === Vie numbers (1..49) === */
+  const vieCircles = document.querySelectorAll('.vie-circles .circle');
+  const vieHidden = document.getElementById('vie_selected');
+
+  vieCircles.forEach(circle => {
+    circle.addEventListener('click', () => {
+      if (circle.classList.contains('selected')) {
+        circle.classList.remove('selected');
+      } else {
+        const selected = document.querySelectorAll('.vie-circles .circle.selected');
+        if (selected.length >= 5) return;
+        circle.classList.add('selected');
+      }
+
+      const selectedValues = Array.from(document.querySelectorAll('.vie-circles .circle.selected'))
+        .map(el => el.dataset.num);
+      vieHidden.value = selectedValues.join(',');
+    });
+  });
+
+  /** === GN (0..7) one-choice === */
+  const gnCircles = document.querySelectorAll('.gn-circles .circle');
+  const gnHidden = document.getElementById('vie_gn');
+
+  // можно по умолчанию выбрать 0 (визуально уже выделен цветом)
+  // если хочешь, чтобы 0 был ещё и выбранным автоматически — раскомментируй:
+  // const gn0 = document.querySelector('.gn-circles .circle[data-gn="0"]');
+  // if (gn0) { gn0.classList.add('selected'); gnHidden.value = "0"; }
+
+  gnCircles.forEach(circle => {
+    circle.addEventListener('click', () => {
+      gnCircles.forEach(c => c.classList.remove('selected'));
+      circle.classList.add('selected');
+      gnHidden.value = circle.dataset.gn;
+    });
+  });
+
 });
 </script>
 
