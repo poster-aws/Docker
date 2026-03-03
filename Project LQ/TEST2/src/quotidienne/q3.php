@@ -15,7 +15,7 @@ if ($countResult && $row = $countResult->fetch_assoc()) {
 ========================================================= */
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q3_stats_norder' : 'Q3_stats_order';
-$tableComb = 'Q3_combo_stats_order';
+$tableComb = $isNorder ? 'Q3_combo_stats_norder' : 'Q3_combo_stats_order';
 
 /* =========================================================
    Диапазон для частот
@@ -38,66 +38,25 @@ if ($result && $result->num_rows > 0) {
 }
 
 /* =========================================================
-   2. Таблица комбинаций
+   2. Таблица комбинаций (из БД: order или norder)
 ========================================================= */
 $comboStats = [];
-
-if ($isNorder) {
-    // Генерация комбинаций в PHP (порядок не важен)
-    $comboMap   = [];
-    $comboCount = [];
-
-    foreach ($data as $row) {
-        $nums = [$row['n1'], $row['n2'], $row['n3']];
-        sort($nums);
-        $key = implode('-', $nums);
-
-        $comboCount[$key] = ($comboCount[$key] ?? 0) + 1;
-
-        if (!isset($comboMap[$key]) || $comboMap[$key]['tirage'] < $row['Tirage']) {
-            $comboMap[$key] = [
-                'n1'     => $nums[0],
-                'n2'     => $nums[1],
-                'n3'     => $nums[2],
-                'tirage' => $row['Tirage']
-            ];
-        }
-    }
-
-    foreach ($comboMap as $key => $row) {
-        $days = (new DateTime($row['tirage']))->diff(new DateTime())->days;
+$sqlCombo = "
+    SELECT n1, n2, n3, jours, tirage, max_fois
+    FROM $tableComb
+    ORDER BY jours DESC
+";
+$resCombo = $conn->query($sqlCombo);
+if ($resCombo && $resCombo->num_rows > 0) {
+    while ($r = $resCombo->fetch_assoc()) {
         $comboStats[] = [
-            'n1'       => $row['n1'],
-            'n2'       => $row['n2'],
-            'n3'       => $row['n3'],
-            'days'     => $days,
-            'date'     => $row['tirage'],
-            'max_fois' => $comboCount[$key]
+            'n1'       => $r['n1'],
+            'n2'       => $r['n2'],
+            'n3'       => $r['n3'],
+            'days'     => $r['jours'],
+            'date'     => $r['tirage'],
+            'max_fois' => $r['max_fois'] ?? '-'
         ];
-    }
-
-    usort($comboStats, fn($a, $b) => $b['days'] <=> $a['days']);
-
-} else {
-    // Загрузка комбинаций из БД (порядок важен)
-    $sqlCombo = "
-        SELECT n1, n2, n3, jours, tirage, max_fois
-        FROM $tableComb
-        ORDER BY jours DESC
-    ";
-    $resCombo = $conn->query($sqlCombo);
-
-    if ($resCombo && $resCombo->num_rows > 0) {
-        while ($r = $resCombo->fetch_assoc()) {
-            $comboStats[] = [
-                'n1'       => $r['n1'],
-                'n2'       => $r['n2'],
-                'n3'       => $r['n3'],
-                'days'     => $r['jours'],
-                'date'     => $r['tirage'],
-                'max_fois' => $r['max_fois'] ?? '-'
-            ];
-        }
     }
 }
 
