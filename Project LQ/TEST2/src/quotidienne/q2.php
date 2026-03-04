@@ -37,16 +37,16 @@ $comboRows = [];
 if ($isNorder) {
     // ✅ Комбинации N'import из БД
     $sqlCombo = "
-        SELECT n1, n2, jours, Tirage, max_fois, max
+        SELECT n1, n2, days, Tirage, max_fois, max_days
         FROM Q2_combo_stats_norder
-        ORDER BY jours DESC
+        ORDER BY days DESC
     ";
 } else {
     // Комбинации ORDER из БД
     $sqlCombo = "
-        SELECT n1, n2, jours, Tirage, max_fois, max
+        SELECT n1, n2, days, Tirage, max_fois, max_days
         FROM Q2_combo_stats_order
-        ORDER BY jours DESC
+        ORDER BY days DESC
     ";
 }
 
@@ -56,10 +56,10 @@ if ($resCombo && $resCombo->num_rows > 0) {
         $comboRows[] = [
             'n1'       => $r['n1'],
             'n2'       => $r['n2'],
-            'days'     => $r['jours'],
+            'days'     => $r['days'],
             'date'     => $r['Tirage'],
             'max_fois' => $r['max_fois'] ?? '-',
-            'max'      => $r['max'] ?? '-'
+            'max_days' => $r['max_days'] ?? '-'
         ];
     }
 }
@@ -156,7 +156,7 @@ foreach ($comboRows as $row) {
         $comboHTML .= "<td>{$row['days']}</td>";
         $comboHTML .= "<td>{$row['date']}</td>";
         $comboHTML .= "<td>{$row['max_fois']}</td>";
-        $comboHTML .= "<td>{$row['max']}</td>";
+        $comboHTML .= "<td>{$row['max_days']}</td>";
         $comboHTML .= '</tr>';
 }
 

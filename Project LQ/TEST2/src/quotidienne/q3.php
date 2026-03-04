@@ -42,7 +42,7 @@ if ($result && $result->num_rows > 0) {
 ========================================================= */
 $comboStats = [];
 $sqlCombo = "
-    SELECT n1, n2, n3, jours, tirage, max_fois
+    SELECT n1, n2, n3, jours, tirage, max_fois, `max`
     FROM $tableComb
     ORDER BY jours DESC
 ";
@@ -55,7 +55,8 @@ if ($resCombo && $resCombo->num_rows > 0) {
             'n3'       => $r['n3'],
             'days'     => $r['jours'],
             'date'     => $r['tirage'],
-            'max_fois' => $r['max_fois'] ?? '-'
+            'max_fois' => $r['max_fois'] ?? '-',
+            'max'      => $r['max'] ?? '-'
         ];
     }
 }
@@ -159,6 +160,7 @@ foreach ($comboStats as $row) {
         <td>{$row['days']}</td>
         <td>{$row['date']}</td>
         <td>{$row['max_fois']}</td>
+        <td>{$row['max']}</td>
     </tr>";
 }
 
