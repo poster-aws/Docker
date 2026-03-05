@@ -180,12 +180,16 @@
   line-height: 30px;
 }
 
+/* Fois 1 — первый раз (синий) */
 .star-1 {
-  background-color: #ff00007c;
+  background-color: #2980b9;
+  color: #fff;
 }
 
+/* Fois 2 — второй раз (оранжевый) */
 .star-2 {
-  background-color: #ffffff;
+  background-color: #e67e22;
+  color: #fff;
 }
 
 /* Убираем подсветку строки для 3-го столбца */

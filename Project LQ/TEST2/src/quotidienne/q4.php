@@ -15,7 +15,7 @@ if ($countResult && $row = $countResult->fetch_assoc()) {
 ================================ */
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q4_stats_norder' : 'Q4_stats_order';
-$tableComb = 'Q4_combo_stats_order';
+$tableComb = $isNorder ? 'Q4_combo_stats_norder' : 'Q4_combo_stats_order';
 
 /* ===============================
    Диапазон (как Q2 / Q3)
@@ -38,63 +38,27 @@ if ($result && $result->num_rows > 0) {
 }
 
 /* ===============================
-   Комбинации
+   Комбинации (из БД: order или norder)
 ================================ */
 $comboStats = [];
-
-if ($isNorder) {
-    $comboMap = [];
-
-    foreach ($data as $row) {
-        $nums = [$row['n1'], $row['n2'], $row['n3'], $row['n4']];
-        sort($nums);
-        $key = implode('-', $nums);
-
-        if (!isset($comboMap[$key]) || $comboMap[$key]['tirage'] < $row['Tirage']) {
-            $comboMap[$key] = [
-                'n1' => $nums[0],
-                'n2' => $nums[1],
-                'n3' => $nums[2],
-                'n4' => $nums[3],
-                'tirage' => $row['Tirage']
-            ];
-        }
-    }
-
-    foreach ($comboMap as $row) {
-        $days = (new DateTime($row['tirage']))->diff(new DateTime())->days;
+$sqlCombo = "
+    SELECT n1, n2, n3, n4, days, Tirage, max_fois, max_days
+    FROM $tableComb
+    ORDER BY days DESC
+";
+$resCombo = $conn->query($sqlCombo);
+if ($resCombo && $resCombo->num_rows > 0) {
+    while ($r = $resCombo->fetch_assoc()) {
         $comboStats[] = [
-            'n1' => $row['n1'],
-            'n2' => $row['n2'],
-            'n3' => $row['n3'],
-            'n4' => $row['n4'],
-            'days' => $days,
-            'date' => $row['tirage']
+            'n1'       => $r['n1'],
+            'n2'       => $r['n2'],
+            'n3'       => $r['n3'],
+            'n4'       => $r['n4'],
+            'days'     => $r['days'],
+            'date'     => $r['Tirage'],
+            'max_fois' => $r['max_fois'] ?? '-',
+            'max_days' => $r['max_days'] ?? '-'
         ];
-    }
-
-    usort($comboStats, fn($a, $b) => $b['days'] <=> $a['days']);
-
-} else {
-
-    $sqlCombo = "
-        SELECT n1, n2, n3, n4, jours, tirage
-        FROM $tableComb
-        ORDER BY jours DESC
-    ";
-    $resCombo = $conn->query($sqlCombo);
-
-    if ($resCombo && $resCombo->num_rows > 0) {
-        while ($r = $resCombo->fetch_assoc()) {
-            $comboStats[] = [
-                'n1' => $r['n1'],
-                'n2' => $r['n2'],
-                'n3' => $r['n3'],
-                'n4' => $r['n4'],
-                'days' => $r['jours'],
-                'date' => $r['tirage']
-            ];
-        }
     }
 }
 
@@ -186,8 +150,8 @@ foreach ($data as $row) {
     $rowClass = $classes ? " class='" . implode(' ', $classes) . "'" : "";
 
     $tableHTML .= "<tr$rowClass>";
-    foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max'] as $key) {
-        $cell = $row[$key];
+    foreach (['Tirage', 'n1', 'n2', 'n3', 'n4', 'days', 'days2', 'fois', 'max_days'] as $key) {
+        $cell = htmlspecialchars((string)($row[$key] ?? ''));
 
         if (in_array($key, ['n1','n2','n3','n4'])) {
             $tableHTML .= "<td><span class='circle'>$cell</span></td>";
@@ -210,11 +174,16 @@ foreach ($data as $row) {
 ================================ */
 $comboHTML = '';
 foreach ($comboStats as $row) {
-    $comboHTML .= "<tr>";
-    foreach (['n1','n2','n3','n4'] as $k) {
-        $comboHTML .= "<td><span class='circle'>{$row[$k]}</span></td>";
-    }
-    $comboHTML .= "<td>{$row['days']}</td><td>{$row['date']}</td></tr>";
+    $comboHTML .= "<tr>
+        <td><span class='circle'>{$row['n1']}</span></td>
+        <td><span class='circle'>{$row['n2']}</span></td>
+        <td><span class='circle'>{$row['n3']}</span></td>
+        <td><span class='circle'>{$row['n4']}</span></td>
+        <td>{$row['days']}</td>
+        <td>{$row['date']}</td>
+        <td>{$row['max_fois']}</td>
+        <td>{$row['max_days']}</td>
+    </tr>";
 }
 
 /* ===============================

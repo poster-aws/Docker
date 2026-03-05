@@ -1,10 +1,7 @@
 <!-- src/quotidienne/q4.html -->
 
 <!-- для заголовка -->
-<div id="q4-meta"
-     data-count="<?= $q4count ?>"
-     data-jamais="<?= $q4freecount ?>">
-</div>
+<div id="q4-meta" data-count="<?= $q4count ?? 0 ?>"></div>
 
 <div class="tables-wrapper">
     <!-- Основная таблица -->
@@ -36,7 +33,9 @@
           <tr>
             <th>#</th><th>#</th><th>#</th><th>#</th>
             <th>Jours<br>passés</th>
-            <th>Tirage</th>
+            <th>Dernier<br>Tirage</th>
+            <th>Max<br>Fois</th>
+            <th>Max jours<br>passés</th>
           </tr>
         </thead>
         <tbody>
