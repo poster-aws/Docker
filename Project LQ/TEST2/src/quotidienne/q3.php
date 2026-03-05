@@ -42,9 +42,9 @@ if ($result && $result->num_rows > 0) {
 ========================================================= */
 $comboStats = [];
 $sqlCombo = "
-    SELECT n1, n2, n3, jours, tirage, max_fois, `max`
+    SELECT n1, n2, n3, days, Tirage, max_fois, max_days
     FROM $tableComb
-    ORDER BY jours DESC
+    ORDER BY days DESC
 ";
 $resCombo = $conn->query($sqlCombo);
 if ($resCombo && $resCombo->num_rows > 0) {
@@ -53,10 +53,10 @@ if ($resCombo && $resCombo->num_rows > 0) {
             'n1'       => $r['n1'],
             'n2'       => $r['n2'],
             'n3'       => $r['n3'],
-            'days'     => $r['jours'],
-            'date'     => $r['tirage'],
+            'days'     => $r['days'],
+            'date'     => $r['Tirage'],
             'max_fois' => $r['max_fois'] ?? '-',
-            'max'      => $r['max'] ?? '-'
+            'max_days' => $r['max_days'] ?? '-'
         ];
     }
 }
@@ -139,8 +139,8 @@ foreach ($data as $row) {
     $highlightClass = ($n1 !== $n2 && $n1 !== $n3 && $n2 !== $n3) ? 'highlight-row' : '';
 
     $tableHTML .= "<tr class=\"$highlightClass\">";
-    foreach (['Tirage','n1','n2','n3','days','days2','fois','max'] as $key) {
-        $cell = htmlspecialchars($row[$key]);
+    foreach (['Tirage','n1','n2','n3','days','days2','fois','max_days'] as $key) {
+        $cell = htmlspecialchars((string)($row[$key] ?? ''));
         $tableHTML .= in_array($key, ['n1','n2','n3'])
             ? "<td><span class='circle'>$cell</span></td>"
             : "<td>$cell</td>";
@@ -160,7 +160,7 @@ foreach ($comboStats as $row) {
         <td>{$row['days']}</td>
         <td>{$row['date']}</td>
         <td>{$row['max_fois']}</td>
-        <td>{$row['max']}</td>
+        <td>{$row['max_days']}</td>
     </tr>";
 }
 
