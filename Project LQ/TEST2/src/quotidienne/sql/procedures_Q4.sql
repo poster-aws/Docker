@@ -1,5 +1,5 @@
 -- =============================================================================
--- Процедуры Q4: создание всех 6 процедур заполнения таблиц (комбинации из 4 цифр)
+-- Процедуры Q4: создание всех 7 процедур заполнения таблиц (комбинации из 4 цифр + Q4_fois)
 -- Выполнить целиком в MySQL (например: source procedures_Q4.sql;)
 -- Требует MySQL 8.0+
 -- =============================================================================
@@ -262,14 +262,59 @@ BEGIN
   SET c.max_days = s.max_days;
 END//
 
+-- -----------------------------------------------------------------------------
+-- 7. fill_Q4_fois — таблица всех 10000 комбинаций и кол-во выпадений (для q4info)
+-- -----------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS fill_Q4_fois//
+CREATE PROCEDURE fill_Q4_fois()
+BEGIN
+  DROP TABLE IF EXISTS Q4_fois;
+
+  CREATE TABLE Q4_fois (
+      n1 TINYINT UNSIGNED NOT NULL,
+      n2 TINYINT UNSIGNED NOT NULL,
+      n3 TINYINT UNSIGNED NOT NULL,
+      n4 TINYINT UNSIGNED NOT NULL,
+      fois INT UNSIGNED NOT NULL DEFAULT 0,
+      PRIMARY KEY (n1, n2, n3, n4)
+  );
+
+  INSERT INTO Q4_fois (n1, n2, n3, n4, fois)
+  SELECT
+    all_combos.n1,
+    all_combos.n2,
+    all_combos.n3,
+    all_combos.n4,
+    IFNULL(q.count, 0) AS fois
+  FROM (
+      SELECT a.num AS n1, b.num AS n2, c.num AS n3, d.num AS n4
+      FROM
+        (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+         UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a,
+        (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+         UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b,
+        (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+         UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c,
+        (SELECT 0 AS num UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+         UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d
+  ) AS all_combos
+  LEFT JOIN (
+      SELECT n1, n2, n3, n4, COUNT(*) AS count
+      FROM Q4
+      GROUP BY n1, n2, n3, n4
+  ) AS q
+  ON all_combos.n1 = q.n1 AND all_combos.n2 = q.n2 AND all_combos.n3 = q.n3 AND all_combos.n4 = q.n4;
+END//
+
 DELIMITER ;
 
 -- =============================================================================
 -- Вызов после создания:
 --   CALL fill_Q4_stats_order();           -- одна строка в stats_order
---   CALL fill_Q4_stats_order_full();      -- полная пересборка stats_order
---   CALL fill_Q4_stats_norder();          -- одна строка в stats_norder
---   CALL fill_Q4_stats_norder_full();    -- полная пересборка stats_norder
---   CALL fill_Q4_combo_stats_order();     -- пересборка combo order
---   CALL fill_Q4_combo_stats_norder();    -- пересборка combo norder
+--   CALL fill_Q4_stats_order_full();       -- полная пересборка stats_order
+--   CALL fill_Q4_stats_norder();           -- одна строка в stats_norder
+--   CALL fill_Q4_stats_norder_full();      -- полная пересборка stats_norder
+--   CALL fill_Q4_combo_stats_order();      -- пересборка combo order
+--   CALL fill_Q4_combo_stats_norder();     -- пересборка combo norder
+--   CALL fill_Q4_fois();                   -- таблица 10000 комбинаций (q4info)
 -- =============================================================================
