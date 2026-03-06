@@ -112,8 +112,8 @@ if response.status_code == 200:
 
                 procedures = [
                     'fill_Q2_stats_order', 'fill_Q2_stats_norder', 'fill_Q2_combo_stats_order', 'fill_Q2_combo_stats_norder',
-                    'fill_Q3_stats_order', 'fill_Q3_stats_norder', 'fill_Q3_combo_stats_order',
-                    'fill_Q4_fois', 'fill_Q4_stats_order', 'fill_Q4_stats_norder', 'fill_Q4_combo_stats_order'
+                    'fill_Q3_stats_order', 'fill_Q3_stats_norder', 'fill_Q3_combo_stats_order', 'fill_Q3_combo_stats_norder',
+                    'fill_Q4_fois', 'fill_Q4_stats_order', 'fill_Q4_stats_norder', 'fill_Q4_combo_stats_order', 'fill_Q4_combo_stats_norder'
                 ]
 
                 for proc in procedures:
