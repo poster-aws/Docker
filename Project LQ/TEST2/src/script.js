@@ -216,6 +216,11 @@ function loadPage(page) {
         const shown = metaDiv?.dataset.limit || "50";
         pageTitle.innerHTML = `Banco<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${total} - Tirages affichés: ${shown} derniers</span>`;
       }
+      else if (page.includes("astro")) {
+        const metaDiv = container.querySelector("#astro-meta");
+        const count = metaDiv?.dataset.count || "?";
+        pageTitle.innerHTML = `Astro<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - 365 dernières entrées</span>`;
+      }
 
       cornerButton.innerHTML = "&#8505;";
     })
@@ -318,6 +323,8 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `<iframe src="toutourien/Info/toutinfo.php?limit=${toggleSwitch.checked ? 200 : 50}" style="width:100%; height:100%; border:none;"></iframe>`;
       } else if (currentPage.includes("banco")) {
         container.innerHTML = `<iframe src="banco/Info/bancoinfo2.php" style="width:100%; height:100%; border:none;"></iframe>`;
+      } else if (currentPage.includes("astro")) {
+        container.innerHTML = `<iframe src="astro/Info/astroinfo.php" style="width:100%; height:100%; border:none;"></iframe>`;
       }
 
       cornerButton.innerHTML = "&#x21c6;"; // ✅ Вернуть иконку Info

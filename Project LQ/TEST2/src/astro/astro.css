@@ -1,0 +1,50 @@
+/* src/astro/astro.css — стили для страницы Astro */
+
+.tables-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.table-container {
+  flex: 0 0 auto;
+  width: max-content;
+  max-height: 88vh;
+  overflow: auto;
+  margin-inline: auto;
+  border-radius: 12px;
+  border: 2px solid #a4a1a1;
+  background: #00000005;
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.interactive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+  font-family: 'Shadows Into Light', cursive;
+  color: #000;
+}
+
+.interactive-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 9px;
+  background-color: rgb(163, 216, 234);
+  z-index: 10;
+  border-bottom: 2px solid #888;
+}
+
+.interactive-table td {
+  padding: 9px;
+  border-bottom: 1px dashed #777;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.interactive-table tr:hover {
+  background-color: rgba(161, 161, 161, 0.493);
+}
