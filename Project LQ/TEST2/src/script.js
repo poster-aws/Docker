@@ -88,7 +88,7 @@ let currentLang = localStorage.getItem("lang") || "fr";
 let q2CountRange = 50; // диапазон для Q2 по умолчанию
 let q3CountRange = 50; // диапазон для Q3 по умолчанию
 let q4CountRange = 50; // диапазон для Q4 по умолчанию
-let astroCountRange = 50; // диапазон для Astro (3-я таблица) по умолчанию
+let astroCountRange = 100; // диапазон для Astro: 30, 100, 365 или 'all' (Tout)
 
 // 📥 Загрузка страниц
 function loadPage(page) {
@@ -131,9 +131,9 @@ function loadPage(page) {
   if (page.includes("q4")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q4CountRange || 50);
   }
-  // Astro: добавляем count_range для таблицы по дням
+  // Astro: добавляем count_range (30, 100, 365 или all)
   if (page.includes("astro") && !page.includes("Info")) {
-    extraParam += (extraParam ? "&" : "") + "count_range=" + (astroCountRange || 50);
+    extraParam += (extraParam ? "&" : "") + "count_range=" + (astroCountRange || 100);
   }
 
   extraParam += (extraParam ? "&" : "") + "lang=" + currentLang;
@@ -197,9 +197,9 @@ function loadPage(page) {
       if (page.includes("astro") && !page.includes("Info")) {
         const rangeSelect = container.querySelector("#astroCountRange");
         if (rangeSelect) {
-          rangeSelect.value = String(astroCountRange || 50);
+          rangeSelect.value = String(astroCountRange || 100);
           rangeSelect.addEventListener("change", () => {
-            astroCountRange = parseInt(rangeSelect.value, 10) || 50;
+            astroCountRange = rangeSelect.value === "all" ? "all" : (parseInt(rangeSelect.value, 10) || 100);
             loadPage(page);
           });
         }
