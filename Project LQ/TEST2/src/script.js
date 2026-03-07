@@ -219,7 +219,7 @@ function loadPage(page) {
       else if (page.includes("astro")) {
         const metaDiv = container.querySelector("#astro-meta");
         const count = metaDiv?.dataset.count || "?";
-        pageTitle.innerHTML = `Astro<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - 365 dernières entrées</span>`;
+        pageTitle.innerHTML = `Astro<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 13 janvier 2006</span>`;
       }
 
       cornerButton.innerHTML = "&#8505;";
