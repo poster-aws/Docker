@@ -88,6 +88,7 @@ let currentLang = localStorage.getItem("lang") || "fr";
 let q2CountRange = 50; // диапазон для Q2 по умолчанию
 let q3CountRange = 50; // диапазон для Q3 по умолчанию
 let q4CountRange = 50; // диапазон для Q4 по умолчанию
+let astroCountRange = 50; // диапазон для Astro (3-я таблица) по умолчанию
 
 // 📥 Загрузка страниц
 function loadPage(page) {
@@ -129,6 +130,10 @@ function loadPage(page) {
   // Q4: добавляем count_range
   if (page.includes("q4")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q4CountRange || 50);
+  }
+  // Astro: добавляем count_range для таблицы по дням
+  if (page.includes("astro") && !page.includes("Info")) {
+    extraParam += (extraParam ? "&" : "") + "count_range=" + (astroCountRange || 50);
   }
 
   extraParam += (extraParam ? "&" : "") + "lang=" + currentLang;
@@ -183,6 +188,18 @@ function loadPage(page) {
           rangeSelect.value = String(q4CountRange || 50);
           rangeSelect.addEventListener("change", () => {
             q4CountRange = parseInt(rangeSelect.value, 10) || 50;
+            loadPage(page);
+          });
+        }
+      }
+
+      // Astro: привязка выпадающего меню диапазона (10…365)
+      if (page.includes("astro") && !page.includes("Info")) {
+        const rangeSelect = container.querySelector("#astroCountRange");
+        if (rangeSelect) {
+          rangeSelect.value = String(astroCountRange || 50);
+          rangeSelect.addEventListener("change", () => {
+            astroCountRange = parseInt(rangeSelect.value, 10) || 50;
             loadPage(page);
           });
         }
