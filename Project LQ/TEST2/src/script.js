@@ -89,6 +89,7 @@ let q2CountRange = 50; // диапазон для Q2 по умолчанию
 let q3CountRange = 50; // диапазон для Q3 по умолчанию
 let q4CountRange = 50; // диапазон для Q4 по умолчанию
 let astroCountRange = 100; // диапазон для Astro: 30, 100, 365 или 'all' (Tout)
+let astroView = "mois";   // 'mois' = Mois+Signe, 'jour' = Jour+Année
 
 // 📥 Загрузка страниц
 function loadPage(page) {
@@ -131,9 +132,10 @@ function loadPage(page) {
   if (page.includes("q4")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (q4CountRange || 50);
   }
-  // Astro: добавляем count_range (30, 100, 365 или all)
+  // Astro: count_range и вид (mois = Mois/Signe, jour = Jour/Année)
   if (page.includes("astro") && !page.includes("Info")) {
     extraParam += (extraParam ? "&" : "") + "count_range=" + (astroCountRange || 100);
+    extraParam += "&astro_view=" + (astroView || "mois");
   }
 
   extraParam += (extraParam ? "&" : "") + "lang=" + currentLang;
@@ -195,14 +197,14 @@ function loadPage(page) {
 
       // Astro: привязка выпадающего меню диапазона (10…365)
       if (page.includes("astro") && !page.includes("Info")) {
-        const rangeSelect = container.querySelector("#astroCountRange");
-        if (rangeSelect) {
+        const rangeSelects = container.querySelectorAll(".astro-count-range-select");
+        rangeSelects.forEach((rangeSelect) => {
           rangeSelect.value = String(astroCountRange || 100);
           rangeSelect.addEventListener("change", () => {
             astroCountRange = rangeSelect.value === "all" ? "all" : (parseInt(rangeSelect.value, 10) || 100);
             loadPage(page);
           });
-        }
+        });
       }
 
       const pageTitle = document.getElementById("pageTitle");
@@ -237,6 +239,11 @@ function loadPage(page) {
         const metaDiv = container.querySelector("#astro-meta");
         const count = metaDiv?.dataset.count || "?";
         pageTitle.innerHTML = `Astro<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} - Tirages depuis 13 janvier 2006</span>`;
+        if (metaDiv?.dataset.view) {
+          astroView = metaDiv.dataset.view;
+          toggleSwitch.checked = (astroView === "jour");
+          updateToggleStyles();
+        }
       }
 
       cornerButton.innerHTML = "&#8505;";
@@ -263,12 +270,15 @@ function updateToggleStyles() {
   labelNimport.classList.toggle("active", isChecked);
   neonSwitch.classList.toggle("active", isChecked);
 
-  // ✅ Изменяем подписи Banco Tout
+  // ✅ Изменяем подписи в зависимости от страницы
   const currentPage = container.getAttribute("data-page") || "";
 
   if (currentPage.includes("banco") || currentPage.includes("tout")) {
     labelOrder.textContent = "50 Tirages";
     labelNimport.textContent = "200 Tirages";
+  } else if (currentPage.includes("astro") && !currentPage.includes("Info")) {
+    labelOrder.textContent = "Mois/Signe";
+    labelNimport.textContent = "Jour/Année";
   } else {
     labelOrder.textContent = "Order";
     labelNimport.textContent = "N'import";
@@ -309,8 +319,11 @@ document.addEventListener("DOMContentLoaded", () => {
   originalHomeContent = container.innerHTML;
 
   toggle.addEventListener("change", () => {
-    updateToggleStyles();
     const currentPage = container.getAttribute("data-page");
+    if (currentPage && !isAltView && currentPage.includes("astro") && !currentPage.includes("Info")) {
+      astroView = toggle.checked ? "jour" : "mois";
+    }
+    updateToggleStyles();
     if (currentPage && !isAltView) {
       loadPage(currentPage);
     }

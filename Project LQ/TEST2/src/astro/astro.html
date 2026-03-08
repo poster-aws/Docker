@@ -1,7 +1,7 @@
 <!-- src/astro/astro.html -->
-<div id="astro-meta" data-count="<?= $astroCount ?? 0 ?>"></div>
+<div id="astro-meta" data-count="<?= $astroCount ?? 0 ?>" data-view="<?= htmlspecialchars($astroView) ?>"></div>
 
-<div class="tables-wrapper">
+<div class="tables-wrapper" data-astro-view="<?= htmlspecialchars($astroView) ?>">
   <div class="table-container">
     <table class="interactive-table">
       <thead>
@@ -21,75 +21,83 @@
     </table>
   </div>
 
-  <!-- Статистика по дню (1–31): Jours passés + Fois за выбранное кол-во тиражей (как 3-я таблица Q2…Q4) -->
-  <div class="number-stats-table">
-    <table class="interactive-table">
-      <thead>
-        <tr>
-          <th>Jour</th>
-          <th>Jours<br>passés</th>
-          <th>
-            Tirages &nbsp; <br>
-            <select id="astroCountRange">
-              <option value="30">30</option>
-              <option value="100">100</option>
-              <option value="365">365</option>
-              <option value="all">Tout</option>
-            </select>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--JOUR_STATS_PLACEHOLDER-->
-      </tbody>
-    </table>
+  <!-- Группа Mois + Signe (видна при переключателе Mois/Signe) -->
+  <div class="astro-stats-group astro-stats-mois">
+    <div class="number-stats-table">
+      <table class="interactive-table">
+        <thead>
+          <tr>
+            <th>Mois</th>
+            <th>Jours<br>passés</th>
+            <th>
+              Tirages &nbsp; <br>
+              <select class="astro-count-range-select">
+                <option value="30">30</option>
+                <option value="100">100</option>
+                <option value="365">365</option>
+                <option value="all">Tout</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--MOIS_STATS_PLACEHOLDER-->
+        </tbody>
+      </table>
+    </div>
+    <div class="number-stats-table">
+      <table class="interactive-table">
+        <thead>
+          <tr>
+            <th>Signe</th>
+            <th>Jours<br>passés</th>
+            <th>Tirages</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--SIGNE_STATS_PLACEHOLDER-->
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Статистика по месяцу (1–12): те же колонки, названия месяцев по-французски -->
-  <div class="number-stats-table">
-    <table class="interactive-table">
-      <thead>
-        <tr>
-          <th>Mois</th>
-          <th>Jours<br>passés</th>
-          <th>Tirages</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--MOIS_STATS_PLACEHOLDER-->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Статистика по году (00–99): те же колонки -->
-  <div class="number-stats-table">
-    <table class="interactive-table">
-      <thead>
-        <tr>
-          <th>Année</th>
-          <th>Jours<br>passés</th>
-          <th>Tirages</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--ANNEE_STATS_PLACEHOLDER-->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Статистика по знаку зодиака (1–12): символ Unicode + аббревиатура, как в первой таблице -->
-  <div class="number-stats-table">
-    <table class="interactive-table">
-      <thead>
-        <tr>
-          <th>Signe</th>
-          <th>Jours<br>passés</th>
-          <th>Tirages</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--SIGNE_STATS_PLACEHOLDER-->
-      </tbody>
-    </table>
+  <!-- Группа Jour + Année (видна при переключателе Jour/Année) -->
+  <div class="astro-stats-group astro-stats-jour">
+    <div class="number-stats-table">
+      <table class="interactive-table">
+        <thead>
+          <tr>
+            <th>Jour</th>
+            <th>Jours<br>passés</th>
+            <th>
+              Tirages &nbsp; <br>
+              <select class="astro-count-range-select">
+                <option value="30">30</option>
+                <option value="100">100</option>
+                <option value="365">365</option>
+                <option value="all">Tout</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--JOUR_STATS_PLACEHOLDER-->
+        </tbody>
+      </table>
+    </div>
+    <div class="number-stats-table">
+      <table class="interactive-table">
+        <thead>
+          <tr>
+            <th>Année</th>
+            <th>Jours<br>passés</th>
+            <th>Tirages</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--ANNEE_STATS_PLACEHOLDER-->
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

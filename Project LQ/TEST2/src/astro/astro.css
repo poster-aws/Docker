@@ -21,6 +21,19 @@
   box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Группы таблиц: показывается только одна в зависимости от переключателя */
+.astro-stats-group {
+  display: none;
+  flex: 0 0 auto;
+  gap: 20px;
+}
+.tables-wrapper[data-astro-view="mois"] .astro-stats-mois {
+  display: flex;
+}
+.tables-wrapper[data-astro-view="jour"] .astro-stats-jour {
+  display: flex;
+}
+
 .interactive-table {
   width: 100%;
   border-collapse: collapse;

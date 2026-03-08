@@ -32,6 +32,9 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
+/* Переключатель вида: mois (Mois+Signe) или jour (Jour+Année) */
+$astroView = (isset($_GET['astro_view']) && $_GET['astro_view'] === 'jour') ? 'jour' : 'mois';
+
 /* Диапазон для третьего столбца: 30, 100, 365 или tout (все тиражи) */
 $allowedRanges = [30, 100, 365];
 $countRangeParam = $_GET['count_range'] ?? '100';
