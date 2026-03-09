@@ -1,0 +1,93 @@
+/* src/vie/vie.css — стили для страницы Grande Vie */
+
+.vie-content,
+.vie-info-content {
+  padding: 1rem;
+}
+
+.vie-info-content h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+.vie-info-content p {
+  margin: 0 0 1rem 0;
+}
+
+/* Сетка в стиле Q4Info */
+.table-wrapper {
+  width: 95%;
+  max-height: 70vh;
+  overflow: auto;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+  background: rgba(173, 216, 230, 0.85);
+}
+
+table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.digit-grid td,
+.digit-grid th {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: #eee;
+}
+
+.digit-grid td:first-child,
+.digit-grid th:first-child {
+  background-color: #eee;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  font-weight: bold;
+  color: #1f4fd8;
+}
+
+.digit-grid td:nth-child(2),
+.digit-grid th:nth-child(2) {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+/* n1..n5: 1–49, повторов нет — только hit (выпадение) или пусто */
+.digit-grid td.hit { background-color: #7eb0ea; }
+
+.digit-grid tr.row-gn td {
+  background-color: #e8e8e8;
+  font-weight: bold;
+}
+.digit-grid td.cell-gn {
+  background-color: #d4e6f1;
+}
+
+.filter-form {
+  text-align: center;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.filter-form select {
+  background-color: #fff;
+  border: 1px solid #999;
+  color: #000;
+  border-radius: 6px;
+  font-size: 1em;
+  padding: 2px 6px;
+  line-height: 1.2;
+}

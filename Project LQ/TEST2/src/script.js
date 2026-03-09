@@ -245,6 +245,11 @@ function loadPage(page) {
           updateToggleStyles();
         }
       }
+      else if (page.includes("vie") && !page.includes("Info")) {
+        const metaDiv = container.querySelector("#vie-meta");
+        const count = metaDiv?.dataset.count ?? "0";
+        pageTitle.innerHTML = `Grande Vie<br><span id="subTitle" style="display:block; font-size: 0.5em; font-weight: normal; line-height: 1.1;">${count} tirages</span>`;
+      }
 
       cornerButton.innerHTML = "&#8505;";
     })
@@ -355,6 +360,8 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `<iframe src="banco/Info/bancoinfo2.php" style="width:100%; height:100%; border:none;"></iframe>`;
       } else if (currentPage.includes("astro")) {
         container.innerHTML = `<iframe src="astro/Info/astroinfo.php" style="width:100%; height:100%; border:none;"></iframe>`;
+      } else if (currentPage.includes("vie")) {
+        container.innerHTML = `<iframe src="vie/Info/vieinfo.php" style="width:100%; height:100%; border:none;"></iframe>`;
       }
 
       cornerButton.innerHTML = "&#x21c6;"; // ✅ Вернуть иконку Info
