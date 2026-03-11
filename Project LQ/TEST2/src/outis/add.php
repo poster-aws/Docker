@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if ($stmt) { $stmt->bind_param("siiii", $date, $n6, $n7, $n8, $n9); $stmt->execute(); $stmt->close(); }
 
       $procedures = [
-        'fill_Q2_stats_order', 'fill_Q2_stats_norder', 'fill_Q2_combo_stats_order',
-        'fill_Q3_stats_order', 'fill_Q3_stats_norder', 'fill_Q3_combo_stats_order',
-        'fill_Q4_fois', 'fill_Q4_stats_order', 'fill_Q4_stats_norder', 'fill_Q4_combo_stats_order'
+        'fill_Q2_stats_order', 'fill_Q2_stats_norder', 'fill_Q2_combo_stats_order', 'fill_Q2_combo_stats_norder',
+        'fill_Q3_stats_order', 'fill_Q3_stats_norder', 'fill_Q3_combo_stats_order', 'fill_Q3_combo_stats_norder',
+        'fill_Q4_fois', 'fill_Q4_stats_order', 'fill_Q4_stats_norder', 'fill_Q4_combo_stats_order', 'fill_Q4_combo_stats_norder'
       ];
       foreach ($procedures as $proc) $conn->query("CALL $proc()");
 
