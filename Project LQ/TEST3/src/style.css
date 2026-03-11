@@ -1,21 +1,37 @@
 /* TEST3 — Quotidienne — Interface moderne, responsive */
 
+/* Fond principal — neutre commun aux deux thèmes */
 :root {
-  --bg: #f1f5f9;
-  --bg-card: #ffffff;
+  --bg: #c9caca;
+  --font: 'Trebuchet MS', Helvetica, sans-serif;
+  --header-h: 56px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  /* Thème sombre — Ardoise (défaut) */
+  --bg-card: #334155;
   --header-bg: #0f172a;
   --header-text: #f8fafc;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #475569;
+  --shadow: 0 1px 3px rgba(0,0,0,0.25);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Thème clair */
+.app.theme-light {
+  --bg-card: #ffffff;
+  --header-bg: #334155;
+  --header-text: #f1f5f9;
   --text: #1e293b;
   --text-muted: #64748b;
   --border: #e2e8f0;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
   --shadow: 0 1px 3px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --font: 'Trebuchet MS', Helvetica, sans-serif;
-  --header-h: 56px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -154,25 +170,48 @@ body {
   padding: 0.75rem 1rem 1rem;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
-.nav-drawer .lang-switch {
+.nav-drawer .lang-switch,
+.nav-drawer .theme-switch {
   display: flex;
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.3);
 }
-.nav-drawer .lang-btn {
+.nav-drawer .theme-switch {
+  margin-top: 0.75rem;
+}
+.nav-drawer .lang-btn,
+.nav-drawer .theme-btn {
+  -webkit-appearance: none;
+  appearance: none;
   flex: 1;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
+  font-family: inherit;
   background: transparent;
   color: var(--header-text);
   border: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
-.nav-drawer .lang-btn.active {
+.nav-drawer .lang-btn:hover,
+.nav-drawer .theme-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+.nav-drawer .lang-btn.active,
+.nav-drawer .theme-btn.active {
   background: var(--accent);
   color: white;
+}
+
+@media (max-width: 899px) {
+  .nav-drawer .lang-btn,
+  .nav-drawer .theme-btn {
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+  }
 }
 
 .nav-list {

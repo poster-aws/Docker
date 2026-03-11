@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemples thème clair / sombre — Quotidienne</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Trebuchet MS', Helvetica, sans-serif;
+      padding: 1.5rem;
+      line-height: 1.5;
+      background: #94a3b8;
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: #1e3a5f;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back:hover { text-decoration: underline; }
+    h1 { font-size: 1.4rem; margin-bottom: 1rem; color: #1e293b; }
+    .intro { margin-bottom: 1.5rem; color: #334155; max-width: 560px; }
+    .sample-page {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-bottom: 2rem;
+      max-width: 560px;
+    }
+    .sample-page h2 {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      padding: 0 0.25rem;
+    }
+    .sample-page .mock-header {
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+    .sample-page .mock-header .title { flex: 1; text-align: center; font-size: 1rem; }
+    .sample-page .mock-main { padding: 1rem; min-height: 120px; }
+    .sample-page table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .sample-page th, .sample-page td { padding: 0.35rem 0.5rem; text-align: center; border-bottom: 1px solid; }
+    .sample-page .ball {
+      display: inline-block; width: 22px; height: 22px; line-height: 22px; border-radius: 50%;
+      font-weight: 700; font-size: 0.85em;
+    }
+
+    .theme-light .sample-page h2 { color: #475569; }
+    .theme-light .mock-header { background: #0f172a; color: #f8fafc; }
+    .theme-light .mock-main { background: #f1f5f9; color: #1e293b; }
+    .theme-light th { background: #1e293b; color: #f8fafc; border-color: #334155; }
+    .theme-light td { border-color: #e2e8f0; }
+    .theme-light .ball { background: #2563eb; color: #fff; }
+
+    .theme-dark .sample-page h2 { color: #94a3b8; }
+    .theme-dark .mock-header { background: #0f172a; color: #e2e8f0; }
+    .theme-dark .mock-main { background: #1e293b; color: #e2e8f0; }
+    .theme-dark th { background: #334155; color: #f1f5f9; border-color: #475569; }
+    .theme-dark td { border-color: #475569; }
+    .theme-dark .ball { background: #3b82f6; color: #fff; }
+
+    .theme-soft .sample-page h2 { color: #64748b; }
+    .theme-soft .mock-header { background: #fff; color: #1e293b; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .theme-soft .mock-main { background: #f8fafc; color: #334155; }
+    .theme-soft .sample-page { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .theme-soft th { background: #f1f5f9; color: #1e293b; border-color: #e2e8f0; }
+    .theme-soft td { border-color: #e2e8f0; }
+    .theme-soft .ball { background: #0ea5e9; color: #fff; }
+
+    .theme-slate .sample-page h2 { color: #94a3b8; }
+    .theme-slate .mock-header { background: #1e293b; color: #e2e8f0; }
+    .theme-slate .mock-main { background: #0f172a; color: #cbd5e1; }
+    .theme-slate th { background: #334155; color: #f1f5f9; border-color: #475569; }
+    .theme-slate td { border-color: #475569; }
+    .theme-slate .ball { background: #38bdf8; color: #0f172a; }
+
+    .theme-oled .sample-page h2 { color: #71717a; }
+    .theme-oled .mock-header { background: #000; color: #fafafa; }
+    .theme-oled .mock-main { background: #0a0a0a; color: #e4e4e7; }
+    .theme-oled th { background: #18181b; color: #fafafa; border-color: #27272a; }
+    .theme-oled td { border-color: #27272a; }
+    .theme-oled .ball { background: #22c55e; color: #000; }
+
+    .theme-warm .sample-page h2 { color: #78716c; }
+    .theme-warm .mock-header { background: #44403c; color: #fafaf9; }
+    .theme-warm .mock-main { background: #fafaf9; color: #292524; }
+    .theme-warm th { background: #57534e; color: #fafaf9; border-color: #78716c; }
+    .theme-warm td { border-color: #e7e5e4; }
+    .theme-warm .ball { background: #b45309; color: #fff; }
+  </style>
+</head>
+<body>
+  <a class="back" href="index.html">← Retour à l'accueil</a>
+  <h1>Exemples thème clair / thème sombre</h1>
+  <p class="intro">Aperçu de l’affichage en différents thèmes modernes souvent utilisés. Même structure, palettes différentes.</p>
+
+  <div class="theme-light">
+    <h2>Thème clair</h2>
+    <div class="sample-page">
+      <div class="mock-header">
+        <span>☰</span>
+        <span class="title">Quotidienne 2 — 1240 tirages</span>
+      </div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-dark">
+    <h2>Thème sombre (bleu-gris)</h2>
+    <div class="sample-page">
+      <div class="mock-header"><span>☰</span><span class="title">Quotidienne 2 — 1240 tirages</span></div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-soft">
+    <h2>Thème doux / cartes (type SaaS, Notion)</h2>
+    <div class="sample-page">
+      <div class="mock-header"><span>☰</span><span class="title">Quotidienne 2 — 1240 tirages</span></div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-slate">
+    <h2>Thème sombre ardoise (Slate, outils dev)</h2>
+    <div class="sample-page">
+      <div class="mock-header"><span>☰</span><span class="title">Quotidienne 2 — 1240 tirages</span></div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-oled">
+    <h2>Thème noir pur (OLED / AMOLED)</h2>
+    <div class="sample-page">
+      <div class="mock-header"><span>☰</span><span class="title">Quotidienne 2 — 1240 tirages</span></div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="theme-warm">
+    <h2>Thème neutre chaud (Stone / réduction fatigue)</h2>
+    <div class="sample-page">
+      <div class="mock-header"><span>☰</span><span class="title">Quotidienne 2 — 1240 tirages</span></div>
+      <div class="mock-main">
+        <table>
+          <thead><tr><th>Tirage</th><th>#</th><th>#</th><th>Jours</th></tr></thead>
+          <tbody>
+            <tr><td>2026-04-12</td><td><span class="ball">3</span></td><td><span class="ball">7</span></td><td>42</td></tr>
+            <tr><td>2026-04-11</td><td><span class="ball">0</span></td><td><span class="ball">9</span></td><td>15</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

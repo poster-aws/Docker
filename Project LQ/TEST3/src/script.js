@@ -2,6 +2,7 @@
   'use strict';
 
   let currentLang = localStorage.getItem('lang') || 'fr';
+  let currentTheme = localStorage.getItem('theme') || 'dark';
   let q2CountRange = 50;
   let q3CountRange = 50;
   let q4CountRange = 50;
@@ -35,6 +36,17 @@
   function updateLangUI() {
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+  }
+
+  function applyTheme() {
+    var app = document.querySelector('.app');
+    if (app) app.classList.toggle('theme-light', currentTheme === 'light');
+  }
+
+  function updateThemeUI() {
+    document.querySelectorAll('.theme-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.theme === currentTheme);
     });
   }
 
@@ -179,6 +191,15 @@
     });
   });
 
+  document.querySelectorAll('.theme-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      currentTheme = btn.dataset.theme;
+      localStorage.setItem('theme', currentTheme);
+      applyTheme();
+      updateThemeUI();
+    });
+  });
+
   if (toggleSwitch) {
     toggleSwitch.addEventListener('change', function () {
       updateToggleLabels();
@@ -218,6 +239,8 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     originalHomeContent = container.innerHTML;
+    applyTheme();
+    updateThemeUI();
     updateLangUI();
     updateToggleLabels();
   });
