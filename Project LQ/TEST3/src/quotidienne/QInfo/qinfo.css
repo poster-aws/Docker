@@ -1,0 +1,32 @@
+
+
+
+
+
+
+
+
+/* == Scroll hint (bouncing ball) == */
+#scrollHint {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(126, 176, 234, 0.85);
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scrollBounce 1.6s infinite;
+  z-index: 9999;
+  pointer-events: none; /* чтобы не мешал кликам */
+}
+
+@keyframes scrollBounce {
+  0%   { transform: translateY(0); opacity: 0.6; }
+  50%  { transform: translateY(6px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.6; }
+}

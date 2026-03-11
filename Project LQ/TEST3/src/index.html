@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotidienne — Q2, Q3, Q4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quotidienne/quotidienne.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <a href="#" class="home-icon" onclick="goHome(); return false;" aria-label="Accueil">&#8962;</a>
+      </div>
+
+      <h1 class="page-title" id="pageTitle">Bienvenue</h1>
+
+      <nav class="nav nav-drawer" id="mainNav" aria-label="Choix de la loterie">
+        <ul class="nav-list">
+          <li><a href="#" data-page="quotidienne/q2.php">Quotidienne 2</a></li>
+          <li><a href="#" data-page="quotidienne/q3.php">Quotidienne 3</a></li>
+          <li><a href="#" data-page="quotidienne/q4.php">Quotidienne 4</a></li>
+        </ul>
+        <div class="nav-footer">
+          <div class="lang-switch" role="group" aria-label="Langue">
+            <button type="button" class="lang-btn active" data-lang="fr">FR</button>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+
+      <div class="header-actions">
+        <div class="mode-switch-wrap">
+          <span class="mode-label" id="labelOrder">Order</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleSwitch" aria-label="Order / N'import">
+            <span class="slider"></span>
+          </label>
+          <span class="mode-label" id="labelNimport">N'import</span>
+        </div>
+        <button type="button" class="btn-icon" id="infoBtn" title="Information" aria-label="Information">ℹ</button>
+      </div>
+    </header>
+
+    <main class="main" id="container">
+      <section class="welcome" data-page="">
+        <div class="welcome-card">
+          <h2>Bienvenue</h2>
+          <p>Choisissez une page dans le menu : Quotidienne 2, 3 ou 4.</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="loading-overlay" id="loadingSpinner" aria-hidden="true">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
