@@ -58,6 +58,8 @@
 
   function loadPage(page) {
     if (!page) return;
+    // Toujours aligner avec l’affichage des tableaux (évite Info « fantôme » après changement de page au menu).
+    isAltView = false;
     setNavOpen(false);
 
     var isOrdered = toggleSwitch.checked;
@@ -161,6 +163,7 @@
   }
 
   function goHome() {
+    isAltView = false;
     setNavOpen(false);
     if (originalHomeContent) {
       container.innerHTML = originalHomeContent;
