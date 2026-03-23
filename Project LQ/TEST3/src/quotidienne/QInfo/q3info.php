@@ -37,6 +37,7 @@ $conn->close();
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Q3 Grid</title>
+  <link rel="stylesheet" href="qinfo.css">
 
   <style>
     html, body {
@@ -50,7 +51,7 @@ $conn->close();
     body::-webkit-scrollbar { display: none; }
 
     .table-wrapper {
-      width: 95%;
+      width: var(--qinfo-content-width, min(86vw, 860px));
       max-height: 70vh;
       overflow: auto;
       margin: 0 auto;

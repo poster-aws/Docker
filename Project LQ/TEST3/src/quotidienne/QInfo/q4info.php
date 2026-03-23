@@ -122,7 +122,7 @@ body::-webkit-scrollbar { display: none; }
   justify-content: space-between;
   gap: 20px;
   margin: 2px auto 0 auto;
-  max-width: 95%;
+  max-width: var(--qinfo-content-width, min(86vw, 860px));
 }
 
 .table-container,
@@ -258,7 +258,7 @@ select {
 
 /* === GRID как в Q2 / Q3 === */
 .table-wrapper {
-  width: 95%;
+  width: var(--qinfo-content-width, min(86vw, 860px));
   max-height: 70vh;
   overflow: auto;
   margin: 10px auto;

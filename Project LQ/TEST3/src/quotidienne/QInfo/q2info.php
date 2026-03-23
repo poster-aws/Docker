@@ -172,7 +172,7 @@ $conn->close();
     }
 
     .table-wrapper {
-      width: 95%;
+      width: var(--qinfo-content-width, min(86vw, 860px));
       max-height: 70vh;
       overflow: auto;
       margin: 0 auto;

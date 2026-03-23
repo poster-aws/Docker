@@ -30,3 +30,14 @@
   50%  { transform: translateY(6px); opacity: 1; }
   100% { transform: translateY(0); opacity: 0.6; }
 }
+
+/* == Unified width for all Q info pages == */
+.table-wrapper {
+  width: 100% !important;
+  overflow-y: scroll !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.tables-wrapper {
+  max-width: 100% !important;
+}

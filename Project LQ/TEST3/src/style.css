@@ -431,7 +431,15 @@ input:checked + .slider::before { transform: translateX(18px); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .main .error { color: #dc2626; padding: 1rem; text-align: center; }
-.main .info-iframe { width: 100%; height: calc(100vh - var(--header-h) - 2rem); border: none; border-radius: var(--radius); }
+.main .info-iframe {
+  display: block;
+  width: min(86vw, 860px);
+  max-width: 100%;
+  height: calc(100vh - var(--header-h) - 2rem);
+  margin: 0 auto;
+  border: none;
+  border-radius: var(--radius);
+}
 
 @media (min-width: 1024px) {
   .main { padding: 0.75rem 2rem 1.5rem; }
