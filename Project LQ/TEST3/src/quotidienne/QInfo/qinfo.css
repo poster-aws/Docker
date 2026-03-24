@@ -34,8 +34,6 @@
 /* == Unified width for all Q info pages == */
 .table-wrapper {
   width: 100% !important;
-  overflow-y: scroll !important;
-  scrollbar-gutter: stable both-edges;
 }
 
 .tables-wrapper {
