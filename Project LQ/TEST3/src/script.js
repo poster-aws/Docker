@@ -128,6 +128,115 @@
     }
   }
 
+  function applyQ3Translations() {
+    if (container.getAttribute('data-page') !== 'quotidienne/q3.php') return;
+
+    var texts = currentLang === 'en'
+      ? {
+          draw: 'Draw',
+          last365: 'Last 365',
+          days: 'Days<br>ago',
+          previous: 'Previous<br>draw',
+          times: 'Times',
+          maxDays: 'Max<br>days ago',
+          lastDraw: 'Last<br>draw',
+          draws: 'Draws'
+        }
+      : {
+          draw: 'Tirage',
+          last365: '365 dernières',
+          days: 'Jours<br>passés',
+          previous: "L'avant<br>dernière",
+          times: 'Fois',
+          maxDays: 'Max<br>jours passés',
+          lastDraw: 'Dernier<br>Tirage',
+          draws: 'Tirages'
+        };
+
+    var tables = container.querySelectorAll('.interactive-table');
+    if (tables[0]) {
+      var headers1 = tables[0].querySelectorAll('thead th');
+      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
+      if (headers1[4]) headers1[4].innerHTML = texts.days;
+      if (headers1[5]) headers1[5].innerHTML = texts.previous;
+      if (headers1[6]) headers1[6].innerHTML = texts.times;
+      if (headers1[7]) headers1[7].innerHTML = texts.maxDays;
+    }
+    if (tables[1]) {
+      var headers2 = tables[1].querySelectorAll('thead th');
+      if (headers2[3]) headers2[3].innerHTML = texts.days;
+      if (headers2[4]) headers2[4].innerHTML = texts.lastDraw;
+      if (headers2[5]) headers2[5].innerHTML = 'Max<br>' + texts.times;
+      if (headers2[6]) headers2[6].innerHTML = 'Max jours<br>passés';
+      if (currentLang === 'en' && headers2[6]) headers2[6].innerHTML = 'Max days<br>ago';
+    }
+    if (tables[2]) {
+      var headers3 = tables[2].querySelectorAll('thead th');
+      if (headers3[1]) headers3[1].innerHTML = texts.days;
+      if (headers3[2]) {
+        var rangeSelect = headers3[2].querySelector('#q3CountRange');
+        if (rangeSelect) {
+          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
+          headers3[2].appendChild(rangeSelect);
+        }
+      }
+    }
+  }
+
+  function applyQ4Translations() {
+    if (container.getAttribute('data-page') !== 'quotidienne/q4.php') return;
+
+    var texts = currentLang === 'en'
+      ? {
+          draw: 'Draw',
+          last365: 'Last 365',
+          days: 'Days<br>ago',
+          previous: 'Previous<br>draw',
+          times: 'Times',
+          maxDays: 'Max<br>days ago',
+          lastDraw: 'Last<br>draw',
+          draws: 'Draws'
+        }
+      : {
+          draw: 'Tirage',
+          last365: '365 dernières',
+          days: 'Jours<br>passés',
+          previous: "L'avant<br>dernière",
+          times: 'Fois',
+          maxDays: 'Max<br>jours passés',
+          lastDraw: 'Dernier<br>Tirage',
+          draws: 'Tirages'
+        };
+
+    var tables = container.querySelectorAll('.interactive-table');
+    if (tables[0]) {
+      var headers1 = tables[0].querySelectorAll('thead th');
+      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
+      if (headers1[5]) headers1[5].innerHTML = texts.days;
+      if (headers1[6]) headers1[6].innerHTML = texts.previous;
+      if (headers1[7]) headers1[7].innerHTML = texts.times;
+      if (headers1[8]) headers1[8].innerHTML = texts.maxDays;
+    }
+    if (tables[1]) {
+      var headers2 = tables[1].querySelectorAll('thead th');
+      if (headers2[4]) headers2[4].innerHTML = texts.days;
+      if (headers2[5]) headers2[5].innerHTML = texts.lastDraw;
+      if (headers2[6]) headers2[6].innerHTML = 'Max<br>' + texts.times;
+      if (headers2[7]) headers2[7].innerHTML = currentLang === 'en' ? 'Max days<br>ago' : 'Max jours<br>passés';
+    }
+    if (tables[2]) {
+      var headers3 = tables[2].querySelectorAll('thead th');
+      if (headers3[1]) headers3[1].innerHTML = texts.days;
+      if (headers3[2]) {
+        var rangeSelect = headers3[2].querySelector('#q4CountRange');
+        if (rangeSelect) {
+          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
+          headers3[2].appendChild(rangeSelect);
+        }
+      }
+    }
+  }
+
   function updatePageTitleForLang(page) {
     if (!pageTitle || !page) return;
 
@@ -144,9 +253,13 @@
         ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
         : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
     } else if (page.indexOf('q3') !== -1) {
-      pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' ' + suffix + '</span>';
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Quotidienne 3 <span class="sub">' + count + ' draws since June 6, 1983</span>'
+        : 'Quotidienne 3 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
     } else if (page.indexOf('q4') !== -1) {
-      pageTitle.innerHTML = 'Quotidienne 4 <span class="sub">' + count + ' ' + suffix + '</span>';
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
+        : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
     }
   }
 
@@ -196,6 +309,8 @@
         container.innerHTML = html;
         container.setAttribute('data-page', page);
         applyQ2Translations();
+        applyQ3Translations();
+        applyQ4Translations();
         updateToggleLabels(page);
         makeTablesSortable();
 
@@ -214,9 +329,13 @@
             ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
             : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
         } else if (page.indexOf('q3') !== -1) {
-          pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' tirages</span>';
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Quotidienne 3 <span class="sub">' + count + ' draws since June 6, 1983</span>'
+            : 'Quotidienne 3 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
         } else if (page.indexOf('q4') !== -1) {
-          pageTitle.innerHTML = 'Quotidienne 4 <span class="sub">' + count + ' tirages</span>';
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
+            : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
         }
         infoBtn.textContent = '\u2139';
       })

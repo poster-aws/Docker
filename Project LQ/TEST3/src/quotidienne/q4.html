@@ -4,12 +4,12 @@
     <table class="interactive-table">
       <thead>
         <tr>
-          <th>Tirage<br><small>365 dernières</small></th>
+          <th><?= t('q4.col.draw') ?><br><small><?= t('q4.col.last_365') ?></small></th>
           <th>#</th><th>#</th><th>#</th><th>#</th>
-          <th>Jours<br>passés</th>
-          <th>L'avant<br>dernière</th>
-          <th>Fois</th>
-          <th>Max<br>jours passés</th>
+          <th><?= t('q4.col.days_passed') ?></th>
+          <th><?= t('q4.col.prev_draw') ?></th>
+          <th><?= t('q4.col.times') ?></th>
+          <th><?= t('q4.col.max_days_passed') ?></th>
         </tr>
       </thead>
       <tbody><!--TABLE_PLACEHOLDER--></tbody>
@@ -20,10 +20,10 @@
       <thead>
         <tr>
           <th>#</th><th>#</th><th>#</th><th>#</th>
-          <th>Jours<br>passés</th>
-          <th>Dernier<br>Tirage</th>
-          <th>Max<br>Fois</th>
-          <th>Max jours<br>passés</th>
+          <th><?= t('q4.col.days_passed') ?></th>
+          <th><?= t('q4.col.last_draw') ?></th>
+          <th>Max<br><?= t('q4.col.times') ?></th>
+          <th><?= t('q4.col.max_days_passed') ?></th>
         </tr>
       </thead>
       <tbody><!--COMBO_PLACEHOLDER--></tbody>
@@ -34,9 +34,9 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Jours<br>passés</th>
+          <th><?= t('q4.col.days_passed') ?></th>
           <th>
-            Tirages &nbsp; <br>
+            <?= t('q4.label.draws') ?> &nbsp; <br>
             <select id="q4CountRange">
               <option value="10">10</option>
               <option value="20">20</option>

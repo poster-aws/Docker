@@ -1,7 +1,12 @@
 <?php
 require_once "../db.php";
+require_once __DIR__ . "/../../i18n.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 function isUniqueCombo($n1, $n2, $n3, $n4) {
     return count(array_unique([$n1, $n2, $n3, $n4])) === 4;
@@ -100,7 +105,7 @@ foreach ($tiragesGrid as $t) {
 ?>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= htmlspecialchars($lang) ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -373,12 +378,14 @@ table.digit-grid {
 </div>
 
 <form class="filter-form" method="get">
-  Dernières
+  <?= t('q4info.latest') ?>
   <select name="grid_limit" onchange="this.form.submit()">
     <?php foreach ([50,100,200,500] as $opt): ?>
       <option value="<?= $opt ?>" <?= ($gridLimit==$opt?'selected':'') ?>><?= $opt ?></option>
     <?php endforeach; ?>
-  </select> tirages
+  </select>
+  <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
+  <?= t('q4info.draws_suffix') ?>
 </form>
 <!-- === /GRID Q4 === -->
 
@@ -390,11 +397,11 @@ table.digit-grid {
         <tr><th colspan="4"> <span id="statsOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('statsOrderTable', this.value)">
-            <option value="all">*Dans l'ordre (toutes)</option>
-            <option value="unique">- Numéros sont différents</option>
-            <option value="onepair">- Une paire</option>
-            <option value="twopairs">- Deux paires</option>
-            <option value="triplet">- Trois identiques</option>
+            <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
+            <option value="unique"><?= t('q4info.filter.unique') ?></option>
+            <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
+            <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
+            <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
           </select>
         </th></tr>
       </thead>
@@ -421,11 +428,11 @@ table.digit-grid {
         <tr><th colspan="4"> <span id="freeOrderCount"></span></th></tr>
         <tr><th colspan="4">
           <select onchange="applyFilter('freeOrderTable', this.value)">
-            <option value="all">*Dans l'ordre (toutes)</option>
-            <option value="unique">- Numéros sont différents</option>
-            <option value="onepair">- Une paire</option>
-            <option value="twopairs">- Deux paires</option>
-            <option value="triplet">- Trois identiques</option>
+            <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
+            <option value="unique"><?= t('q4info.filter.unique') ?></option>
+            <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
+            <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
+            <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
           </select>
         </th></tr>
       </thead>
@@ -449,7 +456,7 @@ table.digit-grid {
   <div class="number-stats-table">
     <table class="interactive-table" id="dupsVariantATable">
       <thead>
-        <tr><th colspan="5">Jamais sorti <br> N'Inport quel Ordre</th></tr>
+        <tr><th colspan="5"><?= t('q4info.never_drawn_any_order') ?></th></tr>
         <!-- <tr>
           <th>n1</th><th>n2</th><th>n3</th><th>n4</th><th>count</th>
         </tr> -->
@@ -523,67 +530,67 @@ table.digit-grid {
     <div class="info-digits">
       <span class="circle">9</span><span class="circle">9</span><span class="circle">9</span><span class="circle">9</span>
     </div>
-    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>10'000</b> </div>
+    <div class="info-text"><?= t('q4info.info.all_combinations') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">2</span><span class="circle">3</span><span class="circle">4</span>
     </div>
-    <div class="info-text">Dans l'Order - Tous les numéros sont différents : <b>5'040</b></div>
+    <div class="info-text"><?= t('q4info.info.all_different') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">1</span><span class="circle">2</span><span class="circle">3</span>
     </div>
-    <div class="info-text">Dans l'Order - Une paire : <b>4'320</b></div>
+    <div class="info-text"><?= t('q4info.info.one_pair') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">2</span>
     </div>
-    <div class="info-text">Dans l'Order - Deux paires : <b>270</b></div>
+    <div class="info-text"><?= t('q4info.info.two_pairs') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">1</span><span class="circle">1</span><span class="circle">8</span>
     </div>
-    <div class="info-text">Dans l'Order - Trois identiques : <b>360</b></div>
+    <div class="info-text"><?= t('q4info.info.triplet') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">8</span><span class="circle">8</span><span class="circle">8</span><span class="circle">8</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Toutes les combinaisons : <b>715</b></div>
+    <div class="info-text"><?= t('q4info.info.any_order_all_combinations') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">4</span><span class="circle">3</span><span class="circle">2</span><span class="circle">1</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Tous les numéros sont différents : <b>210</b></div>
+    <div class="info-text"><?= t('q4info.info.any_order_all_different') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">2</span><span class="circle">3</span><span class="circle">1</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Une paire : <b>360</b></div>
+    <div class="info-text"><?= t('q4info.info.any_order_one_pair') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">2</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Deux пaires : <b>45</b></div>
+    <div class="info-text"><?= t('q4info.info.any_order_two_pairs') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">1</span><span class="circle">2</span><span class="circle">1</span><span class="circle">1</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Trois identiques : <b>90</b></div>
+    <div class="info-text"><?= t('q4info.info.any_order_triplet') ?></div>
   </div>
   <div class="info-row">
     <div class="info-digits">
       <span class="circle">7</span><span class="circle">7</span><span class="circle">7</span><span class="circle">7</span>
     </div>
-    <div class="info-text">Quatre identiques – <b>10</b> </div>
+    <div class="info-text"><?= t('q4info.info.four_identical') ?></div>
   </div>
 </div>
 <!-- Информационный блок конец-->
@@ -600,8 +607,11 @@ function applyFilter(tableId, filterValue) {
     if (visible) count++;
   });
   const header = table.querySelector("thead tr:first-child th");
-  const baseTitle = tableId === "statsOrderTable" ? "Sorti une fois : " : "Jamais sorti : ";
-  header.innerHTML = `${baseTitle} <span> <strong>${count}</strong> combs.</span>`;
+  const baseTitle = tableId === "statsOrderTable"
+    ? <?= json_encode(t('q4info.header.once_drawn'), JSON_UNESCAPED_UNICODE) ?>
+    : <?= json_encode(t('q4info.header.never_drawn'), JSON_UNESCAPED_UNICODE) ?>;
+  const combsLabel = <?= json_encode(t('q4info.header.combs'), JSON_UNESCAPED_UNICODE) ?>;
+  header.innerHTML = `${baseTitle} <span> <strong>${count}</strong> ${combsLabel}</span>`;
 }
 
 function toggleMembers(evt, id) {

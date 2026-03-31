@@ -1,5 +1,6 @@
 <?php
 require_once "db.php";
+require_once __DIR__ . "/../i18n.php";
 
 $countResult = $conn->query("SELECT COUNT(*) as total FROM Q4");
 $q4count = 0;

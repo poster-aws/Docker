@@ -1,7 +1,12 @@
 <?php
 require_once "../db.php";
+require_once __DIR__ . "/../../i18n.php";
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 // Лимит по GET
 $allowedLimits = [50, 100, 200, 500];
@@ -32,7 +37,7 @@ $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= htmlspecialchars($lang) ?>">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -199,17 +204,19 @@ $conn->close();
     </tbody>
   </table>
 <?php else: ?>
-  <p style="text-align:center; color:red;">Нет данных для отображения.</p>
+  <p style="text-align:center; color:red;"><?= t('q3info.no_data') ?></p>
 <?php endif; ?>
 </div>
 
 <form class="filter-form" method="get">
-  Dernières
+  <?= t('q3info.latest') ?>
   <select name="limit" onchange="this.form.submit()">
     <?php foreach ([50, 100, 200, 500] as $opt): ?>
       <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
     <?php endforeach; ?>
-  </select> tirages
+  </select>
+  <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
+  <?= t('q3info.draws_suffix') ?>
 </form>
 
 <div id="infoBlock" class="info-list">
@@ -219,7 +226,7 @@ $conn->close();
       <span class="circle">2</span>
       <span class="circle">3</span>
     </div>
-    <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>1'000</b> </div>
+    <div class="info-text"><?= t('q3info.info.all_combinations') ?></div>
   </div>
 
   <div class="info-row">
@@ -228,7 +235,7 @@ $conn->close();
       <span class="circle">5</span>
       <span class="circle">6</span>
     </div>
-    <div class="info-text">Dans l'Order - Tous les numéros sont différents : <b>720</b> </div>
+    <div class="info-text"><?= t('q3info.info.all_different') ?></div>
   </div>
 
   <div class="info-row">
@@ -237,7 +244,7 @@ $conn->close();
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">Dans l'Order - Une paire : <b>270</b> </div>
+    <div class="info-text"><?= t('q3info.info.one_pair') ?></div>
   </div>
 
   <div class="info-row">
@@ -246,7 +253,7 @@ $conn->close();
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Toutes les combinaisons : <b>220</b> </div>
+    <div class="info-text"><?= t('q3info.info.any_order_all_combinations') ?></div>
   </div>
 
   <div class="info-row">
@@ -255,7 +262,7 @@ $conn->close();
       <span class="circle">1</span>
       <span class="circle">2</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Tous les numéros sont différents : <b>120</b> </div>
+    <div class="info-text"><?= t('q3info.info.any_order_all_different') ?></div>
   </div>
 
   <div class="info-row">
@@ -264,7 +271,7 @@ $conn->close();
       <span class="circle">2</span>
       <span class="circle">1</span>
     </div>
-    <div class="info-text">N'Importe quel Order - Une paire : <b>90</b> </div>
+    <div class="info-text"><?= t('q3info.info.any_order_one_pair') ?></div>
   </div>
 
   <div class="info-row">
@@ -273,7 +280,7 @@ $conn->close();
       <span class="circle">7</span>
       <span class="circle">7</span>
     </div>
-    <div class="info-text">Trois numéros identiques : <b>10</b> </div>
+    <div class="info-text"><?= t('q3info.info.three_identical') ?></div>
   </div>
 </div>
 
