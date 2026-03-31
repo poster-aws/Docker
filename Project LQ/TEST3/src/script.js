@@ -128,6 +128,26 @@
     }
   }
 
+  function updatePageTitleForLang(page) {
+    if (!pageTitle || !page) return;
+
+    var sub = pageTitle.querySelector('.sub');
+    if (!sub) return;
+
+    var countMatch = (sub.textContent || '').match(/\d+/);
+    if (!countMatch) return;
+    var count = countMatch[0];
+    var suffix = currentLang === 'en' ? 'draws' : 'tirages';
+
+    if (page.indexOf('q2') !== -1) {
+      pageTitle.innerHTML = 'Quotidienne 2 <span class="sub">' + count + ' ' + suffix + '</span>';
+    } else if (page.indexOf('q3') !== -1) {
+      pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' ' + suffix + '</span>';
+    } else if (page.indexOf('q4') !== -1) {
+      pageTitle.innerHTML = 'Quotidienne 4 <span class="sub">' + count + ' ' + suffix + '</span>';
+    }
+  }
+
   function loadPage(page) {
     if (!page) return;
     // Toujours aligner avec l’affichage des tableaux (évite Info « fantôme » après changement de page au menu).
@@ -285,9 +305,11 @@
       currentLang = nextLang;
       localStorage.setItem('lang', currentLang);
       updateLangUI();
+      updateToggleLabels();
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
+        updatePageTitleForLang(page);
         var infoUrl = getInfoUrl(page);
         if (infoUrl) {
           container.innerHTML = '<iframe src="' + infoUrl + '" class="info-iframe"></iframe>';
