@@ -8,6 +8,8 @@
   let q4CountRange = 50;
   let isAltView = false;
   let originalHomeContent = null;
+  let loadAbortController = null;
+  let loadRequestId = 0;
 
   const container = document.getElementById('container');
   const pageTitle = document.getElementById('pageTitle');
@@ -52,8 +54,69 @@
 
   function updateToggleLabels(page) {
     if (!labelOrder || !labelNimport) return;
+    if (currentLang === 'en') {
+      labelOrder.innerHTML = 'Order';
+      labelNimport.innerHTML = 'Any order';
+    } else {
+      labelOrder.innerHTML = 'Ordre';
+      labelNimport.innerHTML = "N'importe";
+    }
     labelOrder.classList.toggle('active', !toggleSwitch.checked);
     labelNimport.classList.toggle('active', toggleSwitch.checked);
+  }
+
+  function applyQ2Translations() {
+    if (container.getAttribute('data-page') !== 'quotidienne/q2.php') return;
+
+    var texts = currentLang === 'en'
+      ? {
+          draw: 'Draw',
+          last365: 'Last 365',
+          days: 'Days<br>ago',
+          previous: 'Previous<br>draw',
+          times: 'Times',
+          maxDays: 'Max days<br>ago',
+          lastDraw: 'Last<br>draw',
+          draws: 'Draws'
+        }
+      : {
+          draw: 'Tirage',
+          last365: '365 dernières',
+          days: 'Jours<br>passés',
+          previous: "L'avant<br>dernière",
+          times: 'Fois',
+          maxDays: 'Max jours<br>passés',
+          lastDraw: 'Dernier<br>Tirage',
+          draws: 'Tirages'
+        };
+
+    var tables = container.querySelectorAll('.interactive-table');
+    if (tables[0]) {
+      var headers1 = tables[0].querySelectorAll('thead th');
+      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
+      if (headers1[3]) headers1[3].innerHTML = texts.days;
+      if (headers1[4]) headers1[4].innerHTML = texts.previous;
+      if (headers1[5]) headers1[5].innerHTML = texts.times;
+      if (headers1[6]) headers1[6].innerHTML = texts.maxDays;
+    }
+    if (tables[1]) {
+      var headers2 = tables[1].querySelectorAll('thead th');
+      if (headers2[2]) headers2[2].innerHTML = texts.days;
+      if (headers2[3]) headers2[3].innerHTML = texts.lastDraw;
+      if (headers2[4]) headers2[4].innerHTML = 'Max<br>' + texts.times;
+      if (headers2[5]) headers2[5].innerHTML = texts.maxDays;
+    }
+    if (tables[2]) {
+      var headers3 = tables[2].querySelectorAll('thead th');
+      if (headers3[1]) headers3[1].innerHTML = texts.days;
+      if (headers3[2]) {
+        var rangeSelect = headers3[2].querySelector('#q2CountRange');
+        if (rangeSelect) {
+          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
+          headers3[2].appendChild(rangeSelect);
+        }
+      }
+    }
   }
 
   function loadPage(page) {
@@ -62,30 +125,46 @@
     isAltView = false;
     setNavOpen(false);
 
-    var isOrdered = toggleSwitch.checked;
-    var mode = isOrdered ? 'norder=1' : '';
-    var extraParam = 'lang=' + currentLang;
-
-    if (page.indexOf('q2') !== -1) {
-      extraParam += '&count_range=' + (q2CountRange || 50);
-    } else if (page.indexOf('q3') !== -1) {
-      extraParam += '&count_range=' + (q3CountRange || 50);
-    } else if (page.indexOf('q4') !== -1) {
-      extraParam += '&count_range=' + (q4CountRange || 50);
+    // Single source of truth for language across all reload paths.
+    var storedLang = localStorage.getItem('lang');
+    if (storedLang === 'fr' || storedLang === 'en') {
+      currentLang = storedLang;
     }
 
-    var query = [mode, extraParam].filter(Boolean).join('&');
+    var params = new URLSearchParams();
+    if (toggleSwitch.checked) {
+      params.set('norder', '1');
+    }
+    params.set('lang', currentLang);
+
+    if (page.indexOf('q2') !== -1) {
+      params.set('count_range', String(q2CountRange || 50));
+    } else if (page.indexOf('q3') !== -1) {
+      params.set('count_range', String(q3CountRange || 50));
+    } else if (page.indexOf('q4') !== -1) {
+      params.set('count_range', String(q4CountRange || 50));
+    }
+
+    var query = params.toString();
     var url = query ? page + '?' + query : page;
 
+    if (loadAbortController) {
+      loadAbortController.abort();
+    }
+    loadAbortController = new AbortController();
+    var requestId = ++loadRequestId;
+
     setSpinner(true);
-    fetch(url)
+    fetch(url, { signal: loadAbortController.signal, cache: 'no-store' })
       .then(function (r) {
         if (!r.ok) throw new Error('Erreur de chargement');
         return r.text();
       })
       .then(function (html) {
+        if (requestId !== loadRequestId) return;
         container.innerHTML = html;
         container.setAttribute('data-page', page);
+        applyQ2Translations();
         updateToggleLabels(page);
         makeTablesSortable();
 
@@ -100,7 +179,9 @@
         var meta = container.querySelector('[id$="-meta"]');
         var count = meta ? meta.dataset.count || '?' : '?';
         if (page.indexOf('q2') !== -1) {
-          pageTitle.innerHTML = 'Quotidienne 2 <span class="sub">' + count + ' tirages</span>';
+          pageTitle.innerHTML = (currentLang === 'en'
+            ? 'Quotidienne 2 <span class="sub">' + count + ' draws</span>'
+            : 'Quotidienne 2 <span class="sub">' + count + ' tirages</span>');
         } else if (page.indexOf('q3') !== -1) {
           pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' tirages</span>';
         } else if (page.indexOf('q4') !== -1) {
@@ -109,10 +190,13 @@
         infoBtn.textContent = '\u2139';
       })
       .catch(function (err) {
+        if (err && err.name === 'AbortError') return;
+        if (requestId !== loadRequestId) return;
         container.innerHTML = '<p class="error">Impossible de charger la page.</p>';
         console.error(err);
       })
       .finally(function () {
+        if (requestId !== loadRequestId) return;
         setSpinner(false);
       });
   }
@@ -186,7 +270,10 @@
 
   document.querySelectorAll('.lang-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      currentLang = btn.dataset.lang;
+      var nextLang = btn.dataset.lang;
+      if (nextLang !== 'fr' && nextLang !== 'en') return;
+      if (nextLang === currentLang) return;
+      currentLang = nextLang;
       localStorage.setItem('lang', currentLang);
       updateLangUI();
       var page = container.getAttribute('data-page');

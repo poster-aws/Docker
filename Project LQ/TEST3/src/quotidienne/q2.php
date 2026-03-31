@@ -1,5 +1,10 @@
 <?php
 require_once "db.php";
+require_once __DIR__ . "/../i18n.php";
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 $countQuery = "SELECT COUNT(*) as total FROM Q2";
 $countResult = $conn->query($countQuery);
