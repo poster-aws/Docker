@@ -65,6 +65,15 @@
     labelNimport.classList.toggle('active', toggleSwitch.checked);
   }
 
+  function getInfoUrl(page) {
+    if (!page) return '';
+    var cacheBuster = '&_ts=' + Date.now();
+    if (page.indexOf('q2') !== -1) return 'quotidienne/QInfo/q2info.php?table=Q2_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
+    if (page.indexOf('q3') !== -1) return 'quotidienne/QInfo/q3info.php?table=Q3_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
+    if (page.indexOf('q4') !== -1) return 'quotidienne/QInfo/q4info.php?table=Q4_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
+    return '';
+  }
+
   function applyQ2Translations() {
     if (container.getAttribute('data-page') !== 'quotidienne/q2.php') return;
 
@@ -277,7 +286,16 @@
       localStorage.setItem('lang', currentLang);
       updateLangUI();
       var page = container.getAttribute('data-page');
-      if (page) loadPage(page);
+      if (!page) return;
+      if (isAltView) {
+        var infoUrl = getInfoUrl(page);
+        if (infoUrl) {
+          container.innerHTML = '<iframe src="' + infoUrl + '" class="info-iframe"></iframe>';
+          infoBtn.textContent = '\u21c6';
+          return;
+        }
+      }
+      loadPage(page);
     });
   });
 
@@ -304,11 +322,8 @@
       if (!page) return;
       isAltView = !isAltView;
       if (isAltView) {
-        var infoUrl;
-        if (page.indexOf('q2') !== -1) infoUrl = 'quotidienne/QInfo/q2info.php?table=Q2_stats_order';
-        else if (page.indexOf('q3') !== -1) infoUrl = 'quotidienne/QInfo/q3info.php?table=Q3_stats_order';
-        else if (page.indexOf('q4') !== -1) infoUrl = 'quotidienne/QInfo/q4info.php?table=Q4_stats_order';
-        else return;
+        var infoUrl = getInfoUrl(page);
+        if (!infoUrl) return;
         container.innerHTML = '<iframe src="' + infoUrl + '" class="info-iframe"></iframe>';
         infoBtn.textContent = '\u21c6';
       } else {

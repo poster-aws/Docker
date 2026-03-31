@@ -1,5 +1,10 @@
 <?php
 require_once "../db.php";
+require_once __DIR__ . "/../../i18n.php";
+
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -48,6 +53,12 @@ if (isset($_GET['ajax'])) {
 }
 
 $json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
+$jsTexts = json_encode([
+    'chartCombinations' => t('q2info.chart.combinations'),
+    'statsDays' => t('q2info.stats.days'),
+    'statsComboCount' => t('q2info.stats.combo_count'),
+    'tooltipPattern' => t('q2info.chart.tooltip'),
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // --------------------
 // Получение данных для GRID (как Q3info, но Q2)
@@ -77,7 +88,7 @@ $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= htmlspecialchars($lang) ?>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -276,47 +287,48 @@ $conn->close();
         </tbody>
       </table>
     <?php else: ?>
-      <p style="text-align:center; color: red;">Нет данных для отображения.</p>
+      <p style="text-align:center; color: red;"><?= t('q2info.no_data') ?></p>
     <?php endif; ?>
   </div>
 
   <form class="filter-form" method="get">
     <input type="hidden" name="limit" value="<?= htmlspecialchars($limit) ?>">
+    <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
     <?php if ($isNorder): ?>
       <input type="hidden" name="norder" value="1">
     <?php endif; ?>
 
-    Dernières
+    <?= t('q2info.latest') ?>
     <select name="grid_limit" onchange="this.form.submit()">
       <?php foreach ([50, 100, 365] as $opt): ?>
         <option value="<?= $opt ?>" <?= ($gridLimit == $opt) ? 'selected' : '' ?>><?= $opt ?></option>
       <?php endforeach; ?>
-    </select> tirages
+    </select> <?= t('q2info.draws_suffix') ?>
   </form>
 
   <canvas id="myChart" width="400" height="200"></canvas>
 
   <div id="toggleWrapper">
     <input type="checkbox" id="norderToggle" <?= $isNorder ? 'checked' : '' ?>>
-    <label for="norderToggle">Dans N'Importe quel Order</label>
+    <label for="norderToggle"><?= t('q2info.any_order') ?></label>
   </div>
 
   <div id="selectWrapper">
-    <label for="limitSelect">Nombre de dernières tirages:</label>
+    <label for="limitSelect"><?= t('q2info.last_draw_count') ?></label>
     <select id="limitSelect">
       <option value="100" <?= ($limit == 100 ? 'selected' : '') ?>>100</option>
       <option value="200" <?= ($limit == 200 ? 'selected' : '') ?>>200</option>
       <option value="500" <?= ($limit == 500 ? 'selected' : '') ?>>500</option>
       <option value="1000" <?= ($limit == 1000 ? 'selected' : '') ?>>1000</option>
-      <option value="0" <?= ($limit == 0 ? 'selected' : '') ?>>Tout</option>
+      <option value="0" <?= ($limit == 0 ? 'selected' : '') ?>><?= t('q2info.all') ?></option>
     </select>
   </div>
 
   <table id="statsTable">
     <thead>
       <tr>
-        <th>Jours passé</th>
-        <th>Nombre de combinaisons</th>
+        <th><?= t('q2info.stats.days') ?></th>
+        <th><?= t('q2info.stats.combo_count') ?></th>
         <th>%</th>
       </tr>
     </thead>
@@ -329,27 +341,28 @@ $conn->close();
         <span class="circle">1</span>
         <span class="circle">2</span>
       </div>
-      <div class="info-text">Dans l'Order - Toutes les combinaisons : <b>100</b></div>
+      <div class="info-text"><?= t('q2info.info.all_combinations') ?></div>
     </div>
     <div class="info-row">
       <div class="info-digits">
         <span class="circle">2</span>
         <span class="circle">1</span>
       </div>
-      <div class="info-text">N'Importe quel Order - Sans doublons : <b>45</b></div>
+      <div class="info-text"><?= t('q2info.info.any_order_no_duplicates') ?></div>
     </div>
     <div class="info-row">
       <div class="info-digits">
         <span class="circle">0</span>
         <span class="circle">0</span>
       </div>
-      <div class="info-text">Doublons : <b>10</b></div>
+      <div class="info-text"><?= t('q2info.info.duplicates') ?></div>
     </div>
   </div>
 
   <script>
     let chart;
     const ctx = document.getElementById('myChart');
+    const texts = <?php echo $jsTexts; ?>;
 
     function formatData(dataFromPHP) {
       const scatterData = dataFromPHP.map(item => ({
@@ -362,7 +375,7 @@ $conn->close();
 
       const data = {
         datasets: [{
-          label: 'Combinaisons',
+          label: texts.chartCombinations,
           data: scatterData.map(point => ({
             x: point.x,
             y: yIndexMap[point.y]
@@ -377,12 +390,12 @@ $conn->close();
         options: {
           responsive: true,
           scales: {
-            x: { title: { display: true, text: 'Jours passés' } },
+            x: { title: { display: true, text: texts.statsDays } },
             y: {
               ticks: {
                 callback: value => uniqueYValues[value] || ''
               },
-              title: { display: true, text: 'Combinaisons' }
+              title: { display: true, text: texts.chartCombinations }
             }
           },
           plugins: {
@@ -392,7 +405,9 @@ $conn->close();
                 label: context => {
                   const index = context.raw.y;
                   const combo = uniqueYValues[index] || '';
-                  return `Combinaison: ${combo}, Jours: ${context.raw.x}`;
+                  return texts.tooltipPattern
+                    .replace('{combo}', combo)
+                    .replace('{days}', context.raw.x);
                 }
               }
             }
@@ -435,7 +450,7 @@ $conn->close();
 
     async function loadData(limit, isNorder) {
       try {
-        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&ajax=1`);
+        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&lang=<?= htmlspecialchars($lang, ENT_QUOTES) ?>&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
