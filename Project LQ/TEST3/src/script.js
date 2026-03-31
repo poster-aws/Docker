@@ -140,7 +140,9 @@
     var suffix = currentLang === 'en' ? 'draws' : 'tirages';
 
     if (page.indexOf('q2') !== -1) {
-      pageTitle.innerHTML = 'Quotidienne 2 <span class="sub">' + count + ' ' + suffix + '</span>';
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
+        : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
     } else if (page.indexOf('q3') !== -1) {
       pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' ' + suffix + '</span>';
     } else if (page.indexOf('q4') !== -1) {
@@ -208,9 +210,9 @@
         var meta = container.querySelector('[id$="-meta"]');
         var count = meta ? meta.dataset.count || '?' : '?';
         if (page.indexOf('q2') !== -1) {
-          pageTitle.innerHTML = (currentLang === 'en'
-            ? 'Quotidienne 2 <span class="sub">' + count + ' draws</span>'
-            : 'Quotidienne 2 <span class="sub">' + count + ' tirages</span>');
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
+            : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
         } else if (page.indexOf('q3') !== -1) {
           pageTitle.innerHTML = 'Quotidienne 3 <span class="sub">' + count + ' tirages</span>';
         } else if (page.indexOf('q4') !== -1) {
