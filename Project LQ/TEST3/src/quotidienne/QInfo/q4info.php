@@ -596,6 +596,17 @@ table.digit-grid {
 <!-- Информационный блок конец-->
 
 <script>
+function getCurrentLang() {
+  const lang = localStorage.getItem('lang');
+  return (lang === 'fr' || lang === 'en') ? lang : 'fr';
+}
+
+function syncInfoLangFields() {
+  document.querySelectorAll('input[name="lang"]').forEach(function (input) {
+    input.value = getCurrentLang();
+  });
+}
+
 function applyFilter(tableId, filterValue) {
   const table = document.getElementById(tableId);
   const rows = table.querySelectorAll("tbody tr");
@@ -627,9 +638,15 @@ document.addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+  syncInfoLangFields();
   applyFilter('statsOrderTable', 'all');
   applyFilter('freeOrderTable', 'all');
 });
+
+const gridForm = document.querySelector('.filter-form');
+if (gridForm) {
+  gridForm.addEventListener('submit', syncInfoLangFields);
+}
 </script>
 
 

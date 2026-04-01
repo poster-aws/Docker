@@ -284,5 +284,25 @@ $conn->close();
   </div>
 </div>
 
+<script>
+  function getCurrentLang() {
+    const lang = localStorage.getItem('lang');
+    return (lang === 'fr' || lang === 'en') ? lang : 'fr';
+  }
+
+  function syncInfoLangFields() {
+    document.querySelectorAll('input[name="lang"]').forEach(function (input) {
+      input.value = getCurrentLang();
+    });
+  }
+
+  const gridForm = document.querySelector('.filter-form');
+  if (gridForm) {
+    gridForm.addEventListener('submit', syncInfoLangFields);
+  }
+
+  syncInfoLangFields();
+</script>
+
 </body>
 </html>

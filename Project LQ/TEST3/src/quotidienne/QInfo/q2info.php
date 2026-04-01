@@ -364,6 +364,17 @@ $conn->close();
     const ctx = document.getElementById('myChart');
     const texts = <?php echo $jsTexts; ?>;
 
+    function getCurrentLang() {
+      const lang = localStorage.getItem('lang');
+      return (lang === 'fr' || lang === 'en') ? lang : 'fr';
+    }
+
+    function syncInfoLangFields() {
+      document.querySelectorAll('input[name="lang"]').forEach(function (input) {
+        input.value = getCurrentLang();
+      });
+    }
+
     function formatData(dataFromPHP) {
       const scatterData = dataFromPHP.map(item => ({
         x: parseInt(item.days) || 0,
@@ -450,7 +461,7 @@ $conn->close();
 
     async function loadData(limit, isNorder) {
       try {
-        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&lang=<?= htmlspecialchars($lang, ENT_QUOTES) ?>&ajax=1`);
+        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&lang=${encodeURIComponent(getCurrentLang())}&ajax=1`);
         const data = await response.json();
         renderChart(data);
       } catch (error) {
@@ -474,6 +485,12 @@ $conn->close();
       loadData(getLimit(), getNorder());
     });
 
+    const gridForm = document.querySelector('.filter-form');
+    if (gridForm) {
+      gridForm.addEventListener('submit', syncInfoLangFields);
+    }
+
+    syncInfoLangFields();
     renderChart(<?php echo $json_data; ?>);
   </script>
 
