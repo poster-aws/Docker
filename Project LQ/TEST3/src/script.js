@@ -418,7 +418,8 @@
       if (visible) count++;
     });
 
-    var header = table.querySelector('thead tr:first-child th');
+    var titleEl = table.querySelector('.q4info-head-title');
+    var header = titleEl || table.querySelector('thead tr:first-child th');
     if (!header) return;
     var baseTitle = table.dataset.baseTitle || '';
     var combsLabel = table.dataset.combsLabel || '';
@@ -452,6 +453,7 @@
   function makeTablesSortable() {
     container.querySelectorAll('.interactive-table').forEach(function (table) {
       if (table.closest('.number-stats-table')) return;
+      if (table.id === 'statsOrderTable' || table.id === 'freeOrderTable') return;
       var headers = table.querySelectorAll('thead th');
       var tbody = table.querySelector('tbody');
       if (!tbody) return;

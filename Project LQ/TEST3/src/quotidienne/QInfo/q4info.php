@@ -123,11 +123,12 @@ foreach ($tiragesGrid as $t) {
 
 .q4info-layout .q4info-tables {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
   gap: 20px;
   margin: 2px auto 0 auto;
   max-width: 100%;
+  width: 100%;
 }
 
 .q4info-layout .table-container,
@@ -171,6 +172,7 @@ foreach ($tiragesGrid as $t) {
   width: max-content;
   min-width: 0;
 }
+/* Третья таблица и прочие: одна строка шапки */
 .q4info-layout .interactive-table thead tr:nth-child(1) th {
   position: sticky; top: 0;
   background-color: rgb(163, 216, 234);
@@ -180,6 +182,45 @@ foreach ($tiragesGrid as $t) {
   position: sticky; top: 38px;
   background-color: rgb(218, 238, 247);
   z-index: 11; padding: 2px 4px; border-top: none;
+}
+
+/* Первые две таблицы: один <tr> — заголовок + select в колонке без межстрочного зазора таблицы */
+.q4info-layout .table-container .interactive-table thead tr:first-child th,
+.q4info-layout .combo-table-container .interactive-table thead tr:first-child th {
+  padding: 0;
+  border-bottom: none;
+  background: transparent;
+  vertical-align: top;
+  font-size: inherit;
+  color: #000;
+  font-weight: 700;
+}
+.q4info-layout .q4info-thead-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
+}
+.q4info-layout .q4info-head-band {
+  background-color: rgb(163, 216, 234);
+  padding: 6px 4px;
+  border-bottom: 1px solid #999;
+  line-height: 1.2;
+  text-align: center;
+}
+.q4info-layout .q4info-head-filters {
+  background-color: rgb(218, 238, 247);
+  padding: 2px 4px 6px;
+  text-align: center;
+}
+.q4info-layout .table-container .q4info-head-filters .q4info-filter,
+.q4info-layout .combo-table-container .q4info-head-filters .q4info-filter {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 .q4info-layout .interactive-table td {
   padding: 9px; border-bottom: 1px dashed #777;
@@ -414,16 +455,22 @@ foreach ($tiragesGrid as $t) {
   <div class="table-container">
     <table class="interactive-table" id="statsOrderTable" data-base-title="<?= htmlspecialchars(t('q4info.header.once_drawn')) ?>" data-combs-label="<?= htmlspecialchars(t('q4info.header.combs')) ?>">
       <thead>
-        <tr><th colspan="4"> <span id="statsOrderCount"></span></th></tr>
-        <tr><th colspan="4">
-          <select class="q4info-filter" data-table-id="statsOrderTable">
-            <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
-            <option value="unique"><?= t('q4info.filter.unique') ?></option>
-            <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
-            <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
-            <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
-          </select>
-        </th></tr>
+        <tr>
+          <th colspan="4">
+            <div class="q4info-thead-stack">
+              <div class="q4info-head-band q4info-head-title"></div>
+              <div class="q4info-head-filters">
+                <select class="q4info-filter" data-table-id="statsOrderTable">
+                  <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
+                  <option value="unique"><?= t('q4info.filter.unique') ?></option>
+                  <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
+                  <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
+                  <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
+                </select>
+              </div>
+            </div>
+          </th>
+        </tr>
       </thead>
       <tbody>
         <?php while ($row = $fois1->fetch_assoc()):
@@ -445,16 +492,22 @@ foreach ($tiragesGrid as $t) {
   <div class="combo-table-container">
     <table class="interactive-table" id="freeOrderTable" data-base-title="<?= htmlspecialchars(t('q4info.header.never_drawn')) ?>" data-combs-label="<?= htmlspecialchars(t('q4info.header.combs')) ?>">
       <thead>
-        <tr><th colspan="4"> <span id="freeOrderCount"></span></th></tr>
-        <tr><th colspan="4">
-          <select class="q4info-filter" data-table-id="freeOrderTable">
-            <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
-            <option value="unique"><?= t('q4info.filter.unique') ?></option>
-            <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
-            <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
-            <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
-          </select>
-        </th></tr>
+        <tr>
+          <th colspan="4">
+            <div class="q4info-thead-stack">
+              <div class="q4info-head-band q4info-head-title"></div>
+              <div class="q4info-head-filters">
+                <select class="q4info-filter" data-table-id="freeOrderTable">
+                  <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
+                  <option value="unique"><?= t('q4info.filter.unique') ?></option>
+                  <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
+                  <option value="twopairs"><?= t('q4info.filter.twopairs') ?></option>
+                  <option value="triplet"><?= t('q4info.filter.triplet') ?></option>
+                </select>
+              </div>
+            </div>
+          </th>
+        </tr>
       </thead>
       <tbody>
         <?php while ($row = $freeOrder->fetch_assoc()):
