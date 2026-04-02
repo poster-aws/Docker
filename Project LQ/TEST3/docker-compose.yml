@@ -1,32 +1,67 @@
-# TEST3 — только веб (nginx + php). БД общая с TEST2 (сеть mysql_net).
-# Запускайте сначала: cd TEST2 && docker compose up -d
-# Затем: cd TEST3 && docker compose up -d
-
 services:
+  db:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      # MYSQL_DATABASE: quotidienne2  # Создаем БД
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user  
+    volumes:
+      # - ./DB:/var/lib/mysql/  # Для персистентности данных
+      - ./sql:/docker-entrypoint-initdb.d # Загрузка SQL скриптов при старте
+    ports:
+      - "3306:3306"
+    networks:
+      - mysql_net
+
+  restore:
+    image: mysql:8
+    container_name: mysql_restore
+    depends_on:
+      - db
+    volumes:
+      - ../BackupDB:/backups
+      - ./restore.sh:/scripts/restore.sh
+    networks:
+      - mysql_net
+    entrypoint: ["/bin/sh", "-c", "/scripts/restore.sh"]
+    restart: "no"
+
   php:
     build: .
-    image: my-php-test3
-    container_name: php-fpm-test3
+    image: my-php  # Задаем имя образа
+    container_name: php-fpm
     volumes:
       - ./src:/var/www/html
     networks:
       - mysql_net
+    depends_on:
+      - db
     ports:
-      - "9001:9000"
+      - "9000:9000"  # Порт для взаимодействия с Nginx
 
   nginx:
     image: nginx:latest
-    container_name: nginx-test3
+    container_name: nginx-server
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./src:/var/www/html
     ports:
-      - "81:80"
+      - "80:80"
     networks:
       - mysql_net
     depends_on:
       - php
 
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"  # Порт, по которому будет доступен Adminer
+    networks:
+      - mysql_net
+
 networks:
   mysql_net:
-    external: true
+    name: mysql_net # Явно указываем имя сети, чтобы Adminer мог её использовать

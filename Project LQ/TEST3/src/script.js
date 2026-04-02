@@ -70,15 +70,15 @@
     if (!page) return '';
     var cacheBuster = '&_ts=' + Date.now();
     if (page.indexOf('q2') !== -1) return 'quotidienne/QInfo/q2info.php?table=Q2_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
-    if (page.indexOf('q3') !== -1) return 'quotidienne/QInfo/q3.info.php?table=Q3_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
+    if (page.indexOf('q3') !== -1) return 'quotidienne/QInfo/q3info.php?table=Q3_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
     if (page.indexOf('q4') !== -1) return 'quotidienne/QInfo/q4info.php?table=Q4_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
     return '';
   }
 
   function getInfoFetchPage(page) {
     if (!page) return '';
-    if (page === 'quotidienne/q3.php') return 'quotidienne/QInfo/q3.info.php';
-    if (page === 'quotidienne/QInfo/q3.info.php') return 'quotidienne/q3.php';
+    if (page === 'quotidienne/q3.php') return 'quotidienne/QInfo/q3info.php';
+    if (page === 'quotidienne/QInfo/q3info.php') return 'quotidienne/q3.php';
     return '';
   }
 
@@ -271,53 +271,6 @@
     }
   }
 
-  function getLoadUrls(page, params) {
-    var query = params.toString();
-    if (page !== 'quotidienne/QInfo/q3.info.php') {
-      return [query ? page + '?' + query : page];
-    }
-
-    var limit = String(q3InfoLimit || 50);
-    if (currentLang === 'en') {
-      return [
-        page + '?lang=en&limit=' + encodeURIComponent(limit),
-        page + '?limit=' + encodeURIComponent(limit) + '&lang=en',
-        page + '?lang=en',
-        page + '?limit=' + encodeURIComponent(limit)
-      ];
-    }
-
-    return [
-      page + '?limit=' + encodeURIComponent(limit),
-      page + '?lang=fr&limit=' + encodeURIComponent(limit),
-      page + '?limit=' + encodeURIComponent(limit) + '&lang=fr',
-      page
-    ];
-  }
-
-  function fetchFirstAvailable(urls, signal) {
-    var index = 0;
-
-    function tryNext() {
-      if (index >= urls.length) {
-        throw new Error('Erreur de chargement');
-      }
-
-      var url = urls[index++];
-      return fetch(url, { signal: signal, cache: 'no-store' })
-        .then(function (r) {
-          if (!r.ok) throw new Error('Erreur de chargement');
-          return r.text();
-        })
-        .catch(function (err) {
-          if (err && err.name === 'AbortError') throw err;
-          return tryNext();
-        });
-    }
-
-    return tryNext();
-  }
-
   function loadPage(page, options) {
     if (!page) return;
     options = options || {};
@@ -332,10 +285,10 @@
     }
 
     var params = new URLSearchParams();
-    if (page !== 'quotidienne/QInfo/q3.info.php' && toggleSwitch.checked) {
+    if (page !== 'quotidienne/QInfo/q3info.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q3.info.php') {
+    if (page === 'quotidienne/QInfo/q3info.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -347,13 +300,14 @@
       params.set('count_range', String(q2CountRange || 50));
     } else if (page === 'quotidienne/q3.php') {
       params.set('count_range', String(q3CountRange || 50));
-    } else if (page === 'quotidienne/QInfo/q3.info.php') {
+    } else if (page === 'quotidienne/QInfo/q3info.php') {
       params.set('limit', String(q3InfoLimit || 50));
     } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
     }
 
-    var urls = getLoadUrls(page, params);
+    var query = params.toString();
+    var url = query ? page + '?' + query : page;
 
     if (loadAbortController) {
       loadAbortController.abort();
@@ -362,7 +316,11 @@
     var requestId = ++loadRequestId;
 
     setSpinner(true);
-    fetchFirstAvailable(urls, loadAbortController.signal)
+    fetch(url, { signal: loadAbortController.signal, cache: 'no-store' })
+      .then(function (html) {
+        if (!html.ok) throw new Error('Erreur de chargement');
+        return html.text();
+      })
       .then(function (html) {
         if (requestId !== loadRequestId) return;
         container.innerHTML = html;
@@ -377,7 +335,7 @@
           bindRangeSelect(container.querySelector('#q2CountRange'), 'q2', page);
         } else if (page === 'quotidienne/q3.php') {
           bindRangeSelect(container.querySelector('#q3CountRange'), 'q3', page);
-        } else if (page === 'quotidienne/QInfo/q3.info.php') {
+        } else if (page === 'quotidienne/QInfo/q3info.php') {
           bindQ3InfoLimitSelect(container.querySelector('#q3InfoLimit'), page);
         } else if (page.indexOf('q4') !== -1) {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
@@ -500,7 +458,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q3.info.php') {
+        if (page === 'quotidienne/QInfo/q3info.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -539,7 +497,7 @@
       if (!page) return;
       var fetchInfoPage = getInfoFetchPage(page);
       if (fetchInfoPage) {
-        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q3.info.php';
+        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q3info.php';
         loadPage(fetchInfoPage, { preserveAltView: nextAltView });
         return;
       }
