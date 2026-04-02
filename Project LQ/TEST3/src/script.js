@@ -6,6 +6,7 @@
   let q2CountRange = 50;
   let q3CountRange = 50;
   let q4CountRange = 50;
+  let q3InfoLimit = 50;
   let isAltView = false;
   let originalHomeContent = null;
   let loadAbortController = null;
@@ -76,48 +77,9 @@
 
   function getInfoFetchPage(page) {
     if (!page) return '';
-    if (page === 'quotidienne/q3.php' || page === 'quotidienne/q3test.php') {
-      return currentLang === 'en'
-        ? 'quotidienne/q3test-en.html'
-        : 'quotidienne/q3test-fr.html';
-    }
+    if (page === 'quotidienne/q3.php') return 'quotidienne/q3info_fetch.php';
+    if (page === 'quotidienne/q3info_fetch.php') return 'quotidienne/q3.php';
     return '';
-  }
-
-  function loadQ3TestPage() {
-    var fetchInfoPage = getInfoFetchPage('quotidienne/q3test.php');
-    if (!fetchInfoPage) return;
-
-    isAltView = true;
-    if (loadAbortController) {
-      loadAbortController.abort();
-    }
-    loadAbortController = new AbortController();
-    var requestId = ++loadRequestId;
-
-    setSpinner(true);
-    fetch(fetchInfoPage, { signal: loadAbortController.signal, cache: 'no-store' })
-      .then(function (r) {
-        if (!r.ok) throw new Error('Erreur de chargement');
-        return r.text();
-      })
-      .then(function (html) {
-        if (requestId !== loadRequestId) return;
-        container.innerHTML = html;
-        container.setAttribute('data-page', 'quotidienne/q3test.php');
-        updatePageTitleForLang('quotidienne/q3.php');
-        infoBtn.textContent = '\u21c6';
-      })
-      .catch(function (err) {
-        if (err && err.name === 'AbortError') return;
-        if (requestId !== loadRequestId) return;
-        container.innerHTML = '<p class="error">Impossible de charger la page.</p>';
-        console.error(err);
-      })
-      .finally(function () {
-        if (requestId !== loadRequestId) return;
-        setSpinner(false);
-      });
   }
 
   function applyQ2Translations() {
@@ -309,6 +271,53 @@
     }
   }
 
+  function getLoadUrls(page, params) {
+    var query = params.toString();
+    if (page !== 'quotidienne/q3info_fetch.php') {
+      return [query ? page + '?' + query : page];
+    }
+
+    var limit = String(q3InfoLimit || 50);
+    if (currentLang === 'en') {
+      return [
+        page + '?lang=en&limit=' + encodeURIComponent(limit),
+        page + '?limit=' + encodeURIComponent(limit) + '&lang=en',
+        page + '?lang=en',
+        page + '?limit=' + encodeURIComponent(limit)
+      ];
+    }
+
+    return [
+      page + '?limit=' + encodeURIComponent(limit),
+      page + '?lang=fr&limit=' + encodeURIComponent(limit),
+      page + '?limit=' + encodeURIComponent(limit) + '&lang=fr',
+      page
+    ];
+  }
+
+  function fetchFirstAvailable(urls, signal) {
+    var index = 0;
+
+    function tryNext() {
+      if (index >= urls.length) {
+        throw new Error('Erreur de chargement');
+      }
+
+      var url = urls[index++];
+      return fetch(url, { signal: signal, cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('Erreur de chargement');
+          return r.text();
+        })
+        .catch(function (err) {
+          if (err && err.name === 'AbortError') throw err;
+          return tryNext();
+        });
+    }
+
+    return tryNext();
+  }
+
   function loadPage(page, options) {
     if (!page) return;
     options = options || {};
@@ -323,21 +332,28 @@
     }
 
     var params = new URLSearchParams();
-    if (page !== 'quotidienne/q3test.php' && toggleSwitch.checked) {
+    if (page !== 'quotidienne/q3info_fetch.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    params.set('lang', currentLang);
+    if (page === 'quotidienne/q3info_fetch.php') {
+      if (currentLang === 'en') {
+        params.set('lang', 'en');
+      }
+    } else {
+      params.set('lang', currentLang);
+    }
 
     if (page === 'quotidienne/q2.php') {
       params.set('count_range', String(q2CountRange || 50));
     } else if (page === 'quotidienne/q3.php') {
       params.set('count_range', String(q3CountRange || 50));
+    } else if (page === 'quotidienne/q3info_fetch.php') {
+      params.set('limit', String(q3InfoLimit || 50));
     } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
     }
 
-    var query = params.toString();
-    var url = query ? page + '?' + query : page;
+    var urls = getLoadUrls(page, params);
 
     if (loadAbortController) {
       loadAbortController.abort();
@@ -346,11 +362,7 @@
     var requestId = ++loadRequestId;
 
     setSpinner(true);
-    fetch(url, { signal: loadAbortController.signal, cache: 'no-store' })
-      .then(function (r) {
-        if (!r.ok) throw new Error('Erreur de chargement');
-        return r.text();
-      })
+    fetchFirstAvailable(urls, loadAbortController.signal)
       .then(function (html) {
         if (requestId !== loadRequestId) return;
         container.innerHTML = html;
@@ -365,6 +377,8 @@
           bindRangeSelect(container.querySelector('#q2CountRange'), 'q2', page);
         } else if (page === 'quotidienne/q3.php') {
           bindRangeSelect(container.querySelector('#q3CountRange'), 'q3', page);
+        } else if (page === 'quotidienne/q3info_fetch.php') {
+          bindQ3InfoLimitSelect(container.querySelector('#q3InfoLimit'), page);
         } else if (page.indexOf('q4') !== -1) {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         }
@@ -408,6 +422,15 @@
       else if (key === 'q3') q3CountRange = v;
       else q4CountRange = v;
       loadPage(page);
+    });
+  }
+
+  function bindQ3InfoLimitSelect(select, page) {
+    if (!select) return;
+    select.value = String(q3InfoLimit || 50);
+    select.addEventListener('change', function () {
+      q3InfoLimit = parseInt(select.value, 10) || 50;
+      loadPage(page, { preserveAltView: true });
     });
   }
 
@@ -477,8 +500,8 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/q3test.php') {
-          loadQ3TestPage();
+        if (page === 'quotidienne/q3info_fetch.php') {
+          loadPage(page, { preserveAltView: true });
           return;
         }
         updatePageTitleForLang(page);
@@ -516,12 +539,8 @@
       if (!page) return;
       var fetchInfoPage = getInfoFetchPage(page);
       if (fetchInfoPage) {
-        if (page === 'quotidienne/q3.php') {
-          loadQ3TestPage();
-          return;
-        }
-        isAltView = false;
-        loadPage('quotidienne/q3.php');
+        var nextAltView = fetchInfoPage === 'quotidienne/q3info_fetch.php';
+        loadPage(fetchInfoPage, { preserveAltView: nextAltView });
         return;
       }
       isAltView = !isAltView;
