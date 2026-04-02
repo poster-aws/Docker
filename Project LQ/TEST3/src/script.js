@@ -7,6 +7,7 @@
   let q3CountRange = 50;
   let q4CountRange = 50;
   let q3InfoLimit = 50;
+  let q4InfoLimit = 50;
   let isAltView = false;
   let originalHomeContent = null;
   let loadAbortController = null;
@@ -79,6 +80,8 @@
     if (!page) return '';
     if (page === 'quotidienne/q3.php') return 'quotidienne/QInfo/q3info.php';
     if (page === 'quotidienne/QInfo/q3info.php') return 'quotidienne/q3.php';
+    if (page === 'quotidienne/q4.php') return 'quotidienne/QInfo/q4info.php';
+    if (page === 'quotidienne/QInfo/q4info.php') return 'quotidienne/q4.php';
     return '';
   }
 
@@ -274,21 +277,19 @@
   function loadPage(page, options) {
     if (!page) return;
     options = options || {};
-    // Toujours aligner avec l’affichage des tableaux (évite Info « fantôme » après changement de page au menu).
     isAltView = !!options.preserveAltView;
     setNavOpen(false);
 
-    // Single source of truth for language across all reload paths.
     var storedLang = localStorage.getItem('lang');
     if (storedLang === 'fr' || storedLang === 'en') {
       currentLang = storedLang;
     }
 
     var params = new URLSearchParams();
-    if (page !== 'quotidienne/QInfo/q3info.php' && toggleSwitch.checked) {
+    if (page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q3info.php') {
+    if (page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -302,6 +303,8 @@
       params.set('count_range', String(q3CountRange || 50));
     } else if (page === 'quotidienne/QInfo/q3info.php') {
       params.set('limit', String(q3InfoLimit || 50));
+    } else if (page === 'quotidienne/QInfo/q4info.php') {
+      params.set('grid_limit', String(q4InfoLimit || 50));
     } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
     }
@@ -337,6 +340,8 @@
           bindRangeSelect(container.querySelector('#q3CountRange'), 'q3', page);
         } else if (page === 'quotidienne/QInfo/q3info.php') {
           bindQ3InfoLimitSelect(container.querySelector('#q3InfoLimit'), page);
+        } else if (page === 'quotidienne/QInfo/q4info.php') {
+          initQ4InfoPage(page);
         } else if (page.indexOf('q4') !== -1) {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         }
@@ -362,7 +367,6 @@
         if (err && err.name === 'AbortError') return;
         if (requestId !== loadRequestId) return;
         container.innerHTML = '<p class="error">Impossible de charger la page.</p>';
-        console.error(err);
       })
       .finally(function () {
         if (requestId !== loadRequestId) return;
@@ -389,6 +393,59 @@
     select.addEventListener('change', function () {
       q3InfoLimit = parseInt(select.value, 10) || 50;
       loadPage(page, { preserveAltView: true });
+    });
+  }
+
+  function bindQ4InfoLimitSelect(select, page) {
+    if (!select) return;
+    select.value = String(q4InfoLimit || 50);
+    select.addEventListener('change', function () {
+      q4InfoLimit = parseInt(select.value, 10) || 50;
+      loadPage(page, { preserveAltView: true });
+    });
+  }
+
+  function applyQ4InfoFilter(tableId, filterValue) {
+    var table = container.querySelector('#' + tableId);
+    if (!table) return;
+
+    var rows = table.querySelectorAll('tbody tr');
+    var count = 0;
+    rows.forEach(function (row) {
+      var type = row.dataset.comboType;
+      var visible = filterValue === 'all' || filterValue === type || !type;
+      row.style.display = visible ? '' : 'none';
+      if (visible) count++;
+    });
+
+    var header = table.querySelector('thead tr:first-child th');
+    if (!header) return;
+    var baseTitle = table.dataset.baseTitle || '';
+    var combsLabel = table.dataset.combsLabel || '';
+    header.innerHTML = baseTitle + ' <span><strong>' + count + '</strong> ' + combsLabel + '</span>';
+  }
+
+  function initQ4InfoPage(page) {
+    bindQ4InfoLimitSelect(container.querySelector('#q4InfoLimit'), page);
+
+    container.querySelectorAll('.q4info-filter').forEach(function (select) {
+      var tableId = select.dataset.tableId;
+      applyQ4InfoFilter(tableId, select.value || 'all');
+      select.addEventListener('change', function () {
+        applyQ4InfoFilter(tableId, select.value || 'all');
+      });
+    });
+
+    container.querySelectorAll('.q4info-members-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        container.querySelectorAll('.dropdown-panel.open').forEach(function (panel) {
+          panel.classList.remove('open');
+        });
+        var targetId = btn.dataset.membersTarget;
+        var panel = targetId ? container.querySelector('#' + targetId) : null;
+        if (panel) panel.classList.add('open');
+      });
     });
   }
 
@@ -458,7 +515,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q3info.php') {
+        if (page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -497,7 +554,7 @@
       if (!page) return;
       var fetchInfoPage = getInfoFetchPage(page);
       if (fetchInfoPage) {
-        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q3info.php';
+        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
         loadPage(fetchInfoPage, { preserveAltView: nextAltView });
         return;
       }
@@ -512,6 +569,14 @@
       }
     });
   }
+
+  document.addEventListener('click', function (event) {
+    if (!container.querySelector('.q4info-layout')) return;
+    if (event.target.closest('.dropdown')) return;
+    container.querySelectorAll('.dropdown-panel.open').forEach(function (panel) {
+      panel.classList.remove('open');
+    });
+  });
 
   if (navToggle && mainNav) {
     navToggle.addEventListener('click', function () {

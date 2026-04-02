@@ -8,6 +8,12 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
+$countResult = $conn->query("SELECT COUNT(*) as total FROM Q4");
+$q4count = 0;
+if ($countResult && $row = $countResult->fetch_assoc()) {
+    $q4count = (int)$row['total'];
+}
+
 function isUniqueCombo($n1, $n2, $n3, $n4) {
     return count(array_unique([$n1, $n2, $n3, $n4])) === 4;
 }
@@ -103,36 +109,29 @@ foreach ($tiragesGrid as $t) {
 }
 /* === /GRID Q4 === */
 ?>
-
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars($lang) ?>">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="qinfo.css">   <!-- == Scroll hint (bouncing ball) == -->
-  
-  <style>
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+<div id="q4-meta" data-count="<?= $q4count ?>"></div>
+<style>
+.q4info-layout {
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
   font-family: sans-serif;
-  overflow-y: auto;
-  scrollbar-width: none; /* Firefox */
 }
-body::-webkit-scrollbar { display: none; }
 
-.tables-wrapper {
+.q4info-layout .q4info-tables {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   margin: 2px auto 0 auto;
-  max-width: var(--qinfo-content-width, min(86vw, 860px));
+  max-width: 100%;
 }
 
-.table-container,
-.combo-table-container,
-.number-stats-table {
+.q4info-layout .table-container,
+.q4info-layout .combo-table-container,
+.q4info-layout .number-stats-table {
   width: max-content;
   max-height: 85vh;
   overflow: auto;
@@ -142,42 +141,42 @@ body::-webkit-scrollbar { display: none; }
   box-shadow: 2px 4px 6px rgba(0,0,0,0.3);
   scrollbar-width: none;
 }
-.table-container::-webkit-scrollbar,
-.combo-table-container::-webkit-scrollbar,
-.number-stats-table::-webkit-scrollbar { width: 0px; }
+.q4info-layout .table-container::-webkit-scrollbar,
+.q4info-layout .combo-table-container::-webkit-scrollbar,
+.q4info-layout .number-stats-table::-webkit-scrollbar { width: 0px; }
 
-.interactive-table {
+.q4info-layout .interactive-table {
   border-collapse: collapse;
   font-size: 18px;
   font-family: 'Shadows Into Light', cursive;
   color: #000;
   width: 100%;
 }
-.interactive-table thead tr:nth-child(1) th {
+.q4info-layout .interactive-table thead tr:nth-child(1) th {
   position: sticky; top: 0;
   background-color: rgb(163, 216, 234);
   z-index: 12; border-bottom: 1px solid #999; padding: 6px 4px;
 }
-.interactive-table thead tr:nth-child(2) th {
+.q4info-layout .interactive-table thead tr:nth-child(2) th {
   position: sticky; top: 38px;
   background-color: rgb(218, 238, 247);
   z-index: 11; padding: 2px 4px; border-top: none;
 }
-.interactive-table td {
+.q4info-layout .interactive-table td {
   padding: 9px; border-bottom: 1px dashed #777;
   text-align: center; white-space: nowrap;
 }
-.interactive-table tr:hover { background-color: rgba(161,161,161,0.493); transition: background-color .3s ease; }
-.highlight-row { background-color: rgba(221,221,221,0.493); }
+.q4info-layout .interactive-table tr:hover { background-color: rgba(161,161,161,0.493); transition: background-color .3s ease; }
+.q4info-layout .highlight-row { background-color: rgba(221,221,221,0.493); }
 
-.circle {
+.q4info-layout .circle {
   display: inline-block; width: 28px; height: 28px; line-height: 28px;
   border-radius: 50%; background-color: #7eb0ea; color: #000; font-weight: bold;
   text-align: center; font-family: Arial, sans-serif; margin: 0 3px;
   box-shadow: 0 0 3px rgba(0,0,0,0.4);
 }
 
-select {
+.q4info-layout select {
   padding: 4px 8px;
   font-size: 16px;
   border-radius: 6px;
@@ -188,7 +187,7 @@ select {
 }
 
 /* Кнопка-счётчик и выпадающее окно */
-.count-btn {
+.q4info-layout .count-btn {
   width: 2.5em;
   height: 2.5em;
   display: inline-flex;
@@ -205,12 +204,12 @@ select {
   padding: 0;
   line-height: 1;
 }
-.count-btn[disabled] { opacity: 0.6; cursor: default; }
-.dropdown {
+.q4info-layout .count-btn[disabled] { opacity: 0.6; cursor: default; }
+.q4info-layout .dropdown {
   position: relative; display: inline-block;
 }
 /* было:
-.dropdown-panel {
+.q4info-layout .dropdown-panel {
   display: none; position: absolute; right: 0; top: 110%;
   min-width: 260px; max-height: 50vh; overflow: auto;
   background: #fff; border: 1px solid #aaa; border-radius: 10px; padding: 8px;
@@ -242,44 +241,45 @@ select {
   text-align: left;
 }
 
-.member-item {
+.q4info-layout .member-item {
   padding: 4px 0;
   border-bottom: 1px dashed #ccc;
   white-space: nowrap;         /* не переносить шары на новую строку */
 }
-.member-item:last-child { border-bottom: none; }
-.dropdown-panel.open { display: block; }
+.q4info-layout .member-item:last-child { border-bottom: none; }
+.q4info-layout .dropdown-panel.open { display: block; }
 
-#infoBlock.info-list {
+.q4info-layout #infoBlock.info-list {
   display: flex; flex-direction: column; padding: 14px 16px; gap: 8px; font-size: .95em;
-  max-width: 800px; margin: 30px auto; background: rgba(255,255,255,0.03); color: #333;
+  width: 100%; max-width: none; margin: 30px 0; background: rgba(255,255,255,0.03); color: #333; box-sizing: border-box;
 }
-.info-row { display: flex; align-items: center; gap: 12px; border-left: 4px solid #FF8C00; padding-left: 10px; background: rgba(255,255,255,0.26); border-radius: 6px;}
-.info-text { font-size: .95em; }
-.digit { display: inline-flex; width: 20px; height: 20px; margin-right: 5px; border-radius: 50%;
+.q4info-layout .info-row { display: flex; align-items: center; gap: 12px; border-left: 4px solid #FF8C00; padding-left: 10px; background: rgba(255,255,255,0.26); border-radius: 6px;}
+.q4info-layout .info-text { font-size: .95em; }
+.q4info-layout .digit { display: inline-flex; width: 20px; height: 20px; margin-right: 5px; border-radius: 50%;
   background-color: #7eb0ea; color: #000; font-weight: bold; justify-content: center; align-items: center;
   font-family: Arial, sans-serif; box-shadow: 0 0 3px rgba(0,0,0,0.4);
 }
 
 /* === GRID как в Q2 / Q3 === */
-.table-wrapper {
-  width: var(--qinfo-content-width, min(86vw, 860px));
+.q4info-layout .table-wrapper {
+  width: 100%;
   max-height: 70vh;
   overflow: auto;
-  margin: 10px auto;
+  margin: 0 0 12px;
   border: 1px solid #ccc;
   background: rgba(173, 216, 230, 0.85);
 }
 
-table.digit-grid {
+.q4info-layout table.digit-grid {
   width: max-content;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 12px;
+  color: #000;
 }
 
-.digit-grid td,
-.digit-grid th {
+.q4info-layout .digit-grid td,
+.q4info-layout .digit-grid th {
   width: 20px;
   height: 20px;
   text-align: center;
@@ -288,17 +288,18 @@ table.digit-grid {
   box-sizing: border-box;
 }
 
-.digit-grid th {
+.q4info-layout .digit-grid th {
   height: 60px;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-size: 0.7em;
   background: #eee;
+  color: #000;
 }
 
 /* Σ — ЕДИНСТВЕННЫЙ sticky */
-.digit-grid td:first-child,
-.digit-grid th:first-child {
+.q4info-layout .digit-grid td:first-child,
+.q4info-layout .digit-grid th:first-child {
   background-color: #eee;
   position: sticky;
   left: 0;
@@ -308,37 +309,38 @@ table.digit-grid {
 }
 
 /* # — обычный */
-.digit-grid td:nth-child(2),
-.digit-grid th:nth-child(2) {
+.q4info-layout .digit-grid td:nth-child(2),
+.q4info-layout .digit-grid th:nth-child(2) {
   background-color: #eee;
   font-weight: bold;
 }
 
-.digit-grid td.repeat-4 { background-color:#c0392b; color:#fff; }
-.digit-grid td.repeat-3 { background-color:#e74c3c; }
-.digit-grid td.repeat-2 { background-color:#f8c471; }
-.digit-grid td.hit      { background-color:#7eb0ea; }
+.q4info-layout .digit-grid td.repeat-4 { background-color:#c0392b; color:#fff; }
+.q4info-layout .digit-grid td.repeat-3 { background-color:#e74c3c; }
+.q4info-layout .digit-grid td.repeat-2 { background-color:#f8c471; }
+.q4info-layout .digit-grid td.hit      { background-color:#7eb0ea; }
 
-.filter-form {
+.q4info-layout .filter-form {
   text-align: center;
   margin: 0;
-  padding: 10px 0;
+  padding: 6px 0 14px;
 }
 
 /* === Q2-style select для GRID === */
-.filter-form select {
-  background-color: #fff;      /* ← белый, как в Q2 */
-  border: 1px solid #999;      /* как у простого select */
+.q4info-layout .filter-form select {
+  background-color: #fff;
+  border: 1px solid #999;
   color: #000;
   border-radius: 6px;
-  font-size: 1em;           /* меньше, чем 16px */
-  padding: 2px 6px;         /* компактнее */
-  line-height: 1.2;
+  font-size: 1em;
+  padding: 0 8px;
+  line-height: 32px;
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
 }
-
-  </style>
-</head>
-<body>
+</style>
+<div class="q4info-layout">
 
 <!-- === GRID Q4 (как Q2 / Q3) === -->
 <div class="table-wrapper">
@@ -377,26 +379,25 @@ table.digit-grid {
 <?php endif; ?>
 </div>
 
-<form class="filter-form" method="get">
+<div class="filter-form">
   <?= t('q4info.latest') ?>
-  <select name="grid_limit" onchange="this.form.submit()">
+  <select id="q4InfoLimit">
     <?php foreach ([50,100,200,500] as $opt): ?>
       <option value="<?= $opt ?>" <?= ($gridLimit==$opt?'selected':'') ?>><?= $opt ?></option>
     <?php endforeach; ?>
   </select>
-  <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
   <?= t('q4info.draws_suffix') ?>
-</form>
+</div>
 <!-- === /GRID Q4 === -->
 
-<div class="tables-wrapper">
+<div class="q4info-tables">
   <!-- Fois = 1 -->
   <div class="table-container">
-    <table class="interactive-table" id="statsOrderTable">
+    <table class="interactive-table" id="statsOrderTable" data-base-title="<?= htmlspecialchars(t('q4info.header.once_drawn')) ?>" data-combs-label="<?= htmlspecialchars(t('q4info.header.combs')) ?>">
       <thead>
         <tr><th colspan="4"> <span id="statsOrderCount"></span></th></tr>
         <tr><th colspan="4">
-          <select onchange="applyFilter('statsOrderTable', this.value)">
+          <select class="q4info-filter" data-table-id="statsOrderTable">
             <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
             <option value="unique"><?= t('q4info.filter.unique') ?></option>
             <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
@@ -423,11 +424,11 @@ table.digit-grid {
 
   <!-- Fois = 0 -->
   <div class="combo-table-container">
-    <table class="interactive-table" id="freeOrderTable">
+    <table class="interactive-table" id="freeOrderTable" data-base-title="<?= htmlspecialchars(t('q4info.header.never_drawn')) ?>" data-combs-label="<?= htmlspecialchars(t('q4info.header.combs')) ?>">
       <thead>
         <tr><th colspan="4"> <span id="freeOrderCount"></span></th></tr>
         <tr><th colspan="4">
-          <select onchange="applyFilter('freeOrderTable', this.value)">
+          <select class="q4info-filter" data-table-id="freeOrderTable">
             <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
             <option value="unique"><?= t('q4info.filter.unique') ?></option>
             <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
@@ -498,7 +499,7 @@ table.digit-grid {
           </td>
           <td>
             <div class="dropdown">
-              <button class="count-btn" onclick="toggleMembers(event, 'm<?= $rowIndex ?>')"><?= $cnt ?></button>
+              <button type="button" class="count-btn q4info-members-btn" data-members-target="m<?= $rowIndex ?>"><?= $cnt ?></button>
               <div class="dropdown-panel" id="m<?= $rowIndex ?>">
                 <?php foreach ($members as $mk):
                   $da = (int)substr($mk,0,1);
@@ -595,100 +596,4 @@ table.digit-grid {
 </div>
 <!-- Информационный блок конец-->
 
-<script>
-function getCurrentLang() {
-  const lang = localStorage.getItem('lang');
-  return (lang === 'fr' || lang === 'en') ? lang : 'fr';
-}
-
-function syncInfoLangFields() {
-  document.querySelectorAll('input[name="lang"]').forEach(function (input) {
-    input.value = getCurrentLang();
-  });
-}
-
-function ensureInfoLangUrl() {
-  const currentLang = getCurrentLang();
-  const url = new URL(window.location.href);
-  const urlLang = url.searchParams.get('lang') || 'fr';
-  if (urlLang !== currentLang) {
-    url.searchParams.set('lang', currentLang);
-    url.searchParams.set('_ts', String(Date.now()));
-    window.location.replace(url.toString());
-    return false;
-  }
-  return true;
-}
-
-function navigateInfoForm(form) {
-  if (!form) return;
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams();
-  const formData = new FormData(form);
-
-  formData.forEach(function (value, key) {
-    params.set(key, String(value));
-  });
-
-  params.set('lang', getCurrentLang());
-  params.set('_ts', String(Date.now()));
-  url.search = params.toString();
-  window.location.replace(url.toString());
-}
-
-function applyFilter(tableId, filterValue) {
-  const table = document.getElementById(tableId);
-  const rows = table.querySelectorAll("tbody tr");
-  let count = 0;
-  rows.forEach(row => {
-    const type = row.dataset.comboType;
-    const visible = (filterValue === 'all' || filterValue === type);
-    row.style.display = visible ? '' : 'none';
-    if (visible) count++;
-  });
-  const header = table.querySelector("thead tr:first-child th");
-  const baseTitle = tableId === "statsOrderTable"
-    ? <?= json_encode(t('q4info.header.once_drawn'), JSON_UNESCAPED_UNICODE) ?>
-    : <?= json_encode(t('q4info.header.never_drawn'), JSON_UNESCAPED_UNICODE) ?>;
-  const combsLabel = <?= json_encode(t('q4info.header.combs'), JSON_UNESCAPED_UNICODE) ?>;
-  header.innerHTML = `${baseTitle} <span> <strong>${count}</strong> ${combsLabel}</span>`;
-}
-
-function toggleMembers(evt, id) {
-  evt.stopPropagation();
-  // закрыть все открытые
-  document.querySelectorAll('.dropdown-panel.open').forEach(p => p.classList.remove('open'));
-  // открыть текущий
-  const panel = document.getElementById(id);
-  if (panel) panel.classList.add('open');
-}
-document.addEventListener('click', () => {
-  document.querySelectorAll('.dropdown-panel.open').forEach(p => p.classList.remove('open'));
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (!ensureInfoLangUrl()) {
-    return;
-  }
-  syncInfoLangFields();
-  applyFilter('statsOrderTable', 'all');
-  applyFilter('freeOrderTable', 'all');
-});
-
-const gridForm = document.querySelector('.filter-form');
-if (gridForm) {
-  gridForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-    syncInfoLangFields();
-    navigateInfoForm(gridForm);
-  });
-}
-</script>
-
-
-<div id="scrollHint">⬇⬆</div>
-
-</body>
-</html>
-
-<!-- END of q4info.php -->
+</div>
