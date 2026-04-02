@@ -52,7 +52,7 @@ $conn->close();
     width: 100%;
     max-height: 70vh;
     overflow: auto;
-    margin: 0;
+    margin: 0 0 12px;
     border: 1px solid #ccc;
     background: rgba(173, 216, 230, 0.85);
   }
@@ -107,15 +107,19 @@ $conn->close();
   .q3info-layout .filter-form {
     text-align: center;
     margin: 0;
-    padding: 10px 0;
+    padding: 6px 0 14px;
     width: 100%;
   }
 
   .q3info-layout .filter-form select {
     font-size: 1em;
     border-radius: 6px;
-    padding: 2px 6px;
-    line-height: 1.2;
+    box-sizing: border-box;
+    min-height: 32px;
+    height: 32px;
+    padding: 0 8px;
+    line-height: 32px;
+    vertical-align: middle;
   }
 
   .q3info-layout .circle {
