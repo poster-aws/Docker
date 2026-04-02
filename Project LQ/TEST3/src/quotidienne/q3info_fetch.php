@@ -39,10 +39,11 @@ $conn->close();
 <div id="q3-meta" data-count="<?= $q3count ?>"></div>
 <style>
   .q3info-layout {
-    width: 100%;
-    max-width: 100%;
+    width: min(100%, 980px);
+    max-width: 980px;
     min-width: 0;
     margin: 0 auto;
+    padding: 0 12px;
     box-sizing: border-box;
     font-family: sans-serif;
   }
@@ -61,6 +62,7 @@ $conn->close();
     border-collapse: collapse;
     table-layout: fixed;
     font-size: 12px;
+    color: #000;
   }
 
   .q3info-layout .digit-grid td,
@@ -79,6 +81,7 @@ $conn->close();
     transform: rotate(180deg);
     font-size: 0.7em;
     background: #eee;
+    color: #000;
   }
 
   .q3info-layout .digit-grid td.hit { background-color: #7eb0ea; }
