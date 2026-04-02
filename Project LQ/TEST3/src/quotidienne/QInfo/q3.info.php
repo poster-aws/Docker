@@ -1,6 +1,6 @@
 <?php
-require_once "db.php";
-require_once __DIR__ . "/../i18n.php";
+require_once "../db.php";
+require_once __DIR__ . "/../../i18n.php";
 
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
