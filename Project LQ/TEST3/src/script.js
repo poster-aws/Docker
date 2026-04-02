@@ -74,6 +74,52 @@
     return '';
   }
 
+  function getInfoFetchPage(page) {
+    if (!page) return '';
+    if (page === 'quotidienne/q3.php' || page === 'quotidienne/q3test.php') {
+      return currentLang === 'en'
+        ? 'quotidienne/q3test-en.html'
+        : 'quotidienne/q3test-fr.html';
+    }
+    return '';
+  }
+
+  function loadQ3TestPage() {
+    var fetchInfoPage = getInfoFetchPage('quotidienne/q3test.php');
+    if (!fetchInfoPage) return;
+
+    isAltView = true;
+    if (loadAbortController) {
+      loadAbortController.abort();
+    }
+    loadAbortController = new AbortController();
+    var requestId = ++loadRequestId;
+
+    setSpinner(true);
+    fetch(fetchInfoPage, { signal: loadAbortController.signal, cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Erreur de chargement');
+        return r.text();
+      })
+      .then(function (html) {
+        if (requestId !== loadRequestId) return;
+        container.innerHTML = html;
+        container.setAttribute('data-page', 'quotidienne/q3test.php');
+        updatePageTitleForLang('quotidienne/q3.php');
+        infoBtn.textContent = '\u21c6';
+      })
+      .catch(function (err) {
+        if (err && err.name === 'AbortError') return;
+        if (requestId !== loadRequestId) return;
+        container.innerHTML = '<p class="error">Impossible de charger la page.</p>';
+        console.error(err);
+      })
+      .finally(function () {
+        if (requestId !== loadRequestId) return;
+        setSpinner(false);
+      });
+  }
+
   function applyQ2Translations() {
     if (container.getAttribute('data-page') !== 'quotidienne/q2.php') return;
 
@@ -263,10 +309,11 @@
     }
   }
 
-  function loadPage(page) {
+  function loadPage(page, options) {
     if (!page) return;
+    options = options || {};
     // Toujours aligner avec l’affichage des tableaux (évite Info « fantôme » après changement de page au menu).
-    isAltView = false;
+    isAltView = !!options.preserveAltView;
     setNavOpen(false);
 
     // Single source of truth for language across all reload paths.
@@ -276,16 +323,16 @@
     }
 
     var params = new URLSearchParams();
-    if (toggleSwitch.checked) {
+    if (page !== 'quotidienne/q3test.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
     params.set('lang', currentLang);
 
-    if (page.indexOf('q2') !== -1) {
+    if (page === 'quotidienne/q2.php') {
       params.set('count_range', String(q2CountRange || 50));
-    } else if (page.indexOf('q3') !== -1) {
+    } else if (page === 'quotidienne/q3.php') {
       params.set('count_range', String(q3CountRange || 50));
-    } else if (page.indexOf('q4') !== -1) {
+    } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
     }
 
@@ -316,7 +363,7 @@
 
         if (page.indexOf('q2') !== -1) {
           bindRangeSelect(container.querySelector('#q2CountRange'), 'q2', page);
-        } else if (page.indexOf('q3') !== -1) {
+        } else if (page === 'quotidienne/q3.php') {
           bindRangeSelect(container.querySelector('#q3CountRange'), 'q3', page);
         } else if (page.indexOf('q4') !== -1) {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
@@ -430,6 +477,10 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
+        if (page === 'quotidienne/q3test.php') {
+          loadQ3TestPage();
+          return;
+        }
         updatePageTitleForLang(page);
         var infoUrl = getInfoUrl(page);
         if (infoUrl) {
@@ -463,6 +514,16 @@
     infoBtn.addEventListener('click', function () {
       var page = container.getAttribute('data-page');
       if (!page) return;
+      var fetchInfoPage = getInfoFetchPage(page);
+      if (fetchInfoPage) {
+        if (page === 'quotidienne/q3.php') {
+          loadQ3TestPage();
+          return;
+        }
+        isAltView = false;
+        loadPage('quotidienne/q3.php');
+        return;
+      }
       isAltView = !isAltView;
       if (isAltView) {
         var infoUrl = getInfoUrl(page);

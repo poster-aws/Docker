@@ -375,6 +375,35 @@ $conn->close();
       });
     }
 
+    function ensureInfoLangUrl() {
+      const currentLang = getCurrentLang();
+      const url = new URL(window.location.href);
+      const urlLang = url.searchParams.get('lang') || 'fr';
+      if (urlLang !== currentLang) {
+        url.searchParams.set('lang', currentLang);
+        url.searchParams.set('_ts', String(Date.now()));
+        window.location.replace(url.toString());
+        return false;
+      }
+      return true;
+    }
+
+    function navigateInfoForm(form) {
+      if (!form) return;
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams();
+      const formData = new FormData(form);
+
+      formData.forEach(function (value, key) {
+        params.set(key, String(value));
+      });
+
+      params.set('lang', getCurrentLang());
+      params.set('_ts', String(Date.now()));
+      url.search = params.toString();
+      window.location.replace(url.toString());
+    }
+
     function formatData(dataFromPHP) {
       const scatterData = dataFromPHP.map(item => ({
         x: parseInt(item.days) || 0,
@@ -487,11 +516,19 @@ $conn->close();
 
     const gridForm = document.querySelector('.filter-form');
     if (gridForm) {
-      gridForm.addEventListener('submit', syncInfoLangFields);
+      gridForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        syncInfoLangFields();
+        navigateInfoForm(gridForm);
+      });
     }
 
-    syncInfoLangFields();
-    renderChart(<?php echo $json_data; ?>);
+    if (!ensureInfoLangUrl()) {
+      // Stop here; page is being reloaded with the correct language.
+    } else {
+      syncInfoLangFields();
+      renderChart(<?php echo $json_data; ?>);
+    }
   </script>
 
   <div id="scrollHint">⬇⬆</div>

@@ -607,6 +607,35 @@ function syncInfoLangFields() {
   });
 }
 
+function ensureInfoLangUrl() {
+  const currentLang = getCurrentLang();
+  const url = new URL(window.location.href);
+  const urlLang = url.searchParams.get('lang') || 'fr';
+  if (urlLang !== currentLang) {
+    url.searchParams.set('lang', currentLang);
+    url.searchParams.set('_ts', String(Date.now()));
+    window.location.replace(url.toString());
+    return false;
+  }
+  return true;
+}
+
+function navigateInfoForm(form) {
+  if (!form) return;
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams();
+  const formData = new FormData(form);
+
+  formData.forEach(function (value, key) {
+    params.set(key, String(value));
+  });
+
+  params.set('lang', getCurrentLang());
+  params.set('_ts', String(Date.now()));
+  url.search = params.toString();
+  window.location.replace(url.toString());
+}
+
 function applyFilter(tableId, filterValue) {
   const table = document.getElementById(tableId);
   const rows = table.querySelectorAll("tbody tr");
@@ -638,6 +667,9 @@ document.addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (!ensureInfoLangUrl()) {
+    return;
+  }
   syncInfoLangFields();
   applyFilter('statsOrderTable', 'all');
   applyFilter('freeOrderTable', 'all');
@@ -645,7 +677,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const gridForm = document.querySelector('.filter-form');
 if (gridForm) {
-  gridForm.addEventListener('submit', syncInfoLangFields);
+  gridForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    syncInfoLangFields();
+    navigateInfoForm(gridForm);
+  });
 }
 </script>
 

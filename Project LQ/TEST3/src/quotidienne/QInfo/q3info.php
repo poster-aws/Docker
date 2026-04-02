@@ -33,6 +33,55 @@ foreach ($tirages as $t) {
     }
 }
 
+$gridHtml = '';
+ob_start();
+?>
+<?php if (!empty($tirages)): ?>
+  <table class="digit-grid">
+    <thead>
+      <tr>
+        <th>Σ</th>
+        <th>#</th>
+        <?php foreach ($tirages as $t): ?>
+          <th><?= htmlspecialchars($t['Tirage']) ?></th>
+        <?php endforeach; ?>
+      </tr>
+    </thead>
+    <tbody>
+      <?php for ($digit = 0; $digit <= 9; $digit++): ?>
+        <tr>
+          <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td>
+          <td><?= $digit ?></td>
+          <?php foreach ($tirages as $t):
+            $count = array_count_values($t['nums'])[$digit] ?? 0;
+
+            if ($count === 3)      $class = 'repeat-3';
+            elseif ($count === 2)  $class = 'repeat-2';
+            elseif ($count === 1)  $class = 'hit';
+            else                   $class = '';
+          ?>
+            <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
+          <?php endforeach; ?>
+        </tr>
+      <?php endfor; ?>
+    </tbody>
+  </table>
+<?php else: ?>
+  <p style="text-align:center; color:red;"><?= t('q3info.no_data') ?></p>
+<?php endif; ?>
+<?php
+$gridHtml = trim(ob_get_clean());
+
+if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode([
+        'gridHtml' => $gridHtml,
+        'lang' => $lang,
+        'limit' => $limit,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 $conn->close();
 ?>
 
@@ -55,11 +104,19 @@ $conn->close();
     }
     body::-webkit-scrollbar { display: none; }
 
+    .q3info-layout {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
     .table-wrapper {
-      width: var(--qinfo-content-width, min(86vw, 860px));
+      width: 100%;
       max-height: 70vh;
       overflow: auto;
-      margin: 0 auto;
+      margin: 0;
       border: 1px solid #ccc;
       background: rgba(173, 216, 230, 0.85);
     }
@@ -115,6 +172,7 @@ $conn->close();
       text-align: center;
       margin: 0;
       padding: 10px 0;
+      width: 100%;
     }
 
     .filter-form select {
@@ -146,10 +204,12 @@ $conn->close();
       padding: 14px 16px;
       gap: 8px;
       font-size: 0.95em;
-      max-width: 800px;
-      margin: 30px auto;
+      width: 100%;
+      max-width: none;
+      margin: 30px 0;
       background: rgba(255,255,255,0.03);
       color: #333;
+      box-sizing: border-box;
     }
 
     .info-row {
@@ -168,49 +228,12 @@ $conn->close();
 
 <body>
 
-<div class="table-wrapper">
-<?php if (!empty($tirages)): ?>
-  <table class="digit-grid">
-    <thead>
-      <tr>
-        <th>Σ</th>
-        <th>#</th>
-        <?php foreach ($tirages as $t): ?>
-          <th><?= htmlspecialchars($t['Tirage']) ?></th>
-        <?php endforeach; ?>
-      </tr>
-    </thead>
-
-    <tbody>
-      <?php for ($digit = 0; $digit <= 9; $digit++): ?>
-        <tr>
-          <!-- Σ слева -->
-          <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td>
-          <!-- # -->
-          <td><?= $digit ?></td>
-          <!-- столбцы тиражей -->
-          <?php foreach ($tirages as $t):
-            $count = array_count_values($t['nums'])[$digit] ?? 0;
-
-            if ($count === 3)      $class = 'repeat-3';
-            elseif ($count === 2)  $class = 'repeat-2';
-            elseif ($count === 1)  $class = 'hit';
-            else                   $class = '';
-          ?>
-            <td class="<?= $class ?>"><?= $count > 0 ? $digit : '' ?></td>
-          <?php endforeach; ?>
-        </tr>
-      <?php endfor; ?>
-    </tbody>
-  </table>
-<?php else: ?>
-  <p style="text-align:center; color:red;"><?= t('q3info.no_data') ?></p>
-<?php endif; ?>
-</div>
+<div class="q3info-layout">
+<div class="table-wrapper" id="q3InfoGrid"><?= $gridHtml ?></div>
 
 <form class="filter-form" method="get">
   <?= t('q3info.latest') ?>
-  <select name="limit" onchange="this.form.submit()">
+  <select name="limit">
     <?php foreach ([50, 100, 200, 500] as $opt): ?>
       <option value="<?= $opt ?>" <?= $limit == $opt ? 'selected' : '' ?>><?= $opt ?></option>
     <?php endforeach; ?>
@@ -283,11 +306,25 @@ $conn->close();
     <div class="info-text"><?= t('q3info.info.three_identical') ?></div>
   </div>
 </div>
+</div>
 
 <script>
   function getCurrentLang() {
     const lang = localStorage.getItem('lang');
     return (lang === 'fr' || lang === 'en') ? lang : 'fr';
+  }
+
+  function ensureInfoLangUrl() {
+    const currentLang = getCurrentLang();
+    const url = new URL(window.location.href);
+    const urlLang = url.searchParams.get('lang') || 'fr';
+    if (urlLang !== currentLang) {
+      url.searchParams.set('lang', currentLang);
+      url.searchParams.set('_ts', String(Date.now()));
+      window.location.replace(url.toString());
+      return false;
+    }
+    return true;
   }
 
   function syncInfoLangFields() {
@@ -296,12 +333,71 @@ $conn->close();
     });
   }
 
-  const gridForm = document.querySelector('.filter-form');
-  if (gridForm) {
-    gridForm.addEventListener('submit', syncInfoLangFields);
+  async function loadInfoGrid(limit) {
+    const grid = document.getElementById('q3InfoGrid');
+    if (!grid) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('limit', String(limit));
+    url.searchParams.set('lang', getCurrentLang());
+    url.searchParams.set('ajax', '1');
+    url.searchParams.set('_ts', String(Date.now()));
+
+    try {
+      const response = await fetch(url.toString(), { cache: 'no-store' });
+      if (!response.ok) throw new Error('Erreur de chargement');
+      const data = await response.json();
+      if (data.lang && data.lang !== getCurrentLang()) return;
+      grid.innerHTML = data.gridHtml || '';
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.set('limit', String(limit));
+      cleanUrl.searchParams.set('lang', getCurrentLang());
+      cleanUrl.searchParams.delete('ajax');
+      cleanUrl.searchParams.delete('_ts');
+      window.history.replaceState(null, '', cleanUrl.toString());
+    } catch (error) {
+      console.error('Erreur de chargement Q3 info:', error);
+    }
   }
 
+  const gridForm = document.querySelector('.filter-form');
+  const limitSelect = gridForm ? gridForm.querySelector('select[name="limit"]') : null;
+  if (gridForm) {
+    gridForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      syncInfoLangFields();
+      if (limitSelect) {
+        loadInfoGrid(limitSelect.value);
+      }
+    });
+  }
+
+  if (limitSelect) {
+    limitSelect.addEventListener('change', function () {
+      syncInfoLangFields();
+      loadInfoGrid(limitSelect.value);
+    });
+  }
+
+  window.addEventListener('pageshow', function () {
+    ensureInfoLangUrl();
+  });
+
+  window.addEventListener('focus', function () {
+    ensureInfoLangUrl();
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) {
+      ensureInfoLangUrl();
+    }
+  });
+
+  if (!ensureInfoLangUrl()) {
+    // Stop here; page is being reloaded with the correct language.
+  } else {
   syncInfoLangFields();
+  }
 </script>
 
 </body>
