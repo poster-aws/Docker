@@ -123,7 +123,8 @@ foreach ($tiragesGrid as $t) {
 
 .q4info-layout .q4info-tables {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 20px;
   margin: 2px auto 0 auto;
   max-width: 100%;
@@ -133,6 +134,7 @@ foreach ($tiragesGrid as $t) {
 .q4info-layout .combo-table-container,
 .q4info-layout .number-stats-table {
   width: max-content;
+  flex: 0 0 auto;
   max-height: 85vh;
   overflow: auto;
   border-radius: 12px;
@@ -151,6 +153,23 @@ foreach ($tiragesGrid as $t) {
   font-family: 'Shadows Into Light', cursive;
   color: #000;
   width: 100%;
+}
+
+.q4info-layout .table-container .interactive-table,
+.q4info-layout .combo-table-container .interactive-table {
+  width: auto;
+  min-width: 0;
+  display: inline-table;
+}
+
+.q4info-layout .number-stats-table {
+  width: max-content;
+  max-width: none;
+}
+
+.q4info-layout .number-stats-table .interactive-table {
+  width: max-content;
+  min-width: 0;
 }
 .q4info-layout .interactive-table thead tr:nth-child(1) th {
   position: sticky; top: 0;
