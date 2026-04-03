@@ -234,6 +234,4 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
   </div>
 
   <div id="q2info-bootstrap" hidden data-json="<?= htmlspecialchars($bootJson, ENT_QUOTES, 'UTF-8') ?>"></div>
-
-  <div id="scrollHint">⬇⬆</div>
 </div>
