@@ -1,11 +1,130 @@
 /* TEST3 — Quotidienne — Interface moderne, responsive */
 
-/* Thème sombre — Ardoise (défaut) */
+/* =============================================================================
+   Thème — SOURCE unique (modifier ici par thème)
+   • Page + en-tête
+   • Menu latéral (Quotidienne 2 / 3 / 4, langue, thème)
+   • Accueil « Bienvenue » : carte + titres / textes / lien
+   • Tableaux pages principales Q2 / Q3 / Q4 (même structure ; étoiles Q4 en bas)
+   Les alias --bg, --nav-bg, --welcome-*, --table-*, etc. sont dérivés juste en dessous.
+   ============================================================================= */
 :root {
-  --bg: #1e293b;
+  --theme-page-bg: #1e293b;
+  --theme-header-bg: #0f172a;
+  --theme-header-text: #f8fafc;
+  /* Menu drawer */
+  --theme-nav-bg: #1e293b;
+  --theme-nav-text: #f8fafc;
+  --theme-nav-border: rgba(255, 255, 255, 0.12);
+  --theme-nav-border-strong: rgba(255, 255, 255, 0.28);
+  --theme-nav-hover-bg: rgba(255, 255, 255, 0.1);
+  /* Carte Bienvenue */
+  --theme-welcome-card-bg: #334155;
+  --theme-welcome-card-border: transparent;
+  --theme-welcome-title: #f1f5f9;
+  --theme-welcome-text: #94a3b8;
+  --theme-welcome-link: #38bdf8;
+  --theme-welcome-link-hover: #7dd3fc;
+  /* Tableaux Q2/Q3/Q4 — conteneurs, en-têtes, cellules, pastilles, lignes stats, étoiles */
+  --theme-table-shell-bg: #334155;
+  --theme-table-shell-border: #475569;
+  --theme-table-header-bg: #0f172a;
+  --theme-table-header-text: #f8fafc;
+  --theme-table-header-rule: rgba(255, 255, 255, 0.22);
+  --theme-table-text: #f1f5f9;
+  --theme-table-cell-border: #475569;
+  --theme-table-row-hover: rgba(56, 189, 248, 0.14);
+  --theme-table-circle-bg: #38bdf8;
+  --theme-table-circle-text: #0f172a;
+  --theme-table-highlight-row: rgba(34, 197, 94, 0.1);
+  --theme-table-range-1: rgba(34, 197, 94, 0.14);
+  --theme-table-range-2: rgba(234, 179, 8, 0.18);
+  --theme-table-range-3: rgba(249, 115, 22, 0.18);
+  --theme-table-range-4: rgba(239, 68, 68, 0.14);
+  --theme-table-range-cell-bg: rgba(203, 213, 225, 0.35);
+  --theme-table-star-1-bg: #38bdf8;
+  --theme-table-star-1-text: #0f172a;
+  --theme-table-star-2-bg: #ea580c;
+  --theme-table-star-2-text: #ffffff;
+  --theme-table-outline-zero: #38bdf8;
+}
+
+html.theme-light {
+  --theme-page-bg: #f1f5f9;
+  --theme-header-bg: #334155;
+  --theme-header-text: #f1f5f9;
+  --theme-nav-bg: #ffffff;
+  --theme-nav-text: #1e293b;
+  --theme-nav-border: rgba(15, 23, 42, 0.1);
+  --theme-nav-border-strong: rgba(15, 23, 42, 0.18);
+  --theme-nav-hover-bg: rgba(15, 23, 42, 0.06);
+  --theme-welcome-card-bg: #ffffff;
+  --theme-welcome-card-border: #e2e8f0;
+  --theme-welcome-title: #1e293b;
+  --theme-welcome-text: #64748b;
+  --theme-welcome-link: #2563eb;
+  --theme-welcome-link-hover: #1d4ed8;
+  --theme-table-shell-bg: #ffffff;
+  --theme-table-shell-border: #e2e8f0;
+  --theme-table-header-bg: #334155;
+  --theme-table-header-text: #f8fafc;
+  --theme-table-header-rule: rgba(255, 255, 255, 0.2);
+  --theme-table-text: #1e293b;
+  --theme-table-cell-border: #e2e8f0;
+  --theme-table-row-hover: rgba(37, 99, 235, 0.08);
+  --theme-table-circle-bg: #2563eb;
+  --theme-table-circle-text: #ffffff;
+  --theme-table-highlight-row: rgba(34, 197, 94, 0.12);
+  --theme-table-range-1: rgba(34, 197, 94, 0.16);
+  --theme-table-range-2: rgba(234, 179, 8, 0.22);
+  --theme-table-range-3: rgba(249, 115, 22, 0.2);
+  --theme-table-range-4: rgba(239, 68, 68, 0.16);
+  --theme-table-range-cell-bg: rgba(203, 213, 225, 0.55);
+  --theme-table-star-1-bg: #2563eb;
+  --theme-table-star-1-text: #ffffff;
+  --theme-table-star-2-bg: #ea580c;
+  --theme-table-star-2-text: #ffffff;
+  --theme-table-outline-zero: #2563eb;
+}
+
+/* Thème sombre — Ardoise (défaut) : autres jetons + alias page/en-tête */
+:root {
+  --bg: var(--theme-page-bg);
+  --header-bg: var(--theme-header-bg);
+  --header-text: var(--theme-header-text);
+  --nav-bg: var(--theme-nav-bg);
+  --nav-text: var(--theme-nav-text);
+  --nav-border: var(--theme-nav-border);
+  --nav-border-strong: var(--theme-nav-border-strong);
+  --nav-hover-bg: var(--theme-nav-hover-bg);
+  --welcome-card-bg: var(--theme-welcome-card-bg);
+  --welcome-card-border: var(--theme-welcome-card-border);
+  --welcome-title: var(--theme-welcome-title);
+  --welcome-text: var(--theme-welcome-text);
+  --welcome-link: var(--theme-welcome-link);
+  --welcome-link-hover: var(--theme-welcome-link-hover);
+  --table-shell-bg: var(--theme-table-shell-bg);
+  --table-shell-border: var(--theme-table-shell-border);
+  --table-header-bg: var(--theme-table-header-bg);
+  --table-header-text: var(--theme-table-header-text);
+  --table-header-rule: var(--theme-table-header-rule);
+  --table-text: var(--theme-table-text);
+  --table-cell-border: var(--theme-table-cell-border);
+  --table-row-hover: var(--theme-table-row-hover);
+  --table-circle-bg: var(--theme-table-circle-bg);
+  --table-circle-text: var(--theme-table-circle-text);
+  --table-highlight-row: var(--theme-table-highlight-row);
+  --table-range-1: var(--theme-table-range-1);
+  --table-range-2: var(--theme-table-range-2);
+  --table-range-3: var(--theme-table-range-3);
+  --table-range-4: var(--theme-table-range-4);
+  --table-range-cell-bg: var(--theme-table-range-cell-bg);
+  --table-star-1-bg: var(--theme-table-star-1-bg);
+  --table-star-1-text: var(--theme-table-star-1-text);
+  --table-star-2-bg: var(--theme-table-star-2-bg);
+  --table-star-2-text: var(--theme-table-star-2-text);
+  --table-outline-zero: var(--theme-table-outline-zero);
   --bg-card: #334155;
-  --header-bg: #0f172a;
-  --header-text: #f8fafc;
   --accent: #38bdf8;
   --accent-hover: #0ea5e9;
   --text: #f1f5f9;
@@ -20,12 +139,44 @@
   --header-h: 56px;
 }
 
-/* Thème clair */
-.app.theme-light {
-  --bg: #f1f5f9;
+/* Thème clair — sur <html> : réinjecte les alias + reste des jetons */
+html.theme-light {
+  --bg: var(--theme-page-bg);
+  --header-bg: var(--theme-header-bg);
+  --header-text: var(--theme-header-text);
+  --nav-bg: var(--theme-nav-bg);
+  --nav-text: var(--theme-nav-text);
+  --nav-border: var(--theme-nav-border);
+  --nav-border-strong: var(--theme-nav-border-strong);
+  --nav-hover-bg: var(--theme-nav-hover-bg);
+  --welcome-card-bg: var(--theme-welcome-card-bg);
+  --welcome-card-border: var(--theme-welcome-card-border);
+  --welcome-title: var(--theme-welcome-title);
+  --welcome-text: var(--theme-welcome-text);
+  --welcome-link: var(--theme-welcome-link);
+  --welcome-link-hover: var(--theme-welcome-link-hover);
+  --table-shell-bg: var(--theme-table-shell-bg);
+  --table-shell-border: var(--theme-table-shell-border);
+  --table-header-bg: var(--theme-table-header-bg);
+  --table-header-text: var(--theme-table-header-text);
+  --table-header-rule: var(--theme-table-header-rule);
+  --table-text: var(--theme-table-text);
+  --table-cell-border: var(--theme-table-cell-border);
+  --table-row-hover: var(--theme-table-row-hover);
+  --table-circle-bg: var(--theme-table-circle-bg);
+  --table-circle-text: var(--theme-table-circle-text);
+  --table-highlight-row: var(--theme-table-highlight-row);
+  --table-range-1: var(--theme-table-range-1);
+  --table-range-2: var(--theme-table-range-2);
+  --table-range-3: var(--theme-table-range-3);
+  --table-range-4: var(--theme-table-range-4);
+  --table-range-cell-bg: var(--theme-table-range-cell-bg);
+  --table-star-1-bg: var(--theme-table-star-1-bg);
+  --table-star-1-text: var(--theme-table-star-1-text);
+  --table-star-2-bg: var(--theme-table-star-2-bg);
+  --table-star-2-text: var(--theme-table-star-2-text);
+  --table-outline-zero: var(--theme-table-outline-zero);
   --bg-card: #ffffff;
-  --header-bg: #334155;
-  --header-text: #f1f5f9;
   --text: #1e293b;
   --text-muted: #64748b;
   --border: #e2e8f0;
@@ -157,7 +308,8 @@ body {
   width: 220px;
   max-width: 85vw;
   height: calc(100vh - var(--header-h));
-  background: #1e293b;
+  background: var(--nav-bg);
+  color: var(--nav-text);
   padding: 0.5rem 0;
   box-shadow: 4px 0 12px rgba(0,0,0,0.2);
   transform: translateX(-100%);
@@ -174,14 +326,14 @@ body {
 .nav-footer {
   flex: 0 0 auto;
   padding: 0.75rem 1rem 1rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--nav-border);
 }
 .nav-drawer .lang-switch,
 .nav-drawer .theme-switch {
   display: flex;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid var(--nav-border-strong);
 }
 .nav-drawer .theme-switch {
   margin-top: 0.75rem;
@@ -196,7 +348,7 @@ body {
   font-weight: 600;
   font-family: inherit;
   background: transparent;
-  color: var(--header-text);
+  color: var(--nav-text);
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -204,7 +356,7 @@ body {
 }
 .nav-drawer .lang-btn:hover,
 .nav-drawer .theme-btn:hover {
-  background: rgba(255,255,255,0.1);
+  background: var(--nav-hover-bg);
 }
 .nav-drawer .lang-btn.active,
 .nav-drawer .theme-btn.active {
@@ -230,14 +382,14 @@ body {
 .nav-list a {
   display: block;
   padding: 0.85rem 1rem;
-  color: var(--header-text);
+  color: var(--nav-text);
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--nav-border);
 }
 .nav-list a:hover,
 .nav-list a:focus {
-  background: rgba(255,255,255,0.1);
+  background: var(--nav-hover-bg);
 }
 
 /* Затемнение фона при открытом меню */
@@ -390,14 +542,33 @@ input:checked + .slider::before { transform: translateX(18px); }
   margin: 0 auto;
 }
 .welcome-card {
-  background: var(--bg-card);
+  background: var(--welcome-card-bg);
   padding: 2rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   text-align: center;
+  border: 1px solid var(--welcome-card-border);
 }
-.welcome-card h2 { margin-bottom: 0.5rem; color: var(--text); }
-.welcome-card p { color: var(--text-muted); }
+.welcome-card h2 {
+  margin-bottom: 0.5rem;
+  color: var(--welcome-title);
+  font-weight: 600;
+}
+.welcome-card p {
+  color: var(--welcome-text);
+}
+.welcome-card-extra {
+  margin-top: 1rem;
+}
+.welcome-card a {
+  color: var(--welcome-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.welcome-card a:hover,
+.welcome-card a:focus-visible {
+  color: var(--welcome-link-hover);
+}
 
 /* Content loaded via JS — centering kept from quotidienne.css */
 
@@ -424,7 +595,7 @@ input:checked + .slider::before { transform: translateX(18px); }
   animation: spin 0.7s linear infinite;
   box-shadow: 0 0 20px rgba(56,189,248,0.6), 0 0 0 1px rgba(0,0,0,0.08);
 }
-.app.theme-light .spinner {
+html.theme-light .spinner {
   border-color: rgba(0,0,0,0.1);
   border-top-color: var(--accent);
   box-shadow: 0 0 16px rgba(37,99,235,0.4);

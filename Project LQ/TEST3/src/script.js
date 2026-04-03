@@ -48,8 +48,7 @@
   }
 
   function applyTheme() {
-    var app = document.querySelector('.app');
-    if (app) app.classList.toggle('theme-light', currentTheme === 'light');
+    document.documentElement.classList.toggle('theme-light', currentTheme === 'light');
   }
 
   function updateThemeUI() {
