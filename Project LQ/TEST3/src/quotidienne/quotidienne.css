@@ -73,6 +73,15 @@
     font-size: 0.85em;
     padding: 0 2px;
   }
+  /* Шарики в инфо-блоке Q2/Q3/Q4 — те же размеры, что у шариков в таблицах на узком экране */
+  .q2info-layout #infoBlock.info-list .circle,
+  .q3info-layout #infoBlock.info-list .circle,
+  .q4info-layout #infoBlock.info-list .circle {
+    min-width: 22px;
+    height: 22px;
+    font-size: 0.85em;
+    padding: 0 2px;
+  }
 }
 
 .table-container,
@@ -293,6 +302,38 @@
   outline-offset: -2px;
 }
 
+/* ----- Q2 Info : nuage de points (couleurs Chart.js via --q2info-chart-*) + tableau des plages ----- */
+.q2info-layout {
+  color: var(--q2info-stats-text, var(--text, #1e293b));
+}
+
+.q2info-layout #q2infoStatsTable {
+  margin: 10px auto;
+  border-collapse: collapse;
+  width: 60%;
+  max-width: 100%;
+  color: var(--q2info-stats-text, var(--text));
+}
+
+.q2info-layout #q2infoStatsTable tbody td,
+.q2info-layout #q2infoStatsTable tbody th {
+  border: 1px solid var(--q2info-stats-border, var(--table-cell-border, #999));
+  padding: 6px 10px;
+  text-align: center;
+}
+
+/* Шапка — те же jetons que .interactive-table thead th (переключение thème sur --table-header-*) */
+.q2info-layout #q2infoStatsTable thead th {
+  padding: 6px 10px;
+  text-align: center;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid var(--q2info-stats-border, var(--table-cell-border, #999));
+  border-bottom: 2px solid var(--table-header-rule, rgba(255, 255, 255, 0.2));
+  background: var(--q2info-stats-header-bg, var(--table-header-bg, var(--header-bg, #0f172a)));
+  color: var(--q2info-stats-header-text, var(--table-header-text, var(--header-text, #f8fafc)));
+}
+
 /* ----- Grille chiffres — pages Info Q2 / Q3 / Q4 (couleurs : --info-grid-* dans style.css) ----- */
 .q2info-layout .table-wrapper,
 .q3info-layout .table-wrapper,
@@ -384,4 +425,87 @@
 .q4info-layout .digit-grid td.repeat-4 {
   background-color: var(--info-grid-repeat-4, #c0392b);
   color: var(--info-grid-repeat-4-text, #fff);
+}
+
+/* ----- Bloc légende Info + billes (mêmes couleurs que cellules .hit de la grille) ----- */
+.q2info-layout #infoBlock.info-list,
+.q3info-layout #infoBlock.info-list,
+.q4info-layout #infoBlock.info-list {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 8px;
+  font-size: 0.95em;
+  width: 100%;
+  max-width: none;
+  margin: 30px 0;
+  background: rgba(255, 255, 255, 0.03);
+  color: #333;
+  box-sizing: border-box;
+}
+
+.q2info-layout .info-row,
+.q3info-layout .info-row,
+.q4info-layout .info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #ff8c00;
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.26);
+  border-radius: 6px;
+}
+
+.q2info-layout .info-text,
+.q3info-layout .info-text,
+.q4info-layout .info-text {
+  font-size: 0.95em;
+}
+
+.q2info-layout .info-digits,
+.q3info-layout .info-digits,
+.q4info-layout .info-digits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+/*
+ * Шарики в инфо-блоке — без отдельных правил: наследуют глобальный .circle
+ * (фон/текст --table-circle-*, размер как в .interactive-table на основной странице).
+ * Шарики в таблицах на страницах Info (Q4 и т.д.) тоже используют тот же .circle.
+ */
+
+/* ----- Pages Info (ex-qinfo.css) : hint scroll + largeurs table-wrapper ----- */
+#scrollHint {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(126, 176, 234, 0.85);
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scrollBounce 1.6s infinite;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+@keyframes scrollBounce {
+  0%   { transform: translateY(0); opacity: 0.6; }
+  50%  { transform: translateY(6px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.6; }
+}
+
+.table-wrapper {
+  width: 100% !important;
+}
+
+.tables-wrapper {
+  max-width: 100% !important;
 }

@@ -86,7 +86,6 @@ $q2infoBoot = [
 $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>
 <div id="q2-meta" data-count="<?= (int)$q2count ?>"></div>
-<link rel="stylesheet" href="quotidienne/QInfo/qinfo.css">
 <style>
   .q2info-layout {
     width: min(100%, 980px);
@@ -96,7 +95,6 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     padding: 0 12px;
     box-sizing: border-box;
     font-family: var(--font);
-    color: #000;
   }
 
   .q2info-layout #q2infoToggleWrap,
@@ -112,61 +110,6 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
   }
 
   .q2info-layout label[for="q2infoNorderToggle"] { margin-left: 8px; }
-
-  .q2info-layout #q2infoStatsTable {
-    margin: 10px auto;
-    border-collapse: collapse;
-    width: 60%;
-    max-width: 100%;
-  }
-
-  .q2info-layout #q2infoStatsTable th,
-  .q2info-layout #q2infoStatsTable td {
-    border: 1px solid #999;
-    padding: 6px 10px;
-    text-align: center;
-  }
-
-  .q2info-layout .circle {
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
-    border-radius: 50%;
-    background-color: #7eb0ea;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    font-family: var(--font);
-    margin: 0 3px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-  }
-
-  .q2info-layout #infoBlock.info-list {
-    display: flex;
-    flex-direction: column;
-    padding: 14px 16px;
-    gap: 8px;
-    font-size: 0.95em;
-    width: 100%;
-    max-width: none;
-    margin: 30px 0;
-    background: rgba(255,255,255,0.03);
-    color: #333;
-    box-sizing: border-box;
-  }
-
-  .q2info-layout .info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-left: 4px solid #FF8C00;
-    padding-left: 10px;
-    background: rgba(255, 255, 255, 0.26);
-    border-radius: 6px;
-  }
-
-  .q2info-layout .info-text { font-size: 0.95em; }
 
   .q2info-layout .filter-form {
     text-align: center;

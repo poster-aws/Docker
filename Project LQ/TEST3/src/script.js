@@ -90,6 +90,13 @@
     }
   }
 
+  /** Couleurs thème (style.css → --q2info-chart-* sur <html>) pour Chart.js Q2 Info */
+  function themeCssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    v = (v || '').trim();
+    return v || fallback;
+  }
+
   function applyQ2Translations() {
     var texts = currentLang === 'en'
       ? {
@@ -478,13 +485,22 @@
         yIndexMap[val] = idx;
       });
 
+      var scatterFill = themeCssVar('--q2info-chart-scatter', 'rgba(54, 162, 235, 0.6)');
+      var scatterBorder = themeCssVar('--q2info-chart-scatter-border', 'rgba(54, 162, 235, 0.95)');
+      var tickColor = themeCssVar('--q2info-chart-tick', '#64748b');
+      var gridColor = themeCssVar('--q2info-chart-grid', 'rgba(100, 116, 139, 0.2)');
+
       var chartData = {
         datasets: [{
           label: texts.chartCombinations || '',
           data: scatterData.map(function (point) {
             return { x: point.x, y: yIndexMap[point.y] };
           }),
-          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+          backgroundColor: scatterFill,
+          borderColor: scatterBorder,
+          borderWidth: 1,
+          pointRadius: 4,
+          pointHoverRadius: 5
         }]
       };
 
@@ -495,14 +511,20 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            x: { title: { display: true, text: texts.statsDays || '' } },
+            x: {
+              title: { display: true, text: texts.statsDays || '', color: tickColor },
+              ticks: { color: tickColor },
+              grid: { color: gridColor }
+            },
             y: {
               ticks: {
+                color: tickColor,
                 callback: function (value) {
                   return uniqueYValues[value] || '';
                 }
               },
-              title: { display: true, text: texts.chartCombinations || '' }
+              title: { display: true, text: texts.chartCombinations || '', color: tickColor },
+              grid: { color: gridColor }
             }
           },
           plugins: {

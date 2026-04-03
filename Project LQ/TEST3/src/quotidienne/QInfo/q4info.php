@@ -229,13 +229,6 @@ foreach ($tiragesGrid as $t) {
 .q4info-layout .interactive-table tr:hover { background-color: rgba(161,161,161,0.493); transition: background-color .3s ease; }
 .q4info-layout .highlight-row { background-color: rgba(221,221,221,0.493); }
 
-.q4info-layout .circle {
-  display: inline-block; width: 28px; height: 28px; line-height: 28px;
-  border-radius: 50%; background-color: #7eb0ea; color: #000; font-weight: bold;
-  text-align: center; font-family: var(--font); margin: 0 3px;
-  box-shadow: 0 0 3px rgba(0,0,0,0.4);
-}
-
 .q4info-layout select {
   padding: 4px 8px;
   font-size: 16px;
@@ -308,17 +301,6 @@ foreach ($tiragesGrid as $t) {
 }
 .q4info-layout .member-item:last-child { border-bottom: none; }
 .q4info-layout .dropdown-panel.open { display: block; }
-
-.q4info-layout #infoBlock.info-list {
-  display: flex; flex-direction: column; padding: 14px 16px; gap: 8px; font-size: .95em;
-  width: 100%; max-width: none; margin: 30px 0; background: rgba(255,255,255,0.03); color: #333; box-sizing: border-box;
-}
-.q4info-layout .info-row { display: flex; align-items: center; gap: 12px; border-left: 4px solid #FF8C00; padding-left: 10px; background: rgba(255,255,255,0.26); border-radius: 6px;}
-.q4info-layout .info-text { font-size: .95em; }
-.q4info-layout .digit { display: inline-flex; width: 20px; height: 20px; margin-right: 5px; border-radius: 50%;
-  background-color: #7eb0ea; color: #000; font-weight: bold; justify-content: center; align-items: center;
-  font-family: var(--font); box-shadow: 0 0 3px rgba(0,0,0,0.4);
-}
 
 .q4info-layout .filter-form {
   text-align: center;

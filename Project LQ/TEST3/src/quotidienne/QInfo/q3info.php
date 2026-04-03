@@ -66,46 +66,6 @@ $conn->close();
     vertical-align: middle;
   }
 
-  .q3info-layout .circle {
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-    line-height: 28px;
-    border-radius: 50%;
-    background-color: #7eb0ea;
-    color: #000;
-    font-weight: bold;
-    text-align: center;
-    font-family: var(--font);
-    margin: 0 3px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-  }
-
-  .q3info-layout #infoBlock.info-list {
-    display: flex;
-    flex-direction: column;
-    padding: 14px 16px;
-    gap: 8px;
-    font-size: 0.95em;
-    width: 100%;
-    max-width: none;
-    margin: 30px 0;
-    background: rgba(255,255,255,0.03);
-    color: #333;
-    box-sizing: border-box;
-  }
-
-  .q3info-layout .info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-left: 4px solid #FF8C00;
-    padding-left: 10px;
-    background: rgba(255, 255, 255, 0.26);
-    border-radius: 6px;
-  }
-
-  .q3info-layout .info-text { font-size: 0.95em; }
 </style>
 <div class="q3info-layout">
   <div class="table-wrapper">
