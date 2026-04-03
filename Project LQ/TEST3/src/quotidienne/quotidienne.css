@@ -482,17 +482,6 @@
   padding: 0.4rem 0.35rem;
 }
 
-.q4info-layout .interactive-table thead tr:nth-child(2) th {
-  position: sticky;
-  top: 2.25rem;
-  z-index: 11;
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  color: var(--table-text, var(--text));
-  padding: 0.25rem 0.35rem;
-  border-top: none;
-  border-bottom: 1px solid var(--table-cell-border, var(--border, #e2e8f0));
-}
-
 .q4info-layout .table-container .interactive-table thead tr:first-child th,
 .q4info-layout .combo-table-container .interactive-table thead tr:first-child th {
   padding: 0;

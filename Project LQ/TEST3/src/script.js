@@ -16,6 +16,10 @@
   let originalHomeContent = null;
   let loadAbortController = null;
   let loadRequestId = 0;
+  /** Promesse de chargement Chart.js (Q2 Info uniquement, une seule requête CDN) */
+  let chartJsLoadPromise = null;
+
+  const CHART_JS_CDN = 'https://cdn.jsdelivr.net/npm/chart.js';
 
   const container = document.getElementById('container');
   const pageTitle = document.getElementById('pageTitle');
@@ -88,6 +92,35 @@
       } catch (e) { /* ignore */ }
       q2InfoChartInstance = null;
     }
+  }
+
+  /** Charge Chart.js à la demande (première visite Q2 Info). */
+  function loadChartJs() {
+    if (typeof window.Chart !== 'undefined') {
+      return Promise.resolve();
+    }
+    if (chartJsLoadPromise) {
+      return chartJsLoadPromise;
+    }
+    chartJsLoadPromise = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = CHART_JS_CDN;
+      s.async = true;
+      s.onload = function () {
+        if (typeof window.Chart !== 'undefined') {
+          resolve();
+        } else {
+          chartJsLoadPromise = null;
+          reject(new Error('Chart.js indisponible après chargement'));
+        }
+      };
+      s.onerror = function () {
+        chartJsLoadPromise = null;
+        reject(new Error('Échec du chargement Chart.js'));
+      };
+      document.head.appendChild(s);
+    });
+    return chartJsLoadPromise;
   }
 
   /** Couleurs thème (style.css → --q2info-chart-* sur <html>) pour Chart.js Q2 Info */
@@ -498,12 +531,12 @@
     }
 
     function renderChart(data) {
-      if (!canvas || typeof Chart === 'undefined') {
+      if (!canvas || typeof window.Chart === 'undefined') {
         return;
       }
       var formatted = formatData(data);
       destroyQ2InfoChart();
-      q2InfoChartInstance = new Chart(canvas, formatted.config);
+      q2InfoChartInstance = new window.Chart(canvas, formatted.config);
       calculateStats(formatted.comboDays);
     }
 
@@ -527,10 +560,16 @@
         });
     }
 
+    var q2ChartUiBound = false;
+
     function startQ2ChartUiOnce() {
-      if (!canvas || typeof Chart === 'undefined') {
+      if (!canvas || typeof window.Chart === 'undefined') {
         return false;
       }
+      if (q2ChartUiBound) {
+        return true;
+      }
+      q2ChartUiBound = true;
 
       var initial = boot.initialData;
       if (Array.isArray(initial)) {
@@ -555,15 +594,16 @@
       return true;
     }
 
-    if (!startQ2ChartUiOnce()) {
-      var tries = 0;
-      var t = setInterval(function () {
-        tries++;
-        if (startQ2ChartUiOnce() || tries > 80) {
-          clearInterval(t);
+    loadChartJs()
+      .then(function () {
+        if (!canvas || !canvas.isConnected) {
+          return;
         }
-      }, 50);
-    }
+        startQ2ChartUiOnce();
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
   }
 
   function applyQ4InfoFilter(tableId, filterValue) {
