@@ -46,14 +46,6 @@ if (isset($_GET['ajax'])) {
     exit;
 }
 
-$json_data = json_encode($data, JSON_UNESCAPED_UNICODE);
-$jsTexts = json_encode([
-    'chartCombinations' => t('q2info.chart.combinations'),
-    'statsDays' => t('q2info.stats.days'),
-    'statsComboCount' => t('q2info.stats.combo_count'),
-    'tooltipPattern' => t('q2info.chart.tooltip'),
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
 $sqlGrid = "SELECT Tirage, n1, n2 FROM Q2 ORDER BY Tirage DESC LIMIT $gridLimit";
 $resGrid = $conn->query($sqlGrid);
 
@@ -83,8 +75,13 @@ if ($countResult && $row = $countResult->fetch_assoc()) {
 $conn->close();
 
 $q2infoBoot = [
-    'texts' => json_decode($jsTexts, true),
-    'initialData' => json_decode($json_data, true),
+    'texts' => [
+        'chartCombinations' => t('q2info.chart.combinations'),
+        'statsDays' => t('q2info.stats.days'),
+        'statsComboCount' => t('q2info.stats.combo_count'),
+        'tooltipPattern' => t('q2info.chart.tooltip'),
+    ],
+    'initialData' => $data,
 ];
 $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>

@@ -71,15 +71,6 @@
     labelNimport.classList.toggle('active', toggleSwitch.checked);
   }
 
-  function getInfoUrl(page) {
-    if (!page) return '';
-    var cacheBuster = '&_ts=' + Date.now();
-    if (page.indexOf('q2') !== -1) return 'quotidienne/QInfo/q2info.php?table=Q2_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
-    if (page.indexOf('q3') !== -1) return 'quotidienne/QInfo/q3info.php?table=Q3_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
-    if (page.indexOf('q4') !== -1) return 'quotidienne/QInfo/q4info.php?table=Q4_stats_order&lang=' + encodeURIComponent(currentLang) + cacheBuster;
-    return '';
-  }
-
   function getInfoFetchPage(page) {
     if (!page) return '';
     if (page === 'quotidienne/q2.php') return 'quotidienne/QInfo/q2info.php';
@@ -101,8 +92,6 @@
   }
 
   function applyQ2Translations() {
-    if (container.getAttribute('data-page') !== 'quotidienne/q2.php') return;
-
     var texts = currentLang === 'en'
       ? {
           draw: 'Draw',
@@ -155,8 +144,6 @@
   }
 
   function applyQ3Translations() {
-    if (container.getAttribute('data-page') !== 'quotidienne/q3.php') return;
-
     var texts = currentLang === 'en'
       ? {
           draw: 'Draw',
@@ -210,8 +197,6 @@
   }
 
   function applyQ4Translations() {
-    if (container.getAttribute('data-page') !== 'quotidienne/q4.php') return;
-
     var texts = currentLang === 'en'
       ? {
           draw: 'Draw',
@@ -347,12 +332,18 @@
       })
       .then(function (html) {
         if (requestId !== loadRequestId) return;
-        destroyQ2InfoChart();
+        if (q2InfoChartInstance) {
+          destroyQ2InfoChart();
+        }
         container.innerHTML = html;
         container.setAttribute('data-page', page);
-        applyQ2Translations();
-        applyQ3Translations();
-        applyQ4Translations();
+        if (page === 'quotidienne/q2.php') {
+          applyQ2Translations();
+        } else if (page === 'quotidienne/q3.php') {
+          applyQ3Translations();
+        } else if (page === 'quotidienne/q4.php') {
+          applyQ4Translations();
+        }
         updateToggleLabels(page);
         makeTablesSortable();
 
@@ -391,6 +382,9 @@
       .catch(function (err) {
         if (err && err.name === 'AbortError') return;
         if (requestId !== loadRequestId) return;
+        if (q2InfoChartInstance) {
+          destroyQ2InfoChart();
+        }
         container.innerHTML = '<p class="error">Impossible de charger la page.</p>';
       })
       .finally(function () {
@@ -700,6 +694,9 @@
   function goHome() {
     isAltView = false;
     setNavOpen(false);
+    if (q2InfoChartInstance) {
+      destroyQ2InfoChart();
+    }
     if (originalHomeContent) {
       container.innerHTML = originalHomeContent;
     }
@@ -736,12 +733,8 @@
           return;
         }
         updatePageTitleForLang(page);
-        var infoUrl = getInfoUrl(page);
-        if (infoUrl) {
-          container.innerHTML = '<iframe src="' + infoUrl + '" class="info-iframe"></iframe>';
-          infoBtn.textContent = '\u21c6';
-          return;
-        }
+        loadPage(page, { preserveAltView: true });
+        return;
       }
       loadPage(page);
     });
@@ -769,20 +762,11 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       var fetchInfoPage = getInfoFetchPage(page);
-      if (fetchInfoPage) {
-        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
-        loadPage(fetchInfoPage, { preserveAltView: nextAltView });
+      if (!fetchInfoPage) {
         return;
       }
-      isAltView = !isAltView;
-      if (isAltView) {
-        var infoUrl = getInfoUrl(page);
-        if (!infoUrl) return;
-        container.innerHTML = '<iframe src="' + infoUrl + '" class="info-iframe"></iframe>';
-        infoBtn.textContent = '\u21c6';
-      } else {
-        loadPage(page);
-      }
+      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
+      loadPage(fetchInfoPage, { preserveAltView: nextAltView });
     });
   }
 

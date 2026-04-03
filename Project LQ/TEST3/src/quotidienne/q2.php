@@ -102,7 +102,7 @@ foreach ($daysStats as $num => $daysAgo) {
 }
 
 echo str_replace(
-    ['<!--TABLE_PLACEHOLDER-->', '<!--COMBO_PLACEHOLDER-->', '<!--NUMBER_STATS_PLACEHOLDER-->', '<!--SCRIPT_PLACEHOLDER-->'],
-    [$tableHTML, $comboHTML, $numberStatsHTML, ''],
+    ['<!--TABLE_PLACEHOLDER-->', '<!--COMBO_PLACEHOLDER-->', '<!--NUMBER_STATS_PLACEHOLDER-->'],
+    [$tableHTML, $comboHTML, $numberStatsHTML],
     $template
 );
