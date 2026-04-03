@@ -97,161 +97,93 @@
     return v || fallback;
   }
 
-  function applyQ2Translations() {
-    var texts = currentLang === 'en'
-      ? {
-          draw: 'Draw',
-          last365: 'Last 365',
-          days: 'Days<br>ago',
-          previous: 'Previous<br>draw',
-          times: 'Times',
-          maxDays: 'Max days<br>ago',
-          lastDraw: 'Last<br>draw',
-          draws: 'Draws'
-        }
-      : {
-          draw: 'Tirage',
-          last365: '365 dernières',
-          days: 'Jours<br>passés',
-          previous: "L'avant<br>dernière",
-          times: 'Fois',
-          maxDays: 'Max jours<br>passés',
-          lastDraw: 'Dernier<br>Tirage',
-          draws: 'Tirages'
-        };
+  /** Textes des en-têtes de tableaux Q2 / Q3 / Q4 (pages principales) */
+  var QUOTIDIENNE_TABLE_I18N = {
+    en: {
+      draw: 'Draw',
+      last365: 'Last 365',
+      days: 'Days<br>ago',
+      previous: 'Previous<br>draw',
+      times: 'Times',
+      /** Dernière colonne du 1er tableau (Q3/Q4 : saut après « Max ») */
+      maxDaysTight: 'Max<br>days ago',
+      /** Dernière colonne Q2 (tous) et 2e tableau Q3/Q4 : « Max jours » / « Max days » */
+      maxDaysLoose: 'Max days<br>ago',
+      lastDraw: 'Last<br>draw',
+      draws: 'Draws'
+    },
+    fr: {
+      draw: 'Tirage',
+      last365: '365 dernières',
+      days: 'Jours<br>passés',
+      previous: "L'avant<br>dernière",
+      times: 'Fois',
+      maxDaysTight: 'Max<br>jours passés',
+      maxDaysLoose: 'Max jours<br>passés',
+      lastDraw: 'Dernier<br>Tirage',
+      draws: 'Tirages'
+    }
+  };
+
+  /**
+   * Indices des <th> à remplir par tableau (0-based).
+   * k: draw365 | days | previous | times | maxTight | maxLoose | maxTimes | drawsSelect
+   */
+  var QUOTIDIENNE_TABLE_HEADER_MAP = {
+    q2: [
+      [{ i: 0, k: 'draw365' }, { i: 3, k: 'days' }, { i: 4, k: 'previous' }, { i: 5, k: 'times' }, { i: 6, k: 'maxLoose' }],
+      [{ i: 2, k: 'days' }, { i: 3, k: 'lastDraw' }, { i: 4, k: 'maxTimes' }, { i: 5, k: 'maxLoose' }],
+      [{ i: 1, k: 'days' }, { i: 2, k: 'drawsSelect', selectId: 'q2CountRange' }]
+    ],
+    q3: [
+      [{ i: 0, k: 'draw365' }, { i: 4, k: 'days' }, { i: 5, k: 'previous' }, { i: 6, k: 'times' }, { i: 7, k: 'maxTight' }],
+      [{ i: 3, k: 'days' }, { i: 4, k: 'lastDraw' }, { i: 5, k: 'maxTimes' }, { i: 6, k: 'maxLoose' }],
+      [{ i: 1, k: 'days' }, { i: 2, k: 'drawsSelect', selectId: 'q3CountRange' }]
+    ],
+    q4: [
+      [{ i: 0, k: 'draw365' }, { i: 5, k: 'days' }, { i: 6, k: 'previous' }, { i: 7, k: 'times' }, { i: 8, k: 'maxTight' }],
+      [{ i: 4, k: 'days' }, { i: 5, k: 'lastDraw' }, { i: 6, k: 'maxTimes' }, { i: 7, k: 'maxLoose' }],
+      [{ i: 1, k: 'days' }, { i: 2, k: 'drawsSelect', selectId: 'q4CountRange' }]
+    ]
+  };
+
+  function applyQuotidienneTableTranslations(which) {
+    var lang = currentLang === 'en' ? 'en' : 'fr';
+    var texts = QUOTIDIENNE_TABLE_I18N[lang];
+    var plan = QUOTIDIENNE_TABLE_HEADER_MAP[which];
+    if (!plan || !texts) return;
 
     var tables = container.querySelectorAll('.interactive-table');
-    if (tables[0]) {
-      var headers1 = tables[0].querySelectorAll('thead th');
-      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
-      if (headers1[3]) headers1[3].innerHTML = texts.days;
-      if (headers1[4]) headers1[4].innerHTML = texts.previous;
-      if (headers1[5]) headers1[5].innerHTML = texts.times;
-      if (headers1[6]) headers1[6].innerHTML = texts.maxDays;
-    }
-    if (tables[1]) {
-      var headers2 = tables[1].querySelectorAll('thead th');
-      if (headers2[2]) headers2[2].innerHTML = texts.days;
-      if (headers2[3]) headers2[3].innerHTML = texts.lastDraw;
-      if (headers2[4]) headers2[4].innerHTML = 'Max<br>' + texts.times;
-      if (headers2[5]) headers2[5].innerHTML = texts.maxDays;
-    }
-    if (tables[2]) {
-      var headers3 = tables[2].querySelectorAll('thead th');
-      if (headers3[1]) headers3[1].innerHTML = texts.days;
-      if (headers3[2]) {
-        var rangeSelect = headers3[2].querySelector('#q2CountRange');
-        if (rangeSelect) {
-          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
-          headers3[2].appendChild(rangeSelect);
+
+    function setHeader(th, entry) {
+      if (!th) return;
+      if (entry.k === 'draw365') {
+        th.innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
+      } else if (entry.k === 'maxTimes') {
+        th.innerHTML = 'Max<br>' + texts.times;
+      } else if (entry.k === 'drawsSelect') {
+        var sel = entry.selectId ? th.querySelector('#' + entry.selectId) : null;
+        if (sel) {
+          th.innerHTML = texts.draws + ' &nbsp; <br>';
+          th.appendChild(sel);
         }
+      } else if (entry.k === 'maxTight') {
+        th.innerHTML = texts.maxDaysTight;
+      } else if (entry.k === 'maxLoose') {
+        th.innerHTML = texts.maxDaysLoose;
+      } else if (texts[entry.k]) {
+        th.innerHTML = texts[entry.k];
       }
     }
-  }
 
-  function applyQ3Translations() {
-    var texts = currentLang === 'en'
-      ? {
-          draw: 'Draw',
-          last365: 'Last 365',
-          days: 'Days<br>ago',
-          previous: 'Previous<br>draw',
-          times: 'Times',
-          maxDays: 'Max<br>days ago',
-          lastDraw: 'Last<br>draw',
-          draws: 'Draws'
-        }
-      : {
-          draw: 'Tirage',
-          last365: '365 dernières',
-          days: 'Jours<br>passés',
-          previous: "L'avant<br>dernière",
-          times: 'Fois',
-          maxDays: 'Max<br>jours passés',
-          lastDraw: 'Dernier<br>Tirage',
-          draws: 'Tirages'
-        };
-
-    var tables = container.querySelectorAll('.interactive-table');
-    if (tables[0]) {
-      var headers1 = tables[0].querySelectorAll('thead th');
-      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
-      if (headers1[4]) headers1[4].innerHTML = texts.days;
-      if (headers1[5]) headers1[5].innerHTML = texts.previous;
-      if (headers1[6]) headers1[6].innerHTML = texts.times;
-      if (headers1[7]) headers1[7].innerHTML = texts.maxDays;
-    }
-    if (tables[1]) {
-      var headers2 = tables[1].querySelectorAll('thead th');
-      if (headers2[3]) headers2[3].innerHTML = texts.days;
-      if (headers2[4]) headers2[4].innerHTML = texts.lastDraw;
-      if (headers2[5]) headers2[5].innerHTML = 'Max<br>' + texts.times;
-      if (headers2[6]) headers2[6].innerHTML = 'Max jours<br>passés';
-      if (currentLang === 'en' && headers2[6]) headers2[6].innerHTML = 'Max days<br>ago';
-    }
-    if (tables[2]) {
-      var headers3 = tables[2].querySelectorAll('thead th');
-      if (headers3[1]) headers3[1].innerHTML = texts.days;
-      if (headers3[2]) {
-        var rangeSelect = headers3[2].querySelector('#q3CountRange');
-        if (rangeSelect) {
-          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
-          headers3[2].appendChild(rangeSelect);
-        }
-      }
-    }
-  }
-
-  function applyQ4Translations() {
-    var texts = currentLang === 'en'
-      ? {
-          draw: 'Draw',
-          last365: 'Last 365',
-          days: 'Days<br>ago',
-          previous: 'Previous<br>draw',
-          times: 'Times',
-          maxDays: 'Max<br>days ago',
-          lastDraw: 'Last<br>draw',
-          draws: 'Draws'
-        }
-      : {
-          draw: 'Tirage',
-          last365: '365 dernières',
-          days: 'Jours<br>passés',
-          previous: "L'avant<br>dernière",
-          times: 'Fois',
-          maxDays: 'Max<br>jours passés',
-          lastDraw: 'Dernier<br>Tirage',
-          draws: 'Tirages'
-        };
-
-    var tables = container.querySelectorAll('.interactive-table');
-    if (tables[0]) {
-      var headers1 = tables[0].querySelectorAll('thead th');
-      if (headers1[0]) headers1[0].innerHTML = texts.draw + '<br><small>' + texts.last365 + '</small>';
-      if (headers1[5]) headers1[5].innerHTML = texts.days;
-      if (headers1[6]) headers1[6].innerHTML = texts.previous;
-      if (headers1[7]) headers1[7].innerHTML = texts.times;
-      if (headers1[8]) headers1[8].innerHTML = texts.maxDays;
-    }
-    if (tables[1]) {
-      var headers2 = tables[1].querySelectorAll('thead th');
-      if (headers2[4]) headers2[4].innerHTML = texts.days;
-      if (headers2[5]) headers2[5].innerHTML = texts.lastDraw;
-      if (headers2[6]) headers2[6].innerHTML = 'Max<br>' + texts.times;
-      if (headers2[7]) headers2[7].innerHTML = currentLang === 'en' ? 'Max days<br>ago' : 'Max jours<br>passés';
-    }
-    if (tables[2]) {
-      var headers3 = tables[2].querySelectorAll('thead th');
-      if (headers3[1]) headers3[1].innerHTML = texts.days;
-      if (headers3[2]) {
-        var rangeSelect = headers3[2].querySelector('#q4CountRange');
-        if (rangeSelect) {
-          headers3[2].innerHTML = texts.draws + ' &nbsp; <br>';
-          headers3[2].appendChild(rangeSelect);
-        }
-      }
-    }
+    plan.forEach(function (rows, tableIdx) {
+      var table = tables[tableIdx];
+      if (!table || !rows) return;
+      var headers = table.querySelectorAll('thead th');
+      rows.forEach(function (entry) {
+        setHeader(headers[entry.i], entry);
+      });
+    });
   }
 
   function updatePageTitleForLang(page) {
@@ -344,11 +276,11 @@
         container.innerHTML = html;
         container.setAttribute('data-page', page);
         if (page === 'quotidienne/q2.php') {
-          applyQ2Translations();
+          applyQuotidienneTableTranslations('q2');
         } else if (page === 'quotidienne/q3.php') {
-          applyQ3Translations();
+          applyQuotidienneTableTranslations('q3');
         } else if (page === 'quotidienne/q4.php') {
-          applyQ4Translations();
+          applyQuotidienneTableTranslations('q4');
         }
         updateToggleLabels(page);
         makeTablesSortable();

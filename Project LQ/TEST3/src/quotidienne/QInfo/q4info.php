@@ -240,9 +240,6 @@ foreach ($tiragesGrid as $t) {
     <table class="interactive-table" id="dupsVariantATable">
       <thead>
         <tr><th colspan="5"><?= t('q4info.never_drawn_any_order') ?></th></tr>
-        <!-- <tr>
-          <th>n1</th><th>n2</th><th>n3</th><th>n4</th><th>count</th>
-        </tr> -->
       </thead>
       <tbody>
         <?php

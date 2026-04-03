@@ -37,36 +37,6 @@ foreach ($tirages as $t) {
 $conn->close();
 ?>
 <div id="q3-meta" data-count="<?= $q3count ?>"></div>
-<style>
-  .q3info-layout {
-    width: min(100%, 980px);
-    max-width: 980px;
-    min-width: 0;
-    margin: 0 auto;
-    padding: 0 12px;
-    box-sizing: border-box;
-    font-family: var(--font);
-  }
-
-  .q3info-layout .filter-form {
-    text-align: center;
-    margin: 0;
-    padding: 6px 0 14px;
-    width: 100%;
-  }
-
-  .q3info-layout .filter-form select {
-    font-size: 1em;
-    border-radius: 6px;
-    box-sizing: border-box;
-    min-height: 32px;
-    height: 32px;
-    padding: 0 8px;
-    line-height: 32px;
-    vertical-align: middle;
-  }
-
-</style>
 <div class="q3info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>

@@ -86,55 +86,6 @@ $q2infoBoot = [
 $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>
 <div id="q2-meta" data-count="<?= (int)$q2count ?>"></div>
-<style>
-  .q2info-layout {
-    width: min(100%, 980px);
-    max-width: 980px;
-    min-width: 0;
-    margin: 0 auto;
-    padding: 0 12px;
-    box-sizing: border-box;
-    font-family: var(--font);
-  }
-
-  .q2info-layout #q2infoToggleWrap,
-  .q2info-layout #q2infoSelectWrap {
-    text-align: center;
-    margin: 8px 0;
-  }
-
-  .q2info-layout #q2InfoChartLimit,
-  .q2info-layout #q2infoNorderToggle {
-    font-size: 1em;
-    margin-left: 6px;
-  }
-
-  .q2info-layout label[for="q2infoNorderToggle"] { margin-left: 8px; }
-
-  .q2info-layout .filter-form {
-    text-align: center;
-    margin: 0;
-    padding: 10px 0;
-    width: 100%;
-  }
-
-  .q2info-layout .filter-form select {
-    font-size: 1em;
-    border-radius: 6px;
-    padding: 2px 6px;
-    line-height: 1.2;
-    box-sizing: border-box;
-    min-height: 32px;
-  }
-
-  .q2info-layout .q2info-chart-wrap {
-    max-width: 100%;
-    margin: 12px auto;
-    position: relative;
-    height: min(50vh, 320px);
-  }
-</style>
-
 <div class="q2info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>

@@ -48,7 +48,6 @@
   --theme-table-star-1-text: #0f172a;
   --theme-table-star-2-bg: #ea580c;
   --theme-table-star-2-text: #ffffff;
-  --theme-table-outline-zero: #38bdf8;
   /* Grille chiffres (Info) — copie identique dans html.theme-light jusqu’à différenciation des thèmes */
   --theme-info-grid-wrap-border: #ccc;
   --theme-info-grid-wrap-bg: rgba(173, 216, 230, 0.85);
@@ -108,7 +107,6 @@ html.theme-light {
   --theme-table-star-1-text: #ffffff;
   --theme-table-star-2-bg: #ea580c;
   --theme-table-star-2-text: #ffffff;
-  --theme-table-outline-zero: #2563eb;
   --theme-info-grid-wrap-border: #ccc;
   --theme-info-grid-wrap-bg: rgba(173, 216, 230, 0.85);
   --theme-info-grid-text: #000000;
@@ -167,7 +165,6 @@ html.theme-light {
   --table-star-1-text: var(--theme-table-star-1-text);
   --table-star-2-bg: var(--theme-table-star-2-bg);
   --table-star-2-text: var(--theme-table-star-2-text);
-  --table-outline-zero: var(--theme-table-outline-zero);
   --info-grid-wrap-border: var(--theme-info-grid-wrap-border);
   --info-grid-wrap-bg: var(--theme-info-grid-wrap-bg);
   --info-grid-text: var(--theme-info-grid-text);
@@ -239,7 +236,6 @@ html.theme-light {
   --table-star-1-text: var(--theme-table-star-1-text);
   --table-star-2-bg: var(--theme-table-star-2-bg);
   --table-star-2-text: var(--theme-table-star-2-text);
-  --table-outline-zero: var(--theme-table-outline-zero);
   --info-grid-wrap-border: var(--theme-info-grid-wrap-border);
   --info-grid-wrap-bg: var(--theme-info-grid-wrap-bg);
   --info-grid-text: var(--theme-info-grid-text);
