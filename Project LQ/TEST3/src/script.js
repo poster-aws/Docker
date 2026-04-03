@@ -8,6 +8,10 @@
   let q4CountRange = 50;
   let q3InfoLimit = 50;
   let q4InfoLimit = 50;
+  let q2ChartLimit = 100;
+  let q2InfoGridLimit = 50;
+  let q2InfoNorder = false;
+  let q2InfoChartInstance = null;
   let isAltView = false;
   let originalHomeContent = null;
   let loadAbortController = null;
@@ -78,11 +82,22 @@
 
   function getInfoFetchPage(page) {
     if (!page) return '';
+    if (page === 'quotidienne/q2.php') return 'quotidienne/QInfo/q2info.php';
+    if (page === 'quotidienne/QInfo/q2info.php') return 'quotidienne/q2.php';
     if (page === 'quotidienne/q3.php') return 'quotidienne/QInfo/q3info.php';
     if (page === 'quotidienne/QInfo/q3info.php') return 'quotidienne/q3.php';
     if (page === 'quotidienne/q4.php') return 'quotidienne/QInfo/q4info.php';
     if (page === 'quotidienne/QInfo/q4info.php') return 'quotidienne/q4.php';
     return '';
+  }
+
+  function destroyQ2InfoChart() {
+    if (q2InfoChartInstance) {
+      try {
+        q2InfoChartInstance.destroy();
+      } catch (e) { /* ignore */ }
+      q2InfoChartInstance = null;
+    }
   }
 
   function applyQ2Translations() {
@@ -286,10 +301,10 @@
     }
 
     var params = new URLSearchParams();
-    if (page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && toggleSwitch.checked) {
+    if (page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
+    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -301,6 +316,12 @@
       params.set('count_range', String(q2CountRange || 50));
     } else if (page === 'quotidienne/q3.php') {
       params.set('count_range', String(q3CountRange || 50));
+    } else if (page === 'quotidienne/QInfo/q2info.php') {
+      params.set('limit', String(q2ChartLimit));
+      params.set('grid_limit', String(q2InfoGridLimit || 50));
+      if (q2InfoNorder) {
+        params.set('norder', '1');
+      }
     } else if (page === 'quotidienne/QInfo/q3info.php') {
       params.set('limit', String(q3InfoLimit || 50));
     } else if (page === 'quotidienne/QInfo/q4info.php') {
@@ -326,6 +347,7 @@
       })
       .then(function (html) {
         if (requestId !== loadRequestId) return;
+        destroyQ2InfoChart();
         container.innerHTML = html;
         container.setAttribute('data-page', page);
         applyQ2Translations();
@@ -334,7 +356,10 @@
         updateToggleLabels(page);
         makeTablesSortable();
 
-        if (page.indexOf('q2') !== -1) {
+        /* QInfo до q2.php / q4.php: иначе indexOf('q2') совпадает с путём q2info.php */
+        if (page === 'quotidienne/QInfo/q2info.php') {
+          initQ2InfoPage(page);
+        } else if (page === 'quotidienne/q2.php') {
           bindRangeSelect(container.querySelector('#q2CountRange'), 'q2', page);
         } else if (page === 'quotidienne/q3.php') {
           bindRangeSelect(container.querySelector('#q3CountRange'), 'q3', page);
@@ -342,7 +367,7 @@
           bindQ3InfoLimitSelect(container.querySelector('#q3InfoLimit'), page);
         } else if (page === 'quotidienne/QInfo/q4info.php') {
           initQ4InfoPage(page);
-        } else if (page.indexOf('q4') !== -1) {
+        } else if (page === 'quotidienne/q4.php') {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         }
 
@@ -403,6 +428,195 @@
       q4InfoLimit = parseInt(select.value, 10) || 50;
       loadPage(page, { preserveAltView: true });
     });
+  }
+
+  function initQ2InfoPage(page) {
+    var gridSelect = container.querySelector('#q2InfoGridLimit');
+    if (gridSelect) {
+      q2InfoGridLimit = parseInt(gridSelect.value, 10) || 50;
+      gridSelect.addEventListener('change', function () {
+        q2InfoGridLimit = parseInt(gridSelect.value, 10) || 50;
+        loadPage(page, { preserveAltView: true });
+      });
+    }
+
+    var bootEl = container.querySelector('#q2info-bootstrap');
+    if (!bootEl) return;
+
+    var boot;
+    try {
+      boot = JSON.parse(bootEl.getAttribute('data-json') || '{}');
+    } catch (e) {
+      return;
+    }
+
+    var texts = boot.texts || {};
+    var canvas = container.querySelector('#q2infoChart');
+    var chartSelect = container.querySelector('#q2InfoChartLimit');
+    var norderEl = container.querySelector('#q2infoNorderToggle');
+    var statsBody = container.querySelector('#q2infoStatsBody');
+
+    if (chartSelect) {
+      var cv = parseInt(chartSelect.value, 10);
+      q2ChartLimit = isNaN(cv) ? 100 : cv;
+    }
+    if (norderEl) {
+      q2InfoNorder = !!norderEl.checked;
+    }
+
+    function formatData(dataFromPHP) {
+      var scatterData = dataFromPHP.map(function (item) {
+        var combo = (String(item.n1) + String(item.n2)).padStart(2, '0');
+        return {
+          x: parseInt(item.days, 10) || 0,
+          y: combo
+        };
+      }).filter(function (point) {
+        return !isNaN(point.x);
+      });
+
+      var uniqueYValues = [];
+      scatterData.forEach(function (p) {
+        if (uniqueYValues.indexOf(p.y) === -1) uniqueYValues.push(p.y);
+      });
+      uniqueYValues.sort();
+      var yIndexMap = {};
+      uniqueYValues.forEach(function (val, idx) {
+        yIndexMap[val] = idx;
+      });
+
+      var chartData = {
+        datasets: [{
+          label: texts.chartCombinations || '',
+          data: scatterData.map(function (point) {
+            return { x: point.x, y: yIndexMap[point.y] };
+          }),
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        }]
+      };
+
+      var config = {
+        type: 'scatter',
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { title: { display: true, text: texts.statsDays || '' } },
+            y: {
+              ticks: {
+                callback: function (value) {
+                  return uniqueYValues[value] || '';
+                }
+              },
+              title: { display: true, text: texts.chartCombinations || '' }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  var index = context.raw.y;
+                  var combo = uniqueYValues[index] || '';
+                  var pat = texts.tooltipPattern || '';
+                  return pat.replace('{combo}', combo).replace('{days}', String(context.raw.x));
+                }
+              }
+            }
+          }
+        }
+      };
+
+      return { config: config, comboDays: scatterData };
+    }
+
+    function calculateStats(comboDays) {
+      if (!statsBody) return;
+      var ranges = { '1–50': 0, '1–100': 0, '1–200': 0, '201+': 0 };
+      comboDays.forEach(function (item) {
+        var days = item.x;
+        if (days >= 1 && days <= 50) ranges['1–50']++;
+        if (days >= 1 && days <= 100) ranges['1–100']++;
+        if (days >= 1 && days <= 200) ranges['1–200']++;
+        if (days >= 201) ranges['201+']++;
+      });
+      var total = comboDays.length;
+      statsBody.innerHTML = '';
+      Object.keys(ranges).forEach(function (label) {
+        var count = ranges[label];
+        var percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+        statsBody.innerHTML += '<tr><td>' + label + '</td><td>' + count + '</td><td>' + percent + '%</td></tr>';
+      });
+    }
+
+    function renderChart(data) {
+      if (!canvas || typeof Chart === 'undefined') {
+        return;
+      }
+      var formatted = formatData(data);
+      destroyQ2InfoChart();
+      q2InfoChartInstance = new Chart(canvas, formatted.config);
+      calculateStats(formatted.comboDays);
+    }
+
+    function loadChartAjax() {
+      var p = new URLSearchParams();
+      p.set('limit', String(q2ChartLimit));
+      p.set('grid_limit', String(q2InfoGridLimit || 50));
+      p.set('lang', currentLang);
+      p.set('ajax', '1');
+      if (q2InfoNorder) p.set('norder', '1');
+      fetch('quotidienne/QInfo/q2info.php?' + p.toString(), { cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('q2info ajax');
+          return r.json();
+        })
+        .then(function (data) {
+          renderChart(data);
+        })
+        .catch(function (err) {
+          console.error(err);
+        });
+    }
+
+    function startQ2ChartUiOnce() {
+      if (!canvas || typeof Chart === 'undefined') {
+        return false;
+      }
+
+      var initial = boot.initialData;
+      if (Array.isArray(initial)) {
+        renderChart(initial);
+      }
+
+      if (chartSelect) {
+        chartSelect.addEventListener('change', function () {
+          var v = parseInt(chartSelect.value, 10);
+          q2ChartLimit = isNaN(v) ? 100 : v;
+          loadChartAjax();
+        });
+      }
+
+      if (norderEl) {
+        norderEl.addEventListener('change', function () {
+          q2InfoNorder = !!norderEl.checked;
+          loadChartAjax();
+        });
+      }
+
+      return true;
+    }
+
+    if (!startQ2ChartUiOnce()) {
+      var tries = 0;
+      var t = setInterval(function () {
+        tries++;
+        if (startQ2ChartUiOnce() || tries > 80) {
+          clearInterval(t);
+        }
+      }, 50);
+    }
   }
 
   function applyQ4InfoFilter(tableId, filterValue) {
@@ -517,7 +731,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
+        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -556,7 +770,7 @@
       if (!page) return;
       var fetchInfoPage = getInfoFetchPage(page);
       if (fetchInfoPage) {
-        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
+        var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
         loadPage(fetchInfoPage, { preserveAltView: nextAltView });
         return;
       }

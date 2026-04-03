@@ -9,22 +9,16 @@ header('Expires: 0');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// --------------------
-// 1) Режим переключателя (ORDER / N'import) для графика
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table = $isNorder ? "Q2_stats_norder" : "Q2_stats_order";
 
-// 2) LIMIT для графика (как у тебя)
 $limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? intval($_GET['limit']) : 100;
 
-// 3) GRID LIMIT (как в Q3info, отдельный параметр)
 $allowedGridLimits = [50, 100, 365];
 $gridLimit = isset($_GET['grid_limit']) && in_array((int)$_GET['grid_limit'], $allowedGridLimits, true)
     ? (int)$_GET['grid_limit']
     : 50;
 
-// --------------------
-// Получение данных для графика/таблицы диапазонов
 $conn = new mysqli($servername, $username, $password, $dbname);
 $conn->set_charset("utf8");
 
@@ -45,9 +39,9 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Если AJAX — возвращаем только данные (как у тебя)
 if (isset($_GET['ajax'])) {
     $conn->close();
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -60,8 +54,6 @@ $jsTexts = json_encode([
     'tooltipPattern' => t('q2info.chart.tooltip'),
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-// --------------------
-// Получение данных для GRID (как Q3info, но Q2)
 $sqlGrid = "SELECT Tirage, n1, n2 FROM Q2 ORDER BY Tirage DESC LIMIT $gridLimit";
 $resGrid = $conn->query($sqlGrid);
 
@@ -75,207 +67,205 @@ if ($resGrid && $resGrid->num_rows > 0) {
     }
 }
 
-/* === ДОБАВЛЕНО: сумма выпадений цифр для GRID (с учетом дублей) === */
 $digitSums = array_fill(0, 10, 0);
 foreach ($tirages as $t) {
     foreach ($t['nums'] as $num) {
         $digitSums[$num]++;
     }
 }
-/* === /ДОБАВЛЕНО === */
+
+$q2count = 0;
+$countResult = $conn->query("SELECT COUNT(*) as total FROM Q2");
+if ($countResult && $row = $countResult->fetch_assoc()) {
+    $q2count = (int)$row['total'];
+}
 
 $conn->close();
+
+$q2infoBoot = [
+    'texts' => json_decode($jsTexts, true),
+    'initialData' => json_decode($json_data, true),
+];
+$bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>
+<div id="q2-meta" data-count="<?= (int)$q2count ?>"></div>
+<link rel="stylesheet" href="quotidienne/QInfo/qinfo.css">
+<style>
+  .q2info-layout {
+    width: min(100%, 980px);
+    max-width: 980px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 0 12px;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    color: #000;
+  }
 
-<!DOCTYPE html>
-<html lang="<?= htmlspecialchars($lang) ?>">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="qinfo.css">   <!-- == Scroll hint (bouncing ball) == -->
+  .q2info-layout #q2infoToggleWrap,
+  .q2info-layout #q2infoSelectWrap {
+    text-align: center;
+    margin: 8px 0;
+  }
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    body::-webkit-scrollbar { display: none; }
+  .q2info-layout #q2InfoChartLimit,
+  .q2info-layout #q2infoNorderToggle {
+    font-size: 1em;
+    margin-left: 6px;
+  }
 
-    #toggleWrapper,
-    #selectWrapper {
-      text-align: center;
-      margin: 8px 0;
-    }
+  .q2info-layout label[for="q2infoNorderToggle"] { margin-left: 8px; }
 
-    #limitSelect, #norderToggle {
-      font-size: 1em;
-      margin-left: 6px;
-    }
-    label[for="norderToggle"] { margin-left: 8px; }
+  .q2info-layout #q2infoStatsTable {
+    margin: 10px auto;
+    border-collapse: collapse;
+    width: 60%;
+    max-width: 100%;
+  }
 
-    #statsTable {
-      margin: 10px auto;
-      border-collapse: collapse;
-      width: 60%;
-    }
-    #statsTable th, #statsTable td {
-      border: 1px solid #999;
-      padding: 6px 10px;
-      text-align: center;
-    }
+  .q2info-layout #q2infoStatsTable th,
+  .q2info-layout #q2infoStatsTable td {
+    border: 1px solid #999;
+    padding: 6px 10px;
+    text-align: center;
+  }
 
-    .circle {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
-      border-radius: 50%;
-      background-color: #7eb0ea;
-      color: #000;
-      font-weight: bold;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      margin: 0 3px;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    }
+  .q2info-layout .circle {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    border-radius: 50%;
+    background-color: #7eb0ea;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  }
 
-    #infoBlock.info-list {
-      display: flex;
-      flex-direction: column;
-      padding: 14px 16px;
-      gap: 8px;
-      font-size: 0.95em;
-      max-width: 800px;
-      margin: 30px auto;
-      background: rgba(255,255,255,0.03);
-      color: #333;
-    }
-    .info-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-left: 4px solid #FF8C00;
-      padding-left: 10px;
-      background: rgba(255, 255, 255, 0.26);
-      border-radius: 6px;
-    }
-    .info-text { font-size: 0.95em; }
+  .q2info-layout #infoBlock.info-list {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px;
+    gap: 8px;
+    font-size: 0.95em;
+    width: 100%;
+    max-width: none;
+    margin: 30px 0;
+    background: rgba(255,255,255,0.03);
+    color: #333;
+    box-sizing: border-box;
+  }
 
-    .digit {
-      display: inline-flex;
-      width: 20px;
-      height: 20px;
-      margin-right: 5px;
-      border-radius: 50%;
-      background-color: #7eb0ea;
-      color: #000;
-      font-weight: bold;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    }
+  .q2info-layout .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid #FF8C00;
+    padding-left: 10px;
+    background: rgba(255, 255, 255, 0.26);
+    border-radius: 6px;
+  }
 
-    .table-wrapper {
-      width: var(--qinfo-content-width, min(86vw, 860px));
-      max-height: 70vh;
-      overflow: auto;
-      margin: 0 auto;
-      border: 1px solid #ccc;
-      background: rgba(173, 216, 230, 0.85);
-    }
+  .q2info-layout .info-text { font-size: 0.95em; }
 
-    table.digit-grid {
-      width: max-content;
-      border-collapse: collapse;
-      table-layout: fixed;
-      font-size: 12px;
-    }
+  .q2info-layout .table-wrapper {
+    width: 100%;
+    max-height: 70vh;
+    overflow: auto;
+    margin: 0 auto 12px;
+    border: 1px solid #ccc;
+    background: rgba(173, 216, 230, 0.85);
+  }
 
-    .digit-grid td, .digit-grid th {
-      width: 20px;
-      height: 20px;
-      text-align: center;
-      border: 1px solid #ccc;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  .q2info-layout table.digit-grid {
+    width: max-content;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 12px;
+  }
 
-    .digit-grid th {
-      height: 60px;
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-size: 0.7em;
-      background: #eee;
-    }
+  .q2info-layout .digit-grid td,
+  .q2info-layout .digit-grid th {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    .digit-grid td.hit { background-color: #7eb0ea; }
-    .digit-grid td.repeat-2 { background-color: #f8c471; }
+  .q2info-layout .digit-grid th {
+    height: 60px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.7em;
+    background: #eee;
+  }
 
-    /* первый столбец (Σ) — липкий слева */
-    .digit-grid td:first-child,
-    .digit-grid th:first-child {
-      background-color: #eee;
-      position: sticky;
-      left: 0;
-      z-index: 1;
-      font-weight: bold;
-      color: #1f4fd8
-    }
+  .q2info-layout .digit-grid td.hit { background-color: #7eb0ea; }
+  .q2info-layout .digit-grid td.repeat-2 { background-color: #f8c471; }
 
-    /* второй столбец (#) */
-    .digit-grid td:nth-child(2),
-    .digit-grid th:nth-child(2) {
-      background-color: #eee;
-      font-weight: bold;
-      
-    }
+  .q2info-layout .digit-grid td:first-child,
+  .q2info-layout .digit-grid th:first-child {
+    background-color: #eee;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    font-weight: bold;
+    color: #1f4fd8;
+  }
 
-    .filter-form {
-      text-align: center;
-      margin: 0;
-      padding: 10px 0;
-    }
+  .q2info-layout .digit-grid td:nth-child(2),
+  .q2info-layout .digit-grid th:nth-child(2) {
+    background-color: #eee;
+    font-weight: bold;
+  }
 
-    .filter-form select {
-      font-size: 1em;
-      border-radius: 6px;
-      font-size: 1em;           /* меньше, чем 16px */
-      padding: 2px 6px;         /* компактнее */
-      line-height: 1.2;
-    }
+  .q2info-layout .filter-form {
+    text-align: center;
+    margin: 0;
+    padding: 10px 0;
+    width: 100%;
+  }
 
-  </style>
-</head>
+  .q2info-layout .filter-form select {
+    font-size: 1em;
+    border-radius: 6px;
+    padding: 2px 6px;
+    line-height: 1.2;
+    box-sizing: border-box;
+    min-height: 32px;
+  }
 
-<body>
+  .q2info-layout .q2info-chart-wrap {
+    max-width: 100%;
+    margin: 12px auto;
+    position: relative;
+    height: min(50vh, 320px);
+  }
+</style>
 
+<div class="q2info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>
       <table class="digit-grid">
         <thead>
           <tr>
-          <th>Σ</th>  
-          <th>#</th>
-          <?php foreach ($tirages as $t): ?>
-          <th><?= htmlspecialchars($t['Tirage']) ?></th>
-          <?php endforeach; ?>
+            <th>Σ</th>
+            <th>#</th>
+            <?php foreach ($tirages as $t): ?>
+              <th><?= htmlspecialchars($t['Tirage']) ?></th>
+            <?php endforeach; ?>
           </tr>
         </thead>
         <tbody>
           <?php for ($digit = 0; $digit <= 9; $digit++): ?>
             <tr>
-                <!-- Σ слева -->
-                <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td> <!-- --тут Х -->
-                <!-- # -->
-                <td><?= $digit ?></td>
-                <!-- столбцы тиражей -->
+              <td>&nbsp;<?= $digitSums[$digit] ?>x&nbsp;</td>
+              <td><?= $digit ?></td>
               <?php foreach ($tirages as $t):
                 $count = array_count_values($t['nums'])[$digit] ?? 0;
                 $class = ($count === 2) ? 'repeat-2' : (($count === 1) ? 'hit' : '');
@@ -291,31 +281,28 @@ $conn->close();
     <?php endif; ?>
   </div>
 
-  <form class="filter-form" method="get">
-    <input type="hidden" name="limit" value="<?= htmlspecialchars($limit) ?>">
-    <input type="hidden" name="lang" value="<?= htmlspecialchars($lang) ?>">
-    <?php if ($isNorder): ?>
-      <input type="hidden" name="norder" value="1">
-    <?php endif; ?>
-
+  <div class="filter-form">
     <?= t('q2info.latest') ?>
-    <select name="grid_limit" onchange="this.form.submit()">
+    <select id="q2InfoGridLimit">
       <?php foreach ([50, 100, 365] as $opt): ?>
         <option value="<?= $opt ?>" <?= ($gridLimit == $opt) ? 'selected' : '' ?>><?= $opt ?></option>
       <?php endforeach; ?>
-    </select> <?= t('q2info.draws_suffix') ?>
-  </form>
-
-  <canvas id="myChart" width="400" height="200"></canvas>
-
-  <div id="toggleWrapper">
-    <input type="checkbox" id="norderToggle" <?= $isNorder ? 'checked' : '' ?>>
-    <label for="norderToggle"><?= t('q2info.any_order') ?></label>
+    </select>
+    <?= t('q2info.draws_suffix') ?>
   </div>
 
-  <div id="selectWrapper">
-    <label for="limitSelect"><?= t('q2info.last_draw_count') ?></label>
-    <select id="limitSelect">
+  <div class="q2info-chart-wrap">
+    <canvas id="q2infoChart"></canvas>
+  </div>
+
+  <div id="q2infoToggleWrap">
+    <input type="checkbox" id="q2infoNorderToggle" <?= $isNorder ? 'checked' : '' ?>>
+    <label for="q2infoNorderToggle"><?= t('q2info.any_order') ?></label>
+  </div>
+
+  <div id="q2infoSelectWrap">
+    <label for="q2InfoChartLimit"><?= t('q2info.last_draw_count') ?></label>
+    <select id="q2InfoChartLimit">
       <option value="100" <?= ($limit == 100 ? 'selected' : '') ?>>100</option>
       <option value="200" <?= ($limit == 200 ? 'selected' : '') ?>>200</option>
       <option value="500" <?= ($limit == 500 ? 'selected' : '') ?>>500</option>
@@ -324,7 +311,7 @@ $conn->close();
     </select>
   </div>
 
-  <table id="statsTable">
+  <table id="q2infoStatsTable">
     <thead>
       <tr>
         <th><?= t('q2info.stats.days') ?></th>
@@ -332,7 +319,7 @@ $conn->close();
         <th>%</th>
       </tr>
     </thead>
-    <tbody id="statsBody"></tbody>
+    <tbody id="q2infoStatsBody"></tbody>
   </table>
 
   <div id="infoBlock" class="info-list">
@@ -359,179 +346,7 @@ $conn->close();
     </div>
   </div>
 
-  <script>
-    let chart;
-    const ctx = document.getElementById('myChart');
-    const texts = <?php echo $jsTexts; ?>;
-
-    function getCurrentLang() {
-      const lang = localStorage.getItem('lang');
-      return (lang === 'fr' || lang === 'en') ? lang : 'fr';
-    }
-
-    function syncInfoLangFields() {
-      document.querySelectorAll('input[name="lang"]').forEach(function (input) {
-        input.value = getCurrentLang();
-      });
-    }
-
-    function ensureInfoLangUrl() {
-      const currentLang = getCurrentLang();
-      const url = new URL(window.location.href);
-      const urlLang = url.searchParams.get('lang') || 'fr';
-      if (urlLang !== currentLang) {
-        url.searchParams.set('lang', currentLang);
-        url.searchParams.set('_ts', String(Date.now()));
-        window.location.replace(url.toString());
-        return false;
-      }
-      return true;
-    }
-
-    function navigateInfoForm(form) {
-      if (!form) return;
-      const url = new URL(window.location.href);
-      const params = new URLSearchParams();
-      const formData = new FormData(form);
-
-      formData.forEach(function (value, key) {
-        params.set(key, String(value));
-      });
-
-      params.set('lang', getCurrentLang());
-      params.set('_ts', String(Date.now()));
-      url.search = params.toString();
-      window.location.replace(url.toString());
-    }
-
-    function formatData(dataFromPHP) {
-      const scatterData = dataFromPHP.map(item => ({
-        x: parseInt(item.days) || 0,
-        y: `${item.n1}${item.n2}`.padStart(2, "0")
-      })).filter(point => !isNaN(point.x));
-
-      const uniqueYValues = [...new Set(scatterData.map(p => p.y))].sort();
-      const yIndexMap = Object.fromEntries(uniqueYValues.map((val, idx) => [val, idx]));
-
-      const data = {
-        datasets: [{
-          label: texts.chartCombinations,
-          data: scatterData.map(point => ({
-            x: point.x,
-            y: yIndexMap[point.y]
-          })),
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        }]
-      };
-
-      return { config: {
-        type: 'scatter',
-        data: data,
-        options: {
-          responsive: true,
-          scales: {
-            x: { title: { display: true, text: texts.statsDays } },
-            y: {
-              ticks: {
-                callback: value => uniqueYValues[value] || ''
-              },
-              title: { display: true, text: texts.chartCombinations }
-            }
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: context => {
-                  const index = context.raw.y;
-                  const combo = uniqueYValues[index] || '';
-                  return texts.tooltipPattern
-                    .replace('{combo}', combo)
-                    .replace('{days}', context.raw.x);
-                }
-              }
-            }
-          }
-        }
-      }, comboDays: scatterData };
-    }
-
-    function calculateStats(comboDays) {
-      const ranges = {
-        '1–50': 0,
-        '1–100': 0,
-        '1–200': 0,
-        '201+': 0
-      };
-
-      comboDays.forEach(item => {
-        const days = item.x;
-        if (days >= 1 && days <= 50) ranges['1–50']++;
-        if (days >= 1 && days <= 100) ranges['1–100']++;
-        if (days >= 1 && days <= 200) ranges['1–200']++;
-        if (days >= 201) ranges['201+']++;
-      });
-
-      const total = comboDays.length;
-      const body = document.getElementById('statsBody');
-      body.innerHTML = '';
-      for (const [label, count] of Object.entries(ranges)) {
-        const percent = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
-        body.innerHTML += `<tr><td>${label}</td><td>${count}</td><td>${percent}%</td></tr>`;
-      }
-    }
-
-    function renderChart(data) {
-      const { config, comboDays } = formatData(data);
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, config);
-      calculateStats(comboDays);
-    }
-
-    async function loadData(limit, isNorder) {
-      try {
-        const response = await fetch(`q2info.php?limit=${limit}<?= $gridLimit ? "&grid_limit=" . (int)$gridLimit : "" ?>${isNorder ? '&norder=1' : ''}&lang=${encodeURIComponent(getCurrentLang())}&ajax=1`);
-        const data = await response.json();
-        renderChart(data);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
-      }
-    }
-
-    function getLimit() {
-      return document.getElementById('limitSelect').value;
-    }
-
-    function getNorder() {
-      return document.getElementById('norderToggle').checked;
-    }
-
-    document.getElementById('limitSelect').addEventListener('change', function () {
-      loadData(getLimit(), getNorder());
-    });
-
-    document.getElementById('norderToggle').addEventListener('change', function () {
-      loadData(getLimit(), getNorder());
-    });
-
-    const gridForm = document.querySelector('.filter-form');
-    if (gridForm) {
-      gridForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        syncInfoLangFields();
-        navigateInfoForm(gridForm);
-      });
-    }
-
-    if (!ensureInfoLangUrl()) {
-      // Stop here; page is being reloaded with the correct language.
-    } else {
-      syncInfoLangFields();
-      renderChart(<?php echo $json_data; ?>);
-    }
-  </script>
+  <div id="q2info-bootstrap" hidden data-json="<?= htmlspecialchars($bootJson, ENT_QUOTES, 'UTF-8') ?>"></div>
 
   <div id="scrollHint">⬇⬆</div>
-
-</body>
-</html>
+</div>
