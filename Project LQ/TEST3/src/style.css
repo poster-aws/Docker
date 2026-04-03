@@ -6,7 +6,8 @@
    • Menu latéral (Quotidienne 2 / 3 / 4, langue, thème)
    • Accueil « Bienvenue » : carte + titres / textes / lien
    • Tableaux pages principales Q2 / Q3 / Q4 (même structure ; étoiles Q4 en bas)
-   Les alias --bg, --nav-bg, --welcome-*, --table-*, etc. sont dérivés juste en dessous.
+   • Grille chiffres pages Info Q2 / Q3 / Q4 (mêmes valeurs clair/sombre pour l’instant — à diverger plus tard)
+   Les alias --bg, --nav-bg, --welcome-*, --table-*, --info-grid-*, etc. sont dérivés juste en dessous.
    ============================================================================= */
 :root {
   --theme-page-bg: #1e293b;
@@ -47,6 +48,19 @@
   --theme-table-star-2-bg: #ea580c;
   --theme-table-star-2-text: #ffffff;
   --theme-table-outline-zero: #38bdf8;
+  /* Grille chiffres (Info) — copie identique dans html.theme-light jusqu’à différenciation des thèmes */
+  --theme-info-grid-wrap-border: #ccc;
+  --theme-info-grid-wrap-bg: rgba(173, 216, 230, 0.85);
+  --theme-info-grid-text: #000000;
+  --theme-info-grid-cell-border: #cccccc;
+  --theme-info-grid-muted-bg: #eeeeee;
+  --theme-info-grid-column-header-text: #000000;
+  --theme-info-grid-sticky-accent: #1f4fd8;
+  --theme-info-grid-hit: #7eb0ea;
+  --theme-info-grid-repeat-2: #f8c471;
+  --theme-info-grid-repeat-3: #e74c3c;
+  --theme-info-grid-repeat-4: #c0392b;
+  --theme-info-grid-repeat-4-text: #ffffff;
 }
 
 html.theme-light {
@@ -85,6 +99,18 @@ html.theme-light {
   --theme-table-star-2-bg: #ea580c;
   --theme-table-star-2-text: #ffffff;
   --theme-table-outline-zero: #2563eb;
+  --theme-info-grid-wrap-border: #ccc;
+  --theme-info-grid-wrap-bg: rgba(173, 216, 230, 0.85);
+  --theme-info-grid-text: #000000;
+  --theme-info-grid-cell-border: #cccccc;
+  --theme-info-grid-muted-bg: #eeeeee;
+  --theme-info-grid-column-header-text: #000000;
+  --theme-info-grid-sticky-accent: #1f4fd8;
+  --theme-info-grid-hit: #7eb0ea;
+  --theme-info-grid-repeat-2: #f8c471;
+  --theme-info-grid-repeat-3: #e74c3c;
+  --theme-info-grid-repeat-4: #c0392b;
+  --theme-info-grid-repeat-4-text: #ffffff;
 }
 
 /* Thème sombre — Ardoise (défaut) : autres jetons + alias page/en-tête */
@@ -124,6 +150,18 @@ html.theme-light {
   --table-star-2-bg: var(--theme-table-star-2-bg);
   --table-star-2-text: var(--theme-table-star-2-text);
   --table-outline-zero: var(--theme-table-outline-zero);
+  --info-grid-wrap-border: var(--theme-info-grid-wrap-border);
+  --info-grid-wrap-bg: var(--theme-info-grid-wrap-bg);
+  --info-grid-text: var(--theme-info-grid-text);
+  --info-grid-cell-border: var(--theme-info-grid-cell-border);
+  --info-grid-muted-bg: var(--theme-info-grid-muted-bg);
+  --info-grid-column-header-text: var(--theme-info-grid-column-header-text);
+  --info-grid-sticky-accent: var(--theme-info-grid-sticky-accent);
+  --info-grid-hit: var(--theme-info-grid-hit);
+  --info-grid-repeat-2: var(--theme-info-grid-repeat-2);
+  --info-grid-repeat-3: var(--theme-info-grid-repeat-3);
+  --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
+  --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
   --bg-card: #334155;
   --accent: #38bdf8;
   --accent-hover: #0ea5e9;
@@ -176,6 +214,18 @@ html.theme-light {
   --table-star-2-bg: var(--theme-table-star-2-bg);
   --table-star-2-text: var(--theme-table-star-2-text);
   --table-outline-zero: var(--theme-table-outline-zero);
+  --info-grid-wrap-border: var(--theme-info-grid-wrap-border);
+  --info-grid-wrap-bg: var(--theme-info-grid-wrap-bg);
+  --info-grid-text: var(--theme-info-grid-text);
+  --info-grid-cell-border: var(--theme-info-grid-cell-border);
+  --info-grid-muted-bg: var(--theme-info-grid-muted-bg);
+  --info-grid-column-header-text: var(--theme-info-grid-column-header-text);
+  --info-grid-sticky-accent: var(--theme-info-grid-sticky-accent);
+  --info-grid-hit: var(--theme-info-grid-hit);
+  --info-grid-repeat-2: var(--theme-info-grid-repeat-2);
+  --info-grid-repeat-3: var(--theme-info-grid-repeat-3);
+  --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
+  --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
   --bg-card: #ffffff;
   --text: #1e293b;
   --text-muted: #64748b;

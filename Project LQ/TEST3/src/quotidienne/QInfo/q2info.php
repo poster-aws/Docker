@@ -168,59 +168,6 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
 
   .q2info-layout .info-text { font-size: 0.95em; }
 
-  .q2info-layout .table-wrapper {
-    width: 100%;
-    max-height: 70vh;
-    overflow: auto;
-    margin: 0 auto 12px;
-    border: 1px solid #ccc;
-    background: rgba(173, 216, 230, 0.85);
-  }
-
-  .q2info-layout table.digit-grid {
-    width: max-content;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 12px;
-  }
-
-  .q2info-layout .digit-grid td,
-  .q2info-layout .digit-grid th {
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  .q2info-layout .digit-grid th {
-    height: 60px;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 0.7em;
-    background: #eee;
-  }
-
-  .q2info-layout .digit-grid td.hit { background-color: #7eb0ea; }
-  .q2info-layout .digit-grid td.repeat-2 { background-color: #f8c471; }
-
-  .q2info-layout .digit-grid td:first-child,
-  .q2info-layout .digit-grid th:first-child {
-    background-color: #eee;
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    font-weight: bold;
-    color: #1f4fd8;
-  }
-
-  .q2info-layout .digit-grid td:nth-child(2),
-  .q2info-layout .digit-grid th:nth-child(2) {
-    background-color: #eee;
-    font-weight: bold;
-  }
-
   .q2info-layout .filter-form {
     text-align: center;
     margin: 0;

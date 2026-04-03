@@ -48,62 +48,6 @@ $conn->close();
     font-family: var(--font);
   }
 
-  .q3info-layout .table-wrapper {
-    width: 100%;
-    max-height: 70vh;
-    overflow: auto;
-    margin: 0 0 12px;
-    border: 1px solid #ccc;
-    background: rgba(173, 216, 230, 0.85);
-  }
-
-  .q3info-layout table.digit-grid {
-    width: max-content;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 12px;
-    color: #000;
-  }
-
-  .q3info-layout .digit-grid td,
-  .q3info-layout .digit-grid th {
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  .q3info-layout .digit-grid th {
-    height: 60px;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 0.7em;
-    background: #eee;
-    color: #000;
-  }
-
-  .q3info-layout .digit-grid td.hit { background-color: #7eb0ea; }
-  .q3info-layout .digit-grid td.repeat-2 { background-color: #f8c471; }
-  .q3info-layout .digit-grid td.repeat-3 { background-color: #e74c3c; }
-
-  .q3info-layout .digit-grid td:first-child,
-  .q3info-layout .digit-grid th:first-child {
-    background-color: #eee;
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    font-weight: bold;
-    color: #1f4fd8;
-  }
-
-  .q3info-layout .digit-grid td:nth-child(2),
-  .q3info-layout .digit-grid th:nth-child(2) {
-    background-color: #eee;
-    font-weight: bold;
-  }
-
   .q3info-layout .filter-form {
     text-align: center;
     margin: 0;
