@@ -15,6 +15,7 @@
   --radius-sm: 8px;
   --shadow: 0 1px 3px rgba(0,0,0,0.25);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  /* Единый стек шрифтов всего проекта (остальные CSS/фрагменты — только var(--font)) */
   --font: 'Trebuchet MS', Helvetica, sans-serif;
   --header-h: 56px;
 }

@@ -45,7 +45,7 @@ $conn->close();
     margin: 0 auto;
     padding: 0 12px;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: var(--font);
   }
 
   .q3info-layout .table-wrapper {
@@ -132,7 +132,7 @@ $conn->close();
     color: #000;
     font-weight: bold;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: var(--font);
     margin: 0 3px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   }

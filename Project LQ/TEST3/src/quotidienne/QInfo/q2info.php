@@ -95,7 +95,7 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     margin: 0 auto;
     padding: 0 12px;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: var(--font);
     color: #000;
   }
 
@@ -137,7 +137,7 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     color: #000;
     font-weight: bold;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: var(--font);
     margin: 0 3px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
   }

@@ -118,7 +118,7 @@ foreach ($tiragesGrid as $t) {
   margin: 0 auto;
   padding: 0 12px;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: var(--font);
 }
 
 .q4info-layout .q4info-tables {
@@ -151,7 +151,7 @@ foreach ($tiragesGrid as $t) {
 .q4info-layout .interactive-table {
   border-collapse: collapse;
   font-size: 18px;
-  font-family: 'Shadows Into Light', cursive;
+  font-family: var(--font);
   color: #000;
   width: 100%;
 }
@@ -232,7 +232,7 @@ foreach ($tiragesGrid as $t) {
 .q4info-layout .circle {
   display: inline-block; width: 28px; height: 28px; line-height: 28px;
   border-radius: 50%; background-color: #7eb0ea; color: #000; font-weight: bold;
-  text-align: center; font-family: Arial, sans-serif; margin: 0 3px;
+  text-align: center; font-family: var(--font); margin: 0 3px;
   box-shadow: 0 0 3px rgba(0,0,0,0.4);
 }
 
@@ -317,7 +317,7 @@ foreach ($tiragesGrid as $t) {
 .q4info-layout .info-text { font-size: .95em; }
 .q4info-layout .digit { display: inline-flex; width: 20px; height: 20px; margin-right: 5px; border-radius: 50%;
   background-color: #7eb0ea; color: #000; font-weight: bold; justify-content: center; align-items: center;
-  font-family: Arial, sans-serif; box-shadow: 0 0 3px rgba(0,0,0,0.4);
+  font-family: var(--font); box-shadow: 0 0 3px rgba(0,0,0,0.4);
 }
 
 /* === GRID как в Q2 / Q3 === */
