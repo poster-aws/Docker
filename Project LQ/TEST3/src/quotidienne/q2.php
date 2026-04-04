@@ -96,9 +96,9 @@ foreach ($comboRows as $row) {
 $numberStatsHTML = '';
 foreach ($daysStats as $num => $daysAgo) {
     $val = $daysAgo ?? 0;
-    $class = $val <= 9 ? 'color-range-1' : ($val <= 14 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
+    $class = $val <= 10 ? '' : ($val <= 15 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
     $count = $freqStats[$num] ?? 0;
-    $numberStatsHTML .= "<tr class='$class'><td><span class='circle'>$num</span></td><td>" . ($daysAgo ?? '-') . "</td><td><span class='x-small'>x</span>$count</td></tr>";
+    $numberStatsHTML .= ($class === '' ? '<tr>' : "<tr class='$class'>") . "<td><span class='circle'>$num</span></td><td>" . ($daysAgo ?? '-') . "</td><td><span class='x-small'>x</span>$count</td></tr>";
 }
 
 echo str_replace(

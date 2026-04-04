@@ -254,9 +254,7 @@
   background: var(--table-highlight-row, rgba(34, 197, 94, 0.08));
 }
 
-.number-stats-table tr.color-range-1 {
-  background: var(--table-range-1, rgba(34, 197, 94, 0.12));
-}
+/* ≤10 jours : pas de classe sur <tr> (pas de fond). 11–15 / 16–20 / 21+ : color-range-2…4 */
 .number-stats-table tr.color-range-2 {
   background: var(--table-range-2, rgba(234, 179, 8, 0.15));
 }
@@ -267,7 +265,6 @@
   background: var(--table-range-4, rgba(239, 68, 68, 0.12));
 }
 
-.number-stats-table tr.color-range-1 td:nth-child(3),
 .number-stats-table tr.color-range-2 td:nth-child(3),
 .number-stats-table tr.color-range-3 td:nth-child(3),
 .number-stats-table tr.color-range-4 td:nth-child(3) {
