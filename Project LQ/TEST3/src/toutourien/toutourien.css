@@ -1,5 +1,17 @@
-/* TEST3 — Tout ou Rien — grille, actions, modale vérificateur
+/* TEST3 — Tout ou Rien — grille + bloc vérification combinaison
  * Couleurs grille : variables --info-grid-* définies dans style.css (thème clair/sombre). */
+
+/* Même colonne que les pages Info Q2 / Q3 / Q4 (quotidienne.css : .q4info-layout) */
+.tout-layout {
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-family: var(--font);
+  color: var(--table-text, var(--text));
+}
 
 /* ----- Grille (24 lignes), comme la grille Info Quotidienne ----- */
 .tout-layout .table-wrapper.tout-grid-wrapper {
@@ -73,103 +85,183 @@
   color: var(--error, #c0392b);
 }
 
-.tout-layout .tout-actions {
-  max-width: 100%;
-  margin: 10px auto 16px;
+/* ----- Bloc vérification : largeur = celle de la grille de cercles (6 × boule + 5 interstices) ----- */
+.tout-verifier-block {
+  --tout-verifier-ball-w: 36px;
+  --tout-verifier-gap: 6px;
+  --tout-verifier-grid-w: calc(6 * var(--tout-verifier-ball-w) + 5 * var(--tout-verifier-gap));
+  /* largeur totale = grille des boules + padding latéral (border-box) */
+  --tout-verifier-pad-x: 0.75rem;
+  width: min(calc(var(--tout-verifier-grid-w) + 2 * var(--tout-verifier-pad-x)), 100%);
+  margin: 0.75rem auto 1rem;
+  padding: 0.65rem var(--tout-verifier-pad-x) 0.85rem;
+  box-sizing: border-box;
+  border: 1px solid var(--table-cell-border, var(--border, #dcdcdc));
+  border-radius: var(--radius-sm, 12px);
+  background: var(--table-shell-bg, var(--bg-card, rgba(255, 255, 255, 0.06)));
+}
+
+.tout-verifier-heading {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   text-align: center;
+  color: var(--text);
+  width: 100%;
 }
 
-.tout-layout .btn-tout-verify {
-  display: inline-block;
-  padding: 8px 14px;
-  border: 1px solid var(--table-cell-border, var(--border, #bdbdbd));
-  border-radius: var(--radius-sm, 10px);
-  background: var(--table-shell-bg, rgba(230, 240, 255, 0.95));
-  color: var(--text, #000);
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.tout-layout .btn-tout-verify:hover {
-  filter: brightness(1.02);
-}
-
-.tout-anchor {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-
-/* Modale vérificateur (:target) */
-#verifierModal.tout-verifier-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 16px 16px;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 10000;
+.tout-verifier-number-grid {
+  display: grid;
+  grid-template-columns: repeat(6, var(--tout-verifier-ball-w));
+  gap: var(--tout-verifier-gap);
+  width: 100%;
+  margin: 0 auto 0.45rem;
   box-sizing: border-box;
 }
 
-#verifierModal.tout-verifier-modal:target {
-  display: flex;
+@media (max-width: 300px) {
+  .tout-verifier-number-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .tout-verifier-circle {
+    width: 100%;
+    max-width: var(--tout-verifier-ball-w);
+    height: auto;
+    aspect-ratio: 1;
+  }
 }
 
-#verifierModal.tout-verifier-modal .modal-dialog {
-  background: var(--bg-card, rgba(255, 255, 255, 0.96));
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 12px;
-  width: min(420px, 94vw);
-  height: min(687px, 76vh);
-  max-height: calc(100vh - 48px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+.tout-verifier-circle {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid var(--table-cell-border, #bdbdbd);
+  border-radius: 50%;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--text, #000);
+  font-size: 1em;
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s, background 0.15s;
 }
 
-#verifierModal.tout-verifier-modal .modal-header {
+.tout-verifier-circle:hover {
+  transform: translateY(-1px);
+}
+
+.tout-verifier-circle.selected {
+  background: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border-color: #0056b3;
+}
+
+.tout-verifier-circle.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tout-verifier-actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border, #eee);
-  background: var(--table-header-bg, #f8f9fb);
-  flex-shrink: 0;
+  justify-content: center;
+  margin-bottom: 0.45rem;
 }
 
-#verifierModal.tout-verifier-modal .modal-header h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+.tout-verifier-btn {
+  padding: 5px 12px;
+  font-size: 0.9em;
+  cursor: pointer;
+  border: 1px solid var(--table-cell-border, #bdbdbd);
+  border-radius: var(--radius-sm, 10px);
+  background: var(--table-shell-bg, #f5f5f5);
   color: var(--text, #000);
+  min-width: 118px;
+  font-family: inherit;
 }
 
-#verifierModal.tout-verifier-modal .modal-close {
-  text-decoration: none;
+.tout-verifier-btn:hover {
+  filter: brightness(0.98);
+}
+
+.tout-verifier-btn:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+.tout-verifier-btn-secondary {
+  background: var(--bg-card, #f5f5f5);
+}
+
+.tout-verifier-btn-success {
+  background: #e8f6ee;
+  border-color: #bfe6cf;
+}
+
+.tout-verifier-btn-warning {
+  background: #fff4e5;
+  border-color: #ffd19b;
+}
+
+.tout-verifier-btn-error {
+  background: #fdecec;
+  border-color: #f5b5b5;
+}
+
+.tout-verifier-dist-wrap {
+  margin-top: 0.1rem;
+}
+
+.tout-verifier-counter {
+  text-align: center;
+  margin-bottom: 4px;
+  color: var(--text-muted, #64748b);
+  font-size: 0.82em;
+  line-height: 1.25;
+}
+
+.tout-verifier-dist {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82em;
+  background: var(--bg-card, #fff);
   color: var(--text, #000);
-  font-size: 22px;
-  line-height: 1;
-}
-
-#verifierModal.tout-verifier-modal .modal-body {
-  flex: 1;
-  min-height: 0;
+  border: 1px solid var(--border, #e6e6e6);
+  border-radius: 8px;
   overflow: hidden;
 }
 
-#verifierModal.tout-verifier-modal .modal-body iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 320px;
-  border: none;
-  background: transparent;
-  display: block;
+.tout-verifier-dist td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border, #f2f2f2);
+  white-space: nowrap;
+  line-height: 1.25;
+}
+
+.tout-verifier-dist tr:last-child td {
+  border-bottom: none;
+}
+
+.tout-verifier-dist td:nth-child(1) {
+  width: 28%;
+  text-align: center;
+  font-weight: 600;
+}
+
+.tout-verifier-dist td:nth-child(2) {
+  width: 36%;
+  text-align: right;
+}
+
+.tout-verifier-dist td:nth-child(3) {
+  width: 36%;
+  text-align: right;
+  font-weight: 600;
 }
 
 /* ----- Page Info Tout ou Rien : tableau Analyse (positions n1–n12 × numéros 1–24) ----- */
@@ -190,7 +282,8 @@
 
 .toutinfo-layout .analyse-grid {
   margin: 0 auto;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 3px;
   background: transparent;
 }
 
