@@ -6,7 +6,8 @@
    • Menu latéral (Quotidienne 2 / 3 / 4, langue, thème)
    • Accueil « Bienvenue » : carte + titres / textes / lien
    • Tableaux pages principales Q2 / Q3 / Q4 (même structure ; étoiles Q4 en bas)
-   • Grille chiffres pages Info Q2 / Q3 / Q4 (mêmes valeurs clair/sombre pour l’instant — à diverger plus tard)
+   • Grille chiffres pages Info Q2 / Q3 / Q4 et page principale Tout ou Rien (mêmes --info-grid-* ; toutourien/toutourien.css)
+   • Page Info Tout ou Rien : tableau Analyse + bloc combinaisons (toutourien/toutourien.css)
    • Q2 Info : nuage de points (scatter) + tableau des plages de jours
    Les alias --bg, --nav-bg, --welcome-*, --table-*, --info-grid-*, --q2info-*, etc. sont dérivés juste en dessous.
    ============================================================================= */

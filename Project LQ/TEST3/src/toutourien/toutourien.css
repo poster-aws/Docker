@@ -1,0 +1,293 @@
+/* TEST3 — Tout ou Rien — grille, actions, modale vérificateur
+ * Couleurs grille : variables --info-grid-* définies dans style.css (thème clair/sombre). */
+
+/* ----- Grille (24 lignes), comme la grille Info Quotidienne ----- */
+.tout-layout .table-wrapper.tout-grid-wrapper {
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  margin: 0 auto 12px;
+  border: 1px solid var(--info-grid-wrap-border, #ccc);
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+  border-radius: var(--radius-sm, 8px);
+  box-sizing: border-box;
+}
+
+.tout-grid-wrapper[data-limit='200'] {
+  max-height: 65vh;
+}
+
+.tout-layout table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+.tout-layout .digit-grid td,
+.tout-layout .digit-grid th {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.tout-layout .digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+.tout-layout .digit-grid td:first-child,
+.tout-layout .digit-grid th:first-child {
+  min-width: 36px;
+  width: auto;
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+.tout-layout .digit-grid td:nth-child(2),
+.tout-layout .digit-grid th:nth-child(2) {
+  min-width: 22px;
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.tout-layout .digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+.tout-layout .no-data {
+  text-align: center;
+  margin: 12px;
+  color: var(--error, #c0392b);
+}
+
+.tout-layout .tout-actions {
+  max-width: 100%;
+  margin: 10px auto 16px;
+  text-align: center;
+}
+
+.tout-layout .btn-tout-verify {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--table-cell-border, var(--border, #bdbdbd));
+  border-radius: var(--radius-sm, 10px);
+  background: var(--table-shell-bg, rgba(230, 240, 255, 0.95));
+  color: var(--text, #000);
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tout-layout .btn-tout-verify:hover {
+  filter: brightness(1.02);
+}
+
+.tout-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* Modale vérificateur (:target) */
+#verifierModal.tout-verifier-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px 16px;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10000;
+  box-sizing: border-box;
+}
+
+#verifierModal.tout-verifier-modal:target {
+  display: flex;
+}
+
+#verifierModal.tout-verifier-modal .modal-dialog {
+  background: var(--bg-card, rgba(255, 255, 255, 0.96));
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  width: min(420px, 94vw);
+  height: min(687px, 76vh);
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+#verifierModal.tout-verifier-modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border, #eee);
+  background: var(--table-header-bg, #f8f9fb);
+  flex-shrink: 0;
+}
+
+#verifierModal.tout-verifier-modal .modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text, #000);
+}
+
+#verifierModal.tout-verifier-modal .modal-close {
+  text-decoration: none;
+  color: var(--text, #000);
+  font-size: 22px;
+  line-height: 1;
+}
+
+#verifierModal.tout-verifier-modal .modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#verifierModal.tout-verifier-modal .modal-body iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  border: none;
+  background: transparent;
+  display: block;
+}
+
+/* ----- Page Info Tout ou Rien : tableau Analyse (positions n1–n12 × numéros 1–24) ----- */
+.toutinfo-layout {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.toutinfo-analyse-wrap {
+  max-width: 98%;
+  max-height: 90vh;
+  overflow: auto;
+  margin: 10px auto;
+  text-align: center;
+  background: transparent;
+}
+
+.toutinfo-layout .analyse-grid {
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.toutinfo-layout .analyse-grid th,
+.toutinfo-layout .analyse-grid td {
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--info-grid-muted-bg, #eee);
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--info-grid-text, #000);
+}
+
+.toutinfo-layout .analyse-grid td.sticky-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  font-weight: bold;
+  background-color: var(--toutinfo-analyse-sticky-bg, #f0f0f0);
+}
+
+.toutinfo-layout .analyse-grid td.empty {
+  background-color: var(--toutinfo-analyse-empty-bg, #dcdbdb);
+}
+
+.toutinfo-layout .toutinfo-no-data {
+  text-align: center;
+  color: var(--error, #c0392b);
+  margin: 12px;
+}
+
+.toutinfo-layout .toutinfo-filter.filter-form {
+  text-align: center;
+  margin: 0 auto 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--text, #000);
+}
+
+.toutinfo-layout .toutinfo-filter select {
+  background: var(--table-shell-bg, var(--bg-card, #fff));
+  border: 1px solid var(--table-cell-border, var(--border, #999));
+  color: var(--table-text, var(--text));
+  border-radius: var(--radius-sm, 8px);
+  font-size: 1em;
+  padding: 0 8px;
+  line-height: 32px;
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
+}
+
+/* Bloc info (combinaisons / répétitions) — même esprit que l’ancien projet */
+.toutinfo-layout #toutInfoBlock.info-list {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px;
+  gap: 0;
+  font-size: 0.95em;
+  max-width: 800px;
+  margin: 10px auto 24px;
+  color: var(--text, #333);
+  box-sizing: border-box;
+}
+
+.toutinfo-layout #toutInfoBlock .info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #ff8c00;
+  padding: 6px 10px 6px 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.26);
+  border-radius: 6px;
+}
+
+.toutinfo-layout #toutInfoBlock .info-text {
+  flex: 1;
+  font-size: 0.95em;
+}
+
+.toutinfo-layout .combo-square {
+  display: inline-block;
+  min-width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  margin-right: 4px;
+  background: rgba(126, 176, 234, 0.85);
+  color: var(--info-grid-text, #000);
+  border-radius: 4px;
+  font-weight: 600;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}

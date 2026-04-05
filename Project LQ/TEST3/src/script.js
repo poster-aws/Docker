@@ -8,6 +8,7 @@
   let q4CountRange = 50;
   let q3InfoLimit = 50;
   let q4InfoLimit = 50;
+  let toutInfoLimit = 50;
   let q2ChartLimit = 100;
   let q2InfoGridLimit = 50;
   let q2InfoNorder = false;
@@ -63,6 +64,19 @@
 
   function updateToggleLabels(page) {
     if (!labelOrder || !labelNimport) return;
+    page = page || (container && container.getAttribute('data-page')) || '';
+    if (page === 'toutourien/tout.php' || page === 'toutourien/Info/toutinfo.php') {
+      if (currentLang === 'en') {
+        labelOrder.textContent = '50 Draws';
+        labelNimport.textContent = '200 Draws';
+      } else {
+        labelOrder.textContent = '50 Tirages';
+        labelNimport.textContent = '200 Tirages';
+      }
+      labelOrder.classList.toggle('active', !toggleSwitch.checked);
+      labelNimport.classList.toggle('active', toggleSwitch.checked);
+      return;
+    }
     if (currentLang === 'en') {
       labelOrder.innerHTML = 'Order';
       labelNimport.innerHTML = 'Any order';
@@ -82,6 +96,8 @@
     if (page === 'quotidienne/QInfo/q3info.php') return 'quotidienne/q3.php';
     if (page === 'quotidienne/q4.php') return 'quotidienne/QInfo/q4info.php';
     if (page === 'quotidienne/QInfo/q4info.php') return 'quotidienne/q4.php';
+    if (page === 'toutourien/tout.php') return 'toutourien/Info/toutinfo.php';
+    if (page === 'toutourien/Info/toutinfo.php') return 'toutourien/tout.php';
     return '';
   }
 
@@ -242,6 +258,10 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
         : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
+    } else if (page.indexOf('toutourien/') === 0) {
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
+        : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
     }
   }
 
@@ -251,16 +271,24 @@
     isAltView = !!options.preserveAltView;
     setNavOpen(false);
 
+    if (page.indexOf('toutourien/tout.php') === -1 && location.hash === '#verifierModal') {
+      if (window.history && window.history.replaceState) {
+        var pathOnly = window.location.pathname + (window.location.search || '');
+        window.history.replaceState(null, '', pathOnly);
+      }
+    }
+
     var storedLang = localStorage.getItem('lang');
     if (storedLang === 'fr' || storedLang === 'en') {
       currentLang = storedLang;
     }
 
     var params = new URLSearchParams();
-    if (page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && toggleSwitch.checked) {
+    var isToutMainPage = page.indexOf('toutourien/tout.php') !== -1;
+    if (!isToutMainPage && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
+    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -282,8 +310,12 @@
       params.set('limit', String(q3InfoLimit || 50));
     } else if (page === 'quotidienne/QInfo/q4info.php') {
       params.set('grid_limit', String(q4InfoLimit || 50));
+    } else if (page === 'toutourien/Info/toutinfo.php') {
+      params.set('limit', String(toutInfoLimit || 50));
     } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
+    } else if (page === 'toutourien/tout.php') {
+      params.set('limit', toggleSwitch.checked ? '200' : '50');
     }
 
     var query = params.toString();
@@ -329,6 +361,8 @@
           bindQ3InfoLimitSelect(container.querySelector('#q3InfoLimit'), page);
         } else if (page === 'quotidienne/QInfo/q4info.php') {
           initQ4InfoPage(page);
+        } else if (page === 'toutourien/Info/toutinfo.php') {
+          bindToutInfoLimitSelect(container.querySelector('#toutInfoLimit'), page);
         } else if (page === 'quotidienne/q4.php') {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         }
@@ -347,6 +381,14 @@
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
             : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
+        } else if (page.indexOf('toutourien/') === 0) {
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
+            : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+        }
+        if (infoBtn) {
+          infoBtn.style.visibility = '';
+          infoBtn.style.pointerEvents = '';
         }
         infoBtn.textContent = '\u2139';
       })
@@ -391,6 +433,16 @@
     select.value = String(q4InfoLimit || 50);
     select.addEventListener('change', function () {
       q4InfoLimit = parseInt(select.value, 10) || 50;
+      loadPage(page, { preserveAltView: true });
+    });
+  }
+
+  function bindToutInfoLimitSelect(select, page) {
+    if (!select) return;
+    toutInfoLimit = parseInt(select.value, 10) || 50;
+    select.value = String(toutInfoLimit);
+    select.addEventListener('change', function () {
+      toutInfoLimit = parseInt(select.value, 10) || 50;
       loadPage(page, { preserveAltView: true });
     });
   }
@@ -695,6 +747,10 @@
     }
     container.setAttribute('data-page', '');
     pageTitle.textContent = 'Bienvenue';
+    if (infoBtn) {
+      infoBtn.style.visibility = '';
+      infoBtn.style.pointerEvents = '';
+    }
     infoBtn.textContent = '\u2139';
     updateToggleLabels();
   }
@@ -721,7 +777,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php') {
+        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -758,7 +814,7 @@
       if (!fetchInfoPage) {
         return;
       }
-      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php';
+      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php';
       loadPage(fetchInfoPage, { preserveAltView: nextAltView });
     });
   }
@@ -780,6 +836,22 @@
   if (navOverlay) {
     navOverlay.addEventListener('click', function () { setNavOpen(false); });
   }
+
+  window.addEventListener('hashchange', function () {
+    if (location.hash !== '#verifierModal') return;
+    var m = document.getElementById('verifierModal');
+    if (m) {
+      m.setAttribute('tabindex', '-1');
+      m.focus({ preventScroll: true });
+    }
+  });
+
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Escape' && ev.key !== 'Esc') return;
+    if (location.hash !== '#verifierModal') return;
+    ev.preventDefault();
+    location.hash = '#tout-root';
+  }, true);
 
   document.addEventListener('DOMContentLoaded', function () {
     originalHomeContent = container.innerHTML;
