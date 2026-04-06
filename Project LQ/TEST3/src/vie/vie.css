@@ -1,0 +1,142 @@
+/*
+ * Grande Vie — styles locaux.
+ * Couleurs / jetons grille : --info-grid-* et --info-grid-gn-cell dans style.css (thèmes clair / sombre).
+ * Structure grille : même principe que la page principale Tout ou Rien (.tout-layout + .tout-grid-wrapper + .digit-grid)
+ * et que les pages Info Q (hit, repeat-2…4). Seule variante : ligne GN.
+ */
+
+/* Coquille 980px — comme .tout-layout / .q4info-layout */
+.vie-layout {
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-family: var(--font);
+  color: var(--table-text, var(--text));
+}
+
+/* Conteneur grille — comme .tout-layout .table-wrapper.tout-grid-wrapper */
+.vie-layout .table-wrapper.vie-grid-wrapper {
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  margin: 0 auto 12px;
+  border: 1px solid var(--info-grid-wrap-border, #ccc);
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+  border-radius: var(--radius-sm, 8px);
+  box-sizing: border-box;
+}
+
+.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='200'],
+.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='500'] {
+  max-height: 65vh;
+}
+
+.vie-layout table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+.vie-layout .digit-grid td,
+.vie-layout .digit-grid th {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vie-layout .digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+/* Colonnes Σ / # — comme Tout (1–49) */
+.vie-layout .digit-grid td:first-child,
+.vie-layout .digit-grid th:first-child {
+  min-width: 36px;
+  width: auto;
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+.vie-layout .digit-grid td:nth-child(2),
+.vie-layout .digit-grid th:nth-child(2) {
+  min-width: 22px;
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.vie-layout .digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+.vie-layout .digit-grid td.repeat-2 {
+  background-color: var(--info-grid-repeat-2, #f8c471);
+}
+
+.vie-layout .digit-grid td.repeat-3 {
+  background-color: var(--info-grid-repeat-3, #e74c3c);
+}
+
+.vie-layout .digit-grid td.repeat-4 {
+  background-color: var(--info-grid-repeat-4, #c0392b);
+  color: var(--info-grid-repeat-4-text, #fff);
+}
+
+/* Ligne GN — seul complément Grande Vie (fond cellule via style.css) */
+.vie-layout .digit-grid tr.row-gn td {
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.vie-layout .digit-grid td.cell-gn {
+  background-color: var(--info-grid-gn-cell, #d4e6f1);
+  color: var(--info-grid-text, #000);
+}
+
+.vie-layout .no-data {
+  text-align: center;
+  margin: 12px;
+  color: var(--error, #c0392b);
+}
+
+/* Sélecteur « Dernières n tirages » — mêmes jetons que .q4info-layout .filter-form */
+.vie-layout .filter-form {
+  text-align: center;
+  margin: 0;
+  padding: 6px 0 14px;
+  width: 100%;
+}
+
+.vie-layout .filter-form select {
+  background: var(--table-shell-bg, var(--bg-card, #fff));
+  border: 1px solid var(--table-cell-border, var(--border, #999));
+  color: var(--table-text, var(--text));
+  border-radius: var(--radius-sm, 8px);
+  font-size: 1em;
+  padding: 0 8px;
+  line-height: 32px;
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
+}
+
+/* Page principale */
+.vie-layout .vie-content {
+  padding: 1rem;
+}

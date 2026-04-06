@@ -9,6 +9,7 @@
   let q3InfoLimit = 50;
   let q4InfoLimit = 50;
   let toutInfoLimit = 50;
+  let vieInfoGridLimit = 50;
   let q2ChartLimit = 100;
   let q2InfoGridLimit = 50;
   let q2InfoNorder = false;
@@ -98,6 +99,8 @@
     if (page === 'quotidienne/QInfo/q4info.php') return 'quotidienne/q4.php';
     if (page === 'toutourien/tout.php') return 'toutourien/Info/toutinfo.php';
     if (page === 'toutourien/Info/toutinfo.php') return 'toutourien/tout.php';
+    if (page === 'vie/vie.php') return 'vie/Info/vieinfo.php';
+    if (page === 'vie/Info/vieinfo.php') return 'vie/vie.php';
     return '';
   }
 
@@ -262,6 +265,10 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
         : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+    } else if (page.indexOf('vie/') === 0) {
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Grande Vie <span class="sub">' + count + ' draws</span>'
+        : 'Grande Vie <span class="sub">' + count + ' tirages</span>';
     }
   }
 
@@ -278,10 +285,10 @@
 
     var params = new URLSearchParams();
     var isToutMainPage = page.indexOf('toutourien/tout.php') !== -1;
-    if (!isToutMainPage && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && toggleSwitch.checked) {
+    if (!isToutMainPage && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php') {
+    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -309,6 +316,8 @@
       params.set('count_range', String(q4CountRange || 50));
     } else if (page === 'toutourien/tout.php') {
       params.set('limit', toggleSwitch.checked ? '200' : '50');
+    } else if (page === 'vie/Info/vieinfo.php') {
+      params.set('grid_limit', String(vieInfoGridLimit || 50));
     }
 
     var query = params.toString();
@@ -356,6 +365,8 @@
           initQ4InfoPage(page);
         } else if (page === 'toutourien/Info/toutinfo.php') {
           bindToutInfoLimitSelect(container.querySelector('#toutInfoLimit'), page);
+        } else if (page === 'vie/Info/vieinfo.php') {
+          bindVieInfoGridLimitSelect(container.querySelector('#vieInfoGridLimit'), page);
         } else if (page === 'toutourien/tout.php') {
           initToutVerifierBlock();
         } else if (page === 'quotidienne/q4.php') {
@@ -380,6 +391,10 @@
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
             : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+        } else if (page.indexOf('vie/') === 0) {
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Grande Vie <span class="sub">' + count + ' draws</span>'
+            : 'Grande Vie <span class="sub">' + count + ' tirages</span>';
         }
         if (infoBtn) {
           infoBtn.style.visibility = '';
@@ -582,6 +597,16 @@
     select.value = String(toutInfoLimit);
     select.addEventListener('change', function () {
       toutInfoLimit = parseInt(select.value, 10) || 50;
+      loadPage(page, { preserveAltView: true });
+    });
+  }
+
+  function bindVieInfoGridLimitSelect(select, page) {
+    if (!select) return;
+    vieInfoGridLimit = parseInt(select.value, 10) || 50;
+    select.value = String(vieInfoGridLimit);
+    select.addEventListener('change', function () {
+      vieInfoGridLimit = parseInt(select.value, 10) || 50;
       loadPage(page, { preserveAltView: true });
     });
   }
@@ -916,7 +941,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php') {
+        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -953,7 +978,7 @@
       if (!fetchInfoPage) {
         return;
       }
-      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php';
+      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php' || fetchInfoPage === 'vie/Info/vieinfo.php';
       loadPage(fetchInfoPage, { preserveAltView: nextAltView });
     });
   }

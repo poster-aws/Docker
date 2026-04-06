@@ -6,7 +6,7 @@
    • Menu latéral (Quotidienne 2 / 3 / 4, langue, thème)
    • Accueil « Bienvenue » : carte + titres / textes / lien
    • Tableaux pages principales Q2 / Q3 / Q4 (même structure ; étoiles Q4 en bas)
-   • Grille chiffres pages Info Q2 / Q3 / Q4 et page principale Tout ou Rien (mêmes --info-grid-* ; toutourien/toutourien.css)
+   • Grille chiffres pages Info Q2 / Q3 / Q4, page principale Tout ou Rien, Info Grande Vie (mêmes --info-grid-* ; toutourien/toutourien.css, vie/vie.css)
    • Page Info Tout ou Rien : tableau Analyse + bloc combinaisons (toutourien/toutourien.css)
    • Q2 Info : nuage de points (scatter) + tableau des plages de jours
    Les alias --bg, --nav-bg, --welcome-*, --table-*, --info-grid-*, --q2info-*, etc. sont dérivés juste en dessous.
@@ -62,6 +62,8 @@
   --theme-info-grid-repeat-3: #e74c3c;
   --theme-info-grid-repeat-4: #c0392b;
   --theme-info-grid-repeat-4-text: #ffffff;
+  /* Grande Vie Info — ligne GN (cellules valeurs) */
+  --theme-info-grid-gn-cell: #d4e6f1;
   /* Q2 Info — scatter (points) + axes ; stats : bordures / texte alignés sur les tableaux */
   --theme-q2info-chart-scatter: rgba(56, 189, 248, 0.65);
   --theme-q2info-chart-scatter-border: rgba(125, 211, 252, 0.95);
@@ -120,6 +122,7 @@ html.theme-light {
   --theme-info-grid-repeat-3: #e74c3c;
   --theme-info-grid-repeat-4: #c0392b;
   --theme-info-grid-repeat-4-text: #ffffff;
+  --theme-info-grid-gn-cell: #d4e6f1;
   --theme-q2info-chart-scatter: rgba(37, 99, 235, 0.55);
   --theme-q2info-chart-scatter-border: rgba(29, 78, 216, 0.88);
   --theme-q2info-chart-tick: #475569;
@@ -178,6 +181,7 @@ html.theme-light {
   --info-grid-repeat-3: var(--theme-info-grid-repeat-3);
   --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
   --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
+  --info-grid-gn-cell: var(--theme-info-grid-gn-cell);
   --q2info-chart-scatter: var(--theme-q2info-chart-scatter);
   --q2info-chart-scatter-border: var(--theme-q2info-chart-scatter-border);
   --q2info-chart-tick: var(--theme-q2info-chart-tick);
@@ -249,6 +253,7 @@ html.theme-light {
   --info-grid-repeat-3: var(--theme-info-grid-repeat-3);
   --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
   --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
+  --info-grid-gn-cell: var(--theme-info-grid-gn-cell);
   --q2info-chart-scatter: var(--theme-q2info-chart-scatter);
   --q2info-chart-scatter-border: var(--theme-q2info-chart-scatter-border);
   --q2info-chart-tick: var(--theme-q2info-chart-tick);
