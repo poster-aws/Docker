@@ -19,9 +19,7 @@
           <?php if (!empty($vieRows)): ?>
             <?php foreach ($vieRows as $r): ?>
               <?php
-              $nums = [(int)$r['n1'], (int)$r['n2'], (int)$r['n3'], (int)$r['n4'], (int)$r['n5']];
-              $isAllUnique = count(array_unique($nums)) === 5;
-              $rowClass = $isAllUnique ? ' class="highlight-row"' : '';
+              $rowClass = ((int) $r['GN'] === 0) ? ' class="highlight-row"' : '';
               ?>
               <tr<?= $rowClass ?>>
                 <td><?= htmlspecialchars((string)$r['Tirage'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -30,7 +28,12 @@
                 <td><span class="circle"><?= (int)$r['n3'] ?></span></td>
                 <td><span class="circle"><?= (int)$r['n4'] ?></span></td>
                 <td><span class="circle"><?= (int)$r['n5'] ?></span></td>
-                <td><span class="circle"><?= (int)$r['GN'] ?></span></td>
+                <td class="vie-gn-cell"><?php
+                  $gn = (int) $r['GN'];
+                  if ($gn !== 0) {
+                    echo '<span class="circle vie-gn-circle">' . $gn . '</span>';
+                  }
+                ?></td>
               </tr>
             <?php endforeach; ?>
           <?php else: ?>

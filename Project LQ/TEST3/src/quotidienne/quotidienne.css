@@ -1,7 +1,16 @@
 /*
  * TEST3 — Quotidienne uniquement (Q2 / Q3 / Q4 : pages principales + Info).
  * Styles communs des tableaux : style.css (.tables-wrapper, .table-container, .interactive-table, .circle, …).
+ * 3e tableau stats chiffres : sous .quotidienne-main (q2/q3/q4.html) — pas appliqué à Grande Vie.
  */
+
+/* .main est en flex column + align-items: flex-start ; sans 100% ici l’enveloppe se rétrécit au contenu
+   et le bloc part à gauche — .tables-wrapper perd l’effet de margin: 0 auto au centre. */
+.quotidienne-main {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
 @media (max-width: 899px) {
   .q2info-layout #infoBlock.info-list .circle,
@@ -15,18 +24,18 @@
 }
 
 @media (min-width: 900px) {
-  .number-stats-table .interactive-table {
+  .quotidienne-main .number-stats-table .interactive-table {
     min-width: 0;
     width: 100%;
   }
 }
 
-.number-stats-table .interactive-table thead th:nth-child(3) {
+.quotidienne-main .number-stats-table .interactive-table thead th:nth-child(3) {
   white-space: normal;
   padding: 0.35rem 0.35rem 0.4rem;
 }
 
-.number-stats-table select {
+.quotidienne-main .number-stats-table select {
   display: block;
   color: var(--table-text, var(--text, #1e293b));
   width: auto;
@@ -44,21 +53,21 @@
 }
 
 /* Colonne stats Q : plages de jours */
-.number-stats-table tr.color-range-2 {
+.quotidienne-main .number-stats-table tr.color-range-2 {
   background: var(--table-range-2, rgba(234, 179, 8, 0.15));
 }
 
-.number-stats-table tr.color-range-3 {
+.quotidienne-main .number-stats-table tr.color-range-3 {
   background: var(--table-range-3, rgba(249, 115, 22, 0.15));
 }
 
-.number-stats-table tr.color-range-4 {
+.quotidienne-main .number-stats-table tr.color-range-4 {
   background: var(--table-range-4, rgba(239, 68, 68, 0.12));
 }
 
-.number-stats-table tr.color-range-2 td:nth-child(3),
-.number-stats-table tr.color-range-3 td:nth-child(3),
-.number-stats-table tr.color-range-4 td:nth-child(3) {
+.quotidienne-main .number-stats-table tr.color-range-2 td:nth-child(3),
+.quotidienne-main .number-stats-table tr.color-range-3 td:nth-child(3),
+.quotidienne-main .number-stats-table tr.color-range-4 td:nth-child(3) {
   background: var(--table-range-cell-bg, rgba(203, 213, 225, 0.4)) !important;
   font-weight: 600;
 }
