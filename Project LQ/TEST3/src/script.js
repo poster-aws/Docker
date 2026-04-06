@@ -10,7 +10,8 @@
   let q4InfoLimit = 50;
   let toutInfoLimit = 50;
   let vieInfoGridLimit = 50;
-  let vieGnCountRange = 50;
+  /** Grande Vie stats GN : fenêtre = derniers N tirages (dates distinctes), pas des jours */
+  let vieGnTirageCount = 50;
   let q2ChartLimit = 100;
   let q2InfoGridLimit = 50;
   let q2InfoNorder = false;
@@ -320,7 +321,7 @@
     } else if (page === 'vie/Info/vieinfo.php') {
       params.set('grid_limit', String(vieInfoGridLimit || 50));
     } else if (page === 'vie/vie.php') {
-      params.set('count_range', String(vieGnCountRange || 50));
+      params.set('vie_gn_tirages', String(vieGnTirageCount || 50));
     }
 
     var query = params.toString();
@@ -375,7 +376,7 @@
         } else if (page === 'quotidienne/q4.php') {
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         } else if (page === 'vie/vie.php') {
-          bindRangeSelect(container.querySelector('#vieGnCountRange'), 'vieGn', page);
+          bindRangeSelect(container.querySelector('#vieGnTirageSelect'), 'vieGn', page);
         }
 
         var meta = container.querySelector('[id$="-meta"]');
@@ -570,14 +571,14 @@
     var range =
       key === 'q2' ? q2CountRange
         : key === 'q3' ? q3CountRange
-          : key === 'vieGn' ? vieGnCountRange
+          : key === 'vieGn' ? vieGnTirageCount
             : q4CountRange;
     select.value = String(range || 50);
     select.addEventListener('change', function () {
       var v = parseInt(select.value, 10) || 50;
       if (key === 'q2') q2CountRange = v;
       else if (key === 'q3') q3CountRange = v;
-      else if (key === 'vieGn') vieGnCountRange = v;
+      else if (key === 'vieGn') vieGnTirageCount = v;
       else q4CountRange = v;
       loadPage(page);
     });
