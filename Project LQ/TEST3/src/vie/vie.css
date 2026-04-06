@@ -34,6 +34,16 @@
   max-height: 65vh;
 }
 
+/* Info uniquement : fenêtre visible de la grille ~2× moins haute (défilement vertical) */
+.vie-layout--info .table-wrapper.vie-grid-wrapper {
+  max-height: 35vh;
+}
+
+.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='200'],
+.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='500'] {
+  max-height: 32.5vh;
+}
+
 .vie-layout table.digit-grid {
   width: max-content;
   border-collapse: collapse;

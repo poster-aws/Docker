@@ -41,7 +41,7 @@ $vieConn->close();
 ?>
 <div id="vie-meta" data-count="<?= (int)$vieCount ?>"></div>
 
-<div class="vie-layout">
+<div class="vie-layout vie-layout--info">
   <div class="table-wrapper vie-grid-wrapper" data-limit="<?= (int)$gridLimit ?>">
     <?php if (!empty($tiragesGrid)): ?>
     <table class="digit-grid" id="vieGrid">
