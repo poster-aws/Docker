@@ -7,7 +7,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 
 /* Fenêtre stats GN : nombre de tirages (dates Tirage distinctes), pas des jours. */
-$allowedGnTirages = [10, 20, 50, 100, 365];
+$allowedGnTirages = [10, 20, 50, 100, 200];
 $rawTirages = $_GET['vie_gn_tirages'] ?? $_GET['vie_gn_range'] ?? null;
 $vieGnTirageCount = ($rawTirages !== null && in_array((int) $rawTirages, $allowedGnTirages, true))
     ? (int) $rawTirages

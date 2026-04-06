@@ -12,6 +12,12 @@
   let vieInfoGridLimit = 50;
   /** Grande Vie stats GN : fenêtre = derniers N tirages (dates distinctes), pas des jours */
   let vieGnTirageCount = 50;
+  const vieGnTirageAllowed = [10, 20, 50, 100, 200];
+
+  function clampVieGnTirageCount(v) {
+    const n = parseInt(v, 10) || 50;
+    return vieGnTirageAllowed.indexOf(n) !== -1 ? n : 50;
+  }
   let q2ChartLimit = 100;
   let q2InfoGridLimit = 50;
   let q2InfoNorder = false;
@@ -321,7 +327,7 @@
     } else if (page === 'vie/Info/vieinfo.php') {
       params.set('grid_limit', String(vieInfoGridLimit || 50));
     } else if (page === 'vie/vie.php') {
-      params.set('vie_gn_tirages', String(vieGnTirageCount || 50));
+      params.set('vie_gn_tirages', String(clampVieGnTirageCount(vieGnTirageCount)));
     }
 
     var query = params.toString();
@@ -573,13 +579,19 @@
         : key === 'q3' ? q3CountRange
           : key === 'vieGn' ? vieGnTirageCount
             : q4CountRange;
+    if (key === 'vieGn') {
+      range = clampVieGnTirageCount(parseInt(select.value, 10) || range);
+      vieGnTirageCount = range;
+    }
     select.value = String(range || 50);
     select.addEventListener('change', function () {
       var v = parseInt(select.value, 10) || 50;
       if (key === 'q2') q2CountRange = v;
       else if (key === 'q3') q3CountRange = v;
-      else if (key === 'vieGn') vieGnTirageCount = v;
-      else q4CountRange = v;
+      else if (key === 'vieGn') {
+        vieGnTirageCount = clampVieGnTirageCount(v);
+        select.value = String(vieGnTirageCount);
+      } else q4CountRange = v;
       loadPage(page);
     });
   }
@@ -612,12 +624,20 @@
     });
   }
 
+  var vieInfoGridAllowed = [50, 100, 200];
+
+  function clampVieInfoGridLimit(v) {
+    var n = parseInt(v, 10) || 50;
+    return vieInfoGridAllowed.indexOf(n) !== -1 ? n : 50;
+  }
+
   function bindVieInfoGridLimitSelect(select, page) {
     if (!select) return;
-    vieInfoGridLimit = parseInt(select.value, 10) || 50;
+    vieInfoGridLimit = clampVieInfoGridLimit(select.value);
     select.value = String(vieInfoGridLimit);
     select.addEventListener('change', function () {
-      vieInfoGridLimit = parseInt(select.value, 10) || 50;
+      vieInfoGridLimit = clampVieInfoGridLimit(select.value);
+      select.value = String(vieInfoGridLimit);
       loadPage(page, { preserveAltView: true });
     });
   }

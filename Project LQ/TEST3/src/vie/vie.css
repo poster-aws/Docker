@@ -44,8 +44,8 @@ html.theme-light .vie-layout {
   box-sizing: border-box;
 }
 
-.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='200'],
-.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='500'] {
+.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='100'],
+.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='200'] {
   max-height: 65vh;
 }
 
@@ -54,8 +54,8 @@ html.theme-light .vie-layout {
   max-height: 35vh;
 }
 
-.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='200'],
-.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='500'] {
+.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='100'],
+.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='200'] {
   max-height: 32.5vh;
 }
 

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../../i18n.php';
 
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
@@ -7,9 +8,10 @@ header('Expires: 0');
 
 $tiragesGrid = [];
 $numberSums = array_fill(1, 49, 0);
-$allowedGridLimits = [50, 100, 200, 500];
-$gridLimit = isset($_GET['grid_limit']) && in_array((int)$_GET['grid_limit'], $allowedGridLimits, true)
-    ? (int)$_GET['grid_limit']
+/* Grille : N derniers tirages = N dates Tirage distinctes avec GN 1–7 (lignes GN = 0 exclues). */
+$allowedGridLimits = [50, 100, 200];
+$gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $allowedGridLimits, true)
+    ? (int) $_GET['grid_limit']
     : 50;
 
 $vieCount = 0;
@@ -19,15 +21,27 @@ if ($tableExists && $tableExists->num_rows > 0) {
     if ($countRes && $row = $countRes->fetch_assoc()) {
         $vieCount = (int)$row['total'];
     }
-    $sqlGrid = 'SELECT Tirage, n1, n2, n3, n4, n5, GN FROM Vie ORDER BY Tirage DESC LIMIT ' . (int)$gridLimit;
+    $n = (int) $gridLimit;
+    $sqlGrid = "SELECT v.Tirage, v.n1, v.n2, v.n3, v.n4, v.n5, v.GN FROM Vie v
+        INNER JOIN (
+            SELECT Tirage FROM Vie WHERE GN >= 1 AND GN <= 7
+            GROUP BY Tirage ORDER BY Tirage DESC LIMIT {$n}
+        ) AS recent ON v.Tirage = recent.Tirage AND v.GN >= 1 AND v.GN <= 7
+        ORDER BY v.Tirage DESC, v.GN ASC";
     $resGrid = $vieConn->query($sqlGrid);
     if ($resGrid && $resGrid->num_rows > 0) {
+        $seenTirage = [];
         while ($r = $resGrid->fetch_assoc()) {
-            $nums = [(int)$r['n1'], (int)$r['n2'], (int)$r['n3'], (int)$r['n4'], (int)$r['n5']];
+            $key = (string) $r['Tirage'];
+            if (isset($seenTirage[$key])) {
+                continue;
+            }
+            $seenTirage[$key] = true;
+            $nums = [(int) $r['n1'], (int) $r['n2'], (int) $r['n3'], (int) $r['n4'], (int) $r['n5']];
             $tiragesGrid[] = [
                 'Tirage' => $r['Tirage'],
                 'nums'   => $nums,
-                'GN'     => (int)$r['GN'],
+                'GN'     => (int) $r['GN'],
             ];
             foreach ($nums as $num) {
                 if ($num >= 1 && $num <= 49) {
@@ -76,19 +90,19 @@ $vieConn->close();
       </tbody>
     </table>
     <?php else: ?>
-    <p class="no-data">Aucun tirage.</p>
+    <p class="no-data"><?= htmlspecialchars(t('vieinfo.no_data'), ENT_QUOTES, 'UTF-8') ?></p>
     <?php endif; ?>
   </div>
 
   <?php if (!empty($tiragesGrid)): ?>
   <div class="filter-form">
-    Dernières
-    <select id="vieInfoGridLimit" name="grid_limit" aria-label="Nombre de tirages">
+    <?= htmlspecialchars(t('vieinfo.filter.prefix'), ENT_QUOTES, 'UTF-8') ?>
+    <select id="vieInfoGridLimit" name="grid_limit" title="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>">
       <?php foreach ($allowedGridLimits as $opt): ?>
         <option value="<?= (int)$opt ?>" <?= ($gridLimit === $opt ? 'selected' : '') ?>><?= (int)$opt ?></option>
       <?php endforeach; ?>
     </select>
-    tirages
+    <?= htmlspecialchars(t('vieinfo.filter.suffix'), ENT_QUOTES, 'UTF-8') ?>
   </div>
   <?php endif; ?>
 </div>
