@@ -146,7 +146,8 @@
   box-sizing: border-box;
 }
 
-/* Page principale */
-.vie-layout .vie-content {
-  padding: 1rem;
+/* Page principale : grille des tirages — .tables-wrapper / .interactive-table dans style.css */
+.vie-layout .tables-wrapper {
+  width: 100%;
+  max-width: 100%;
 }

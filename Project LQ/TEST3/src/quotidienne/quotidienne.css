@@ -1,79 +1,9 @@
-/* TEST3 — Quotidienne — Tables modernes, responsive */
+/*
+ * TEST3 — Quotidienne uniquement (Q2 / Q3 / Q4 : pages principales + Info).
+ * Styles communs des tableaux : style.css (.tables-wrapper, .table-container, .interactive-table, .circle, …).
+ */
 
-.tables-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
-  align-items: center;
-}
-
-@media (min-width: 900px) {
-  .tables-wrapper {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-    gap: 1rem;
-    justify-content: center;
-  }
-}
-
-/* Мобилка: все данные видны, при необходимости — горизонтальная прокрутка внутри таблицы */
 @media (max-width: 899px) {
-  .tables-wrapper {
-    width: 100%;
-    padding: 0 0.5rem;
-    box-sizing: border-box;
-  }
-  .table-container,
-  .combo-table-container {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .table-container .interactive-table,
-  .combo-table-container .interactive-table {
-    min-width: max-content;
-    width: max-content;
-    font-size: 0.75rem;
-  }
-  .table-container th,
-  .table-container td,
-  .combo-table-container th,
-  .combo-table-container td {
-    padding: 0.3rem 0.35rem;
-    overflow: visible;
-    white-space: nowrap;
-  }
-  .table-container .circle,
-  .combo-table-container .circle {
-    min-width: 22px;
-    height: 22px;
-    font-size: 0.85em;
-    padding: 0 2px;
-  }
-  .number-stats-table .interactive-table {
-    min-width: max-content;
-    width: max-content;
-    font-size: 0.75rem;
-  }
-  .number-stats-table th,
-  .number-stats-table td {
-    padding: 0.3rem 0.35rem;
-    overflow: visible;
-    white-space: nowrap;
-  }
-  .number-stats-table .circle {
-    min-width: 22px;
-    height: 22px;
-    font-size: 0.85em;
-    padding: 0 2px;
-  }
-  /* Шарики в инфо-блоке Q2/Q3/Q4 — те же размеры, что у шариков в таблицах на узком экране */
   .q2info-layout #infoBlock.info-list .circle,
   .q3info-layout #infoBlock.info-list .circle,
   .q4info-layout #infoBlock.info-list .circle {
@@ -84,85 +14,18 @@
   }
 }
 
-.table-container,
-.combo-table-container,
-.number-stats-table {
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  border-radius: var(--radius, 12px);
-  box-shadow: var(--shadow, 0 1px 3px rgba(0,0,0,0.08));
-  border: 1px solid var(--table-shell-border, var(--border, #e2e8f0));
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  width: max-content;
-  max-width: 100%;
-  height: fit-content;
-  max-height: calc(100vh - var(--header-h, 56px) - 2rem);
-}
-/* Скрытие вертикальных скроллбаров (прокрутка колёсиком/тачем остаётся) */
-.table-container,
-.combo-table-container,
-.number-stats-table {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.table-container::-webkit-scrollbar,
-.combo-table-container::-webkit-scrollbar,
-.number-stats-table::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-}
-
-.table-container,
-.combo-table-container {
-  flex: 0 0 auto;
-}
-
-.number-stats-table {
-  flex: 0 0 auto;
-  width: 150px;
-  max-width: 150px;
-}
-
-.interactive-table {
-  width: 100%;
-  min-width: 320px;
-  border-collapse: collapse;
-  font-size: clamp(0.8rem, 2.2vw, 0.95rem);
-  font-family: var(--font);
-  color: var(--table-text, var(--text, #1e293b));
-  font-weight: 600;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Все три таблицы — один базовый размер, шапка и ячейки в одной шкале */
-.table-container .interactive-table,
-.combo-table-container .interactive-table,
-.number-stats-table .interactive-table {
-  font-size: 1.1rem;
-}
 @media (min-width: 900px) {
   .number-stats-table .interactive-table {
     min-width: 0;
     width: 100%;
   }
 }
-.table-container .interactive-table thead th,
-.combo-table-container .interactive-table thead th,
-.number-stats-table .interactive-table thead th {
-  font-size: 0.7em;
-}
-.table-container .interactive-table td,
-.combo-table-container .interactive-table td,
-.number-stats-table .interactive-table td,
-.number-stats-table .interactive-table tbody th {
-  font-size: 0.85em;
-}
 
 .number-stats-table .interactive-table thead th:nth-child(3) {
   white-space: normal;
   padding: 0.35rem 0.35rem 0.4rem;
 }
+
 .number-stats-table select {
   display: block;
   color: var(--table-text, var(--text, #1e293b));
@@ -180,87 +43,15 @@
   cursor: pointer;
 }
 
-.interactive-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  padding: 0.4rem 0.35rem;
-  background: var(--table-header-bg, var(--header-bg, #0f172a));
-  color: var(--table-header-text, var(--header-text, #f8fafc));
-  font-weight: 700;
-  font-size: 0.75em;
-  line-height: 1.2;
-  text-align: center;
-  border-bottom: 2px solid var(--table-header-rule, rgba(255, 255, 255, 0.2));
-  white-space: nowrap;
-}
-
-.interactive-table thead th small {
-  display: block;
-  font-weight: 400;
-  opacity: 0.9;
-  font-size: 0.95em;
-}
-
-.interactive-table td {
-  padding: 0.3rem 0.35rem;
-  border-bottom: 1px solid var(--table-cell-border, var(--border, #e2e8f0));
-  text-align: center;
-  white-space: nowrap;
-  font-weight: 700;
-}
-/* Минимальный отступ только между шариками */
-.interactive-table td:has(> .circle),
-.interactive-table th:has(> .circle) {
-  padding-left: 0.15rem;
-  padding-right: 0.15rem;
-}
-
-.interactive-table tbody tr:hover {
-  background: var(--table-row-hover, rgba(37, 99, 235, 0.06));
-}
-
-.interactive-table th.sort-asc::after {
-  content: " ▲";
-  font-size: 0.75em;
-  opacity: 0.8;
-}
-
-.interactive-table th.sort-desc::after {
-  content: " ▼";
-  font-size: 0.75em;
-  opacity: 0.8;
-}
-
-.circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 25px;
-  height: 25px;
-  padding: 0 3px;
-  border-radius: 50%;
-  background: var(--table-circle-bg, var(--accent, #2563eb));
-  color: var(--table-circle-text, #fff);
-  font-weight: 600;
-  font-size: 0.85em;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-  /* Как внутри .interactive-table : без этого в инфо-блоке (вне таблицы) цифры на светлой теме выглядят гуще */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.highlight-row {
-  background: var(--table-highlight-row, rgba(34, 197, 94, 0.08));
-}
-
-/* ≤10 jours : pas de classe sur <tr> (pas de fond). 11–15 / 16–20 / 21+ : color-range-2…4 */
+/* Colonne stats Q : plages de jours */
 .number-stats-table tr.color-range-2 {
   background: var(--table-range-2, rgba(234, 179, 8, 0.15));
 }
+
 .number-stats-table tr.color-range-3 {
   background: var(--table-range-3, rgba(249, 115, 22, 0.15));
 }
+
 .number-stats-table tr.color-range-4 {
   background: var(--table-range-4, rgba(239, 68, 68, 0.12));
 }
@@ -270,31 +61,6 @@
 .number-stats-table tr.color-range-4 td:nth-child(3) {
   background: var(--table-range-cell-bg, rgba(203, 213, 225, 0.4)) !important;
   font-weight: 600;
-}
-
-.x-small {
-  font-size: 0.75em;
-  opacity: 0.7;
-  margin-right: 2px;
-}
-
-.star-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  font-weight: 700;
-  font-size: 0.85em;
-}
-.star-1 {
-  background: var(--table-star-1-bg, #2563eb);
-  color: var(--table-star-1-text, #fff);
-}
-.star-2 {
-  background: var(--table-star-2-bg, #ea580c);
-  color: var(--table-star-2-text, #fff);
 }
 
 /* ----- Pages Info Q2 / Q3 : coquille + limite grille + contrôles graphique Q2 ----- */
@@ -768,16 +534,5 @@
 }
 
 /*
- * Шарики в инфо-блоке — без отдельных правил: наследуют глобальный .circle
- * (фон/текст --table-circle-*, размер как в .interactive-table на основной странице).
- * Шарики в таблицах на страницах Info (Q4 и т.д.) тоже используют тот же .circle.
+ * Pastilles .circle : définition dans style.css (thème --table-circle-*).
  */
-
-/* ----- Pages Info : largeurs table-wrapper / tables-wrapper ----- */
-.table-wrapper {
-  width: 100% !important;
-}
-
-.tables-wrapper {
-  max-width: 100% !important;
-}
