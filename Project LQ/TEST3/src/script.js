@@ -267,8 +267,8 @@
         : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
     } else if (page.indexOf('vie/') === 0) {
       pageTitle.innerHTML = currentLang === 'en'
-        ? 'Grande Vie <span class="sub">' + count + ' draws</span>'
-        : 'Grande Vie <span class="sub">' + count + ' tirages</span>';
+        ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
+        : 'Grande Vie <span class="sub">' + count + ' tirages depuis 20 octobre 2016</span>';
     }
   }
 
@@ -393,8 +393,8 @@
             : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
         } else if (page.indexOf('vie/') === 0) {
           pageTitle.innerHTML = currentLang === 'en'
-            ? 'Grande Vie <span class="sub">' + count + ' draws</span>'
-            : 'Grande Vie <span class="sub">' + count + ' tirages</span>';
+            ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
+            : 'Grande Vie <span class="sub">' + count + ' tirages depuis 20 octobre 2016</span>';
         }
         if (infoBtn) {
           infoBtn.style.visibility = '';
