@@ -32,7 +32,8 @@ html.theme-light .vie-layout {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* Conteneur grille — comme .tout-layout .table-wrapper.tout-grid-wrapper */
+/* Conteneur grille — comme .tout-layout .table-wrapper.tout-grid-wrapper.
+ * Une seule max-height pour 50 / 100 / 200 (pas de réduction pour 100–200). */
 .vie-layout .table-wrapper.vie-grid-wrapper {
   width: 100%;
   max-height: 70vh;
@@ -44,19 +45,10 @@ html.theme-light .vie-layout {
   box-sizing: border-box;
 }
 
-.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='100'],
-.vie-layout .table-wrapper.vie-grid-wrapper[data-limit='200'] {
-  max-height: 65vh;
-}
-
-/* Info uniquement : fenêtre visible de la grille ~2× moins haute (défilement vertical) */
+/* Info uniquement : fenêtre visible de la grille ~2× moins haute (défilement vertical).
+ * Même hauteur pour 50 / 100 / 200 tirages — sinon la grille paraît plus basse au-delà de 50. */
 .vie-layout--info .table-wrapper.vie-grid-wrapper {
   max-height: 35vh;
-}
-
-.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='100'],
-.vie-layout--info .table-wrapper.vie-grid-wrapper[data-limit='200'] {
-  max-height: 32.5vh;
 }
 
 .vie-layout table.digit-grid {
