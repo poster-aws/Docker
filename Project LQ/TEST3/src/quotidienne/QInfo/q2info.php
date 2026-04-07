@@ -161,6 +161,10 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
   </table>
 
   <div id="infoBlock" class="info-list">
+    <div class="info-row info-row--schedule">
+      <span class="info-sign" aria-hidden="true">&#8505;</span>
+      <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
     <div class="info-row">
       <div class="info-digits">
         <span class="circle">1</span>

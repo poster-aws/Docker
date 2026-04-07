@@ -7,6 +7,8 @@ if (!in_array($lang, ['fr', 'en'], true)) {
 
 $I18N = [
     'fr' => [
+        'infoblock.schedule.daily' => 'Tirage quotidien',
+        'infoblock.schedule.vie_biweekly' => 'Tirage bihebdomadaire, le lundi et le jeudi',
         'q2.col.draw' => "Tirage",
         'q2.col.last_365' => "365 dernières",
         'q2.col.days_passed' => "Jours<br>passés",
@@ -84,6 +86,9 @@ $I18N = [
         'vieinfo.filter.prefix' => 'Derniers',
         'vieinfo.filter.suffix' => 'tirages',
         'vieinfo.select_title' => 'Nombre de tirages affichés dans la grille',
+        'vieinfo.placeholder.1' => 'Légende à venir (1).',
+        'vieinfo.placeholder.2' => 'Légende à venir (2).',
+        'vieinfo.placeholder.3' => 'Légende à venir (3).',
         'tout.col.tot' => 'Tot',
         'tout.no_data' => 'Pas de données à afficher.',
         'tout.btn.verify_combo' => 'Vérifier la combinaison',
@@ -108,6 +113,8 @@ $I18N = [
         'toutinfo.info.repeated_intro' => 'Combinaisons sorties plusieurs fois :',
     ],
     'en' => [
+        'infoblock.schedule.daily' => 'Daily draw',
+        'infoblock.schedule.vie_biweekly' => 'Biweekly draw, on Mondays and Thursdays',
         'q2.col.draw' => "Draw",
         'q2.col.last_365' => "Last 365",
         'q2.col.days_passed' => "Days<br>ago",
@@ -185,6 +192,9 @@ $I18N = [
         'vieinfo.filter.prefix' => 'Last',
         'vieinfo.filter.suffix' => 'draws',
         'vieinfo.select_title' => 'Number of draws shown in the grid',
+        'vieinfo.placeholder.1' => 'Legend placeholder (1).',
+        'vieinfo.placeholder.2' => 'Legend placeholder (2).',
+        'vieinfo.placeholder.3' => 'Legend placeholder (3).',
         'tout.col.tot' => 'Tot',
         'tout.no_data' => 'No data to display.',
         'tout.btn.verify_combo' => 'Check combination',

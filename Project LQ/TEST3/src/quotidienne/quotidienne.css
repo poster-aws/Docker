@@ -12,16 +12,7 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 899px) {
-  .q2info-layout #infoBlock.info-list .circle,
-  .q3info-layout #infoBlock.info-list .circle,
-  .q4info-layout #infoBlock.info-list .circle {
-    min-width: 22px;
-    height: 22px;
-    font-size: 0.85em;
-    padding: 0 2px;
-  }
-}
+/* Pastilles #infoBlock : style.css (#infoBlock.info-list .circle, mobile) */
 
 @media (min-width: 900px) {
   .quotidienne-main .number-stats-table .interactive-table {
@@ -498,49 +489,7 @@
   color: var(--info-grid-repeat-4-text, #fff);
 }
 
-/* ----- Bloc légende Info + billes (mêmes couleurs que cellules .hit de la grille) ----- */
-.q2info-layout #infoBlock.info-list,
-.q3info-layout #infoBlock.info-list,
-.q4info-layout #infoBlock.info-list {
-  display: flex;
-  flex-direction: column;
-  padding: 14px 16px;
-  gap: 8px;
-  font-size: 0.95em;
-  width: 100%;
-  max-width: none;
-  margin: 30px 0;
-  background: rgba(255, 255, 255, 0.03);
-  color: #333;
-  box-sizing: border-box;
-}
-
-.q2info-layout .info-row,
-.q3info-layout .info-row,
-.q4info-layout .info-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-left: 4px solid #ff8c00;
-  padding-left: 10px;
-  background: rgba(255, 255, 255, 0.26);
-  border-radius: 6px;
-}
-
-.q2info-layout .info-text,
-.q3info-layout .info-text,
-.q4info-layout .info-text {
-  font-size: 0.95em;
-}
-
-.q2info-layout .info-digits,
-.q3info-layout .info-digits,
-.q4info-layout .info-digits {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-}
+/* Bloc #infoBlock : style.css */
 
 /*
  * Pastilles .circle : définition dans style.css (thème --table-circle-*).

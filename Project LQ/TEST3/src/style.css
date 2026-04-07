@@ -914,6 +914,77 @@ input:checked + .slider::before { transform: translateX(18px); }
   max-width: 100% !important;
 }
 
+/* =============================================================================
+   Bloc légende Info (#infoBlock.info-list) — Quotidienne, Grande Vie, Tout ou Rien Info…
+   ============================================================================= */
+#infoBlock.info-list {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 8px;
+  font-size: 0.95em;
+  width: 100%;
+  max-width: none;
+  margin: 30px 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text, #f1f5f9);
+  box-sizing: border-box;
+}
+
+html.theme-light #infoBlock.info-list {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text, #1e293b);
+}
+
+#infoBlock.info-list .info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #ff8c00;
+  padding-left: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+html.theme-light #infoBlock.info-list .info-row {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+#infoBlock.info-list .info-text {
+  font-size: 0.95em;
+}
+
+#infoBlock.info-list .info-digits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+#infoBlock.info-list .info-row.info-row--schedule {
+  align-items: center;
+}
+
+#infoBlock.info-list .info-sign {
+  flex-shrink: 0;
+  width: 1.75rem;
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--accent, #38bdf8);
+  font-family: var(--font);
+}
+
+@media (max-width: 899px) {
+  #infoBlock.info-list .circle {
+    min-width: 22px;
+    height: 22px;
+    font-size: 0.85em;
+    padding: 0 2px;
+  }
+}
+
 /* ----- Loading ----- */
 .loading-overlay {
   position: fixed;

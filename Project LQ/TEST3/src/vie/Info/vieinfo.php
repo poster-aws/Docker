@@ -105,4 +105,33 @@ $vieConn->close();
     <?= htmlspecialchars(t('vieinfo.filter.suffix'), ENT_QUOTES, 'UTF-8') ?>
   </div>
   <?php endif; ?>
+
+  <div id="infoBlock" class="info-list">
+    <div class="info-row info-row--schedule">
+      <span class="info-sign" aria-hidden="true">&#8505;</span>
+      <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.vie_biweekly'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle">1</span>
+        <span class="circle">2</span>
+        <span class="circle">3</span>
+        <span class="circle">4</span>
+        <span class="circle">5</span>
+      </div>
+      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.1'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle vie-gn-circle">7</span>
+      </div>
+      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.2'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div class="info-row">
+      <div class="info-digits">
+        <span class="circle">—</span>
+      </div>
+      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.3'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+  </div>
 </div>

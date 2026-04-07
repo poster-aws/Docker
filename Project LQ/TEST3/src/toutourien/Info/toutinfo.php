@@ -131,7 +131,11 @@ function toutinfo_format_int(int $n, string $lang): string
   <?= t('toutinfo.draws_suffix') ?>
 </div>
 
-<div id="toutInfoBlock" class="info-list">
+<div id="infoBlock" class="info-list">
+  <div class="info-row info-row--schedule">
+    <span class="info-sign" aria-hidden="true">&#8505;</span>
+    <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
+  </div>
   <div class="info-row">
     <div class="info-text">
       <?= t('toutinfo.info.all_possible') ?> — <b><?= toutinfo_format_int($totalPossibleComb, $lang) ?></b>

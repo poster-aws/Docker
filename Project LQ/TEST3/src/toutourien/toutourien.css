@@ -342,33 +342,25 @@
   box-sizing: border-box;
 }
 
-/* Bloc info (combinaisons / répétitions) — même esprit que l’ancien projet */
-.toutinfo-layout #toutInfoBlock.info-list {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 16px;
-  gap: 0;
-  font-size: 0.95em;
+/* Bloc info Tout ou Rien : base #infoBlock dans style.css — nuances locales seulement */
+.toutinfo-layout #infoBlock.info-list {
   max-width: 800px;
   margin: 10px auto 24px;
-  color: var(--text, #333);
-  box-sizing: border-box;
+  padding: 10px 16px;
+  gap: 0;
 }
 
-.toutinfo-layout #toutInfoBlock .info-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-left: 4px solid #ff8c00;
+.toutinfo-layout #infoBlock.info-list .info-row {
   padding: 6px 10px 6px 12px;
   margin-bottom: 8px;
-  background: rgba(255, 255, 255, 0.26);
-  border-radius: 6px;
 }
 
-.toutinfo-layout #toutInfoBlock .info-text {
+.toutinfo-layout #infoBlock.info-list .info-row:last-child {
+  margin-bottom: 0;
+}
+
+.toutinfo-layout #infoBlock .info-text {
   flex: 1;
-  font-size: 0.95em;
 }
 
 .toutinfo-layout .combo-square {
