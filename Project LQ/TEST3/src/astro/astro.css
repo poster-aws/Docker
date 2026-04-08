@@ -99,10 +99,6 @@ html.theme-light .astro-layout .number-stats-table select {
   color: var(--text, #1e293b);
 }
 
-.astro-layout .number-stats-table tr.color-range-1 {
-  background: var(--table-range-1, rgba(34, 197, 94, 0.12));
-}
-
 .astro-layout .number-stats-table tr.color-range-2 {
   background: var(--table-range-2, rgba(234, 179, 8, 0.15));
 }
@@ -115,7 +111,6 @@ html.theme-light .astro-layout .number-stats-table select {
   background: var(--table-range-4, rgba(239, 68, 68, 0.12));
 }
 
-.astro-layout .number-stats-table tr.color-range-1 td:nth-child(3),
 .astro-layout .number-stats-table tr.color-range-2 td:nth-child(3),
 .astro-layout .number-stats-table tr.color-range-3 td:nth-child(3),
 .astro-layout .number-stats-table tr.color-range-4 td:nth-child(3) {

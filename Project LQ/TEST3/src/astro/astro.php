@@ -183,6 +183,21 @@ function astro_days_since(?string $lastTirage, DateTime $today): string
     }
 }
 
+/** Jours passés (2e colonne) → classe de ligne. ≤10 : pas de zébrage. */
+function astro_stats_row_class(int $val): string
+{
+    if ($val <= 10) {
+        return '';
+    }
+    if ($val <= 20) {
+        return 'color-range-2';
+    }
+    if ($val <= 30) {
+        return 'color-range-3';
+    }
+    return 'color-range-4';
+}
+
 $tableHTML = '';
 $today = new DateTime('today');
 foreach ($data as $row) {
@@ -208,9 +223,9 @@ for ($j = 1; $j <= 31; $j++) {
         $joursPasses = astro_days_since((string) $jourStats[$j]['last_tirage'], $today);
     }
     $val = $joursPasses !== '' ? (int) $joursPasses : 0;
-    $class = $val <= 9 ? 'color-range-1' : ($val <= 14 ? 'color-range-2' : ($val <= 20 ? 'color-range-3' : 'color-range-4'));
+    $class = astro_stats_row_class($val);
     $count = $freqStats[$j] ?? 0;
-    $jourStatsHTML .= '<tr class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '">';
+    $jourStatsHTML .= $class !== '' ? '<tr class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '">' : '<tr>';
     $jourStatsHTML .= '<td>' . $j . '</td>';
     $jourStatsHTML .= '<td>' . htmlspecialchars($joursPasses, ENT_QUOTES, 'UTF-8') . '</td>';
     $jourStatsHTML .= '<td><span class="x-small">x</span>' . $count . '</td>';
@@ -224,9 +239,9 @@ for ($m = 1; $m <= 12; $m++) {
         $joursPassesM = astro_days_since((string) $moisStats[$m]['last_tirage'], $today);
     }
     $valM = $joursPassesM !== '' ? (int) $joursPassesM : 0;
-    $classM = $valM <= 9 ? 'color-range-1' : ($valM <= 14 ? 'color-range-2' : ($valM <= 20 ? 'color-range-3' : 'color-range-4'));
+    $classM = astro_stats_row_class($valM);
     $countM = $freqMois[$m] ?? 0;
-    $moisStatsHTML .= '<tr class="' . htmlspecialchars($classM, ENT_QUOTES, 'UTF-8') . '">';
+    $moisStatsHTML .= $classM !== '' ? '<tr class="' . htmlspecialchars($classM, ENT_QUOTES, 'UTF-8') . '">' : '<tr>';
     $moisStatsHTML .= '<td>' . htmlspecialchars(t('astro.mois.' . $m), ENT_QUOTES, 'UTF-8') . '</td>';
     $moisStatsHTML .= '<td>' . htmlspecialchars($joursPassesM, ENT_QUOTES, 'UTF-8') . '</td>';
     $moisStatsHTML .= '<td><span class="x-small">x</span>' . $countM . '</td>';
@@ -240,9 +255,9 @@ for ($a = 0; $a <= 99; $a++) {
         $joursPassesA = astro_days_since((string) $anneeStats[$a]['last_tirage'], $today);
     }
     $valA = $joursPassesA !== '' ? (int) $joursPassesA : 0;
-    $classA = $valA <= 9 ? 'color-range-1' : ($valA <= 14 ? 'color-range-2' : ($valA <= 20 ? 'color-range-3' : 'color-range-4'));
+    $classA = astro_stats_row_class($valA);
     $countA = $freqAnnee[$a] ?? 0;
-    $anneeStatsHTML .= '<tr class="' . htmlspecialchars($classA, ENT_QUOTES, 'UTF-8') . '">';
+    $anneeStatsHTML .= $classA !== '' ? '<tr class="' . htmlspecialchars($classA, ENT_QUOTES, 'UTF-8') . '">' : '<tr>';
     $anneeStatsHTML .= '<td>' . sprintf('%02d', $a) . '</td>';
     $anneeStatsHTML .= '<td>' . htmlspecialchars($joursPassesA, ENT_QUOTES, 'UTF-8') . '</td>';
     $anneeStatsHTML .= '<td><span class="x-small">x</span>' . $countA . '</td>';
@@ -256,10 +271,10 @@ for ($s = 1; $s <= 12; $s++) {
         $joursPassesS = astro_days_since((string) $signeStats[$s]['last_tirage'], $today);
     }
     $valS = $joursPassesS !== '' ? (int) $joursPassesS : 0;
-    $classS = $valS <= 9 ? 'color-range-1' : ($valS <= 14 ? 'color-range-2' : ($valS <= 20 ? 'color-range-3' : 'color-range-4'));
+    $classS = astro_stats_row_class($valS);
     $countS = $freqSigne[$s] ?? 0;
     $signeDisplay = $signe_symb[$s] . ' ' . $signe_abr[$s];
-    $signeStatsHTML .= '<tr class="' . htmlspecialchars($classS, ENT_QUOTES, 'UTF-8') . '">';
+    $signeStatsHTML .= $classS !== '' ? '<tr class="' . htmlspecialchars($classS, ENT_QUOTES, 'UTF-8') . '">' : '<tr>';
     $signeStatsHTML .= '<td>' . htmlspecialchars($signeDisplay, ENT_QUOTES, 'UTF-8') . '</td>';
     $signeStatsHTML .= '<td>' . htmlspecialchars($joursPassesS, ENT_QUOTES, 'UTF-8') . '</td>';
     $signeStatsHTML .= '<td><span class="x-small">x</span>' . $countS . '</td>';
