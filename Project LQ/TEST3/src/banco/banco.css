@@ -1,0 +1,92 @@
+/*
+ * Banco — page principale.
+ * Une grille unique (70 lignes) comme les grilles Info Q2/Q3/Q4.
+ */
+
+.banco-layout {
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-family: var(--font);
+  color: var(--table-text, var(--text));
+}
+
+.banco-layout .table-wrapper.banco-grid-wrapper {
+  width: 100%;
+  height: calc(100vh - var(--header-h, 56px) - 2rem);
+  max-height: calc(100vh - var(--header-h, 56px) - 2rem);
+  overflow-x: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  margin: 0 auto 12px;
+  border: 1px solid var(--info-grid-wrap-border, #ccc);
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+  border-radius: var(--radius-sm, 8px);
+  box-sizing: border-box;
+}
+
+.banco-layout table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+.banco-layout .digit-grid td,
+.banco-layout .digit-grid th {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.banco-layout .digit-grid thead th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+.banco-layout .digit-grid thead tr.banco-turbo-row th {
+  height: 28px;
+  writing-mode: horizontal-tb;
+  transform: none;
+  font-size: 0.75em;
+}
+
+.banco-layout .digit-grid td:first-child,
+.banco-layout .digit-grid th:first-child {
+  min-width: 36px;
+  width: auto;
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+.banco-layout .digit-grid td:nth-child(2),
+.banco-layout .digit-grid th:nth-child(2) {
+  min-width: 22px;
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.banco-layout .digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+.banco-layout .no-data {
+  text-align: center;
+  margin: 12px;
+  color: var(--error, #c0392b);
+}

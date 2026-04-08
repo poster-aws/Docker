@@ -77,7 +77,7 @@
   function updateToggleLabels(page) {
     if (!labelOrder || !labelNimport) return;
     page = page || (container && container.getAttribute('data-page')) || '';
-    if (page === 'toutourien/tout.php' || page === 'toutourien/Info/toutinfo.php') {
+    if (page === 'toutourien/tout.php' || page === 'toutourien/Info/toutinfo.php' || page === 'banco/banco.php' || page === 'banco/Info/bancoinfo.php') {
       if (currentLang === 'en') {
         labelOrder.textContent = '50 Draws';
         labelNimport.textContent = '200 Draws';
@@ -122,6 +122,8 @@
     if (page === 'quotidienne/QInfo/q4info.php') return 'quotidienne/q4.php';
     if (page === 'toutourien/tout.php') return 'toutourien/Info/toutinfo.php';
     if (page === 'toutourien/Info/toutinfo.php') return 'toutourien/tout.php';
+    if (page === 'banco/banco.php') return 'banco/Info/bancoinfo.php';
+    if (page === 'banco/Info/bancoinfo.php') return 'banco/banco.php';
     if (page === 'vie/vie.php') return 'vie/Info/vieinfo.php';
     if (page === 'vie/Info/vieinfo.php') return 'vie/vie.php';
     if (page === 'astro/astro.php') return 'astro/Info/astroinfo.php';
@@ -290,6 +292,10 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
         : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+    } else if (page.indexOf('banco/') === 0) {
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Banco <span class="sub">' + count + ' draws</span>'
+        : 'Banco <span class="sub">' + count + ' tirages</span>';
     } else if (page.indexOf('astro/') === 0) {
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
@@ -314,10 +320,11 @@
 
     var params = new URLSearchParams();
     var isToutMainPage = page.indexOf('toutourien/tout.php') !== -1;
-    if (!isToutMainPage && page !== 'astro/astro.php' && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
+    var isBancoMainPage = page.indexOf('banco/banco.php') !== -1;
+    if (!isToutMainPage && !isBancoMainPage && page !== 'astro/astro.php' && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'banco/Info/bancoinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
+    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'banco/Info/bancoinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -344,6 +351,8 @@
     } else if (page === 'quotidienne/q4.php') {
       params.set('count_range', String(q4CountRange || 50));
     } else if (page === 'toutourien/tout.php') {
+      params.set('limit', toggleSwitch.checked ? '200' : '50');
+    } else if (page === 'banco/banco.php') {
       params.set('limit', toggleSwitch.checked ? '200' : '50');
     } else if (page === 'vie/Info/vieinfo.php') {
       params.set('grid_limit', String(vieInfoGridLimit || 50));
@@ -429,6 +438,10 @@
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
             : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+        } else if (page.indexOf('banco/') === 0) {
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Banco <span class="sub">' + count + ' draws</span>'
+            : 'Banco <span class="sub">' + count + ' tirages</span>';
         } else if (page.indexOf('astro/') === 0) {
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
@@ -1022,7 +1035,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
+        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'banco/Info/bancoinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -1062,7 +1075,7 @@
       if (!fetchInfoPage) {
         return;
       }
-      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php' || fetchInfoPage === 'vie/Info/vieinfo.php' || fetchInfoPage === 'astro/Info/astroinfo.php';
+      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php' || fetchInfoPage === 'banco/Info/bancoinfo.php' || fetchInfoPage === 'vie/Info/vieinfo.php' || fetchInfoPage === 'astro/Info/astroinfo.php';
       loadPage(fetchInfoPage, { preserveAltView: nextAltView });
     });
   }
