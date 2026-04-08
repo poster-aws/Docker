@@ -13,6 +13,9 @@
   /** Grande Vie stats GN : fenêtre = derniers N tirages (dates distinctes), pas des jours */
   let vieGnTirageCount = 50;
   const vieGnTirageAllowed = [10, 20, 50, 100, 200];
+  /** Astro : fenêtre stats (30 / 100 / 365 / tout) et vue Mois+Signe vs Jour+Année */
+  let astroCountRange = 100;
+  let astroView = 'mois';
 
   function clampVieGnTirageCount(v) {
     const n = parseInt(v, 10) || 50;
@@ -86,6 +89,18 @@
       labelNimport.classList.toggle('active', toggleSwitch.checked);
       return;
     }
+    if (page === 'astro/astro.php' || page === 'astro/Info/astroinfo.php') {
+      if (currentLang === 'en') {
+        labelOrder.textContent = 'Month / Sign';
+        labelNimport.textContent = 'Day / Year';
+      } else {
+        labelOrder.textContent = 'Mois / Signe';
+        labelNimport.textContent = 'Jour / Année';
+      }
+      labelOrder.classList.toggle('active', !toggleSwitch.checked);
+      labelNimport.classList.toggle('active', toggleSwitch.checked);
+      return;
+    }
     if (currentLang === 'en') {
       labelOrder.innerHTML = 'Order';
       labelNimport.innerHTML = 'Any order';
@@ -109,6 +124,8 @@
     if (page === 'toutourien/Info/toutinfo.php') return 'toutourien/tout.php';
     if (page === 'vie/vie.php') return 'vie/Info/vieinfo.php';
     if (page === 'vie/Info/vieinfo.php') return 'vie/vie.php';
+    if (page === 'astro/astro.php') return 'astro/Info/astroinfo.php';
+    if (page === 'astro/Info/astroinfo.php') return 'astro/astro.php';
     return '';
   }
 
@@ -273,6 +290,10 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
         : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+    } else if (page.indexOf('astro/') === 0) {
+      pageTitle.innerHTML = currentLang === 'en'
+        ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
+        : 'Astro <span class="sub">' + count + ' tirages depuis 13 janvier 2006</span>';
     } else if (page.indexOf('vie/') === 0) {
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
@@ -293,10 +314,10 @@
 
     var params = new URLSearchParams();
     var isToutMainPage = page.indexOf('toutourien/tout.php') !== -1;
-    if (!isToutMainPage && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
+    if (!isToutMainPage && page !== 'astro/astro.php' && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
-    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php') {
+    if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
       if (currentLang === 'en') {
         params.set('lang', 'en');
       }
@@ -328,6 +349,9 @@
       params.set('grid_limit', String(vieInfoGridLimit || 50));
     } else if (page === 'vie/vie.php') {
       params.set('vie_gn_tirages', String(clampVieGnTirageCount(vieGnTirageCount)));
+    } else if (page === 'astro/astro.php') {
+      params.set('count_range', astroCountRange === 'all' ? 'all' : String(astroCountRange || 100));
+      params.set('astro_view', astroView || 'mois');
     }
 
     var query = params.toString();
@@ -383,6 +407,8 @@
           bindRangeSelect(container.querySelector('#q4CountRange'), 'q4', page);
         } else if (page === 'vie/vie.php') {
           bindRangeSelect(container.querySelector('#vieGnTirageSelect'), 'vieGn', page);
+        } else if (page === 'astro/astro.php') {
+          bindAstroMainPage(page);
         }
 
         var meta = container.querySelector('[id$="-meta"]');
@@ -403,6 +429,10 @@
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
             : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+        } else if (page.indexOf('astro/') === 0) {
+          pageTitle.innerHTML = currentLang === 'en'
+            ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
+            : 'Astro <span class="sub">' + count + ' tirages depuis 13 janvier 2006</span>';
         } else if (page.indexOf('vie/') === 0) {
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
@@ -640,6 +670,26 @@
       select.value = String(vieInfoGridLimit);
       loadPage(page, { preserveAltView: true });
     });
+  }
+
+  function bindAstroMainPage(page) {
+    var rangeSelects = container.querySelectorAll('.astro-count-range-select');
+    var val = astroCountRange === 'all' ? 'all' : String(astroCountRange || 100);
+    rangeSelects.forEach(function (sel) {
+      sel.value = val;
+      sel.addEventListener('change', function () {
+        astroCountRange = sel.value === 'all' ? 'all' : (parseInt(sel.value, 10) || 100);
+        loadPage(page);
+      });
+    });
+    var metaA = container.querySelector('#astro-meta');
+    if (metaA && metaA.dataset.view) {
+      astroView = metaA.dataset.view;
+      if (toggleSwitch) {
+        toggleSwitch.checked = astroView === 'jour';
+      }
+      updateToggleLabels(page);
+    }
   }
 
   function initQ2InfoPage(page) {
@@ -972,7 +1022,7 @@
       var page = container.getAttribute('data-page');
       if (!page) return;
       if (isAltView) {
-        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php') {
+        if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
           loadPage(page, { preserveAltView: true });
           return;
         }
@@ -995,8 +1045,11 @@
 
   if (toggleSwitch) {
     toggleSwitch.addEventListener('change', function () {
-      updateToggleLabels();
       var page = container.getAttribute('data-page');
+      if (page === 'astro/astro.php') {
+        astroView = toggleSwitch.checked ? 'jour' : 'mois';
+      }
+      updateToggleLabels();
       if (page && !isAltView) loadPage(page);
     });
   }
@@ -1009,7 +1062,7 @@
       if (!fetchInfoPage) {
         return;
       }
-      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php' || fetchInfoPage === 'vie/Info/vieinfo.php';
+      var nextAltView = fetchInfoPage === 'quotidienne/QInfo/q2info.php' || fetchInfoPage === 'quotidienne/QInfo/q3info.php' || fetchInfoPage === 'quotidienne/QInfo/q4info.php' || fetchInfoPage === 'toutourien/Info/toutinfo.php' || fetchInfoPage === 'vie/Info/vieinfo.php' || fetchInfoPage === 'astro/Info/astroinfo.php';
       loadPage(fetchInfoPage, { preserveAltView: nextAltView });
     });
   }
