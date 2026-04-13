@@ -14,15 +14,17 @@
   color: var(--table-text, var(--text));
 }
 
+/* Comme style.css → .tables-wrapper : bloc centré, pas étiré sur toute la largeur avec contenu à gauche */
 .astro-layout .tables-wrapper {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
   gap: 1.25rem;
   flex-wrap: nowrap;
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
+  margin-inline: auto;
 }
 
 /* Même hauteur utile que les autres loteries (style.css → .table-container) */
@@ -142,6 +144,8 @@ html.theme-light .astro-layout .number-stats-table select {
     flex-direction: column;
     flex-wrap: wrap;
     align-items: stretch;
+    width: 100%;
+    margin-inline: 0;
   }
 
   .astro-layout .table-container,
