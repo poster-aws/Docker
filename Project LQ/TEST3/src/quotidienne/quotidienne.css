@@ -79,20 +79,14 @@
   color: var(--q2info-stats-text, var(--text, #1e293b));
 }
 
-.q2info-layout #q2infoToggleWrap,
 .q2info-layout #q2infoSelectWrap {
   text-align: center;
   margin: 8px 0;
 }
 
-.q2info-layout #q2InfoChartLimit,
-.q2info-layout #q2infoNorderToggle {
+.q2info-layout #q2InfoChartLimit {
   font-size: 1em;
   margin-left: 6px;
-}
-
-.q2info-layout label[for="q2infoNorderToggle"] {
-  margin-left: 8px;
 }
 
 .q2info-layout .filter-form {

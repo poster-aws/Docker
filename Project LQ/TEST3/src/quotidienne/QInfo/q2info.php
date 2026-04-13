@@ -85,7 +85,7 @@ $q2infoBoot = [
 ];
 $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>
-<div id="q2-meta" data-count="<?= (int)$q2count ?>"></div>
+<div id="q2-meta" data-count="<?= (int)$q2count ?>" data-norder="<?= $isNorder ? '1' : '0' ?>"></div>
 <div class="q2info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>
@@ -131,11 +131,6 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
 
   <div class="q2info-chart-wrap">
     <canvas id="q2infoChart"></canvas>
-  </div>
-
-  <div id="q2infoToggleWrap">
-    <input type="checkbox" id="q2infoNorderToggle" <?= $isNorder ? 'checked' : '' ?>>
-    <label for="q2infoNorderToggle"><?= t('q2info.any_order') ?></label>
   </div>
 
   <div id="q2infoSelectWrap">

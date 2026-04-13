@@ -339,7 +339,7 @@
     } else if (page === 'quotidienne/QInfo/q2info.php') {
       params.set('limit', String(q2ChartLimit));
       params.set('grid_limit', String(q2InfoGridLimit || 50));
-      if (q2InfoNorder) {
+      if (toggleSwitch && toggleSwitch.checked) {
         params.set('norder', '1');
       }
     } else if (page === 'quotidienne/QInfo/q3info.php') {
@@ -385,6 +385,16 @@
         }
         container.innerHTML = html;
         container.setAttribute('data-page', page);
+        if (page === 'quotidienne/QInfo/q2info.php') {
+          var q2Meta = container.querySelector('#q2-meta');
+          if (q2Meta && toggleSwitch) {
+            var norderAttr = q2Meta.getAttribute('data-norder');
+            if (norderAttr === '1' || norderAttr === '0') {
+              toggleSwitch.checked = norderAttr === '1';
+              q2InfoNorder = toggleSwitch.checked;
+            }
+          }
+        }
         if (page === 'quotidienne/q2.php') {
           applyQuotidienneTableTranslations('q2');
         } else if (page === 'quotidienne/q3.php') {
@@ -728,15 +738,14 @@
     var texts = boot.texts || {};
     var canvas = container.querySelector('#q2infoChart');
     var chartSelect = container.querySelector('#q2InfoChartLimit');
-    var norderEl = container.querySelector('#q2infoNorderToggle');
     var statsBody = container.querySelector('#q2infoStatsBody');
 
     if (chartSelect) {
       var cv = parseInt(chartSelect.value, 10);
       q2ChartLimit = isNaN(cv) ? 100 : cv;
     }
-    if (norderEl) {
-      q2InfoNorder = !!norderEl.checked;
+    if (toggleSwitch) {
+      q2InfoNorder = !!toggleSwitch.checked;
     }
 
     function formatData(dataFromPHP) {
@@ -890,13 +899,6 @@
         chartSelect.addEventListener('change', function () {
           var v = parseInt(chartSelect.value, 10);
           q2ChartLimit = isNaN(v) ? 100 : v;
-          loadChartAjax();
-        });
-      }
-
-      if (norderEl) {
-        norderEl.addEventListener('change', function () {
-          q2InfoNorder = !!norderEl.checked;
           loadChartAjax();
         });
       }
@@ -1063,7 +1065,13 @@
         astroView = toggleSwitch.checked ? 'jour' : 'mois';
       }
       updateToggleLabels();
-      if (page && !isAltView) loadPage(page);
+      if (!page) return;
+      if (page === 'quotidienne/QInfo/q2info.php') {
+        q2InfoNorder = !!toggleSwitch.checked;
+        loadPage(page, { preserveAltView: true });
+        return;
+      }
+      if (!isAltView) loadPage(page);
     });
   }
 
