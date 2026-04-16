@@ -263,7 +263,7 @@ $anneeMax = max(1, ...$sumsAnnee);
         <div class="astro-metrics-grid">
           <div class="number-stats-table">
             <table class="interactive-table">
-              <thead><tr><th>Top 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <thead><tr><th><?= htmlspecialchars(t('astroinfo.analytics.top10'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
               <tbody>
                 <?php foreach ($jourRanks['top'] as $row): ?>
                   <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
@@ -273,7 +273,7 @@ $anneeMax = max(1, ...$sumsAnnee);
           </div>
           <div class="number-stats-table">
             <table class="interactive-table">
-              <thead><tr><th>Bottom 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <thead><tr><th><?= htmlspecialchars(t('astroinfo.analytics.bottom10'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
               <tbody>
                 <?php foreach ($jourRanks['bottom'] as $row): ?>
                   <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
@@ -316,7 +316,7 @@ $anneeMax = max(1, ...$sumsAnnee);
         <div class="astro-metrics-grid">
           <div class="number-stats-table">
             <table class="interactive-table">
-              <thead><tr><th>Top 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <thead><tr><th><?= htmlspecialchars(t('astroinfo.analytics.top10'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
               <tbody>
                 <?php foreach ($anneeRanks['top'] as $row): ?>
                   <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
@@ -326,7 +326,7 @@ $anneeMax = max(1, ...$sumsAnnee);
           </div>
           <div class="number-stats-table">
             <table class="interactive-table">
-              <thead><tr><th>Bottom 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <thead><tr><th><?= htmlspecialchars(t('astroinfo.analytics.bottom10'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
               <tbody>
                 <?php foreach ($anneeRanks['bottom'] as $row): ?>
                   <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
@@ -369,36 +369,36 @@ $anneeMax = max(1, ...$sumsAnnee);
   <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
-      <div class="info-text">Coût: 1 cad pour 1 sélection</div>
+      <div class="info-text"><?= t('astroinfo.info.cost') ?></div>
     </div>
     <div class="info-row info-row--schedule">
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
     </div>
     <div class="info-row">
-      <div class="info-text">Toutes les combinaisons : <b>446 400</b></div>
+      <div class="info-text"><?= t('astroinfo.info.all_combinations') ?></div>
     </div>
     <div class="info-row">
       <div class="info-text">
         <details>
-          <summary>Combinaisons de 2 types : <b>6 388</b></summary>
-          <div>Mois + Signe = 12 × 12 = <b>144</b></div>
-          <div>Mois + Jour = 12 × 31 = <b>372</b></div>
-          <div>Mois + Année = 12 × 100 = <b>1 200</b></div>
-          <div>Signe + Jour = 12 × 31 = <b>372</b></div>
-          <div>Signe + Année = 12 × 100 = <b>1 200</b></div>
-          <div>Jour + Année = 31 × 100 = <b>3 100</b></div>
+          <summary><?= t('astroinfo.info.types2.summary') ?></summary>
+          <div><?= t('astroinfo.info.types2.1') ?></div>
+          <div><?= t('astroinfo.info.types2.2') ?></div>
+          <div><?= t('astroinfo.info.types2.3') ?></div>
+          <div><?= t('astroinfo.info.types2.4') ?></div>
+          <div><?= t('astroinfo.info.types2.5') ?></div>
+          <div><?= t('astroinfo.info.types2.6') ?></div>
         </details>
       </div>
     </div>
     <div class="info-row">
       <div class="info-text">
         <details>
-          <summary>Combinaisons de 3 types : <b>93 264</b></summary>
-          <div>Mois + Signe + Jour = 12 × 12 × 31 = <b>4 464</b></div>
-          <div>Mois + Signe + Année = 12 × 12 × 100 = <b>14 400</b></div>
-          <div>Mois + Jour + Année = 12 × 31 × 100 = <b>37 200</b></div>
-          <div>Signe + Jour + Année = 12 × 31 × 100 = <b>37 200</b></div>
+          <summary><?= t('astroinfo.info.types3.summary') ?></summary>
+          <div><?= t('astroinfo.info.types3.1') ?></div>
+          <div><?= t('astroinfo.info.types3.2') ?></div>
+          <div><?= t('astroinfo.info.types3.3') ?></div>
+          <div><?= t('astroinfo.info.types3.4') ?></div>
         </details>
       </div>
     </div>
