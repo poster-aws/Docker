@@ -139,6 +139,228 @@ html.theme-light .astro-layout .number-stats-table select {
   margin-bottom: 28px;
 }
 
+/*
+ * Page Info Astro — grilles digit-grid (même logique visuelle que Q2–Q4 Info ;
+ * variables globales --info-grid-* dans style.css).
+ */
+.astro-layout--info.astroinfo-layout {
+  width: min(100%, 980px);
+  max-width: 980px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-family: var(--font);
+  color: var(--table-text, var(--text));
+}
+
+.astro-layout--info.astroinfo-layout .filter-form {
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+  width: 100%;
+}
+
+.astro-layout--info.astroinfo-layout .filter-form select {
+  font-size: 1em;
+  border-radius: 6px;
+  padding: 2px 6px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  min-height: 32px;
+}
+
+.astro-layout--info.astroinfo-layout .table-wrapper {
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  margin: 0 auto 12px;
+  border: 1px solid var(--info-grid-wrap-border, #ccc);
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+}
+
+/* Jour + Année : hauteur max. de la zone de défilement */
+.astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--jour,
+.astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--annee {
+  max-height: 24vh;
+}
+
+/*
+ * Jour + Année : même grille digit que Quotidienne Info Q2–Q4 (quotidienne.css).
+ */
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour table.digit-grid,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid th,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid th {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid th,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid th:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid th:first-child {
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid th:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid th:nth-child(2) {
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td.hit,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td.repeat-2,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td.repeat-2 {
+  background-color: var(--info-grid-repeat-2, #f8c471);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td.repeat-3,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td.repeat-3 {
+  background-color: var(--info-grid-repeat-3, #e74c3c);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--jour .digit-grid td.repeat-4,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--annee .digit-grid td.repeat-4 {
+  background-color: var(--info-grid-repeat-4, #c0392b);
+  color: var(--info-grid-repeat-4-text, #fff);
+}
+
+/* Mois + Signe : colonnes tirages serrées ; libellés sans « trou » après le texte */
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois table.digit-grid,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th {
+  min-width: 1.1rem;
+  min-height: 20px;
+  height: auto;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0 1px;
+  box-sizing: border-box;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td:first-child,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th:first-child {
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th:nth-child(2) {
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td.hit,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td.repeat-2,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.repeat-2 {
+  background-color: var(--info-grid-repeat-2, #f8c471);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td.repeat-3,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.repeat-3 {
+  background-color: var(--info-grid-repeat-3, #e74c3c);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td.repeat-4,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.repeat-4 {
+  background-color: var(--info-grid-repeat-4, #c0392b);
+  color: var(--info-grid-repeat-4-text, #fff);
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid thead th:nth-child(n + 3),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid thead th:nth-child(n + 3) {
+  width: 1.35rem;
+  max-width: 1.6rem;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid tbody td:nth-child(2),
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid tbody td:nth-child(2) {
+  min-width: 4.25rem;
+  max-width: 5.75rem;
+  white-space: nowrap;
+  word-break: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: normal;
+  text-align: center;
+  padding: 0 2px;
+}
+
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.hit--sign {
+  font-size: 1.05rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 @media (max-width: 899px) {
   .astro-layout .tables-wrapper {
     flex-direction: column;

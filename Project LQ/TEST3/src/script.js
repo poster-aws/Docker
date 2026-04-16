@@ -16,6 +16,8 @@
   /** Astro : fenêtre stats (30 / 100 / 365 / tout) et vue Mois+Signe vs Jour+Année */
   let astroCountRange = 100;
   let astroView = 'mois';
+  /** Fenêtre tirages (grilles digit) sur la page Info Astro */
+  let astroInfoGridLimit = 100;
 
   function clampVieGnTirageCount(v) {
     const n = parseInt(v, 10) || 50;
@@ -321,7 +323,7 @@
     var params = new URLSearchParams();
     var isToutMainPage = page.indexOf('toutourien/tout.php') !== -1;
     var isBancoMainPage = page.indexOf('banco/banco.php') !== -1;
-    if (!isToutMainPage && !isBancoMainPage && page !== 'astro/astro.php' && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'banco/Info/bancoinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
+    if (!isToutMainPage && !isBancoMainPage && page !== 'astro/astro.php' && page !== 'astro/Info/astroinfo.php' && page !== 'quotidienne/QInfo/q2info.php' && page !== 'quotidienne/QInfo/q3info.php' && page !== 'quotidienne/QInfo/q4info.php' && page !== 'toutourien/Info/toutinfo.php' && page !== 'banco/Info/bancoinfo.php' && page !== 'vie/Info/vieinfo.php' && toggleSwitch.checked) {
       params.set('norder', '1');
     }
     if (page === 'quotidienne/QInfo/q2info.php' || page === 'quotidienne/QInfo/q3info.php' || page === 'quotidienne/QInfo/q4info.php' || page === 'toutourien/Info/toutinfo.php' || page === 'banco/Info/bancoinfo.php' || page === 'vie/Info/vieinfo.php' || page === 'astro/Info/astroinfo.php') {
@@ -361,6 +363,9 @@
     } else if (page === 'astro/astro.php') {
       params.set('count_range', astroCountRange === 'all' ? 'all' : String(astroCountRange || 100));
       params.set('astro_view', astroView || 'mois');
+    } else if (page === 'astro/Info/astroinfo.php') {
+      params.set('grid_limit', String(astroInfoGridLimit || 100));
+      params.set('astro_view', toggleSwitch && toggleSwitch.checked ? 'jour' : 'mois');
     }
 
     var query = params.toString();
@@ -428,6 +433,8 @@
           bindRangeSelect(container.querySelector('#vieGnTirageSelect'), 'vieGn', page);
         } else if (page === 'astro/astro.php') {
           bindAstroMainPage(page);
+        } else if (page === 'astro/Info/astroinfo.php') {
+          bindAstroInfoPage(page);
         }
 
         var meta = container.querySelector('[id$="-meta"]');
@@ -712,6 +719,29 @@
         toggleSwitch.checked = astroView === 'jour';
       }
       updateToggleLabels(page);
+    }
+  }
+
+  function bindAstroInfoPage(page) {
+    var metaA = container.querySelector('#astro-meta');
+    if (metaA && metaA.dataset.view) {
+      astroView = metaA.dataset.view;
+      if (toggleSwitch) {
+        toggleSwitch.checked = astroView === 'jour';
+      }
+      updateToggleLabels(page);
+    }
+    var gridSel = container.querySelector('#astroInfoGridLimit');
+    if (gridSel) {
+      var gv = parseInt(gridSel.value, 10);
+      astroInfoGridLimit = (gv === 30 || gv === 100 || gv === 365) ? gv : 100;
+      gridSel.value = String(astroInfoGridLimit);
+      gridSel.addEventListener('change', function () {
+        var v = parseInt(gridSel.value, 10);
+        astroInfoGridLimit = (v === 30 || v === 100 || v === 365) ? v : 100;
+        gridSel.value = String(astroInfoGridLimit);
+        loadPage(page, { preserveAltView: true });
+      });
     }
   }
 
@@ -1061,11 +1091,15 @@
   if (toggleSwitch) {
     toggleSwitch.addEventListener('change', function () {
       var page = container.getAttribute('data-page');
-      if (page === 'astro/astro.php') {
+      if (page === 'astro/astro.php' || page === 'astro/Info/astroinfo.php') {
         astroView = toggleSwitch.checked ? 'jour' : 'mois';
       }
       updateToggleLabels();
       if (!page) return;
+      if (page === 'astro/Info/astroinfo.php') {
+        loadPage(page, { preserveAltView: true });
+        return;
+      }
       if (page === 'quotidienne/QInfo/q2info.php') {
         q2InfoNorder = !!toggleSwitch.checked;
         loadPage(page, { preserveAltView: true });
