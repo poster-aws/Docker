@@ -141,7 +141,8 @@ html.theme-light .astro-layout .number-stats-table select {
 
 .astro-layout--info #infoBlock.info-list .info-sign.info-sign--cost {
   font-size: 0.95rem;
-  width: 1.25rem;
+  width: 1.75rem;
+  line-height: 1.2;
 }
 
 

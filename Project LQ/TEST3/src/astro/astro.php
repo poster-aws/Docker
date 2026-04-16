@@ -21,7 +21,7 @@ if ($chk && $chk->num_rows > 0) {
     $hasStats = true;
 }
 
-$astroCount = 0;
+$astroCount = null;
 $data = [];
 $jourStats = [];
 $freqStats = array_fill(1, 31, 0);
@@ -32,10 +32,21 @@ $freqAnnee = array_fill(0, 100, 0);
 $signeStats = [];
 $freqSigne = array_fill(1, 12, 0);
 
+// Сначала берём готовый счётчик из Astro_info (дешевле, чем COUNT(*) каждый запрос).
+$infoTable = $astroConn->query("SHOW TABLES LIKE 'Astro_info'");
+if ($infoTable && $infoTable->num_rows > 0) {
+    $infoRes = $astroConn->query('SELECT Tirages FROM Astro_info LIMIT 1');
+    if ($infoRes && $infoRow = $infoRes->fetch_assoc()) {
+        $astroCount = (int) $infoRow['Tirages'];
+    }
+}
+
 if ($hasStats) {
-    $countResult = $astroConn->query('SELECT COUNT(*) AS total FROM Astro_stats');
-    if ($countResult && $row = $countResult->fetch_assoc()) {
-        $astroCount = (int) $row['total'];
+    if ($astroCount === null) {
+        $countResult = $astroConn->query('SELECT COUNT(*) AS total FROM Astro_stats');
+        if ($countResult && $row = $countResult->fetch_assoc()) {
+            $astroCount = (int) $row['total'];
+        }
     }
 
     $sql = 'SELECT Tirage, jour, mois, annee, signe, fois, days FROM Astro_stats ORDER BY Tirage DESC LIMIT 365';
@@ -163,10 +174,17 @@ if ($hasStats) {
         }
     }
 } else {
+    if ($astroCount !== null) {
+        $astroView = (isset($_GET['astro_view']) && $_GET['astro_view'] === 'jour') ? 'jour' : 'mois';
+        $allowedRanges = [30, 100, 365];
+        $countRangeParam = $_GET['count_range'] ?? '100';
+        $countRange = ($countRangeParam === 'all') ? 'all' : (in_array((int) $countRangeParam, $allowedRanges, true) ? (int) $countRangeParam : 100);
+    } else {
     $astroView = (isset($_GET['astro_view']) && $_GET['astro_view'] === 'jour') ? 'jour' : 'mois';
     $allowedRanges = [30, 100, 365];
     $countRangeParam = $_GET['count_range'] ?? '100';
     $countRange = ($countRangeParam === 'all') ? 'all' : (in_array((int) $countRangeParam, $allowedRanges, true) ? (int) $countRangeParam : 100);
+    }
 }
 
 $astroConn->close();

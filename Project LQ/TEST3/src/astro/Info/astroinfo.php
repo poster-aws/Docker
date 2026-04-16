@@ -19,15 +19,26 @@ if ($chkStats && $chkStats->num_rows > 0) {
     $hasStats = true;
 }
 
-$astroCount = 0;
+$astroCount = null;
 $tirages = [];
 $jourLastSeen = array_fill(1, 31, '');
 $anneeLastSeen = array_fill(0, 100, '');
 
+// Сначала берём готовое значение из Astro_info (если заполнено процедурами).
+$infoTable = $astroConn->query("SHOW TABLES LIKE 'Astro_info'");
+if ($infoTable && $infoTable->num_rows > 0) {
+    $infoRes = $astroConn->query('SELECT Tirages FROM Astro_info LIMIT 1');
+    if ($infoRes && $infoRow = $infoRes->fetch_assoc()) {
+        $astroCount = (int) $infoRow['Tirages'];
+    }
+}
+
 if ($hasStats) {
-    $countRes = $astroConn->query('SELECT COUNT(*) AS total FROM Astro_stats');
-    if ($countRes && $row = $countRes->fetch_assoc()) {
-        $astroCount = (int) $row['total'];
+    if ($astroCount === null) {
+        $countRes = $astroConn->query('SELECT COUNT(*) AS total FROM Astro_stats');
+        if ($countRes && $row = $countRes->fetch_assoc()) {
+            $astroCount = (int) $row['total'];
+        }
     }
     $sqlGrid = 'SELECT Tirage, jour, mois, annee, signe FROM Astro_stats ORDER BY Tirage DESC LIMIT ' . (int) $gridLimit;
     $resGrid = $astroConn->query($sqlGrid);
@@ -63,11 +74,13 @@ if ($hasStats) {
         }
     }
 } else {
-    $chk = $astroConn->query("SHOW TABLES LIKE 'Astro'");
-    if ($chk && $chk->num_rows > 0) {
-        $countRes = $astroConn->query('SELECT COUNT(*) AS total FROM Astro');
-        if ($countRes && $row = $countRes->fetch_assoc()) {
-            $astroCount = (int) $row['total'];
+    if ($astroCount === null) {
+        $chk = $astroConn->query("SHOW TABLES LIKE 'Astro'");
+        if ($chk && $chk->num_rows > 0) {
+            $countRes = $astroConn->query('SELECT COUNT(*) AS total FROM Astro');
+            if ($countRes && $row = $countRes->fetch_assoc()) {
+                $astroCount = (int) $row['total'];
+            }
         }
     }
 }
@@ -368,12 +381,12 @@ $anneeMax = max(1, ...$sumsAnnee);
 
   <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">
-      <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
-      <div class="info-text"><?= t('astroinfo.info.cost') ?></div>
-    </div>
-    <div class="info-row info-row--schedule">
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
+      <div class="info-text"><?= t('astroinfo.info.cost') ?></div>
     </div>
     <div class="info-row">
       <div class="info-text"><?= t('astroinfo.info.all_combinations') ?></div>

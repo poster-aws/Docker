@@ -20,6 +20,11 @@ CREATE TABLE Astro_stats (
     KEY (jour, mois, signe)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS Astro_info (
+    Tirages SMALLINT UNSIGNED NOT NULL,
+    Comb_out SMALLINT UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 INSERT INTO Astro_stats (Tirage, jour, mois, annee, signe, fois, days)
 WITH conv AS (
     SELECT
@@ -54,3 +59,18 @@ SELECT
     IFNULL(DATEDIFF(Tirage, prev_Tirage), 0) AS days
 FROM base
 ORDER BY Tirage;
+
+TRUNCATE TABLE Astro_info;
+
+INSERT INTO Astro_info (Tirages, Comb_out)
+SELECT
+    (SELECT COUNT(*) FROM Astro) AS Tirages,
+    (
+        SELECT COUNT(*)
+        FROM (
+            SELECT jour, mois, annee, signe
+            FROM Astro_stats
+            GROUP BY jour, mois, annee, signe
+            HAVING COUNT(*) = 1
+        ) AS uniq_combos
+    ) AS Comb_out;

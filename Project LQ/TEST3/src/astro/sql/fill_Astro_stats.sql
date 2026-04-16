@@ -45,3 +45,18 @@ SELECT
            AND a.Tirage < l.Tirage)
     ), 0) AS days
 FROM latest_data l;
+
+TRUNCATE TABLE Astro_info;
+
+INSERT INTO Astro_info (Tirages, Comb_out)
+SELECT
+    (SELECT COUNT(*) FROM Astro) AS Tirages,
+    (
+        SELECT COUNT(*)
+        FROM (
+            SELECT jour, mois, annee, signe
+            FROM Astro_stats
+            GROUP BY jour, mois, annee, signe
+            HAVING COUNT(*) = 1
+        ) AS uniq_combos
+    ) AS Comb_out;
