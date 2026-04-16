@@ -908,6 +908,12 @@ input:checked + .slider::before { transform: translateX(18px); }
 /* Grilles Info (digit-grid) : largeur utile dans #main */
 .table-wrapper {
   width: 100% !important;
+  border-radius: var(--radius-sm, 8px);
+  clip-path: inset(0 round var(--radius-sm, 8px));
+}
+
+.table-wrapper::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .tables-wrapper {
