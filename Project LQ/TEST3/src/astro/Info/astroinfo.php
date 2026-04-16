@@ -20,16 +20,18 @@ if ($chkStats && $chkStats->num_rows > 0) {
 }
 
 $astroCount = null;
+$astroCombOut = 0;
 $tirages = [];
 $jourLastSeen = array_fill(1, 31, '');
 $anneeLastSeen = array_fill(0, 100, '');
 
-// Сначала берём готовое значение из Astro_info (если заполнено процедурами).
+// Сначала берём готовые значения из Astro_info (если заполнено процедурами).
 $infoTable = $astroConn->query("SHOW TABLES LIKE 'Astro_info'");
 if ($infoTable && $infoTable->num_rows > 0) {
-    $infoRes = $astroConn->query('SELECT Tirages FROM Astro_info LIMIT 1');
+    $infoRes = $astroConn->query('SELECT Tirages, Comb_out FROM Astro_info LIMIT 1');
     if ($infoRes && $infoRow = $infoRes->fetch_assoc()) {
         $astroCount = (int) $infoRow['Tirages'];
+        $astroCombOut = (int) $infoRow['Comb_out'];
     }
 }
 
@@ -387,6 +389,10 @@ $anneeMax = max(1, ...$sumsAnnee);
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
       <div class="info-text"><?= t('astroinfo.info.cost') ?></div>
+    </div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
+      <div class="info-text"><?= sprintf(t('astroinfo.info.unique_combos'), (int) $astroCombOut) ?></div>
     </div>
     <div class="info-row">
       <div class="info-text"><?= t('astroinfo.info.all_combinations') ?></div>
