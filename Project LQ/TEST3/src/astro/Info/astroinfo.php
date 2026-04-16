@@ -8,7 +8,7 @@ header('Expires: 0');
 
 $astroView = (isset($_GET['astro_view']) && $_GET['astro_view'] === 'jour') ? 'jour' : 'mois';
 
-$allowedGridLimits = [30, 100, 365];
+$allowedGridLimits = [100, 365];
 $gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $allowedGridLimits, true)
     ? (int) $_GET['grid_limit']
     : 100;
@@ -210,7 +210,7 @@ foreach ($tirages as $t) {
   <?php endif; ?>
 
   <div class="filter-form">
-    <?= htmlspecialchars(t('q2info.last_draw_count'), ENT_QUOTES, 'UTF-8') ?>
+    <?= htmlspecialchars(t('q2info.latest'), ENT_QUOTES, 'UTF-8') ?>
     <select id="astroInfoGridLimit">
       <?php foreach ($allowedGridLimits as $opt): ?>
         <option value="<?= $opt ?>" <?= ($gridLimit === $opt) ? 'selected' : '' ?>><?= $opt ?></option>

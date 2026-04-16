@@ -734,11 +734,11 @@
     var gridSel = container.querySelector('#astroInfoGridLimit');
     if (gridSel) {
       var gv = parseInt(gridSel.value, 10);
-      astroInfoGridLimit = (gv === 30 || gv === 100 || gv === 365) ? gv : 100;
+      astroInfoGridLimit = (gv === 100 || gv === 365) ? gv : 100;
       gridSel.value = String(astroInfoGridLimit);
       gridSel.addEventListener('change', function () {
         var v = parseInt(gridSel.value, 10);
-        astroInfoGridLimit = (v === 30 || v === 100 || v === 365) ? v : 100;
+        astroInfoGridLimit = (v === 100 || v === 365) ? v : 100;
         gridSel.value = String(astroInfoGridLimit);
         loadPage(page, { preserveAltView: true });
       });
