@@ -133,6 +133,16 @@
     return '';
   }
 
+  function isInfoPage(page) {
+    return page === 'quotidienne/QInfo/q2info.php' ||
+      page === 'quotidienne/QInfo/q3info.php' ||
+      page === 'quotidienne/QInfo/q4info.php' ||
+      page === 'toutourien/Info/toutinfo.php' ||
+      page === 'banco/Info/bancoinfo.php' ||
+      page === 'vie/Info/vieinfo.php' ||
+      page === 'astro/Info/astroinfo.php';
+  }
+
   function destroyQ2InfoChart() {
     if (q2InfoChartInstance) {
       try {
@@ -472,7 +482,7 @@
           infoBtn.style.visibility = '';
           infoBtn.style.pointerEvents = '';
         }
-        infoBtn.textContent = '\u2139';
+        infoBtn.textContent = isInfoPage(page) ? '\u21A9' : '\u2139';
       })
       .catch(function (err) {
         if (err && err.name === 'AbortError') return;

@@ -916,6 +916,14 @@ input:checked + .slider::before { transform: translateX(18px); }
   background: transparent;
 }
 
+.table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-wrapper {
+  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+}
+
 .tables-wrapper {
   max-width: 100% !important;
 }
