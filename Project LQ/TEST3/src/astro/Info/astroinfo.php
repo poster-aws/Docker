@@ -368,8 +368,39 @@ $anneeMax = max(1, ...$sumsAnnee);
 
   <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
+      <div class="info-text">Coût: 1 cad pour 1 sélection</div>
+    </div>
+    <div class="info-row info-row--schedule">
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div class="info-row">
+      <div class="info-text">Toutes les combinaisons : <b>446 400</b></div>
+    </div>
+    <div class="info-row">
+      <div class="info-text">
+        <details>
+          <summary>Combinaisons de 2 types : <b>6 388</b></summary>
+          <div>Mois + Signe = 12 × 12 = <b>144</b></div>
+          <div>Mois + Jour = 12 × 31 = <b>372</b></div>
+          <div>Mois + Année = 12 × 100 = <b>1 200</b></div>
+          <div>Signe + Jour = 12 × 31 = <b>372</b></div>
+          <div>Signe + Année = 12 × 100 = <b>1 200</b></div>
+          <div>Jour + Année = 31 × 100 = <b>3 100</b></div>
+        </details>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-text">
+        <details>
+          <summary>Combinaisons de 3 types : <b>93 264</b></summary>
+          <div>Mois + Signe + Jour = 12 × 12 × 31 = <b>4 464</b></div>
+          <div>Mois + Signe + Année = 12 × 12 × 100 = <b>14 400</b></div>
+          <div>Mois + Jour + Année = 12 × 31 × 100 = <b>37 200</b></div>
+          <div>Signe + Jour + Année = 12 × 31 × 100 = <b>37 200</b></div>
+        </details>
+      </div>
     </div>
   </div>
 </div>
