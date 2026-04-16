@@ -21,6 +21,8 @@ if ($chkStats && $chkStats->num_rows > 0) {
 
 $astroCount = 0;
 $tirages = [];
+$jourLastSeen = array_fill(1, 31, '');
+$anneeLastSeen = array_fill(0, 100, '');
 
 if ($hasStats) {
     $countRes = $astroConn->query('SELECT COUNT(*) AS total FROM Astro_stats');
@@ -38,6 +40,26 @@ if ($hasStats) {
                 'annee'  => (int) $r['annee'],
                 'signe'  => (int) $r['signe'],
             ];
+        }
+    }
+
+    $resJourLast = $astroConn->query('SELECT jour, MAX(Tirage) AS last_tirage FROM Astro_stats GROUP BY jour');
+    if ($resJourLast && $resJourLast->num_rows > 0) {
+        while ($r = $resJourLast->fetch_assoc()) {
+            $j = (int) $r['jour'];
+            if ($j >= 1 && $j <= 31) {
+                $jourLastSeen[$j] = (string) ($r['last_tirage'] ?? '');
+            }
+        }
+    }
+
+    $resAnneeLast = $astroConn->query('SELECT annee, MAX(Tirage) AS last_tirage FROM Astro_stats GROUP BY annee');
+    if ($resAnneeLast && $resAnneeLast->num_rows > 0) {
+        while ($r = $resAnneeLast->fetch_assoc()) {
+            $a = (int) $r['annee'];
+            if ($a >= 0 && $a <= 99) {
+                $anneeLastSeen[$a] = (string) ($r['last_tirage'] ?? '');
+            }
         }
     }
 } else {
@@ -84,6 +106,80 @@ foreach ($tirages as $t) {
         $sumsAnnee[$a]++;
     }
 }
+
+$today = new DateTime('today');
+
+/**
+ * @return array{date: string, daysAgo: string}
+ */
+function astro_last_seen_stats(string $date, DateTime $today): array
+{
+    if ($date === '') {
+        return ['date' => '', 'daysAgo' => ''];
+    }
+    try {
+        $d = new DateTime($date);
+        return ['date' => $date, 'daysAgo' => (string) $today->diff($d)->days];
+    } catch (Throwable $e) {
+        return ['date' => $date, 'daysAgo' => ''];
+    }
+}
+
+/**
+ * @param array<int, array{value: string, count: int, date: string, daysAgo: string}> $items
+ * @return array{top: array<int, array{value: string, count: int, date: string, daysAgo: string}>, bottom: array<int, array{value: string, count: int, date: string, daysAgo: string}>}
+ */
+function astro_ranked_top_bottom(array $items, int $size = 10): array
+{
+    $top = $items;
+    usort($top, static function (array $a, array $b): int {
+        if ($a['count'] === $b['count']) {
+            return strcmp($a['value'], $b['value']);
+        }
+        return $b['count'] <=> $a['count'];
+    });
+
+    $bottom = $items;
+    usort($bottom, static function (array $a, array $b): int {
+        if ($a['count'] === $b['count']) {
+            return strcmp($a['value'], $b['value']);
+        }
+        return $a['count'] <=> $b['count'];
+    });
+
+    return [
+        'top' => array_slice($top, 0, $size),
+        'bottom' => array_slice($bottom, 0, $size),
+    ];
+}
+
+$jourItems = [];
+for ($j = 1; $j <= 31; $j++) {
+    $last = astro_last_seen_stats($jourLastSeen[$j], $today);
+    $jourItems[] = [
+        'value' => (string) $j,
+        'count' => (int) $sumsJour[$j],
+        'date' => $last['date'],
+        'daysAgo' => $last['daysAgo'],
+    ];
+}
+
+$anneeItems = [];
+for ($a = 0; $a <= 99; $a++) {
+    $label = sprintf('%02d', $a);
+    $last = astro_last_seen_stats($anneeLastSeen[$a], $today);
+    $anneeItems[] = [
+        'value' => $label,
+        'count' => (int) $sumsAnnee[$a],
+        'date' => $last['date'],
+        'daysAgo' => $last['daysAgo'],
+    ];
+}
+
+$jourRanks = astro_ranked_top_bottom($jourItems, 10);
+$anneeRanks = astro_ranked_top_bottom($anneeItems, 10);
+$jourMax = max(1, ...$sumsJour);
+$anneeMax = max(1, ...$sumsAnnee);
 
 ?>
 <div class="astro-layout astro-layout--info astroinfo-layout">
@@ -152,60 +248,111 @@ foreach ($tirages as $t) {
         </table>
       </div>
     <?php else: ?>
-      <div class="table-wrapper astroinfo-grid astroinfo-grid--jour">
-        <table class="digit-grid">
-          <thead>
-            <tr>
-              <th>Σ</th>
-              <th>#</th>
-              <?php foreach ($tirages as $t): ?>
-                <th><?= htmlspecialchars((string) $t['Tirage'], ENT_QUOTES, 'UTF-8') ?></th>
-              <?php endforeach; ?>
-            </tr>
-          </thead>
-          <tbody>
-            <?php for ($jour = 1; $jour <= 31; $jour++): ?>
-              <tr>
-                <td>&nbsp;<?= (int) $sumsJour[$jour] ?>x&nbsp;</td>
-                <td><?= $jour ?></td>
-                <?php foreach ($tirages as $t):
-                    $hit = ($t['jour'] === $jour);
-                    ?>
-                  <td class="<?= $hit ? 'hit' : '' ?>"><?= $hit ? $jour : '' ?></td>
+      <section class="astro-analytics">
+        <h3><?= htmlspecialchars(t('astro.col.jour'), ENT_QUOTES, 'UTF-8') ?></h3>
+        <div class="astro-heatmap">
+          <?php foreach ($jourItems as $item):
+              $heat = $item['count'] / $jourMax;
+              ?>
+            <div class="astro-heatcell" style="--heat: <?= number_format($heat, 3, '.', '') ?>">
+              <span class="v"><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></span>
+              <span class="c"><?= (int) $item['count'] ?></span>
+            </div>
+          <?php endforeach; ?>
+        </div>
+        <div class="astro-metrics-grid">
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th>Top 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php foreach ($jourRanks['top'] as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
                 <?php endforeach; ?>
-              </tr>
-            <?php endfor; ?>
-          </tbody>
-        </table>
-      </div>
-      <div class="table-wrapper astroinfo-grid astroinfo-grid--annee">
-        <table class="digit-grid">
-          <thead>
-            <tr>
-              <th>Σ</th>
-              <th>#</th>
-              <?php foreach ($tirages as $t): ?>
-                <th><?= htmlspecialchars((string) $t['Tirage'], ENT_QUOTES, 'UTF-8') ?></th>
-              <?php endforeach; ?>
-            </tr>
-          </thead>
-          <tbody>
-            <?php for ($an = 0; $an <= 99; $an++):
-                $anneeAff = sprintf('%02d', $an);
-                ?>
-              <tr>
-                <td>&nbsp;<?= (int) $sumsAnnee[$an] ?>x&nbsp;</td>
-                <td><?= htmlspecialchars($anneeAff, ENT_QUOTES, 'UTF-8') ?></td>
-                <?php foreach ($tirages as $t):
-                    $hit = ($t['annee'] === $an);
-                    ?>
-                  <td class="<?= $hit ? 'hit' : '' ?>"><?= $hit ? htmlspecialchars($anneeAff, ENT_QUOTES, 'UTF-8') : '' ?></td>
+              </tbody>
+            </table>
+          </div>
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th>Bottom 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php foreach ($jourRanks['bottom'] as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
                 <?php endforeach; ?>
-              </tr>
-            <?php endfor; ?>
-          </tbody>
-        </table>
-      </div>
+              </tbody>
+            </table>
+          </div>
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th><?= htmlspecialchars(t('astro.col.jour'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.days'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(trim((string) preg_replace('/<br\\s*\\/?\\s*>/i', ' ', t('q2.col.last_draw'))), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php
+                $jourByDelay = $jourItems;
+                usort($jourByDelay, static function (array $a, array $b): int {
+                    $ad = ($a['daysAgo'] === '') ? -1 : (int) $a['daysAgo'];
+                    $bd = ($b['daysAgo'] === '') ? -1 : (int) $b['daysAgo'];
+                    return $bd <=> $ad;
+                });
+                foreach (array_slice($jourByDelay, 0, 10) as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= htmlspecialchars($row['daysAgo'], ENT_QUOTES, 'UTF-8') ?></td><td><?= htmlspecialchars($row['date'], ENT_QUOTES, 'UTF-8') ?></td></tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="astro-analytics">
+        <h3><?= htmlspecialchars(t('astro.col.annee'), ENT_QUOTES, 'UTF-8') ?></h3>
+        <div class="astro-heatmap astro-heatmap--years">
+          <?php foreach ($anneeItems as $item):
+              $heat = $item['count'] / $anneeMax;
+              ?>
+            <div class="astro-heatcell" style="--heat: <?= number_format($heat, 3, '.', '') ?>">
+              <span class="v"><?= htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') ?></span>
+              <span class="c"><?= (int) $item['count'] ?></span>
+            </div>
+          <?php endforeach; ?>
+        </div>
+        <div class="astro-metrics-grid">
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th>Top 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php foreach ($anneeRanks['top'] as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th>Bottom 10</th><th><?= htmlspecialchars(t('astro.col.fois'), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php foreach ($anneeRanks['bottom'] as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= (int) $row['count'] ?></td></tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+          <div class="number-stats-table">
+            <table class="interactive-table">
+              <thead><tr><th><?= htmlspecialchars(t('astro.col.annee'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(t('astro.col.days'), ENT_QUOTES, 'UTF-8') ?></th><th><?= htmlspecialchars(trim((string) preg_replace('/<br\\s*\\/?\\s*>/i', ' ', t('q2.col.last_draw'))), ENT_QUOTES, 'UTF-8') ?></th></tr></thead>
+              <tbody>
+                <?php
+                $anneeByDelay = $anneeItems;
+                usort($anneeByDelay, static function (array $a, array $b): int {
+                    $ad = ($a['daysAgo'] === '') ? -1 : (int) $a['daysAgo'];
+                    $bd = ($b['daysAgo'] === '') ? -1 : (int) $b['daysAgo'];
+                    return $bd <=> $ad;
+                });
+                foreach (array_slice($anneeByDelay, 0, 10) as $row): ?>
+                  <tr><td><?= htmlspecialchars($row['value'], ENT_QUOTES, 'UTF-8') ?></td><td><?= htmlspecialchars($row['daysAgo'], ENT_QUOTES, 'UTF-8') ?></td><td><?= htmlspecialchars($row['date'], ENT_QUOTES, 'UTF-8') ?></td></tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     <?php endif; ?>
   <?php endif; ?>
 

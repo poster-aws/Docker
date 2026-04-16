@@ -179,6 +179,61 @@ html.theme-light .astro-layout .number-stats-table select {
   background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
 }
 
+.astro-layout--info.astroinfo-layout .astro-analytics {
+  margin: 0 0 14px;
+}
+
+.astro-layout--info.astroinfo-layout .astro-analytics h3 {
+  margin: 6px 0 8px;
+  font-size: 0.98rem;
+}
+
+.astro-layout--info.astroinfo-layout .astro-heatmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.astro-layout--info.astroinfo-layout .astro-heatmap--years {
+  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+}
+
+.astro-layout--info.astroinfo-layout .astro-heatcell {
+  border: 1px solid var(--table-cell-border, #64748b);
+  border-radius: 6px;
+  padding: 2px;
+  text-align: center;
+  background: color-mix(in oklab, var(--accent, #38bdf8) calc(10% + (var(--heat) * 65%)), transparent);
+}
+
+.astro-layout--info.astroinfo-layout .astro-heatcell .v {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.astro-layout--info.astroinfo-layout .astro-heatcell .c {
+  display: block;
+  font-size: 0.62rem;
+  opacity: 0.9;
+}
+
+.astro-layout--info.astroinfo-layout .astro-metrics-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.astro-layout--info.astroinfo-layout .astro-metrics-grid .number-stats-table {
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: none;
+}
+
 /* Jour + Année : hauteur max. de la zone de défilement */
 .astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--jour,
 .astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--annee {
@@ -380,5 +435,11 @@ html.theme-light .astro-layout .number-stats-table select {
   .astro-layout .astro-stats-jour {
     flex-direction: column;
     width: 100%;
+  }
+
+  .astro-layout--info.astroinfo-layout .astro-metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
