@@ -273,6 +273,25 @@ html.theme-light {
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Прокрутка : прозрачный фон дорожки (главная .main, Info, любые overflow:auto) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+}
+
+html.theme-light * {
+  scrollbar-color: rgba(100, 116, 139, 0.5) transparent;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;

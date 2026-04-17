@@ -1,0 +1,44 @@
+/* Бирка PosteR_Lab — фиксированный угол; sideways-lr = латиница «на боку» вдоль края, не столбик как в японской вёрстке */
+
+.poster-lab-tag {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  max-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.poster-lab-tag__text {
+  display: inline-block;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  /* было 8×12 → в ~3 раза меньше по вертикали и горизонтали относительно текста */
+  padding: 3px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  background: #dc2626;
+  /* Красная обводка, чуть темнее заливки (#dc2626) */
+  border: 1px solid #b91c1c;
+  border-radius: 0;
+  border-top-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  /* Латинские буквы лежат горизонтально, строка идёт вверх от нижнего угла (не upright-столбик) */
+  writing-mode: sideways-lr;
+}
+
+.poster-lab-tag__text:hover {
+  filter: brightness(1.08);
+}
+
+.poster-lab-tag__text:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

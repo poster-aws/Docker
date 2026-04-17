@@ -227,6 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Добавление тиражей</title>
+  <link rel="stylesheet" href="../poster-lab-tag.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -558,6 +559,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
+<aside class="poster-lab-tag">
+  <a class="poster-lab-tag__text" href="add.php" title="Ajout des tirages">PosteR_Lab</a>
+</aside>
 
 </body>
 </html>
