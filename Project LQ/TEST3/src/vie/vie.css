@@ -15,21 +15,33 @@
   box-sizing: border-box;
   font-family: var(--font);
   color: var(--table-text, var(--text));
-  /* Jeton GN (page principale) — thème sombre par défaut */
-  --vie-main-gn-circle-bg: #14b8a6;
-  --vie-main-gn-circle-text: #042f2e;
-}
-
-html.theme-light .vie-layout {
-  --vie-main-gn-circle-bg: #0f766e;
+  /* Jeton GN — тёмный зелёно-серый (светлее «почти чёрного»), 3D */
+  --vie-main-gn-circle-glare: #82998d;
+  --vie-main-gn-circle-bg: #4c6258;
+  --vie-main-gn-circle-depth: #314239;
   --vie-main-gn-circle-text: #ecfdf5;
 }
 
-/* GN : couleur distincte des 5 boules ; GN = 0 → pas de jeton (cellule vide) */
+html.theme-light .vie-layout {
+  --vie-main-gn-circle-glare: #91a69b;
+  --vie-main-gn-circle-bg: #5a7167;
+  --vie-main-gn-circle-depth: #3d5249;
+  --vie-main-gn-circle-text: #f0fdf4;
+}
+
+/* GN : distinct des 5 boules ; effet sphère 3D comme .circle (style.css) */
 .vie-layout .vie-gn-circle {
-  background: var(--vie-main-gn-circle-bg);
   color: var(--vie-main-gn-circle-text);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--vie-main-gn-circle-glare) 0%,
+    var(--vie-main-gn-circle-bg) 48%,
+    var(--vie-main-gn-circle-depth) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.22),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.35),
+    0 2px 5px rgba(0, 0, 0, 0.28);
 }
 
 /* Conteneur grille — comme .tout-layout .table-wrapper.tout-grid-wrapper.
