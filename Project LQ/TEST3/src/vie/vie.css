@@ -172,6 +172,28 @@ html.theme-light .vie-layout {
 }
 
 /*
+ * Table 1–49 : même largeur / coque que la table GN (150px), même max-hauteur que les autres
+ * .number-stats-table ; barre de défilement masquée comme la 3e table pour garder les mêmes marges visuelles.
+ */
+.vie-layout .vie-num-stats-table.number-stats-table {
+  width: 150px;
+  max-width: 150px;
+  min-width: 0;
+  max-height: calc(100vh - var(--header-h, 56px) - 2rem);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  align-self: flex-start;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.vie-layout .vie-num-stats-table.number-stats-table::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/*
  * Table stats GN (page principale) — styles Vie uniquement, sans quotidienne.css.
  * Jetons : mêmes variables --table-* que le reste de l’app (thème global dans style.css).
  */

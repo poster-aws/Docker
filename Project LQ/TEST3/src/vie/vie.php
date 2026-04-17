@@ -19,6 +19,8 @@ $vieRows = [];
    Lignes GN = 0 : ne définissent pas un tirage pour ces stats. */
 $gnTiragesPasses = array_fill(1, 7, null);
 $gnFreqStats = array_fill(1, 7, 0);
+$numTiragesPasses = array_fill(1, 49, null);
+$numFreqStats = array_fill(1, 49, 0);
 
 $tableExists = $vieConn->query("SHOW TABLES LIKE 'Vie'");
 if ($tableExists && $tableExists->num_rows > 0) {
@@ -63,6 +65,64 @@ if ($tableExists && $tableExists->num_rows > 0) {
             $g = (int) ($r['GN'] ?? 0);
             if ($g >= 1 && $g <= 7) {
                 $gnFreqStats[$g] = (int) ($r['cnt'] ?? 0);
+            }
+        }
+    }
+
+    /* Dernière sortie de chaque numéro 1–49 (n1…n5), puis tirages passés (dates distinctes après). */
+    $sqlLastNum = '
+        SELECT u.num, MAX(u.tir) AS m FROM (
+            SELECT n1 AS num, Tirage AS tir FROM Vie WHERE n1 BETWEEN 1 AND 49
+            UNION ALL SELECT n2, Tirage FROM Vie WHERE n2 BETWEEN 1 AND 49
+            UNION ALL SELECT n3, Tirage FROM Vie WHERE n3 BETWEEN 1 AND 49
+            UNION ALL SELECT n4, Tirage FROM Vie WHERE n4 BETWEEN 1 AND 49
+            UNION ALL SELECT n5, Tirage FROM Vie WHERE n5 BETWEEN 1 AND 49
+        ) AS u
+        GROUP BY u.num';
+    $resLastNum = $vieConn->query($sqlLastNum);
+    $lastNumMap = [];
+    if ($resLastNum && $resLastNum->num_rows > 0) {
+        while ($row = $resLastNum->fetch_assoc()) {
+            $nn = (int) ($row['num'] ?? 0);
+            if ($nn >= 1 && $nn <= 49) {
+                $lastNumMap[$nn] = (string) ($row['m'] ?? '');
+            }
+        }
+    }
+    for ($num = 1; $num <= 49; $num++) {
+        if (!isset($lastNumMap[$num]) || $lastNumMap[$num] === '') {
+            continue;
+        }
+        $lastT = $vieConn->real_escape_string($lastNumMap[$num]);
+        $resPassN = $vieConn->query("SELECT COUNT(DISTINCT Tirage) AS c FROM Vie WHERE Tirage > '{$lastT}'");
+        if ($resPassN && ($rowP = $resPassN->fetch_assoc())) {
+            $numTiragesPasses[$num] = (int) ($rowP['c'] ?? 0);
+        }
+    }
+
+    /* Fréquence des numéros 1–49 sur les n derniers tirages (dates distinctes), toutes lignes Vie. */
+    $nDraws = (int) $vieGnTirageCount;
+    $sqlRecentDraws = "( SELECT Tirage FROM Vie GROUP BY Tirage ORDER BY Tirage DESC LIMIT {$nDraws} ) AS r";
+    $sqlFreqNum = "
+        SELECT z.num, COUNT(*) AS cnt FROM (
+            SELECT v.n1 AS num FROM Vie v INNER JOIN {$sqlRecentDraws} ON v.Tirage = r.Tirage
+            UNION ALL
+            SELECT v.n2 AS num FROM Vie v INNER JOIN {$sqlRecentDraws} ON v.Tirage = r.Tirage
+            UNION ALL
+            SELECT v.n3 AS num FROM Vie v INNER JOIN {$sqlRecentDraws} ON v.Tirage = r.Tirage
+            UNION ALL
+            SELECT v.n4 AS num FROM Vie v INNER JOIN {$sqlRecentDraws} ON v.Tirage = r.Tirage
+            UNION ALL
+            SELECT v.n5 AS num FROM Vie v INNER JOIN {$sqlRecentDraws} ON v.Tirage = r.Tirage
+        ) AS z
+        WHERE z.num BETWEEN 1 AND 49
+        GROUP BY z.num";
+    $resFreqNum = $vieConn->query($sqlFreqNum);
+    if ($resFreqNum && $resFreqNum->num_rows > 0) {
+        while ($r = $resFreqNum->fetch_assoc()) {
+            $nn = (int) ($r['num'] ?? 0);
+            if ($nn >= 1 && $nn <= 49) {
+                $numFreqStats[$nn] = (int) ($r['cnt'] ?? 0);
             }
         }
     }
