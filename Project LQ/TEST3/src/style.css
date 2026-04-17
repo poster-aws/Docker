@@ -38,6 +38,9 @@
   --theme-table-row-hover: rgba(56, 189, 248, 0.14);
   --theme-table-circle-bg: #38bdf8;
   --theme-table-circle-text: #0f172a;
+  /* Шарики : блик (верх) и кромка (низ) для градиента 3D */
+  --theme-table-circle-glare: #7dd3fc;
+  --theme-table-circle-depth: #0369a1;
   --theme-table-highlight-row: rgba(34, 197, 94, 0.1);
   --theme-table-range-1: rgba(34, 197, 94, 0.14);
   --theme-table-range-2: rgba(234, 179, 8, 0.18);
@@ -97,16 +100,20 @@ html.theme-light {
   --theme-table-text: #1e293b;
   --theme-table-cell-border: #e2e8f0;
   --theme-table-row-hover: rgba(37, 99, 235, 0.08);
-  --theme-table-circle-bg: #2563eb;
-  --theme-table-circle-text: #ffffff;
+  /* Шарики : более светлый синий (blue-400), чем тёмная тема — мягче на #f1f5f9 */
+  --theme-table-circle-bg: #60a5fa;
+  /* Тёмно-коричневый — лучше читается на светло-синем, чем белый */
+  --theme-table-circle-text: #422006;
+  --theme-table-circle-glare: #eff6ff;
+  --theme-table-circle-depth: #2563eb;
   --theme-table-highlight-row: rgba(34, 197, 94, 0.12);
   --theme-table-range-1: rgba(34, 197, 94, 0.16);
   --theme-table-range-2: rgba(234, 179, 8, 0.22);
   --theme-table-range-3: rgba(249, 115, 22, 0.2);
   --theme-table-range-4: rgba(239, 68, 68, 0.16);
   --theme-table-range-cell-bg: rgba(203, 213, 225, 0.55);
-  --theme-table-star-1-bg: #2563eb;
-  --theme-table-star-1-text: #ffffff;
+  --theme-table-star-1-bg: #60a5fa;
+  --theme-table-star-1-text: #422006;
   --theme-table-star-2-bg: #ea580c;
   --theme-table-star-2-text: #ffffff;
   --theme-info-grid-wrap-border: #ccc;
@@ -158,6 +165,8 @@ html.theme-light {
   --table-row-hover: var(--theme-table-row-hover);
   --table-circle-bg: var(--theme-table-circle-bg);
   --table-circle-text: var(--theme-table-circle-text);
+  --table-circle-glare: var(--theme-table-circle-glare);
+  --table-circle-depth: var(--theme-table-circle-depth);
   --table-highlight-row: var(--theme-table-highlight-row);
   --table-range-1: var(--theme-table-range-1);
   --table-range-2: var(--theme-table-range-2);
@@ -230,6 +239,8 @@ html.theme-light {
   --table-row-hover: var(--theme-table-row-hover);
   --table-circle-bg: var(--theme-table-circle-bg);
   --table-circle-text: var(--theme-table-circle-text);
+  --table-circle-glare: var(--theme-table-circle-glare);
+  --table-circle-depth: var(--theme-table-circle-depth);
   --table-highlight-row: var(--theme-table-highlight-row);
   --table-range-1: var(--theme-table-range-1);
   --table-range-2: var(--theme-table-range-2);
@@ -731,7 +742,7 @@ input:checked + .slider::before { transform: translateX(18px); }
   .combo-table-container .circle {
     min-width: 22px;
     height: 22px;
-    font-size: 0.85em;
+    font-size: 1em;
     padding: 0 2px;
   }
   .number-stats-table .interactive-table {
@@ -748,7 +759,7 @@ input:checked + .slider::before { transform: translateX(18px); }
   .number-stats-table .circle {
     min-width: 22px;
     height: 22px;
-    font-size: 0.85em;
+    font-size: 1em;
     padding: 0 2px;
   }
 }
@@ -884,11 +895,21 @@ input:checked + .slider::before { transform: translateX(18px); }
   height: 25px;
   padding: 0 3px;
   border-radius: 50%;
-  background: var(--table-circle-bg, var(--accent, #2563eb));
   color: var(--table-circle-text, #fff);
-  font-weight: 600;
-  font-size: 0.85em;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-family: var(--font);
+  font-size: 1em;
+  font-weight: 700;
+  /* 3D : блик сверху-слева, основной тон, тень снизу — палитра из темы */
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--table-circle-glare, var(--table-circle-bg, #38bdf8)) 0%,
+    var(--table-circle-bg, #38bdf8) 48%,
+    var(--table-circle-depth, #0369a1) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.42),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.22),
+    0 2px 5px rgba(0, 0, 0, 0.2);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -1015,7 +1036,7 @@ html.theme-light #infoBlock.info-list .info-row {
   #infoBlock.info-list .circle {
     min-width: 22px;
     height: 22px;
-    font-size: 0.85em;
+    font-size: 1em;
     padding: 0 2px;
   }
 }
