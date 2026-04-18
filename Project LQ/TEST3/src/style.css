@@ -48,6 +48,10 @@
   /* Ambre (doré) vs rouge brique — mieux distingués que orange-500 / red-500 */
   --theme-table-range-3: rgba(245, 158, 11, 0.32);
   --theme-table-range-4: rgba(185, 28, 28, 0.28);
+  /* Contours tableaux stats (lisibles, pas la même alpha que le fond historique) */
+  --theme-table-range-2-stroke: rgba(154, 236, 187, 0.92);
+  --theme-table-range-3-stroke: rgba(245, 158, 11, 0.92);
+  --theme-table-range-4-stroke: rgba(220, 60, 60, 0.92);
   --theme-table-range-cell-bg: rgba(203, 213, 225, 0.35);
   --theme-table-star-1-bg: #38bdf8;
   --theme-table-star-1-text: #0f172a;
@@ -111,8 +115,12 @@ html.theme-light {
   --theme-table-highlight-row: rgba(34, 197, 94, 0.12);
   --theme-table-range-1: rgba(34, 197, 94, 0.3);
   --theme-table-range-2: rgba(154, 236, 187, 0.36);
-  --theme-table-range-3: rgba(245, 158, 11, 0.34);
-  --theme-table-range-4: rgba(185, 28, 28, 0.3);
+  /* Светлая тема: янтарь и красный мягче (ближе к пастельному зелёному обводкам) */
+  --theme-table-range-3: rgba(253, 224, 130, 0.42);
+  --theme-table-range-4: rgba(252, 165, 165, 0.38);
+  --theme-table-range-2-stroke: rgba(154, 236, 187, 0.92);
+  --theme-table-range-3-stroke: rgba(251, 211, 120, 0.82);
+  --theme-table-range-4-stroke: rgba(248, 172, 172, 0.82);
   --theme-table-range-cell-bg: rgba(203, 213, 225, 0.55);
   --theme-table-star-1-bg: #60a5fa;
   --theme-table-star-1-text: #422006;
@@ -174,6 +182,9 @@ html.theme-light {
   --table-range-2: var(--theme-table-range-2);
   --table-range-3: var(--theme-table-range-3);
   --table-range-4: var(--theme-table-range-4);
+  --table-range-2-stroke: var(--theme-table-range-2-stroke);
+  --table-range-3-stroke: var(--theme-table-range-3-stroke);
+  --table-range-4-stroke: var(--theme-table-range-4-stroke);
   --table-range-cell-bg: var(--theme-table-range-cell-bg);
   --table-star-1-bg: var(--theme-table-star-1-bg);
   --table-star-1-text: var(--theme-table-star-1-text);
@@ -248,6 +259,9 @@ html.theme-light {
   --table-range-2: var(--theme-table-range-2);
   --table-range-3: var(--theme-table-range-3);
   --table-range-4: var(--theme-table-range-4);
+  --table-range-2-stroke: var(--theme-table-range-2-stroke);
+  --table-range-3-stroke: var(--theme-table-range-3-stroke);
+  --table-range-4-stroke: var(--theme-table-range-4-stroke);
   --table-range-cell-bg: var(--theme-table-range-cell-bg);
   --table-star-1-bg: var(--theme-table-star-1-bg);
   --table-star-1-text: var(--theme-table-star-1-text);
@@ -867,6 +881,41 @@ input:checked + .slider::before { transform: translateX(18px); }
   font-weight: 700;
 }
 
+/* Статистика: цветная рамка только вокруг 2-й колонки (дни / тиражи и т.п.) */
+.number-stats-table .interactive-table tbody tr.color-range-2 td,
+.number-stats-table .interactive-table tbody tr.color-range-3 td,
+.number-stats-table .interactive-table tbody tr.color-range-4 td {
+  background: transparent !important;
+}
+
+.number-stats-table .interactive-table tbody tr.color-range-2 td:nth-child(2),
+.number-stats-table .interactive-table tbody tr.color-range-3 td:nth-child(2),
+.number-stats-table .interactive-table tbody tr.color-range-4 td:nth-child(2) {
+  border-radius: 6px;
+}
+
+.number-stats-table .interactive-table tbody tr.color-range-2 td:nth-child(2) {
+  box-shadow: inset 0 0 0 2px var(--table-range-2-stroke, rgba(154, 236, 187, 0.92));
+}
+
+.number-stats-table .interactive-table tbody tr.color-range-3 td:nth-child(2) {
+  box-shadow: inset 0 0 0 2px var(--table-range-3-stroke, rgba(245, 158, 11, 0.92));
+}
+
+.number-stats-table .interactive-table tbody tr.color-range-4 td:nth-child(2) {
+  box-shadow: inset 0 0 0 2px var(--table-range-4-stroke, rgba(220, 60, 60, 0.92));
+}
+
+.number-stats-table .interactive-table tbody tr.color-range-2:hover,
+.number-stats-table .interactive-table tbody tr.color-range-3:hover,
+.number-stats-table .interactive-table tbody tr.color-range-4:hover {
+  background: transparent !important;
+}
+
+.number-stats-table .interactive-table tbody tr[class*="color-range-"]:hover td {
+  background: transparent !important;
+}
+
 .interactive-table td:has(> .circle),
 .interactive-table th:has(> .circle) {
   padding-left: 0.15rem;
@@ -875,6 +924,10 @@ input:checked + .slider::before { transform: translateX(18px); }
 
 .interactive-table tbody tr:hover {
   background: var(--table-row-hover, rgba(37, 99, 235, 0.06));
+}
+
+.interactive-table tbody tr[class*="color-range-"]:hover {
+  background: transparent !important;
 }
 
 .interactive-table th.sort-asc::after {

@@ -226,17 +226,7 @@ html.theme-light .vie-layout {
   cursor: pointer;
 }
 
-.vie-layout .number-stats-table tr.color-range-2 {
-  background: var(--table-range-2, rgba(154, 236, 187, 0.32));
-}
-
-.vie-layout .number-stats-table tr.color-range-3 {
-  background: var(--table-range-3, rgba(245, 158, 11, 0.32));
-}
-
-.vie-layout .number-stats-table tr.color-range-4 {
-  background: var(--table-range-4, rgba(185, 28, 28, 0.28));
-}
+/* Plages stats (contour) : style.css — .number-stats-table tr.color-range-* */
 
 /* Grande Vie Info — bloc #infoBlock : base dans style.css ; marges dans la coquille 980px */
 .vie-layout--info #infoBlock.info-list {

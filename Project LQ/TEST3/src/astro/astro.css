@@ -101,17 +101,7 @@ html.theme-light .astro-layout .number-stats-table select {
   color: var(--text, #1e293b);
 }
 
-.astro-layout .number-stats-table tr.color-range-2 {
-  background: var(--table-range-2, rgba(154, 236, 187, 0.32));
-}
-
-.astro-layout .number-stats-table tr.color-range-3 {
-  background: var(--table-range-3, rgba(245, 158, 11, 0.32));
-}
-
-.astro-layout .number-stats-table tr.color-range-4 {
-  background: var(--table-range-4, rgba(185, 28, 28, 0.28));
-}
+/* Plages stats (contour) : style.css — .number-stats-table tr.color-range-* */
 
 .astro-layout .number-stats-table td:nth-child(3),
 .astro-layout .number-stats-table th:nth-child(3) {
