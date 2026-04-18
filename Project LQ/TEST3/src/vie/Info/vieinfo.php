@@ -8,6 +8,7 @@ header('Expires: 0');
 
 $tiragesGrid = [];
 $numberSums = array_fill(1, 49, 0);
+$gnSums = array_fill(1, 7, 0);
 /* Grille : N derniers tirages = N dates Tirage distinctes avec GN 1–7 (lignes GN = 0 exclues). */
 $allowedGridLimits = [50, 100, 200];
 $gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $allowedGridLimits, true)
@@ -38,11 +39,15 @@ if ($tableExists && $tableExists->num_rows > 0) {
             }
             $seenTirage[$key] = true;
             $nums = [(int) $r['n1'], (int) $r['n2'], (int) $r['n3'], (int) $r['n4'], (int) $r['n5']];
+            $gnVal = (int) $r['GN'];
             $tiragesGrid[] = [
                 'Tirage' => $r['Tirage'],
                 'nums'   => $nums,
-                'GN'     => (int) $r['GN'],
+                'GN'     => $gnVal,
             ];
+            if ($gnVal >= 1 && $gnVal <= 7) {
+                $gnSums[$gnVal]++;
+            }
             foreach ($nums as $num) {
                 if ($num >= 1 && $num <= 49) {
                     $numberSums[$num]++;
@@ -95,7 +100,35 @@ $vieConn->close();
   </div>
 
   <?php if (!empty($tiragesGrid)): ?>
-  <div class="filter-form">
+  <div class="table-wrapper vie-grid-wrapper vie-grid-wrapper--gn" data-limit="<?= (int)$gridLimit ?>">
+    <table class="digit-grid" id="vieGnInfoGrid">
+      <thead>
+        <tr>
+          <th>Σ</th>
+          <th>#</th>
+          <?php foreach ($tiragesGrid as $t): ?>
+            <th><?= htmlspecialchars((string) $t['Tirage'], ENT_QUOTES, 'UTF-8') ?></th>
+          <?php endforeach; ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php for ($g = 1; $g <= 7; $g++): ?>
+          <tr>
+            <td>&nbsp;<?= (int) $gnSums[$g] ?>x&nbsp;</td>
+            <td><?= $g ?></td>
+            <?php foreach ($tiragesGrid as $t):
+              $gv = (int) ($t['GN'] ?? 0);
+              $hit = ($gv === $g);
+              ?>
+              <td class="<?= $hit ? 'hit' : '' ?>"><?= $hit ? $g : '' ?></td>
+            <?php endforeach; ?>
+          </tr>
+        <?php endfor; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="filter-form vie-info-grids-filter">
     <?= htmlspecialchars(t('vieinfo.filter.prefix'), ENT_QUOTES, 'UTF-8') ?>
     <select id="vieInfoGridLimit" name="grid_limit" title="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>">
       <?php foreach ($allowedGridLimits as $opt): ?>

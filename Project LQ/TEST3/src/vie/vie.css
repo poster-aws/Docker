@@ -63,6 +63,16 @@ html.theme-light .vie-layout {
   max-height: 35vh;
 }
 
+/* Deux grilles Info : léger écart sans légende */
+.vie-layout--info .vie-grid-wrapper + .vie-grid-wrapper--gn {
+  margin-top: 12px;
+}
+
+.vie-layout--info .vie-info-grids-filter {
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
 .vie-layout table.digit-grid {
   width: max-content;
   border-collapse: collapse;
