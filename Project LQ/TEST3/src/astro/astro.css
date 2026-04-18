@@ -102,24 +102,15 @@ html.theme-light .astro-layout .number-stats-table select {
 }
 
 .astro-layout .number-stats-table tr.color-range-2 {
-  background: var(--table-range-2, rgba(234, 179, 8, 0.15));
+  background: var(--table-range-2, rgba(154, 236, 187, 0.32));
 }
 
 .astro-layout .number-stats-table tr.color-range-3 {
-  background: var(--table-range-3, rgba(249, 115, 22, 0.15));
+  background: var(--table-range-3, rgba(245, 158, 11, 0.32));
 }
 
 .astro-layout .number-stats-table tr.color-range-4 {
-  background: var(--table-range-4, rgba(239, 68, 68, 0.12));
-}
-
-.astro-layout .number-stats-table tr.color-range-2 td:nth-child(3),
-.astro-layout .number-stats-table tr.color-range-3 td:nth-child(3),
-.astro-layout .number-stats-table tr.color-range-4 td:nth-child(3) {
-  background: var(--table-range-cell-bg, rgba(203, 213, 225, 0.35)) !important;
-  font-weight: 600;
-  border-left: 1px solid var(--table-cell-border, #64748b);
-  border-right: 1px solid var(--table-cell-border, #64748b);
+  background: var(--table-range-4, rgba(185, 28, 28, 0.28));
 }
 
 .astro-layout .number-stats-table td:nth-child(3),
