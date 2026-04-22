@@ -1009,6 +1009,56 @@ input:checked + .slider::before { transform: translateX(18px); }
 }
 
 /* =============================================================================
+   Pages Info — filtre « derniers tirages » + <select> (réf. Grande Vie)
+   Wrapper : class="filter-form info-filter-form". Select hors wrapper : class="info-page-select".
+   Marges / cas particuliers : feuilles locale (vie.css, quotidienne.css, …).
+   ============================================================================= */
+.info-filter-form {
+  text-align: center;
+  margin: 0;
+  padding: 6px 0 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-filter-form select,
+.info-filter-form--chart select,
+select.info-page-select {
+  background: var(--table-shell-bg, var(--bg-card, #fff));
+  border: 1px solid var(--table-cell-border, var(--border, #999));
+  color: var(--table-text, var(--text));
+  border-radius: var(--radius-sm, 8px);
+  font-size: 1em;
+  padding: 0 8px;
+  line-height: 32px;
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  cursor: pointer;
+  max-width: 100%;
+  font-family: inherit;
+}
+
+.info-filter-form--chart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  margin: 12px auto;
+  padding: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-filter-form--chart label {
+  font-size: 0.95em;
+  color: var(--table-text, var(--text));
+}
+
+/* =============================================================================
    Bloc légende Info (#infoBlock.info-list) — Quotidienne, Grande Vie, Tout ou Rien Info…
    ============================================================================= */
 #infoBlock.info-list {

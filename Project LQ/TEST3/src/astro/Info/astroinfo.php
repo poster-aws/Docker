@@ -371,7 +371,7 @@ $anneeMax = max(1, ...$sumsAnnee);
     <?php endif; ?>
   <?php endif; ?>
 
-  <div class="filter-form">
+  <div class="filter-form info-filter-form">
     <?= htmlspecialchars(t('q2info.latest'), ENT_QUOTES, 'UTF-8') ?>
     <select id="astroInfoGridLimit">
       <?php foreach ($allowedGridLimits as $opt): ?>

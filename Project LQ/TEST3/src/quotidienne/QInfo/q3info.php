@@ -78,7 +78,7 @@ $conn->close();
     <?php endif; ?>
   </div>
 
-  <div class="filter-form">
+  <div class="filter-form info-filter-form">
     <?= t('q3info.latest') ?>
     <select id="q3InfoLimit">
       <?php foreach ([50, 100, 200, 500] as $opt): ?>

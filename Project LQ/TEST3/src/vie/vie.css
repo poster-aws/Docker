@@ -154,26 +154,7 @@ html.theme-light .vie-layout {
   color: var(--error, #c0392b);
 }
 
-/* Sélecteur « Dernières n tirages » — mêmes jetons que .q4info-layout .filter-form */
-.vie-layout .filter-form {
-  text-align: center;
-  margin: 0;
-  padding: 6px 0 14px;
-  width: 100%;
-}
-
-.vie-layout .filter-form select {
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  border: 1px solid var(--table-cell-border, var(--border, #999));
-  color: var(--table-text, var(--text));
-  border-radius: var(--radius-sm, 8px);
-  font-size: 1em;
-  padding: 0 8px;
-  line-height: 32px;
-  min-height: 32px;
-  height: 32px;
-  box-sizing: border-box;
-}
+/* Filtre Info : style select dans style.css (.info-filter-form) */
 
 /* Page principale : grille des tirages — .tables-wrapper / .interactive-table dans style.css */
 .vie-layout .tables-wrapper {

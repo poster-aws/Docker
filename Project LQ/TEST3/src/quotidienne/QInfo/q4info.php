@@ -149,9 +149,9 @@ foreach ($tiragesGrid as $t) {
 <?php endif; ?>
 </div>
 
-<div class="filter-form">
+<div class="filter-form info-filter-form">
   <?= t('q4info.latest') ?>
-  <select id="q4InfoLimit">
+  <select id="q4InfoLimit" class="info-page-select">
     <?php foreach ([50,100,200,500] as $opt): ?>
       <option value="<?= $opt ?>" <?= ($gridLimit==$opt?'selected':'') ?>><?= $opt ?></option>
     <?php endforeach; ?>
@@ -170,7 +170,7 @@ foreach ($tiragesGrid as $t) {
             <div class="q4info-thead-stack">
               <div class="q4info-head-band q4info-head-title"></div>
               <div class="q4info-head-filters">
-                <select class="q4info-filter" data-table-id="statsOrderTable">
+                <select class="q4info-filter info-page-select" data-table-id="statsOrderTable">
                   <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
                   <option value="unique"><?= t('q4info.filter.unique') ?></option>
                   <option value="onepair"><?= t('q4info.filter.onepair') ?></option>
@@ -207,7 +207,7 @@ foreach ($tiragesGrid as $t) {
             <div class="q4info-thead-stack">
               <div class="q4info-head-band q4info-head-title"></div>
               <div class="q4info-head-filters">
-                <select class="q4info-filter" data-table-id="freeOrderTable">
+                <select class="q4info-filter info-page-select" data-table-id="freeOrderTable">
                   <option value="all"><?= t('q4info.filter.all_in_order') ?></option>
                   <option value="unique"><?= t('q4info.filter.unique') ?></option>
                   <option value="onepair"><?= t('q4info.filter.onepair') ?></option>

@@ -16,6 +16,7 @@ $gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $
     : 50;
 
 $vieCount = 0;
+$vieCombOut = 0;
 $tableExists = $vieConn->query("SHOW TABLES LIKE 'Vie'");
 if ($tableExists && $tableExists->num_rows > 0) {
     $countRes = $vieConn->query('SELECT COUNT(*) AS total FROM Vie');
@@ -56,6 +57,15 @@ if ($tableExists && $tableExists->num_rows > 0) {
         }
     }
 }
+
+$chkVieInfo = $vieConn->query("SHOW TABLES LIKE 'Vie_info'");
+if ($chkVieInfo && $chkVieInfo->num_rows > 0) {
+    $infoRes = $vieConn->query('SELECT Comb_out FROM Vie_info LIMIT 1');
+    if ($infoRes && $infoRow = $infoRes->fetch_assoc()) {
+        $vieCombOut = (int) $infoRow['Comb_out'];
+    }
+}
+
 $vieConn->close();
 ?>
 <div id="vie-meta" data-count="<?= (int)$vieCount ?>"></div>
@@ -128,7 +138,7 @@ $vieConn->close();
     </table>
   </div>
 
-  <div class="filter-form vie-info-grids-filter">
+  <div class="filter-form info-filter-form vie-info-grids-filter">
     <?= htmlspecialchars(t('vieinfo.filter.prefix'), ENT_QUOTES, 'UTF-8') ?>
     <select id="vieInfoGridLimit" name="grid_limit" title="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars(t('vieinfo.select_title'), ENT_QUOTES, 'UTF-8') ?>">
       <?php foreach ($allowedGridLimits as $opt): ?>
@@ -144,27 +154,16 @@ $vieConn->close();
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.vie_biweekly'), ENT_QUOTES, 'UTF-8') ?></div>
     </div>
-    <div class="info-row">
-      <div class="info-digits">
-        <span class="circle">1</span>
-        <span class="circle">2</span>
-        <span class="circle">3</span>
-        <span class="circle">4</span>
-        <span class="circle">5</span>
-      </div>
-      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.1'), ENT_QUOTES, 'UTF-8') ?></div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
+      <div class="info-text"><?= t('vieinfo.info.cost') ?></div>
+    </div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
+      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos'), (int) $vieCombOut) ?></div>
     </div>
     <div class="info-row">
-      <div class="info-digits">
-        <span class="circle vie-gn-circle">7</span>
-      </div>
-      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.2'), ENT_QUOTES, 'UTF-8') ?></div>
-    </div>
-    <div class="info-row">
-      <div class="info-digits">
-        <span class="circle">—</span>
-      </div>
-      <div class="info-text"><?= htmlspecialchars(t('vieinfo.placeholder.3'), ENT_QUOTES, 'UTF-8') ?></div>
+      <div class="info-text"><?= t('vieinfo.info.all_combinations') ?></div>
     </div>
   </div>
 </div>

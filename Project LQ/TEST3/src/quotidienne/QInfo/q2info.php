@@ -119,7 +119,7 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     <?php endif; ?>
   </div>
 
-  <div class="filter-form">
+  <div class="filter-form info-filter-form">
     <?= t('q2info.latest') ?>
     <select id="q2InfoGridLimit">
       <?php foreach ([50, 100, 365] as $opt): ?>
@@ -133,9 +133,9 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     <canvas id="q2infoChart"></canvas>
   </div>
 
-  <div id="q2infoSelectWrap">
+  <div id="q2infoSelectWrap" class="info-filter-form--chart">
     <label for="q2InfoChartLimit"><?= t('q2info.last_draw_count') ?></label>
-    <select id="q2InfoChartLimit">
+    <select id="q2InfoChartLimit" class="info-page-select">
       <option value="100" <?= ($limit == 100 ? 'selected' : '') ?>>100</option>
       <option value="200" <?= ($limit == 200 ? 'selected' : '') ?>>200</option>
       <option value="500" <?= ($limit == 500 ? 'selected' : '') ?>>500</option>

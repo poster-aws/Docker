@@ -66,50 +66,11 @@
   margin: 8px 0;
 }
 
-.q2info-layout #q2InfoChartLimit {
-  font-size: 1em;
-  margin-left: 6px;
-}
-
-.q2info-layout .filter-form {
-  text-align: center;
-  margin: 0;
-  padding: 10px 0;
-  width: 100%;
-}
-
-.q2info-layout .filter-form select {
-  font-size: 1em;
-  border-radius: 6px;
-  padding: 2px 6px;
-  line-height: 1.2;
-  box-sizing: border-box;
-  min-height: 32px;
-}
-
 .q2info-layout .q2info-chart-wrap {
   max-width: 100%;
   margin: 12px auto;
   position: relative;
   height: min(50vh, 320px);
-}
-
-.q3info-layout .filter-form {
-  text-align: center;
-  margin: 0;
-  padding: 6px 0 14px;
-  width: 100%;
-}
-
-.q3info-layout .filter-form select {
-  font-size: 1em;
-  border-radius: 6px;
-  box-sizing: border-box;
-  min-height: 32px;
-  height: 32px;
-  padding: 0 8px;
-  line-height: 32px;
-  vertical-align: middle;
 }
 
 /* ----- Q2 Info : nuage de points (couleurs Chart.js via --q2info-chart-*) + tableau des plages ----- */
@@ -282,16 +243,6 @@
   background: var(--table-highlight-row, rgba(34, 197, 94, 0.08));
 }
 
-.q4info-layout select {
-  padding: 0.25rem 0.5rem;
-  font-size: 1em;
-  border-radius: var(--radius-sm, 8px);
-  border: 1px solid var(--table-cell-border, var(--border, #e2e8f0));
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  color: var(--table-text, var(--text));
-  box-sizing: border-box;
-}
-
 .q4info-layout .count-btn {
   width: 2.5em;
   height: 2.5em;
@@ -351,25 +302,6 @@
 
 .q4info-layout .dropdown-panel.open {
   display: block;
-}
-
-.q4info-layout .filter-form {
-  text-align: center;
-  margin: 0;
-  padding: 6px 0 14px;
-}
-
-.q4info-layout .filter-form select {
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  border: 1px solid var(--table-cell-border, var(--border, #999));
-  color: var(--table-text, var(--text));
-  border-radius: var(--radius-sm, 8px);
-  font-size: 1em;
-  padding: 0 8px;
-  line-height: 32px;
-  min-height: 32px;
-  height: 32px;
-  box-sizing: border-box;
 }
 
 /* ----- Grille chiffres — pages Info Q2 / Q3 / Q4 (couleurs : --info-grid-* dans style.css) ----- */

@@ -321,25 +321,9 @@
   margin: 12px;
 }
 
-.toutinfo-layout .toutinfo-filter.filter-form {
-  text-align: center;
+/* Filtre Tout Info : style global .info-filter-form ; marge locale */
+.toutinfo-layout .toutinfo-filter.info-filter-form {
   margin: 0 auto 12px;
-  padding: 8px 0;
-  font-size: 14px;
-  color: var(--text, #000);
-}
-
-.toutinfo-layout .toutinfo-filter select {
-  background: var(--table-shell-bg, var(--bg-card, #fff));
-  border: 1px solid var(--table-cell-border, var(--border, #999));
-  color: var(--table-text, var(--text));
-  border-radius: var(--radius-sm, 8px);
-  font-size: 1em;
-  padding: 0 8px;
-  line-height: 32px;
-  min-height: 32px;
-  height: 32px;
-  box-sizing: border-box;
 }
 
 /* Bloc info Tout ou Rien : base #infoBlock dans style.css — nuances locales seulement */

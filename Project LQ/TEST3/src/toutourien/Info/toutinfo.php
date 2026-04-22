@@ -121,7 +121,7 @@ function toutinfo_format_int(int $n, string $lang): string
   <p class="toutinfo-no-data"><?= t('toutinfo.no_data') ?></p>
 <?php endif; ?>
 
-<div class="filter-form toutinfo-filter">
+<div class="filter-form info-filter-form toutinfo-filter">
   <?= t('toutinfo.latest') ?>
   <select id="toutInfoLimit" name="limit">
     <?php foreach ($allowedLimits as $opt): ?>
