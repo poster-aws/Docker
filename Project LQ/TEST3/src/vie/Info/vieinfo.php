@@ -163,7 +163,19 @@ $vieConn->close();
       <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos'), (int) $vieCombOut) ?></div>
     </div>
     <div class="info-row">
-      <div class="info-text"><?= t('vieinfo.info.all_combinations') ?></div>
+      <div class="info-text">
+        <details>
+          <summary><?= t('vieinfo.info.all_combinations') ?></summary>
+          <div><?= t('vieinfo.info.combo_detail.5_5') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.4_5_gn') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.4_5') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.3_5_gn') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.3_5') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.2_5_gn') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.1_5_gn') ?></div>
+          <div><?= t('vieinfo.info.combo_detail.0_5_gn') ?></div>
+        </details>
+      </div>
     </div>
   </div>
 </div>
