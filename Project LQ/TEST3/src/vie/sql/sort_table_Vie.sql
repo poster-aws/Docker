@@ -1,0 +1,9 @@
+CREATE TABLE Vie_sorted LIKE Vie;
+
+INSERT INTO Vie_sorted
+SELECT *
+FROM Vie
+ORDER BY Tirage ASC;
+
+DROP TABLE Vie;
+RENAME TABLE Vie_sorted TO Vie;

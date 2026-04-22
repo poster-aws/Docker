@@ -16,13 +16,19 @@ $gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $
     : 50;
 
 $vieCount = 0;
-$vieCombOut = 0;
+$vieCombOut6 = 0;
+$vieCombOut5 = 0;
+
+$tableInfoExists = $vieConn->query("SHOW TABLES LIKE 'Vie_info'");
+if ($tableInfoExists && $tableInfoExists->num_rows > 0) {
+    $countRes = $vieConn->query('SELECT Tirages FROM Vie_info LIMIT 1');
+    if ($countRes && $row = $countRes->fetch_assoc()) {
+        $vieCount = (int) ($row['Tirages'] ?? 0);
+    }
+}
+
 $tableExists = $vieConn->query("SHOW TABLES LIKE 'Vie'");
 if ($tableExists && $tableExists->num_rows > 0) {
-    $countRes = $vieConn->query('SELECT COUNT(*) AS total FROM Vie');
-    if ($countRes && $row = $countRes->fetch_assoc()) {
-        $vieCount = (int)$row['total'];
-    }
     $n = (int) $gridLimit;
     $sqlGrid = "SELECT v.Tirage, v.n1, v.n2, v.n3, v.n4, v.n5, v.GN FROM Vie v
         INNER JOIN (
@@ -60,9 +66,10 @@ if ($tableExists && $tableExists->num_rows > 0) {
 
 $chkVieInfo = $vieConn->query("SHOW TABLES LIKE 'Vie_info'");
 if ($chkVieInfo && $chkVieInfo->num_rows > 0) {
-    $infoRes = $vieConn->query('SELECT Comb_out FROM Vie_info LIMIT 1');
+    $infoRes = $vieConn->query('SELECT Comb_out_6, Comb_out_5 FROM Vie_info LIMIT 1');
     if ($infoRes && $infoRow = $infoRes->fetch_assoc()) {
-        $vieCombOut = (int) $infoRow['Comb_out'];
+        $vieCombOut6 = (int) ($infoRow['Comb_out_6'] ?? 0);
+        $vieCombOut5 = (int) ($infoRow['Comb_out_5'] ?? 0);
     }
 }
 
@@ -160,7 +167,11 @@ $vieConn->close();
     </div>
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
-      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos'), (int) $vieCombOut) ?></div>
+      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_6'), (int) $vieCombOut6) ?></div>
+    </div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
+      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_5'), (int) $vieCombOut5) ?></div>
     </div>
     <div class="info-row">
       <div class="info-text">

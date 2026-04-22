@@ -6,9 +6,11 @@
 -- Требует MySQL 8.0+ (не обязательно; здесь только агрегаты)
 -- =============================================================================
 -- Vie_info:
---   Tirages  — число прошедших тиражей = число различных дат Tirage в таблице Vie
---   Comb_out — число уникальных комбинаций (n1,n2,n3,n4,n5,GN), которые
---              встретились ровно один раз (аналог Astro: GROUP BY … HAVING COUNT(*) = 1)
+--   Tirages    — число прошедших тиражей = число различных дат Tirage в таблице Vie
+--   Comb_out_6 — число уникальных комбинаций (n1,n2,n3,n4,n5,GN), где GN > 0,
+--                которые встретились ровно один раз
+--   Comb_out_5 — число уникальных комбинаций (n1,n2,n3,n4,n5), без учёта GN и даты,
+--                которые встретились ровно один раз
 -- =============================================================================
 
 DELIMITER //
@@ -16,14 +18,14 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS fill_Vie_info//
 CREATE PROCEDURE fill_Vie_info()
 BEGIN
-  CREATE TABLE IF NOT EXISTS Vie_info (
+  DROP TABLE IF EXISTS Vie_info;
+  CREATE TABLE Vie_info (
       Tirages SMALLINT UNSIGNED NOT NULL,
-      Comb_out SMALLINT UNSIGNED NOT NULL
+      Comb_out_6 SMALLINT UNSIGNED NOT NULL,
+      Comb_out_5 SMALLINT UNSIGNED NOT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-  TRUNCATE TABLE Vie_info;
-
-  INSERT INTO Vie_info (Tirages, Comb_out)
+  INSERT INTO Vie_info (Tirages, Comb_out_6, Comb_out_5)
   SELECT
       (SELECT COUNT(DISTINCT Tirage) FROM Vie) AS Tirages,
       (
@@ -31,10 +33,20 @@ BEGIN
           FROM (
               SELECT n1, n2, n3, n4, n5, GN
               FROM Vie
+              WHERE GN > 0
               GROUP BY n1, n2, n3, n4, n5, GN
               HAVING COUNT(*) = 1
-          ) AS uniq_combos
-      ) AS Comb_out;
+          ) AS uniq_combos_6
+      ) AS Comb_out_6,
+      (
+          SELECT COUNT(*)
+          FROM (
+              SELECT n1, n2, n3, n4, n5
+              FROM Vie
+              GROUP BY n1, n2, n3, n4, n5
+              HAVING COUNT(*) = 1
+          ) AS uniq_combos_5
+      ) AS Comb_out_5;
 END//
 
 DELIMITER ;

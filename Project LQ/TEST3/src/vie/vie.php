@@ -22,12 +22,16 @@ $gnFreqStats = array_fill(1, 7, 0);
 $numTiragesPasses = array_fill(1, 49, null);
 $numFreqStats = array_fill(1, 49, 0);
 
+$tableInfoExists = $vieConn->query("SHOW TABLES LIKE 'Vie_info'");
+if ($tableInfoExists && $tableInfoExists->num_rows > 0) {
+    $countRes = $vieConn->query('SELECT Tirages FROM Vie_info LIMIT 1');
+    if ($countRes && $row = $countRes->fetch_assoc()) {
+        $vieCount = (int) ($row['Tirages'] ?? 0);
+    }
+}
+
 $tableExists = $vieConn->query("SHOW TABLES LIKE 'Vie'");
 if ($tableExists && $tableExists->num_rows > 0) {
-    $countRes = $vieConn->query('SELECT COUNT(*) AS total FROM Vie');
-    if ($countRes && $row = $countRes->fetch_assoc()) {
-        $vieCount = (int) $row['total'];
-    }
     $sql = 'SELECT Tirage, n1, n2, n3, n4, n5, GN FROM Vie ORDER BY Tirage DESC LIMIT 365';
     $res = $vieConn->query($sql);
     if ($res && $res->num_rows > 0) {
