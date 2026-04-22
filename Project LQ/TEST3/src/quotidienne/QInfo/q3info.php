@@ -93,6 +93,10 @@ $conn->close();
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
     </div>
+    <div class="info-row info-row--schedule">
+      <span class="info-sign info-sign--cost" aria-hidden="true">$</span>
+      <div class="info-text"><?= t('infoblock.cost.q234') ?></div>
+    </div>
     <div class="info-row">
       <div class="info-digits">
         <span class="circle">1</span>
