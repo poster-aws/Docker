@@ -177,14 +177,14 @@ $vieConn->close();
       <div class="info-text">
         <details>
           <summary><?= t('vieinfo.info.all_combinations') ?></summary>
-          <div><?= t('vieinfo.info.combo_detail.5_5') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.4_5_gn') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.4_5') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.3_5_gn') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.3_5') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.2_5_gn') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.1_5_gn') ?></div>
-          <div><?= t('vieinfo.info.combo_detail.0_5_gn') ?></div>
+          <div>5/5 — <b>1 906 884</b></div>
+          <div>4/5+GN — <b>1 483 132</b></div>
+          <div>4/5 — <b>211 876</b></div>
+          <div>3/5+GN — <b>128 968</b></div>
+          <div>3/5 — <b>18 424</b></div>
+          <div>2/5+GN — <b>8 232</b></div>
+          <div>1/5+GN — <b>343</b></div>
+          <div>0/5+GN — <b>7</b></div>
         </details>
       </div>
     </div>
