@@ -581,6 +581,16 @@ body {
   gap: 0.1rem;
 }
 .mode-label.active { color: var(--header-text); font-weight: 600; }
+.mode-switch-wrap.is-disabled {
+  opacity: 0.5;
+}
+.mode-switch-wrap.is-disabled .switch,
+.mode-switch-wrap.is-disabled .slider {
+  cursor: not-allowed;
+}
+.mode-switch-wrap.is-disabled .mode-label {
+  color: var(--text-muted);
+}
 
 .switch {
   position: relative;
@@ -599,6 +609,12 @@ body {
   opacity: 0;
   width: 0;
   height: 0;
+}
+.switch input:disabled + .slider {
+  background: rgba(148, 163, 184, 0.3);
+}
+.switch input:disabled + .slider::before {
+  background: rgba(226, 232, 240, 0.9);
 }
 .slider {
   position: absolute;

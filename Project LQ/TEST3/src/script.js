@@ -43,9 +43,34 @@
   const infoBtn = document.getElementById('infoBtn');
   const labelOrder = document.getElementById('labelOrder');
   const labelNimport = document.getElementById('labelNimport');
+  const modeSwitchWrap = document.querySelector('.mode-switch-wrap');
   const navToggle = document.getElementById('navToggle');
   const mainNav = document.getElementById('mainNav');
   const navOverlay = document.getElementById('navOverlay');
+
+  function isToggleEnabledForPage(page) {
+    return page === 'quotidienne/q2.php' ||
+      page === 'quotidienne/q3.php' ||
+      page === 'quotidienne/q4.php' ||
+      page === 'quotidienne/QInfo/q2info.php' ||
+      page === 'toutourien/tout.php' ||
+      page === 'banco/banco.php' ||
+      page === 'astro/astro.php' ||
+      page === 'astro/Info/astroinfo.php';
+  }
+
+  function updateToggleAvailability(page) {
+    page = page || (container && container.getAttribute('data-page')) || '';
+    var enabled = isToggleEnabledForPage(page);
+    if (toggleSwitch) {
+      toggleSwitch.disabled = !enabled;
+      toggleSwitch.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+    }
+    if (modeSwitchWrap) {
+      modeSwitchWrap.classList.toggle('is-disabled', !enabled);
+    }
+    return enabled;
+  }
 
   function setNavOpen(open) {
     if (mainNav) mainNav.classList.toggle('is-open', open);
@@ -79,6 +104,8 @@
   function updateToggleLabels(page) {
     if (!labelOrder || !labelNimport) return;
     page = page || (container && container.getAttribute('data-page')) || '';
+    var enabled = updateToggleAvailability(page);
+    var checked = !!(toggleSwitch && toggleSwitch.checked);
     if (page === 'toutourien/tout.php' || page === 'toutourien/Info/toutinfo.php' || page === 'banco/banco.php' || page === 'banco/Info/bancoinfo.php') {
       if (currentLang === 'en') {
         labelOrder.textContent = '50 Draws';
@@ -87,8 +114,8 @@
         labelOrder.textContent = '50 Tirages';
         labelNimport.textContent = '200 Tirages';
       }
-      labelOrder.classList.toggle('active', !toggleSwitch.checked);
-      labelNimport.classList.toggle('active', toggleSwitch.checked);
+      labelOrder.classList.toggle('active', enabled && !checked);
+      labelNimport.classList.toggle('active', enabled && checked);
       return;
     }
     if (page === 'astro/astro.php' || page === 'astro/Info/astroinfo.php') {
@@ -99,8 +126,15 @@
         labelOrder.textContent = 'Mois / Signe';
         labelNimport.textContent = 'Jour / Année';
       }
-      labelOrder.classList.toggle('active', !toggleSwitch.checked);
-      labelNimport.classList.toggle('active', toggleSwitch.checked);
+      labelOrder.classList.toggle('active', enabled && !checked);
+      labelNimport.classList.toggle('active', enabled && checked);
+      return;
+    }
+    if (page === 'vie/vie.php' || page === 'vie/Info/vieinfo.php') {
+      labelOrder.textContent = 'Grande';
+      labelNimport.textContent = 'Vie';
+      labelOrder.classList.toggle('active', enabled && !checked);
+      labelNimport.classList.toggle('active', enabled && checked);
       return;
     }
     if (currentLang === 'en') {
@@ -110,8 +144,8 @@
       labelOrder.innerHTML = 'Ordre';
       labelNimport.innerHTML = "N'importe";
     }
-    labelOrder.classList.toggle('active', !toggleSwitch.checked);
-    labelNimport.classList.toggle('active', toggleSwitch.checked);
+    labelOrder.classList.toggle('active', enabled && !checked);
+    labelNimport.classList.toggle('active', enabled && checked);
   }
 
   function getInfoFetchPage(page) {
