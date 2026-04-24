@@ -100,6 +100,7 @@ if response.status_code == 200:
             cursor.execute("SELECT COUNT(*) FROM Vie WHERE Tirage = %s", (date_obj,))
             exists = cursor.fetchone()[0] > 0
 
+            inserted = False
             if exists:
                 print(f"- Данные для {date_obj} уже существуют! Пропускаем вставку.")
             else:
@@ -109,7 +110,18 @@ if response.status_code == 200:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (date_obj, n1, n2, n3, n4, n5, GN))
                 connection.commit()
+                inserted = True
                 print(f"- Тираж {date_obj} успешно добавлен в базу данных.")
+
+            # === 8. Запускаем процедуру fill_Vie_info, если были вставки ===
+            if inserted:
+                print("- Запускаем процедуру fill_Vie_info...")
+                try:
+                    cursor.callproc("fill_Vie_info")
+                    connection.commit()
+                    print("- Процедура fill_Vie_info выполнена.")
+                except Error as e:
+                    print(f"* Ошибка при вызове fill_Vie_info: {e}")
 
     except Error as e:
         print("* Ошибка при работе с MySQL:", e)
@@ -124,7 +136,7 @@ if response.status_code == 200:
         except Exception as cleanup_error:
             print("* Ошибка при закрытии соединения:", cleanup_error)
 
-    # === 8. Удаляем временный файл page_source.html ===
+    # === 9. Удаляем временный файл page_source.html ===
     if os.path.exists("page_source.html"):
         try:
             os.remove("page_source.html")
