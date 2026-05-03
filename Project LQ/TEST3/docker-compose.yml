@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: rootpassword
       # MYSQL_DATABASE: quotidienne2  # Создаем БД
       MYSQL_USER: user
-      MYSQL_PASSWORD: user  
+      MYSQL_PASSWORD: user
     volumes:
       # - ./DB:/var/lib/mysql/  # Для персистентности данных
       - ./sql:/docker-entrypoint-initdb.d # Загрузка SQL скриптов при старте
@@ -14,12 +14,18 @@ services:
       - "3306:3306"
     networks:
       - mysql_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   restore:
     image: mysql:8
     container_name: mysql_restore
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ../BackupDB:/backups
       - ./restore.sh:/scripts/restore.sh
@@ -37,7 +43,8 @@ services:
     networks:
       - mysql_net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "9000:9000"  # Порт для взаимодействия с Nginx
 
@@ -58,10 +65,10 @@ services:
     image: adminer
     container_name: adminer
     ports:
-      - "8080:8080"  # Порт, по которому будет доступен Adminer
+      - "8080:8080"
     networks:
       - mysql_net
 
 networks:
   mysql_net:
-    name: mysql_net # Явно указываем имя сети, чтобы Adminer мог её использовать
+    driver: bridge
