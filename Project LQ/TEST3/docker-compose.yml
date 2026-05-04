@@ -71,4 +71,5 @@ services:
 
 networks:
   mysql_net:
+    name: mysql_net
     driver: bridge

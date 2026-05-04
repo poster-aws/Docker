@@ -683,6 +683,24 @@ input:checked + .slider::before { transform: translateX(18px); }
   margin-bottom: 0;
 }
 
+/* Banco : même marge bas de zone principale que Quotidienne (Q2…) avec .tables-wrapper */
+.main:has(.banco-layout) {
+  overflow: hidden;
+  padding-bottom: 0.25rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+@media (max-width: 899px) {
+  .main:has(.banco-layout) {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+.main:has(.banco-layout) .banco-layout {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
 .welcome {
   max-width: 480px;
   margin: 0 auto;
@@ -1182,7 +1200,8 @@ html.theme-light .spinner {
 @media (min-width: 1024px) {
   .main { padding: 0.75rem 2rem 1.5rem; }
   /* Таблицы: сверху и снизу одинаковый малый отступ снизу */
-  .main:has(.tables-wrapper) {
+  .main:has(.tables-wrapper),
+  .main:has(.banco-layout) {
     padding: 0.75rem 2rem 0.375rem;
   }
   .page-title { font-size: 1.125rem; }

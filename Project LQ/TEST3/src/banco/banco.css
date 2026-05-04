@@ -16,12 +16,13 @@
 
 .banco-layout .table-wrapper.banco-grid-wrapper {
   width: 100%;
-  height: calc(100vh - var(--header-h, 56px) - 2rem);
-  max-height: calc(100vh - var(--header-h, 56px) - 2rem);
+  /* Comme Q2 : .main padding vertical = 0.5rem + 0.25rem (voir .main:has(.banco-layout) dans style.css) */
+  height: calc(100vh - var(--header-h, 56px) - 0.75rem);
+  max-height: calc(100vh - var(--header-h, 56px) - 0.75rem);
   overflow-x: auto;
   overflow-y: scroll;
   scrollbar-gutter: stable;
-  margin: 0 auto 12px;
+  margin: 0 auto 0;
   border: 1px solid var(--info-grid-wrap-border, #ccc);
   background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
   border-radius: var(--radius-sm, 8px);
@@ -89,4 +90,12 @@
   text-align: center;
   margin: 12px;
   color: var(--error, #c0392b);
+}
+
+/* Comme Q2 ≥1024px : .main padding 0.75rem + 0.375rem */
+@media (min-width: 1024px) {
+  .banco-layout .table-wrapper.banco-grid-wrapper {
+    height: calc(100vh - var(--header-h, 56px) - 1.125rem);
+    max-height: calc(100vh - var(--header-h, 56px) - 1.125rem);
+  }
 }
