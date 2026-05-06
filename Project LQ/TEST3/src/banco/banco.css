@@ -14,6 +14,12 @@
   color: var(--table-text, var(--text));
 }
 
+/* Limit 200 : zone un peu plus large (confirmation visuelle vs 50) */
+.banco-layout:has(.banco-grid-wrapper[data-limit="200"]) {
+  width: min(100%, 1120px);
+  max-width: 1120px;
+}
+
 .banco-layout .table-wrapper.banco-grid-wrapper {
   width: 100%;
   /* Comme Q2 : .main padding vertical = 0.5rem + 0.25rem (voir .main:has(.banco-layout) dans style.css) */
