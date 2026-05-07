@@ -39,8 +39,13 @@
   --theme-table-circle-bg: #38bdf8;
   --theme-table-circle-text: #0f172a;
   /* Шарики : блик (верх) и кромка (низ) для градиента 3D */
-  --theme-table-circle-glare: #7dd3fc;
-  --theme-table-circle-depth: #0369a1;
+  --theme-table-circle-glare: #e0f2fe;
+  --theme-table-circle-depth: #075985;
+  /* Palette « autre thème » pour pastilles sélectionnées (ex. vérificateur Tout ou Rien) */
+  --theme-table-circle-alt-bg: #60a5fa;
+  --theme-table-circle-alt-text: #422006;
+  --theme-table-circle-alt-glare: #eff6ff;
+  --theme-table-circle-alt-depth: #1d4ed8;
   --theme-table-highlight-row: rgba(34, 197, 94, 0.1);
   --theme-table-range-1: rgba(34, 197, 94, 0.28);
   /* Vert palier 2 : ~50 % vers le blanc (2× plus clair que le vert « lime » précédent) */
@@ -80,6 +85,13 @@
   --theme-q2info-stats-text: var(--theme-table-text);
   --theme-q2info-stats-header-bg: var(--theme-table-header-bg);
   --theme-q2info-stats-header-text: var(--theme-table-header-text);
+  /* Tout ou Rien — bouton Vérifier : résultats (même logique qu’en clair, tons adaptés au fond sombre) */
+  --theme-verifier-success-bg: rgba(34, 197, 94, 0.2);
+  --theme-verifier-success-border: rgba(52, 211, 153, 0.5);
+  --theme-verifier-warning-bg: rgba(245, 158, 11, 0.22);
+  --theme-verifier-warning-border: rgba(251, 191, 36, 0.52);
+  --theme-verifier-error-bg: rgba(239, 68, 68, 0.2);
+  --theme-verifier-error-border: rgba(248, 113, 113, 0.5);
 }
 
 html.theme-light {
@@ -111,6 +123,10 @@ html.theme-light {
   --theme-table-circle-text: #422006;
   --theme-table-circle-glare: #eff6ff;
   --theme-table-circle-depth: #2563eb;
+  --theme-table-circle-alt-bg: #38bdf8;
+  --theme-table-circle-alt-text: #0f172a;
+  --theme-table-circle-alt-glare: #e0f2fe;
+  --theme-table-circle-alt-depth: #075985;
   --theme-table-highlight-row: rgba(34, 197, 94, 0.12);
   --theme-table-range-1: rgba(34, 197, 94, 0.3);
   --theme-table-range-2: rgba(154, 236, 187, 0.36);
@@ -146,6 +162,12 @@ html.theme-light {
   --theme-q2info-stats-text: var(--theme-table-text);
   --theme-q2info-stats-header-bg: var(--theme-table-header-bg);
   --theme-q2info-stats-header-text: var(--theme-table-header-text);
+  --theme-verifier-success-bg: #e8f6ee;
+  --theme-verifier-success-border: #bfe6cf;
+  --theme-verifier-warning-bg: #fff4e5;
+  --theme-verifier-warning-border: #ffd19b;
+  --theme-verifier-error-bg: #fdecec;
+  --theme-verifier-error-border: #f5b5b5;
 }
 
 /* Thème sombre — Ardoise (défaut) : autres jetons + alias page/en-tête */
@@ -176,6 +198,10 @@ html.theme-light {
   --table-circle-text: var(--theme-table-circle-text);
   --table-circle-glare: var(--theme-table-circle-glare);
   --table-circle-depth: var(--theme-table-circle-depth);
+  --table-circle-alt-bg: var(--theme-table-circle-alt-bg);
+  --table-circle-alt-text: var(--theme-table-circle-alt-text);
+  --table-circle-alt-glare: var(--theme-table-circle-alt-glare);
+  --table-circle-alt-depth: var(--theme-table-circle-alt-depth);
   --table-highlight-row: var(--theme-table-highlight-row);
   --table-range-1: var(--theme-table-range-1);
   --table-range-2: var(--theme-table-range-2);
@@ -253,6 +279,10 @@ html.theme-light {
   --table-circle-text: var(--theme-table-circle-text);
   --table-circle-glare: var(--theme-table-circle-glare);
   --table-circle-depth: var(--theme-table-circle-depth);
+  --table-circle-alt-bg: var(--theme-table-circle-alt-bg);
+  --table-circle-alt-text: var(--theme-table-circle-alt-text);
+  --table-circle-alt-glare: var(--theme-table-circle-alt-glare);
+  --table-circle-alt-depth: var(--theme-table-circle-alt-depth);
   --table-highlight-row: var(--theme-table-highlight-row);
   --table-range-1: var(--theme-table-range-1);
   --table-range-2: var(--theme-table-range-2);

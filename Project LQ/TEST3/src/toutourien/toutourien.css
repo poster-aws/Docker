@@ -132,31 +132,60 @@
   }
 }
 
+/* Pastilles : même rendu 3D que .circle (Quotidienne), variables --table-circle-* du thème */
 .tout-verifier-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 36px;
   height: 36px;
   margin: 0 auto;
   padding: 0;
-  border: 1px solid var(--table-cell-border, #bdbdbd);
+  border: none;
   border-radius: 50%;
-  background: var(--info-grid-muted-bg, #eee);
-  color: var(--text, #000);
+  color: var(--table-circle-text, #0f172a);
   font-size: 1em;
-  font-family: inherit;
+  font-weight: 700;
+  font-family: var(--font);
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s, background 0.15s;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--table-circle-glare, var(--table-circle-bg, #38bdf8)) 0%,
+    var(--table-circle-bg, #38bdf8) 48%,
+    var(--table-circle-depth, #0369a1) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.42),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.22),
+    0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
 }
 
-.tout-verifier-circle:hover {
+.tout-verifier-circle:hover:not(.locked) {
   transform: translateY(-1px);
 }
 
+/* Sélection : palette de l’autre thème (--table-circle-alt-*) */
 .tout-verifier-circle.selected {
-  background: #007bff;
-  color: #fff;
-  font-weight: bold;
-  border-color: #0056b3;
+  color: var(--table-circle-alt-text, #422006);
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--table-circle-alt-glare, var(--table-circle-alt-bg, #60a5fa)) 0%,
+    var(--table-circle-alt-bg, #60a5fa) 48%,
+    var(--table-circle-alt-depth, #2563eb) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.48),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.24),
+    0 2px 6px rgba(0, 0, 0, 0.22);
+}
+
+.tout-verifier-circle:focus-visible {
+  outline: 2px solid var(--accent, #38bdf8);
+  outline-offset: 2px;
 }
 
 .tout-verifier-circle.locked {
@@ -166,27 +195,45 @@
 
 .tout-verifier-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: stretch;
   gap: 8px;
-  align-items: center;
   justify-content: center;
+  width: 100%;
   margin-bottom: 0.45rem;
 }
 
 .tout-verifier-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 5px 12px;
   font-size: 0.9em;
+  line-height: 1.25;
   cursor: pointer;
   border: 1px solid var(--table-cell-border, #bdbdbd);
   border-radius: var(--radius-sm, 10px);
   background: var(--table-shell-bg, #f5f5f5);
   color: var(--text, #000);
-  min-width: 118px;
+  min-height: 2.5rem;
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: filter 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  text-align: center;
 }
 
-.tout-verifier-btn:hover {
-  filter: brightness(0.98);
+.tout-verifier-btn:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+
+.tout-verifier-btn:active:not(:disabled) {
+  filter: brightness(0.88);
 }
 
 .tout-verifier-btn:disabled {
@@ -198,19 +245,20 @@
   background: var(--bg-card, #f5f5f5);
 }
 
+/* Pastels en thème clair ; tons translucides sombres via --theme-verifier-* en thème foncé */
 .tout-verifier-btn-success {
-  background: #e8f6ee;
-  border-color: #bfe6cf;
+  background: var(--theme-verifier-success-bg, #e8f6ee);
+  border-color: var(--theme-verifier-success-border, #bfe6cf);
 }
 
 .tout-verifier-btn-warning {
-  background: #fff4e5;
-  border-color: #ffd19b;
+  background: var(--theme-verifier-warning-bg, #fff4e5);
+  border-color: var(--theme-verifier-warning-border, #ffd19b);
 }
 
 .tout-verifier-btn-error {
-  background: #fdecec;
-  border-color: #f5b5b5;
+  background: var(--theme-verifier-error-bg, #fdecec);
+  border-color: var(--theme-verifier-error-border, #f5b5b5);
 }
 
 .tout-verifier-dist-wrap {
