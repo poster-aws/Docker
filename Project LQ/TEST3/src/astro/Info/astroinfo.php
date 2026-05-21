@@ -8,6 +8,16 @@ header('Expires: 0');
 
 $astroView = (isset($_GET['astro_view']) && $_GET['astro_view'] === 'jour') ? 'jour' : 'mois';
 
+/** Format entier pour affichage Info (FR : espaces, EN : virgules). */
+function astro_format_info_count(int $value): string
+{
+    global $lang;
+    if ($lang === 'en') {
+        return number_format($value, 0, '.', ',');
+    }
+    return number_format($value, 0, ',', ' ');
+}
+
 $allowedGridLimits = [100, 365];
 $gridLimit = isset($_GET['grid_limit']) && in_array((int) $_GET['grid_limit'], $allowedGridLimits, true)
     ? (int) $_GET['grid_limit']
@@ -198,7 +208,7 @@ $anneeMax = max(1, ...$sumsAnnee);
 
 ?>
 <div class="astro-layout astro-layout--info astroinfo-layout">
-  <div id="astro-meta" data-count="<?= (int) $astroCount ?>" data-view="<?= htmlspecialchars($astroView, ENT_QUOTES, 'UTF-8') ?>"></div>
+  <div id="astro-meta" data-count="<?= (int) $astroCount ?>" data-view="<?= htmlspecialchars($astroView, ENT_QUOTES, 'UTF-8') ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('astro.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('astro.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 
   <?php if (!$hasStats): ?>
     <p class="no-data" style="margin: 1rem 0;"><?= htmlspecialchars(t('astroinfo.no_stats_table'), ENT_QUOTES, 'UTF-8') ?></p>
@@ -392,7 +402,7 @@ $anneeMax = max(1, ...$sumsAnnee);
     </div>
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
-      <div class="info-text"><?= sprintf(t('astroinfo.info.unique_combos'), (int) $astroCombOut) ?></div>
+      <div class="info-text"><?= sprintf(t('astroinfo.info.unique_combos'), astro_format_info_count((int) $astroCombOut)) ?></div>
     </div>
     <div class="info-row">
       <div class="info-text"><?= t('astroinfo.info.all_combinations') ?></div>

@@ -122,6 +122,7 @@ $I18N = [
         'banco.no_data' => 'Pas de données à afficher.',
         'bancoinfo.stub' => 'Page d’information Banco — contenu à venir.',
         'bancoinfo.placeholder' => 'Légende et analyses détaillées : à venir.',
+        'astro.header.sub' => 'tirages depuis le 13 janvier 2006',
         'astro.col.draw' => 'Tirage',
         'astro.col.last_365' => '365 dernières',
         'astro.col.jour' => 'Jour',
@@ -160,7 +161,7 @@ $I18N = [
         'astroinfo.no_stats_table' => 'Table Astro_stats introuvable — importez ou calculez les statistiques.',
         'astroinfo.info.cost' => 'Coût: 1 cad pour 1 sélection',
         'astroinfo.info.all_combinations' => 'Toutes les combinaisons : <b>446 400</b>',
-        'astroinfo.info.unique_combos' => 'Combinaisons uniques sorties : <b>%d</b>',
+        'astroinfo.info.unique_combos' => 'Combinaisons uniques sorties : <span class="header-draw-count">%s</span>',
         'astroinfo.info.types2.summary' => 'Combinaisons de 2 types : <b>6 388</b>',
         'astroinfo.info.types2.1' => 'Mois + Signe = 12 × 12 = <b>144</b>',
         'astroinfo.info.types2.2' => 'Mois + Jour = 12 × 31 = <b>372</b>',
@@ -292,6 +293,7 @@ $I18N = [
         'banco.no_data' => 'No data to display.',
         'bancoinfo.stub' => 'Banco information page — content coming later.',
         'bancoinfo.placeholder' => 'Legend and detailed analysis: coming later.',
+        'astro.header.sub' => 'draws since January 13, 2006',
         'astro.col.draw' => 'Draw',
         'astro.col.last_365' => 'Last 365',
         'astro.col.jour' => 'Day',
@@ -330,7 +332,7 @@ $I18N = [
         'astroinfo.no_stats_table' => 'Astro_stats table not found — import or build statistics.',
         'astroinfo.info.cost' => 'Cost: 1 CAD per selection',
         'astroinfo.info.all_combinations' => 'All combinations: <b>446,400</b>',
-        'astroinfo.info.unique_combos' => 'Unique combinations drawn: <b>%d</b>',
+        'astroinfo.info.unique_combos' => 'Unique combinations drawn: <span class="header-draw-count">%s</span>',
         'astroinfo.info.types2.summary' => 'Combinations of 2 types: <b>6,388</b>',
         'astroinfo.info.types2.1' => 'Month + Sign = 12 × 12 = <b>144</b>',
         'astroinfo.info.types2.2' => 'Month + Day = 12 × 31 = <b>372</b>',
@@ -347,6 +349,17 @@ $I18N = [
         'astroinfo.analytics.bottom10' => 'Bottom 10',
     ],
 ];
+
+if (!function_exists('t_for_lang')) {
+    function t_for_lang(string $key, string $langCode): string
+    {
+        global $I18N;
+        if (!in_array($langCode, ['fr', 'en'], true)) {
+            $langCode = 'fr';
+        }
+        return $I18N[$langCode][$key] ?? $I18N['fr'][$key] ?? $key;
+    }
+}
 
 if (!function_exists('t')) {
     function t(string $key): string

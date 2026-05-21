@@ -311,8 +311,42 @@
     });
   }
 
+  function formatHeaderDrawCount(raw, lang) {
+    var n = parseInt(String(raw).replace(/[^\d]/g, ''), 10);
+    if (isNaN(n)) return String(raw);
+    try {
+      return n.toLocaleString(lang === 'en' ? 'en-CA' : 'fr-CA');
+    } catch (e) {
+      return String(n);
+    }
+  }
+
+  function getAstroHeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en'
+      ? 'draws since January 13, 2006'
+      : 'tirages depuis le 13 janvier 2006';
+  }
+
+  function buildAstroPageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getAstroHeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Astro <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
   function updatePageTitleForLang(page) {
     if (!pageTitle || !page) return;
+
+    if (page.indexOf('astro/') === 0) {
+      var astroCount = pageTitle.dataset.drawCount || '?';
+      var astroMeta = container.querySelector('#astro-meta');
+      pageTitle.innerHTML = buildAstroPageTitle(astroCount, currentLang, astroMeta);
+      return;
+    }
 
     var sub = pageTitle.querySelector('.sub');
     if (!sub) return;
@@ -320,7 +354,6 @@
     var countMatch = (sub.textContent || '').match(/\d+/);
     if (!countMatch) return;
     var count = countMatch[0];
-    var suffix = currentLang === 'en' ? 'draws' : 'tirages';
 
     if (page.indexOf('q2') !== -1) {
       pageTitle.innerHTML = currentLang === 'en'
@@ -342,10 +375,6 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Banco <span class="sub">' + count + ' draws</span>'
         : 'Banco <span class="sub">' + count + ' tirages</span>';
-    } else if (page.indexOf('astro/') === 0) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
-        : 'Astro <span class="sub">' + count + ' tirages depuis 13 janvier 2006</span>';
     } else if (page.indexOf('vie/') === 0) {
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
@@ -504,9 +533,8 @@
             ? 'Banco <span class="sub">' + count + ' draws</span>'
             : 'Banco <span class="sub">' + count + ' tirages</span>';
         } else if (page.indexOf('astro/') === 0) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Astro <span class="sub">' + count + ' draws since January 13, 2006</span>'
-            : 'Astro <span class="sub">' + count + ' tirages depuis 13 janvier 2006</span>';
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildAstroPageTitle(count, currentLang, meta);
         } else if (page.indexOf('vie/') === 0) {
           pageTitle.innerHTML = currentLang === 'en'
             ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
