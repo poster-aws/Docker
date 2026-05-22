@@ -351,16 +351,24 @@
   color: var(--info-grid-text, #000);
 }
 
+.toutinfo-layout .analyse-grid thead th,
+.toutinfo-layout .analyse-grid td.sticky-label {
+  font-weight: 400;
+}
+
 .toutinfo-layout .analyse-grid td.sticky-label {
   position: sticky;
   left: 0;
   z-index: 1;
-  font-weight: bold;
   background-color: var(--toutinfo-analyse-sticky-bg, #f0f0f0);
 }
 
 .toutinfo-layout .analyse-grid td.empty {
   background-color: var(--toutinfo-analyse-empty-bg, #dcdbdb);
+}
+
+.toutinfo-layout .analyse-grid tbody td:not(.empty):not(.sticky-label) {
+  font-weight: 700;
 }
 
 .toutinfo-layout .toutinfo-no-data {

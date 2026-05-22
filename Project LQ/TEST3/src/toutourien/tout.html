@@ -1,4 +1,4 @@
-<div id="tout-meta" data-count="<?= (int)$toutCount ?>"></div>
+<div id="tout-meta" data-count="<?= (int) $toutCount ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('tout.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('tout.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 <script type="application/json" id="tout-verifier-i18n"><?= json_encode([
     'btnCheck' => t('verifier.btn_check'),
     'btnReset' => t('verifier.btn_reset'),

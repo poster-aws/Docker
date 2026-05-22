@@ -87,7 +87,7 @@ function toutinfo_format_int(int $n, string $lang): string
     return number_format($n, 0, ',', ' ');
 }
 ?>
-<div id="tout-meta" data-count="<?= $totalCount ?>"></div>
+<div id="tout-meta" data-count="<?= (int) $totalCount ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('tout.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('tout.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 <div class="toutinfo-layout">
 
 <?php if (!empty($positionMatrix)): ?>
@@ -138,12 +138,12 @@ function toutinfo_format_int(int $n, string $lang): string
   </div>
   <div class="info-row">
     <div class="info-text">
-      <?= t('toutinfo.info.all_possible') ?> — <b><?= toutinfo_format_int($totalPossibleComb, $lang) ?></b>
+      <?= sprintf(t('toutinfo.info.drawn_unique'), '<span class="header-draw-count">' . toutinfo_format_int($totalActualComb, $lang) . '</span>') ?>
     </div>
   </div>
   <div class="info-row">
     <div class="info-text">
-      <?= t('toutinfo.info.drawn_unique') ?> — <b><?= toutinfo_format_int($totalActualComb, $lang) ?></b>
+      <?= t('toutinfo.info.all_possible') ?> — <b><?= toutinfo_format_int($totalPossibleComb, $lang) ?></b>
     </div>
   </div>
 
@@ -157,7 +157,7 @@ function toutinfo_format_int(int $n, string $lang): string
           <?php foreach (explode(',', $combo) as $d): ?>
             <span class="combo-square"><?= htmlspecialchars(trim($d), ENT_QUOTES, 'UTF-8') ?></span>
           <?php endforeach; ?>
-          — <b><?= (int)$cnt ?></b>
+          — <b><?= toutinfo_format_int((int) $cnt, $lang) ?></b>
         </div>
       </div>
     <?php endforeach; ?>

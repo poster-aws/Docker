@@ -372,6 +372,23 @@
     return 'Banco <span class="sub">' + countHtml + ' ' + line + '</span>';
   }
 
+  function getToutHeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en'
+      ? 'draws since November 17, 2014'
+      : 'tirages depuis le 17 novembre 2014';
+  }
+
+  function buildToutPageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getToutHeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Tout ou Rien <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
   function updatePageTitleForLang(page) {
     if (!pageTitle || !page) return;
 
@@ -396,6 +413,13 @@
       return;
     }
 
+    if (page.indexOf('toutourien/') === 0) {
+      var toutCount = pageTitle.dataset.drawCount || '?';
+      var toutMeta = container.querySelector('#tout-meta');
+      pageTitle.innerHTML = buildToutPageTitle(toutCount, currentLang, toutMeta);
+      return;
+    }
+
     var sub = pageTitle.querySelector('.sub');
     if (!sub) return;
 
@@ -415,10 +439,6 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
         : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
-    } else if (page.indexOf('toutourien/') === 0) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
-        : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
     }
   }
 
@@ -565,9 +585,8 @@
             ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
             : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
         } else if (page.indexOf('toutourien/') === 0) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
-            : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildToutPageTitle(count, currentLang, meta);
         } else if (page.indexOf('banco/') === 0) {
           pageTitle.dataset.drawCount = count;
           pageTitle.innerHTML = buildBancoPageTitle(count, currentLang, meta);
