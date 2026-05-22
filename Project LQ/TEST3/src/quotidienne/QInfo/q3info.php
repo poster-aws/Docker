@@ -36,7 +36,7 @@ foreach ($tirages as $t) {
 
 $conn->close();
 ?>
-<div id="q3-meta" data-count="<?= $q3count ?>"></div>
+<div id="q3-meta" data-count="<?= (int) $q3count ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('q3.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('q3.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 <div class="q3info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>

@@ -402,3 +402,20 @@
 /*
  * Pastilles .circle : définition dans style.css (thème --table-circle-*).
  */
+
+/* Q4 — 1re table : fond étoile 1↔2, chiffres noirs, étoiles un peu plus grandes */
+.quotidienne-main .table-container .star-box {
+  width: 24px;
+  height: 24px;
+  font-size: 0.9em;
+  font-weight: 800;
+  color: #000;
+}
+
+.quotidienne-main .table-container .star-1 {
+  background: var(--table-star-2-bg);
+}
+
+.quotidienne-main .table-container .star-2 {
+  background: var(--table-star-1-bg);
+}

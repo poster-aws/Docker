@@ -109,7 +109,7 @@ foreach ($tiragesGrid as $t) {
 }
 /* === /GRID Q4 === */
 ?>
-<div id="q4-meta" data-count="<?= $q4count ?>"></div>
+<div id="q4-meta" data-count="<?= (int) $q4count ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('q4.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('q4.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 <div class="q4info-layout">
 
 <!-- === GRID Q4 (как Q2 / Q3) === -->

@@ -389,6 +389,63 @@
     return 'Tout ou Rien <span class="sub">' + countHtml + ' ' + line + '</span>';
   }
 
+  function getQ2HeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en' ? 'draws since May 19, 2016' : 'tirages depuis le 19 mai 2016';
+  }
+
+  function buildQ2PageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getQ2HeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Quotidienne 2 <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
+  function getQ3HeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en' ? 'draws since June 6, 1983' : 'tirages depuis le 6 juin 1983';
+  }
+
+  function buildQ3PageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getQ3HeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Quotidienne 3 <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
+  function getQ4HeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en' ? 'draws since June 6, 1983' : 'tirages depuis le 6 juin 1983';
+  }
+
+  function buildQ4PageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getQ4HeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Quotidienne 4 <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
+  function isQuotidienneQ2Page(page) {
+    return page === 'quotidienne/q2.php' || page === 'quotidienne/QInfo/q2info.php';
+  }
+
+  function isQuotidienneQ3Page(page) {
+    return page === 'quotidienne/q3.php' || page === 'quotidienne/QInfo/q3info.php';
+  }
+
+  function isQuotidienneQ4Page(page) {
+    return page === 'quotidienne/q4.php' || page === 'quotidienne/QInfo/q4info.php';
+  }
+
   function updatePageTitleForLang(page) {
     if (!pageTitle || !page) return;
 
@@ -420,25 +477,25 @@
       return;
     }
 
-    var sub = pageTitle.querySelector('.sub');
-    if (!sub) return;
+    if (isQuotidienneQ2Page(page)) {
+      var q2Count = pageTitle.dataset.drawCount || '?';
+      var q2Meta = container.querySelector('#q2-meta');
+      pageTitle.innerHTML = buildQ2PageTitle(q2Count, currentLang, q2Meta);
+      return;
+    }
 
-    var countMatch = (sub.textContent || '').match(/\d+/);
-    if (!countMatch) return;
-    var count = countMatch[0];
+    if (isQuotidienneQ3Page(page)) {
+      var q3Count = pageTitle.dataset.drawCount || '?';
+      var q3Meta = container.querySelector('#q3-meta');
+      pageTitle.innerHTML = buildQ3PageTitle(q3Count, currentLang, q3Meta);
+      return;
+    }
 
-    if (page.indexOf('q2') !== -1) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
-        : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
-    } else if (page.indexOf('q3') !== -1) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Quotidienne 3 <span class="sub">' + count + ' draws since June 6, 1983</span>'
-        : 'Quotidienne 3 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
-    } else if (page.indexOf('q4') !== -1) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
-        : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
+    if (isQuotidienneQ4Page(page)) {
+      var q4Count = pageTitle.dataset.drawCount || '?';
+      var q4Meta = container.querySelector('#q4-meta');
+      pageTitle.innerHTML = buildQ4PageTitle(q4Count, currentLang, q4Meta);
+      return;
     }
   }
 
@@ -572,18 +629,15 @@
 
         var meta = container.querySelector('[id$="-meta"]');
         var count = meta ? meta.dataset.count || '?' : '?';
-        if (page.indexOf('q2') !== -1) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Quotidienne 2 <span class="sub">' + count + ' draws since May 19, 2016</span>'
-            : 'Quotidienne 2 <span class="sub">' + count + ' tirages depuis 19 mai 2016</span>';
-        } else if (page.indexOf('q3') !== -1) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Quotidienne 3 <span class="sub">' + count + ' draws since June 6, 1983</span>'
-            : 'Quotidienne 3 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
-        } else if (page.indexOf('q4') !== -1) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Quotidienne 4 <span class="sub">' + count + ' draws since June 6, 1983</span>'
-            : 'Quotidienne 4 <span class="sub">' + count + ' tirages depuis 06 juin 1983</span>';
+        if (isQuotidienneQ2Page(page)) {
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildQ2PageTitle(count, currentLang, meta);
+        } else if (isQuotidienneQ3Page(page)) {
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildQ3PageTitle(count, currentLang, meta);
+        } else if (isQuotidienneQ4Page(page)) {
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildQ4PageTitle(count, currentLang, meta);
         } else if (page.indexOf('toutourien/') === 0) {
           pageTitle.dataset.drawCount = count;
           pageTitle.innerHTML = buildToutPageTitle(count, currentLang, meta);

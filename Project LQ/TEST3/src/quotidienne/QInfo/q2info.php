@@ -85,7 +85,7 @@ $q2infoBoot = [
 ];
 $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
 ?>
-<div id="q2-meta" data-count="<?= (int)$q2count ?>" data-norder="<?= $isNorder ? '1' : '0' ?>"></div>
+<div id="q2-meta" data-count="<?= (int) $q2count ?>" data-norder="<?= $isNorder ? '1' : '0' ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('q2.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('q2.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 <div class="q2info-layout">
   <div class="table-wrapper">
     <?php if (!empty($tirages)): ?>
