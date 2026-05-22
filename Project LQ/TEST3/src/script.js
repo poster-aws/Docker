@@ -338,6 +338,40 @@
     return 'Astro <span class="sub">' + countHtml + ' ' + line + '</span>';
   }
 
+  function getVieHeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en'
+      ? 'draws since October 20, 2016'
+      : 'tirages depuis le 20 octobre 2016';
+  }
+
+  function buildViePageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getVieHeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Grande Vie <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
+  function getBancoHeaderSubLine(lang, meta) {
+    if (meta) {
+      var fromMeta = lang === 'en' ? meta.dataset.headerSubEn : meta.dataset.headerSubFr;
+      if (fromMeta) return fromMeta;
+    }
+    return lang === 'en'
+      ? 'draws since September 15, 1989'
+      : 'tirages depuis le 15 septembre 1989';
+  }
+
+  function buildBancoPageTitle(count, lang, meta) {
+    var formatted = formatHeaderDrawCount(count, lang);
+    var line = getBancoHeaderSubLine(lang, meta);
+    var countHtml = '<span class="header-draw-count">' + formatted + '</span>';
+    return 'Banco <span class="sub">' + countHtml + ' ' + line + '</span>';
+  }
+
   function updatePageTitleForLang(page) {
     if (!pageTitle || !page) return;
 
@@ -345,6 +379,20 @@
       var astroCount = pageTitle.dataset.drawCount || '?';
       var astroMeta = container.querySelector('#astro-meta');
       pageTitle.innerHTML = buildAstroPageTitle(astroCount, currentLang, astroMeta);
+      return;
+    }
+
+    if (page.indexOf('vie/') === 0) {
+      var vieCount = pageTitle.dataset.drawCount || '?';
+      var vieMeta = container.querySelector('#vie-meta');
+      pageTitle.innerHTML = buildViePageTitle(vieCount, currentLang, vieMeta);
+      return;
+    }
+
+    if (page.indexOf('banco/') === 0) {
+      var bancoCount = pageTitle.dataset.drawCount || '?';
+      var bancoMeta = container.querySelector('#banco-meta');
+      pageTitle.innerHTML = buildBancoPageTitle(bancoCount, currentLang, bancoMeta);
       return;
     }
 
@@ -371,14 +419,6 @@
       pageTitle.innerHTML = currentLang === 'en'
         ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
         : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
-    } else if (page.indexOf('banco/') === 0) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Banco <span class="sub">' + count + ' draws</span>'
-        : 'Banco <span class="sub">' + count + ' tirages</span>';
-    } else if (page.indexOf('vie/') === 0) {
-      pageTitle.innerHTML = currentLang === 'en'
-        ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
-        : 'Grande Vie <span class="sub">' + count + ' tirages depuis 20 octobre 2016</span>';
     }
   }
 
@@ -529,16 +569,14 @@
             ? 'Tout ou Rien <span class="sub">' + count + ' draws since November 17, 2014</span>'
             : 'Tout ou Rien <span class="sub">' + count + ' tirages depuis 17 novembre 2014</span>';
         } else if (page.indexOf('banco/') === 0) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Banco <span class="sub">' + count + ' draws</span>'
-            : 'Banco <span class="sub">' + count + ' tirages</span>';
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildBancoPageTitle(count, currentLang, meta);
         } else if (page.indexOf('astro/') === 0) {
           pageTitle.dataset.drawCount = count;
           pageTitle.innerHTML = buildAstroPageTitle(count, currentLang, meta);
         } else if (page.indexOf('vie/') === 0) {
-          pageTitle.innerHTML = currentLang === 'en'
-            ? 'Grande Vie <span class="sub">' + count + ' draws since October 20, 2016</span>'
-            : 'Grande Vie <span class="sub">' + count + ' tirages depuis 20 octobre 2016</span>';
+          pageTitle.dataset.drawCount = count;
+          pageTitle.innerHTML = buildViePageTitle(count, currentLang, meta);
         }
         if (infoBtn) {
           infoBtn.style.visibility = '';

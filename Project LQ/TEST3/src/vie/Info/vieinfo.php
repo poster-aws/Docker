@@ -6,6 +6,16 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
+/** Format entier pour affichage Info (FR : espaces, EN : virgules). */
+function vie_format_info_count(int $value): string
+{
+    global $lang;
+    if ($lang === 'en') {
+        return number_format($value, 0, '.', ',');
+    }
+    return number_format($value, 0, ',', ' ');
+}
+
 $tiragesGrid = [];
 $numberSums = array_fill(1, 49, 0);
 $gnSums = array_fill(1, 7, 0);
@@ -75,7 +85,7 @@ if ($chkVieInfo && $chkVieInfo->num_rows > 0) {
 
 $vieConn->close();
 ?>
-<div id="vie-meta" data-count="<?= (int)$vieCount ?>"></div>
+<div id="vie-meta" data-count="<?= (int) $vieCount ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('vie.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('vie.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 
 <div class="vie-layout vie-layout--info">
   <div class="table-wrapper vie-grid-wrapper" data-limit="<?= (int)$gridLimit ?>">
@@ -167,24 +177,31 @@ $vieConn->close();
     </div>
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
-      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_6'), (int) $vieCombOut6) ?></div>
+      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_6'), '<span class="header-draw-count">' . vie_format_info_count((int) $vieCombOut6) . '</span>') ?></div>
     </div>
     <div class="info-row info-row--schedule">
       <span class="info-sign info-sign--sum" aria-hidden="true">&#8721;</span>
-      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_5'), (int) $vieCombOut5) ?></div>
+      <div class="info-text"><?= sprintf(t('vieinfo.info.unique_combos_5'), '<span class="header-draw-count">' . vie_format_info_count((int) $vieCombOut5) . '</span>') ?></div>
     </div>
     <div class="info-row">
       <div class="info-text">
         <details>
-          <summary><?= t('vieinfo.info.all_combinations') ?></summary>
-          <div>5/5 — <b>1 906 884</b></div>
-          <div>4/5+GN — <b>1 483 132</b></div>
-          <div>4/5 — <b>211 876</b></div>
-          <div>3/5+GN — <b>128 968</b></div>
-          <div>3/5 — <b>18 424</b></div>
-          <div>2/5+GN — <b>8 232</b></div>
-          <div>1/5+GN — <b>343</b></div>
-          <div>0/5+GN — <b>7</b></div>
+          <summary><?= sprintf(t('vieinfo.info.all_combinations'), vie_format_info_count(13348188)) ?></summary>
+          <?php
+          $vieAllComboBreakdown = [
+              ['5/5', 1906884],
+              ['4/5+GN', 1483132],
+              ['4/5', 211876],
+              ['3/5+GN', 128968],
+              ['3/5', 18424],
+              ['2/5+GN', 8232],
+              ['1/5+GN', 343],
+              ['0/5+GN', 7],
+          ];
+          foreach ($vieAllComboBreakdown as $vieComboRow):
+              ?>
+          <div><?= htmlspecialchars($vieComboRow[0], ENT_QUOTES, 'UTF-8') ?> — <b><?= vie_format_info_count($vieComboRow[1]) ?></b></div>
+          <?php endforeach; ?>
         </details>
       </div>
     </div>

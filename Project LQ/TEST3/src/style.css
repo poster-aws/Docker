@@ -14,7 +14,7 @@
   --theme-page-bg: #1e293b;
   --theme-header-bg: #0f172a;
   --theme-header-text: #f8fafc;
-  --theme-header-draw-count: #fbbf24;
+  --theme-header-draw-count: #f59e0b;
   /* Menu drawer */
   --theme-nav-bg: #1e293b;
   --theme-nav-text: #f8fafc;
@@ -99,7 +99,7 @@ html.theme-light {
   --theme-page-bg: #f1f5f9;
   --theme-header-bg: #232f3f;
   --theme-header-text: #f8fafc;
-  --theme-header-draw-count: #fbbf24;
+  --theme-header-draw-count: #d97706;
   --theme-nav-bg: #ffffff;
   --theme-nav-text: #1e293b;
   --theme-nav-border: rgba(15, 23, 42, 0.1);
@@ -464,7 +464,7 @@ html.theme-light .header {
 
 .page-title .header-draw-count,
 #infoBlock.info-list .header-draw-count {
-  color: var(--theme-header-draw-count, #fbbf24);
+  color: var(--theme-header-draw-count, #f59e0b);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
