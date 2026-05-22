@@ -4,8 +4,8 @@
    Thème — SOURCE unique (modifier ici par thème)
    • Page + en-tête, menu, accueil, alias --table-*, --info-grid-*, etc.
    Fichiers CSS par loterie (ne pas mélanger les rôles) :
-   • style.css — thème + styles communs à toutes les loteries (tables .interactive-table,
-     .tables-wrapper, .circle, etc.)
+   • style.css — thème + styles communs (tables .interactive-table, table.digit-grid,
+     .circle, analyse-grid Tout Info, etc.)
    • quotidienne/quotidienne.css — uniquement Quotidienne (Q2/Q3/Q4 : stats, pages Info, grilles…)
    • toutourien/toutourien.css — uniquement Tout ou Rien
    • vie/vie.css — uniquement Grande Vie
@@ -93,6 +93,13 @@
   --theme-verifier-warning-border: rgba(251, 191, 36, 0.52);
   --theme-verifier-error-bg: rgba(239, 68, 68, 0.2);
   --theme-verifier-error-border: rgba(248, 113, 113, 0.5);
+  /* Tout Info — grille Analyse (surlignage ligne / colonne) */
+  --theme-toutinfo-analyse-sticky-bg: #f0f0f0;
+  --theme-toutinfo-analyse-empty-bg: #dcdbdb;
+  --theme-toutinfo-analyse-hl-cell: #b5c2d8;
+  --theme-toutinfo-analyse-hl-label: #a3b4cf;
+  --theme-toutinfo-analyse-hl-empty: #adb9cc;
+  --theme-toutinfo-analyse-hl-cross: #92a5c4;
 }
 
 html.theme-light {
@@ -170,6 +177,12 @@ html.theme-light {
   --theme-verifier-warning-border: #ffd19b;
   --theme-verifier-error-bg: #fdecec;
   --theme-verifier-error-border: #f5b5b5;
+  --theme-toutinfo-analyse-sticky-bg: #f0f0f0;
+  --theme-toutinfo-analyse-empty-bg: #dcdbdb;
+  --theme-toutinfo-analyse-hl-cell: rgba(37, 99, 235, 0.14);
+  --theme-toutinfo-analyse-hl-label: rgba(37, 99, 235, 0.22);
+  --theme-toutinfo-analyse-hl-empty: rgba(37, 99, 235, 0.08);
+  --theme-toutinfo-analyse-hl-cross: rgba(37, 99, 235, 0.26);
 }
 
 /* Thème sombre — Ardoise (défaut) : autres jetons + alias page/en-tête */
@@ -230,6 +243,12 @@ html.theme-light {
   --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
   --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
   --info-grid-gn-cell: var(--theme-info-grid-gn-cell);
+  --toutinfo-analyse-sticky-bg: var(--theme-toutinfo-analyse-sticky-bg);
+  --toutinfo-analyse-empty-bg: var(--theme-toutinfo-analyse-empty-bg);
+  --toutinfo-analyse-hl-cell: var(--theme-toutinfo-analyse-hl-cell);
+  --toutinfo-analyse-hl-label: var(--theme-toutinfo-analyse-hl-label);
+  --toutinfo-analyse-hl-empty: var(--theme-toutinfo-analyse-hl-empty);
+  --toutinfo-analyse-hl-cross: var(--theme-toutinfo-analyse-hl-cross);
   --q2info-chart-scatter: var(--theme-q2info-chart-scatter);
   --q2info-chart-scatter-border: var(--theme-q2info-chart-scatter-border);
   --q2info-chart-tick: var(--theme-q2info-chart-tick);
@@ -311,6 +330,12 @@ html.theme-light {
   --info-grid-repeat-4: var(--theme-info-grid-repeat-4);
   --info-grid-repeat-4-text: var(--theme-info-grid-repeat-4-text);
   --info-grid-gn-cell: var(--theme-info-grid-gn-cell);
+  --toutinfo-analyse-sticky-bg: var(--theme-toutinfo-analyse-sticky-bg);
+  --toutinfo-analyse-empty-bg: var(--theme-toutinfo-analyse-empty-bg);
+  --toutinfo-analyse-hl-cell: var(--theme-toutinfo-analyse-hl-cell);
+  --toutinfo-analyse-hl-label: var(--theme-toutinfo-analyse-hl-label);
+  --toutinfo-analyse-hl-empty: var(--theme-toutinfo-analyse-hl-empty);
+  --toutinfo-analyse-hl-cross: var(--theme-toutinfo-analyse-hl-cross);
   --q2info-chart-scatter: var(--theme-q2info-chart-scatter);
   --q2info-chart-scatter-border: var(--theme-q2info-chart-scatter-border);
   --q2info-chart-tick: var(--theme-q2info-chart-tick);
@@ -1032,6 +1057,46 @@ input:checked + .slider::before { transform: translateX(18px); }
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Bouton / sélection (ex. vérificateur Tout ou Rien) — base .circle ci-dessus */
+button.circle {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+button.circle:hover:not(.locked) {
+  transform: translateY(-1px);
+}
+
+button.circle.selected {
+  color: var(--table-circle-alt-text, #422006);
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--table-circle-alt-glare, var(--table-circle-alt-bg, #60a5fa)) 0%,
+    var(--table-circle-alt-bg, #60a5fa) 48%,
+    var(--table-circle-alt-depth, #2563eb) 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.48),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.24),
+    0 2px 6px rgba(0, 0, 0, 0.22);
+}
+
+button.circle:focus-visible {
+  outline: 2px solid var(--accent, #38bdf8);
+  outline-offset: 2px;
+}
+
+button.circle.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .highlight-row {
   background: var(--table-highlight-row, rgba(34, 197, 94, 0.08));
 }
@@ -1084,6 +1149,162 @@ input:checked + .slider::before { transform: translateX(18px); }
 
 .tables-wrapper {
   max-width: 100% !important;
+}
+
+/* =============================================================================
+   Grilles tirages (table.digit-grid) — commun Tout / Vie / Banco / Q Info / Astro
+   Surcharges locales : banco-turbo-row, GN (Vie), mois/signe (Astro), hauteur Banco.
+   ============================================================================= */
+.table-wrapper:has(table.digit-grid):not(.banco-grid-wrapper) {
+  max-height: 70vh;
+  overflow: auto;
+  margin: 0 auto 12px;
+  border: 1px solid var(--info-grid-wrap-border, #ccc);
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+}
+
+table.digit-grid {
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: var(--info-grid-text, #000);
+}
+
+table.digit-grid td,
+table.digit-grid th {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+table.digit-grid th {
+  height: 60px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.7em;
+  background: var(--info-grid-muted-bg, #eee);
+  color: var(--info-grid-column-header-text, #000);
+}
+
+table.digit-grid td:first-child,
+table.digit-grid th:first-child {
+  min-width: 36px;
+  width: auto;
+  background-color: var(--info-grid-muted-bg, #eee);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  font-weight: bold;
+  color: var(--info-grid-sticky-accent, #1f4fd8);
+}
+
+table.digit-grid td:nth-child(2),
+table.digit-grid th:nth-child(2) {
+  min-width: 22px;
+  background-color: var(--info-grid-muted-bg, #eee);
+  font-weight: bold;
+}
+
+table.digit-grid td.hit {
+  background-color: var(--info-grid-hit, #7eb0ea);
+}
+
+table.digit-grid td.repeat-2 {
+  background-color: var(--info-grid-repeat-2, #f8c471);
+}
+
+table.digit-grid td.repeat-3 {
+  background-color: var(--info-grid-repeat-3, #e74c3c);
+}
+
+table.digit-grid td.repeat-4 {
+  background-color: var(--info-grid-repeat-4, #c0392b);
+  color: var(--info-grid-repeat-4-text, #fff);
+}
+
+.no-data {
+  text-align: center;
+  margin: 12px;
+  color: var(--error, #c0392b);
+}
+
+/* Tout Info — grille Analyse (positions × numéros) */
+.toutinfo-layout .analyse-grid {
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 3px;
+  background: transparent;
+}
+
+.toutinfo-layout .analyse-grid th,
+.toutinfo-layout .analyse-grid td {
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--info-grid-muted-bg, #eee);
+  border: 1px solid var(--info-grid-cell-border, #ccc);
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--info-grid-text, #000);
+}
+
+.toutinfo-layout .analyse-grid thead th,
+.toutinfo-layout .analyse-grid td.sticky-label {
+  font-weight: 400;
+}
+
+.toutinfo-layout .analyse-grid td.sticky-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--toutinfo-analyse-sticky-bg, #f0f0f0);
+}
+
+.toutinfo-layout .analyse-grid td.empty {
+  background-color: var(--toutinfo-analyse-empty-bg, #dcdbdb);
+}
+
+.toutinfo-layout .analyse-grid tbody td:not(.empty):not(.sticky-label) {
+  font-weight: 700;
+}
+
+.toutinfo-layout .analyse-grid .analyse-grid-axis {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toutinfo-layout .analyse-grid tr.row-highlight td {
+  background-color: var(--toutinfo-analyse-hl-cell);
+}
+
+.toutinfo-layout .analyse-grid tr.row-highlight td.sticky-label {
+  background-color: var(--toutinfo-analyse-hl-label);
+}
+
+.toutinfo-layout .analyse-grid tr.row-highlight td.empty {
+  background-color: var(--toutinfo-analyse-hl-empty);
+}
+
+.toutinfo-layout .analyse-grid th.col-highlight,
+.toutinfo-layout .analyse-grid td.col-highlight {
+  background-color: var(--toutinfo-analyse-hl-cell);
+}
+
+.toutinfo-layout .analyse-grid thead th.col-highlight {
+  background-color: var(--toutinfo-analyse-hl-label);
+}
+
+.toutinfo-layout .analyse-grid tr.row-highlight td.col-highlight {
+  background-color: var(--toutinfo-analyse-hl-cross) !important;
 }
 
 /* =============================================================================

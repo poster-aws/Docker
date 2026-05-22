@@ -118,7 +118,7 @@ function toutinfo_format_int(int $n, string $lang): string
   </table>
 </div>
 <?php else: ?>
-  <p class="toutinfo-no-data"><?= t('toutinfo.no_data') ?></p>
+  <p class="no-data"><?= t('toutinfo.no_data') ?></p>
 <?php endif; ?>
 
 <div class="filter-form info-filter-form toutinfo-filter">

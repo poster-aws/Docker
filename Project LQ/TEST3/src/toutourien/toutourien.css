@@ -1,5 +1,4 @@
-/* TEST3 — Tout ou Rien — grille + bloc vérification combinaison
- * Couleurs grille : variables --info-grid-* définies dans style.css (thème clair/sombre). */
+/* TEST3 — Tout ou Rien — vérificateur, Info analyse (grille digit : style.css) */
 
 /* Même colonne que les pages Info Q2 / Q3 / Q4 (quotidienne.css : .q4info-layout) */
 .tout-layout {
@@ -13,76 +12,14 @@
   color: var(--table-text, var(--text));
 }
 
-/* ----- Grille (24 lignes), comme la grille Info Quotidienne ----- */
+/* Grille 24 lignes : table.digit-grid + .table-wrapper dans style.css */
 .tout-layout .table-wrapper.tout-grid-wrapper {
-  width: 100%;
-  max-height: 70vh;
-  overflow: auto;
-  margin: 0 auto 12px;
-  border: 1px solid var(--info-grid-wrap-border, #ccc);
-  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
   border-radius: var(--radius-sm, 8px);
   box-sizing: border-box;
 }
 
 .tout-grid-wrapper[data-limit='200'] {
   max-height: 65vh;
-}
-
-.tout-layout table.digit-grid {
-  width: max-content;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 12px;
-  color: var(--info-grid-text, #000);
-}
-
-.tout-layout .digit-grid td,
-.tout-layout .digit-grid th {
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  border: 1px solid var(--info-grid-cell-border, #ccc);
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.tout-layout .digit-grid th {
-  height: 60px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 0.7em;
-  background: var(--info-grid-muted-bg, #eee);
-  color: var(--info-grid-column-header-text, #000);
-}
-
-.tout-layout .digit-grid td:first-child,
-.tout-layout .digit-grid th:first-child {
-  min-width: 36px;
-  width: auto;
-  background-color: var(--info-grid-muted-bg, #eee);
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  font-weight: bold;
-  color: var(--info-grid-sticky-accent, #1f4fd8);
-}
-
-.tout-layout .digit-grid td:nth-child(2),
-.tout-layout .digit-grid th:nth-child(2) {
-  min-width: 22px;
-  background-color: var(--info-grid-muted-bg, #eee);
-  font-weight: bold;
-}
-
-.tout-layout .digit-grid td.hit {
-  background-color: var(--info-grid-hit, #7eb0ea);
-}
-
-.tout-layout .no-data {
-  text-align: center;
-  margin: 12px;
-  color: var(--error, #c0392b);
 }
 
 /* ----- Bloc vérification : largeur = celle de la grille de cercles (6 × boule + 5 interstices) ----- */
@@ -132,65 +69,12 @@
   }
 }
 
-/* Pastilles : même rendu 3D que .circle (Quotidienne), variables --table-circle-* du thème */
+/* Pastilles : .circle global (style.css) — taille grille 6×4 */
 .tout-verifier-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 36px;
   height: 36px;
+  min-width: 36px;
   margin: 0 auto;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  color: var(--table-circle-text, #0f172a);
-  font-size: 1em;
-  font-weight: 700;
-  font-family: var(--font);
-  cursor: pointer;
-  user-select: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: radial-gradient(
-    circle at 32% 28%,
-    var(--table-circle-glare, var(--table-circle-bg, #38bdf8)) 0%,
-    var(--table-circle-bg, #38bdf8) 48%,
-    var(--table-circle-depth, #0369a1) 100%
-  );
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.42),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.22),
-    0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
-}
-
-.tout-verifier-circle:hover:not(.locked) {
-  transform: translateY(-1px);
-}
-
-/* Sélection : palette de l’autre thème (--table-circle-alt-*) */
-.tout-verifier-circle.selected {
-  color: var(--table-circle-alt-text, #422006);
-  background: radial-gradient(
-    circle at 32% 28%,
-    var(--table-circle-alt-glare, var(--table-circle-alt-bg, #60a5fa)) 0%,
-    var(--table-circle-alt-bg, #60a5fa) 48%,
-    var(--table-circle-alt-depth, #2563eb) 100%
-  );
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.48),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.24),
-    0 2px 6px rgba(0, 0, 0, 0.22);
-}
-
-.tout-verifier-circle:focus-visible {
-  outline: 2px solid var(--accent, #38bdf8);
-  outline-offset: 2px;
-}
-
-.tout-verifier-circle.locked {
-  opacity: 0.45;
-  cursor: not-allowed;
 }
 
 .tout-verifier-actions {
@@ -312,13 +196,7 @@
   font-weight: 600;
 }
 
-/* ----- Page Info Tout ou Rien : tableau Analyse (positions n1–n12 × numéros 1–24) ----- */
-.toutinfo-layout {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
+/* Page Info — grille Analyse : style.css (.analyse-grid) */
 .toutinfo-analyse-wrap {
   max-width: 98%;
   max-height: 90vh;
@@ -326,113 +204,6 @@
   margin: 10px auto;
   text-align: center;
   background: transparent;
-}
-
-.toutinfo-layout .analyse-grid {
-  margin: 0 auto;
-  border-collapse: separate;
-  border-spacing: 3px;
-  background: transparent;
-}
-
-.toutinfo-layout .analyse-grid th,
-.toutinfo-layout .analyse-grid td {
-  width: 25px;
-  height: 25px;
-  min-width: 25px;
-  border-radius: 4px;
-  font-size: 12px;
-  text-align: center;
-  vertical-align: middle;
-  background-color: var(--info-grid-muted-bg, #eee);
-  border: 1px solid var(--info-grid-cell-border, #ccc);
-  padding: 0;
-  box-sizing: border-box;
-  color: var(--info-grid-text, #000);
-}
-
-.toutinfo-layout .analyse-grid thead th,
-.toutinfo-layout .analyse-grid td.sticky-label {
-  font-weight: 400;
-}
-
-.toutinfo-layout .analyse-grid td.sticky-label {
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  background-color: var(--toutinfo-analyse-sticky-bg, #f0f0f0);
-}
-
-.toutinfo-layout .analyse-grid td.empty {
-  background-color: var(--toutinfo-analyse-empty-bg, #dcdbdb);
-}
-
-.toutinfo-layout .analyse-grid tbody td:not(.empty):not(.sticky-label) {
-  font-weight: 700;
-}
-
-.toutinfo-layout .analyse-grid .analyse-grid-axis {
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Light : rgba sur fond clair des cellules (#eee) */
-html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td {
-  background-color: rgba(37, 99, 235, 0.14);
-}
-
-html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.sticky-label {
-  background-color: rgba(37, 99, 235, 0.22);
-}
-
-html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.empty {
-  background-color: rgba(37, 99, 235, 0.08);
-}
-
-html.theme-light .toutinfo-layout .analyse-grid th.col-highlight,
-html.theme-light .toutinfo-layout .analyse-grid td.col-highlight {
-  background-color: rgba(37, 99, 235, 0.14);
-}
-
-html.theme-light .toutinfo-layout .analyse-grid thead th.col-highlight {
-  background-color: rgba(37, 99, 235, 0.22);
-}
-
-html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.col-highlight {
-  background-color: rgba(37, 99, 235, 0.26) !important;
-}
-
-/* Dark : opaques, un peu plus foncés que la light (lisibles sur fond sombre) */
-html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td {
-  background-color: #b5c2d8;
-}
-
-html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.sticky-label {
-  background-color: #a3b4cf;
-}
-
-html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.empty {
-  background-color: #adb9cc;
-}
-
-html:not(.theme-light) .toutinfo-layout .analyse-grid th.col-highlight,
-html:not(.theme-light) .toutinfo-layout .analyse-grid td.col-highlight {
-  background-color: #b5c2d8;
-}
-
-html:not(.theme-light) .toutinfo-layout .analyse-grid thead th.col-highlight {
-  background-color: #a3b4cf;
-}
-
-html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.col-highlight {
-  background-color: #92a5c4 !important;
-}
-
-.toutinfo-layout .toutinfo-no-data {
-  text-align: center;
-  color: var(--error, #c0392b);
-  margin: 12px;
 }
 
 /* Filtre Tout Info : style global .info-filter-form ; marge locale */
@@ -468,7 +239,7 @@ html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.col-hi
   line-height: 22px;
   text-align: center;
   margin-right: 4px;
-  background: rgba(126, 176, 234, 0.85);
+  background: var(--info-grid-hit, #7eb0ea);
   color: var(--info-grid-text, #000);
   border-radius: 4px;
   font-weight: 600;
