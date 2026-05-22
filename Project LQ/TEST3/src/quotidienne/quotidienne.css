@@ -2,7 +2,7 @@
  * TEST3 — Quotidienne (Q2 / Q3 / Q4 : pages principales + Info).
  *
  * Défini dans style.css (ne pas dupliquer ici) :
- * - table.digit-grid (Info Q2/Q3/Q4), .tables-wrapper, .interactive-table, …
+ * - .digit-grid (Info Q2/Q3/Q4), .tables-wrapper, .interactive-table, …
  * - .circle, .highlight-row, .star-box (forme de base), .x-small
  * - #infoBlock.info-list, .info-filter-form, .info-filter-form--chart, select.info-page-select
  * - .number-stats-table tbody tr.color-range-*
@@ -359,4 +359,4 @@ html.theme-light .quotidienne-main .table-container .star-box.star-2 {
   display: block;
 }
 
-/* Grilles digit Info Q2/Q3/Q4 : table.digit-grid + .table-wrapper dans style.css */
+/* Grilles digit Info Q2/Q3/Q4 : .digit-grid + .table-wrapper dans style.css */

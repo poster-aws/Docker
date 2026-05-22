@@ -1,7 +1,7 @@
 /*
  * Grande Vie — styles locaux.
  * Couleurs / jetons grille : --info-grid-* et --info-grid-gn-cell dans style.css (thèmes clair / sombre).
- * Structure grille : même principe que la page principale Tout ou Rien (.tout-layout + .tout-grid-wrapper + .digit-grid)
+ * Structure grille : .digit-grid + .table-wrapper dans style.css (compléments GN ci-dessous)
  * et que les pages Info Q (hit, repeat-2…4). Seule variante : ligne GN.
  */
 
@@ -66,7 +66,7 @@ html.theme-light .vie-layout {
   margin-bottom: 8px;
 }
 
-/* table.digit-grid commun : style.css — compléments Grande Vie ci-dessous */
+/* .digit-grid commun : style.css — compléments Grande Vie ci-dessous */
 
 /* Ligne GN — seul complément Grande Vie (fond cellule via style.css) */
 .vie-layout .digit-grid tr.row-gn td {

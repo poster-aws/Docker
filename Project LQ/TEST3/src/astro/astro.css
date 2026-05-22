@@ -110,11 +110,6 @@ html.theme-light .astro-layout .number-stats-table select {
   padding-right: 0.25rem !important;
 }
 
-.astro-layout .no-data {
-  text-align: center;
-  color: var(--error, #f87171);
-}
-
 .astro-layout--info #infoBlock.info-list {
   margin-top: 16px;
   margin-bottom: 28px;
@@ -207,11 +202,11 @@ html.theme-light .astro-layout .number-stats-table select {
   max-height: 24vh;
 }
 
-/* Jour + Année : table.digit-grid standard (style.css) */
+/* Jour + Année : .digit-grid standard (style.css) */
 
 /* Mois + Signe : colonnes tirages serrées ; libellés sans « trou » après le texte */
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois table.digit-grid,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe table.digit-grid {
+.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid,
+.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid {
   width: max-content;
   border-collapse: collapse;
   table-layout: auto;
