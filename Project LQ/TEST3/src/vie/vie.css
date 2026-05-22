@@ -1,11 +1,8 @@
 /*
  * Grande Vie — styles locaux.
- * Couleurs / jetons grille : --info-grid-* et --info-grid-gn-cell dans style.css (thèmes clair / sombre).
- * Structure grille : .digit-grid + .table-wrapper dans style.css (compléments GN ci-dessous)
- * et que les pages Info Q (hit, repeat-2…4). Seule variante : ligne GN.
+ * Grille .digit-grid : style.css — ici GN (ligne/cellule Info), jeton GN, tables stats.
  */
 
-/* Coquille 980px — comme .tout-layout / .q4info-layout */
 .vie-layout {
   width: min(100%, 980px);
   max-width: 980px;
@@ -15,7 +12,6 @@
   box-sizing: border-box;
   font-family: var(--font);
   color: var(--table-text, var(--text));
-  /* Jeton GN — тёмный зелёно-серый (светлее «почти чёрного»), 3D */
   --vie-main-gn-circle-glare: #82998d;
   --vie-main-gn-circle-bg: #4c6258;
   --vie-main-gn-circle-depth: #314239;
@@ -29,8 +25,8 @@ html.theme-light .vie-layout {
   --vie-main-gn-circle-text: #f0fdf4;
 }
 
-/* GN : distinct des 5 boules ; effet sphère 3D comme .circle (style.css) */
-.vie-layout .vie-gn-circle {
+/* GN : variante de .circle (palette locale) */
+.vie-layout .circle.vie-gn-circle {
   color: var(--vie-main-gn-circle-text);
   background: radial-gradient(
     circle at 32% 28%,
@@ -44,31 +40,21 @@ html.theme-light .vie-layout {
     0 2px 5px rgba(0, 0, 0, 0.28);
 }
 
-/* Conteneur grille — base .table-wrapper:has(.digit-grid) dans style.css */
-.vie-layout .table-wrapper.vie-grid-wrapper {
-  border-radius: var(--radius-sm, 8px);
-  box-sizing: border-box;
-}
-
-/* Info uniquement : fenêtre visible de la grille ~2× moins haute (défilement vertical).
- * Même hauteur pour 50 / 100 / 200 tirages — sinon la grille paraît plus basse au-delà de 50. */
-.vie-layout--info .table-wrapper.vie-grid-wrapper {
+/* Info : deux grilles digit — hauteur réduite (50/100/200 idem) */
+.vie-layout--info .table-wrapper:has(.digit-grid) {
   max-height: 35vh;
+  border-radius: var(--radius-sm, 8px);
 }
 
-/* Deux grilles Info : léger écart sans légende */
-.vie-layout--info .vie-grid-wrapper + .vie-grid-wrapper--gn {
+.vie-layout--info .table-wrapper + .table-wrapper--gn {
   margin-top: 12px;
 }
 
-.vie-layout--info .vie-info-grids-filter {
+.vie-info-grids-filter.info-filter-form {
   margin-top: 12px;
   margin-bottom: 8px;
 }
 
-/* .digit-grid commun : style.css — compléments Grande Vie ci-dessous */
-
-/* Ligne GN — seul complément Grande Vie (fond cellule via style.css) */
 .vie-layout .digit-grid tr.row-gn td {
   background-color: var(--info-grid-muted-bg, #eee);
   font-weight: bold;
@@ -79,18 +65,7 @@ html.theme-light .vie-layout {
   color: var(--info-grid-text, #000);
 }
 
-/* Filtre Info : style select dans style.css (.info-filter-form) */
-
-/* Page principale : grille des tirages — .tables-wrapper / .interactive-table dans style.css */
-.vie-layout .tables-wrapper {
-  width: 100%;
-  max-width: 100%;
-}
-
-/*
- * Table 1–49 : même largeur / coque que la table GN (150px), même max-hauteur que les autres
- * .number-stats-table ; barre de défilement masquée comme la 3e table pour garder les mêmes marges visuelles.
- */
+/* Page principale — table stats 1–49 (150px, scrollbar masquée) */
 .vie-layout .vie-num-stats-table.number-stats-table {
   width: 150px;
   max-width: 150px;
@@ -109,10 +84,6 @@ html.theme-light .vie-layout {
   display: none;
 }
 
-/*
- * Table stats GN (page principale) — styles Vie uniquement, sans quotidienne.css.
- * Jetons : mêmes variables --table-* que le reste de l’app (thème global dans style.css).
- */
 @media (min-width: 900px) {
   .vie-layout .number-stats-table .interactive-table {
     min-width: 0;
@@ -142,9 +113,6 @@ html.theme-light .vie-layout {
   cursor: pointer;
 }
 
-/* Plages stats (contour) : style.css — .number-stats-table tr.color-range-* */
-
-/* Grande Vie Info — bloc #infoBlock : base dans style.css ; marges dans la coquille 980px */
 .vie-layout--info #infoBlock.info-list {
   margin-top: 16px;
   margin-bottom: 28px;

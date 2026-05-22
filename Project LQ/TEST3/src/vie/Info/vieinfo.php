@@ -88,7 +88,7 @@ $vieConn->close();
 <div id="vie-meta" data-count="<?= (int) $vieCount ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('vie.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('vie.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 
 <div class="vie-layout vie-layout--info">
-  <div class="table-wrapper vie-grid-wrapper" data-limit="<?= (int)$gridLimit ?>">
+  <div class="table-wrapper">
     <?php if (!empty($tiragesGrid)): ?>
     <table class="digit-grid" id="vieGrid">
       <thead>
@@ -127,7 +127,7 @@ $vieConn->close();
   </div>
 
   <?php if (!empty($tiragesGrid)): ?>
-  <div class="table-wrapper vie-grid-wrapper vie-grid-wrapper--gn" data-limit="<?= (int)$gridLimit ?>">
+  <div class="table-wrapper table-wrapper--gn">
     <table class="digit-grid" id="vieGnInfoGrid">
       <thead>
         <tr>
