@@ -19,7 +19,7 @@ $bancoConn->close();
 <div id="banco-meta" data-count="<?= (int) $bancoCount ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('banco.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('banco.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 
 <div class="banco-layout banco-layout--info">
-  <p class="no-data" style="margin: 1rem 0;"><?= htmlspecialchars(t('bancoinfo.stub'), ENT_QUOTES, 'UTF-8') ?></p>
+  <p class="no-data"><?= htmlspecialchars(t('bancoinfo.stub'), ENT_QUOTES, 'UTF-8') ?></p>
 
   <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">

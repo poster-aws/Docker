@@ -1,6 +1,6 @@
 /*
- * Banco — page principale.
- * Une grille unique (70 lignes) comme les grilles Info Q2/Q3/Q4.
+ * Banco — page principale (70 lignes + ligne Turbo).
+ * Grille .digit-grid : style.css — ici conteneur plein écran + turbo-row seulement.
  */
 
 .banco-layout {
@@ -14,14 +14,14 @@
   color: var(--table-text, var(--text));
 }
 
-/* Limit 200 : zone un peu plus large (confirmation visuelle vs 50) */
-.banco-layout:has(.banco-grid-wrapper[data-limit="200"]) {
+/* limit=200 : colonne un peu plus large (vs 50 tirages) */
+.banco-layout:has(.table-wrapper[data-limit='200']) {
   width: min(100%, 1120px);
   max-width: 1120px;
 }
 
-/* Grille plein écran — hors .table-wrapper:has(.digit-grid) standard (style.css) */
-.banco-layout .table-wrapper.banco-grid-wrapper {
+/* Plein écran : surcharge le max-height 70vh de style.css */
+.banco-layout .table-wrapper:has(.digit-grid) {
   width: 100%;
   height: calc(100vh - var(--header-h, 56px) - 0.75rem);
   max-height: calc(100vh - var(--header-h, 56px) - 0.75rem);
@@ -42,9 +42,8 @@
   font-size: 0.75em;
 }
 
-/* Comme Q2 ≥1024px : .main padding 0.75rem + 0.375rem */
 @media (min-width: 1024px) {
-  .banco-layout .table-wrapper.banco-grid-wrapper {
+  .banco-layout .table-wrapper:has(.digit-grid) {
     height: calc(100vh - var(--header-h, 56px) - 1.125rem);
     max-height: calc(100vh - var(--header-h, 56px) - 1.125rem);
   }

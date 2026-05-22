@@ -1153,9 +1153,9 @@ button.circle.locked {
 
 /* =============================================================================
    Grilles tirages (.digit-grid) — commun Tout / Vie / Banco / Q Info / Astro
-   Surcharges locales : banco-turbo-row, GN (Vie), mois/signe (Astro), hauteur Banco.
+   Surcharges locales : banco turbo-row, GN (Vie), mois/signe (Astro), conteneur Banco plein écran.
    ============================================================================= */
-.table-wrapper:has(.digit-grid):not(.banco-grid-wrapper) {
+.table-wrapper:has(.digit-grid) {
   max-height: 70vh;
   overflow: auto;
   margin: 0 auto 12px;
