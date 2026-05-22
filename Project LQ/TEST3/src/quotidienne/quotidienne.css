@@ -1,18 +1,21 @@
 /*
- * TEST3 — Quotidienne uniquement (Q2 / Q3 / Q4 : pages principales + Info).
- * Styles communs des tableaux : style.css (.tables-wrapper, .table-container, .interactive-table, .circle, …).
- * 3e tableau stats chiffres : sous .quotidienne-main (q2/q3/q4.html) — pas appliqué à Grande Vie.
+ * TEST3 — Quotidienne (Q2 / Q3 / Q4 : pages principales + Info).
+ *
+ * Défini dans style.css (ne pas dupliquer ici) :
+ * - .tables-wrapper, .table-container, .combo-table-container, .number-stats-table, .interactive-table
+ * - .circle, .highlight-row, .star-box (forme de base), .x-small
+ * - #infoBlock.info-list, .info-filter-form, .info-filter-form--chart, select.info-page-select
+ * - .number-stats-table tbody tr.color-range-*
+ * - Variables --info-grid-*, --table-*, --q2info-chart-*, thème clair/sombre
  */
 
-/* .main est en flex column + align-items: flex-start ; sans 100% ici l’enveloppe se rétrécit au contenu
-   et le bloc part à gauche — .tables-wrapper perd l’effet de margin: 0 auto au centre. */
+/* ----- Pages principales Q2 / Q3 / Q4 ----- */
+/* .main en flex : sans width 100% ici, .tables-wrapper ne centre plus */
 .quotidienne-main {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
-
-/* Pastilles #infoBlock : style.css (#infoBlock.info-list .circle, mobile) */
 
 @media (min-width: 900px) {
   .quotidienne-main .number-stats-table .interactive-table {
@@ -43,11 +46,50 @@
   cursor: pointer;
 }
 
-/* Plages stats (contour) : style.css — .number-stats-table tr.color-range-* */
+/* Q4 — 1re table : contour SVG derrière le chiffre (5 pointes visibles) */
+.quotidienne-main .table-container .star-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  clip-path: none;
+  background-color: transparent !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 27px 27px;
+  vertical-align: middle;
+}
 
-/* ----- Pages Info Q2 / Q3 : coquille + limite grille + contrôles graphique Q2 ----- */
+.quotidienne-main .table-container .star-box.star-1,
+.quotidienne-main .table-container .star-box.star-2 {
+  color: inherit;
+}
+
+.quotidienne-main .table-container .star-num {
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+/* fois=1 → orange (--table-star-2) ; fois=2 → bleu (--table-star-1) ; pointes arrondies */
+.quotidienne-main .table-container .star-box.star-1 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='none' stroke='%23ea580c' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round' d='M15.29,3.08 Q16,1 16.71,3.08 L19.5,11.2 L29.2,11.2 Q31.4,11.2 29.62,12.5 L21.8,18.2 L24.63,27.01 Q25.3,29.1 23.51,27.81 L16,22.4 L8.49,27.81 Q6.7,29.1 7.37,27.01 L10.2,18.2 L2.38,12.5 Q0.6,11.2 2.8,11.2 L12.5,11.2 Z'/%3E%3C/svg%3E");
+}
+
+.quotidienne-main .table-container .star-box.star-2 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='none' stroke='%2338bdf8' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round' d='M15.29,3.08 Q16,1 16.71,3.08 L19.5,11.2 L29.2,11.2 Q31.4,11.2 29.62,12.5 L21.8,18.2 L24.63,27.01 Q25.3,29.1 23.51,27.81 L16,22.4 L8.49,27.81 Q6.7,29.1 7.37,27.01 L10.2,18.2 L2.38,12.5 Q0.6,11.2 2.8,11.2 L12.5,11.2 Z'/%3E%3C/svg%3E");
+}
+
+html.theme-light .quotidienne-main .table-container .star-box.star-2 {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='none' stroke='%2360a5fa' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round' d='M15.29,3.08 Q16,1 16.71,3.08 L19.5,11.2 L29.2,11.2 Q31.4,11.2 29.62,12.5 L21.8,18.2 L24.63,27.01 Q25.3,29.1 23.51,27.81 L16,22.4 L8.49,27.81 Q6.7,29.1 7.37,27.01 L10.2,18.2 L2.38,12.5 Q0.6,11.2 2.8,11.2 L12.5,11.2 Z'/%3E%3C/svg%3E");
+}
+
+/* ----- Coquilles pages Info Q2 / Q3 / Q4 ----- */
 .q2info-layout,
-.q3info-layout {
+.q3info-layout,
+.q4info-layout {
   width: min(100%, 980px);
   max-width: 980px;
   min-width: 0;
@@ -61,6 +103,11 @@
   color: var(--q2info-stats-text, var(--text, #1e293b));
 }
 
+.q4info-layout {
+  color: var(--table-text, var(--text));
+}
+
+/* ----- Q2 Info : graphique + tableau des plages ----- */
 .q2info-layout #q2infoSelectWrap {
   text-align: center;
   margin: 8px 0;
@@ -73,47 +120,56 @@
   height: min(50vh, 320px);
 }
 
-/* ----- Q2 Info : nuage de points (couleurs Chart.js via --q2info-chart-*) + tableau des plages ----- */
-
-.q2info-layout #q2infoStatsTable {
-  margin: 10px auto;
-  border-collapse: collapse;
+.q2info-layout .q2info-stats-wrap {
   width: 60%;
   max-width: 100%;
+  margin: 10px auto;
+  border-radius: var(--radius-sm, 8px);
+  clip-path: inset(0 round var(--radius-sm, 8px));
+  border: 1px solid var(--table-shell-border, var(--border, #e2e8f0));
+  background: var(--table-shell-bg, var(--bg-card, #fff));
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.q2info-layout #q2infoStatsTable {
+  margin: 0;
+  border-collapse: collapse;
+  width: 100%;
   color: var(--q2info-stats-text, var(--text));
+  -webkit-font-smoothing: antialiased;
 }
 
 .q2info-layout #q2infoStatsTable tbody td,
 .q2info-layout #q2infoStatsTable tbody th {
-  border: 1px solid var(--q2info-stats-border, var(--table-cell-border, #999));
   padding: 6px 10px;
   text-align: center;
+  border: none;
+  border-bottom: 1px solid var(--q2info-stats-border, var(--table-cell-border, #e2e8f0));
 }
 
-/* Шапка — те же jetons que .interactive-table thead th (переключение thème sur --table-header-*) */
+.q2info-layout #q2infoStatsTable tbody td:not(:last-child),
+.q2info-layout #q2infoStatsTable tbody th:not(:last-child),
+.q2info-layout #q2infoStatsTable thead th:not(:last-child) {
+  border-right: 1px solid var(--q2info-stats-border, var(--table-cell-border, #e2e8f0));
+}
+
+.q2info-layout #q2infoStatsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .q2info-layout #q2infoStatsTable thead th {
   padding: 6px 10px;
   text-align: center;
   font-weight: 700;
   white-space: nowrap;
-  border: 1px solid var(--q2info-stats-border, var(--table-cell-border, #999));
+  border: none;
   border-bottom: 2px solid var(--table-header-rule, rgba(255, 255, 255, 0.2));
   background: var(--q2info-stats-header-bg, var(--table-header-bg, var(--header-bg, #0f172a)));
   color: var(--q2info-stats-header-text, var(--table-header-text, var(--header-text, #f8fafc)));
 }
 
-/* ----- Q4 Info : .interactive-table (jetons --table-* comme pages Q2/Q3/Q4, .circle inchangé) ----- */
-.q4info-layout {
-  width: min(100%, 980px);
-  max-width: 980px;
-  min-width: 0;
-  margin: 0 auto;
-  padding: 0 12px;
-  box-sizing: border-box;
-  font-family: var(--font);
-  color: var(--table-text, var(--text));
-}
-
+/* ----- Q4 Info : tables .interactive-table + dropdown ----- */
 .q4info-layout .q4info-tables {
   display: flex;
   justify-content: center;
@@ -171,7 +227,6 @@
   min-width: 0;
 }
 
-/* 3e tableau : une ligne d’en-tête */
 .q4info-layout .interactive-table thead tr:nth-child(1) th {
   position: sticky;
   top: 0;
@@ -304,7 +359,7 @@
   display: block;
 }
 
-/* ----- Grille chiffres — pages Info Q2 / Q3 / Q4 (couleurs : --info-grid-* dans style.css) ----- */
+/* ----- Grilles digit (Info Q2 / Q3 / Q4) — couleurs via --info-grid-* ----- */
 .q2info-layout .table-wrapper,
 .q3info-layout .table-wrapper,
 .q4info-layout .table-wrapper {
@@ -395,27 +450,4 @@
 .q4info-layout .digit-grid td.repeat-4 {
   background-color: var(--info-grid-repeat-4, #c0392b);
   color: var(--info-grid-repeat-4-text, #fff);
-}
-
-/* Bloc #infoBlock : style.css */
-
-/*
- * Pastilles .circle : définition dans style.css (thème --table-circle-*).
- */
-
-/* Q4 — 1re table : fond étoile 1↔2, chiffres noirs, étoiles un peu plus grandes */
-.quotidienne-main .table-container .star-box {
-  width: 24px;
-  height: 24px;
-  font-size: 0.9em;
-  font-weight: 800;
-  color: #000;
-}
-
-.quotidienne-main .table-container .star-1 {
-  background: var(--table-star-2-bg);
-}
-
-.quotidienne-main .table-container .star-2 {
-  background: var(--table-star-1-bg);
 }

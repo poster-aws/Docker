@@ -74,7 +74,7 @@ foreach ($data as $row) {
         } elseif ($key === 'fois') {
             if ($fois === 1 || $fois === 2) {
                 $class = $fois === 1 ? 'star-box star-1' : 'star-box star-2';
-                $tableHTML .= "<td><span class='$class'>$fois</span></td>";
+                $tableHTML .= "<td><span class='$class'><span class=\"star-num\">$fois</span></span></td>";
             } else {
                 $tableHTML .= "<td>$cell</td>";
             }

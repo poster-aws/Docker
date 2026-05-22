@@ -144,16 +144,18 @@ $bootJson = json_encode($q2infoBoot, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSO
     </select>
   </div>
 
-  <table id="q2infoStatsTable">
-    <thead>
-      <tr>
-        <th><?= t('q2info.stats.days') ?></th>
-        <th><?= t('q2info.stats.combo_count') ?></th>
-        <th>%</th>
-      </tr>
-    </thead>
-    <tbody id="q2infoStatsBody"></tbody>
-  </table>
+  <div class="q2info-stats-wrap">
+    <table id="q2infoStatsTable">
+      <thead>
+        <tr>
+          <th><?= t('q2info.stats.days') ?></th>
+          <th><?= t('q2info.stats.combo_count') ?></th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody id="q2infoStatsBody"></tbody>
+    </table>
+  </div>
 
   <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">
