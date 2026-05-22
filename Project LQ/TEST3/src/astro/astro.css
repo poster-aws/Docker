@@ -1,8 +1,9 @@
 /*
- * Astro — page principale (données Astro_stats).
- * Préfixe .astro-layout pour ne pas écraser .tables-wrapper ailleurs dans l’app.
+ * Astro — page principale (Astro_stats) + page Info.
+ * Grille digit standard : style.css — ici .digit-grid--astro-labels (mois/signe).
  */
 
+/* ----- Page principale ----- */
 .astro-layout {
   width: min(100%, 980px);
   max-width: 980px;
@@ -14,7 +15,6 @@
   color: var(--table-text, var(--text));
 }
 
-/* Comme style.css → .tables-wrapper : bloc centré, pas étiré sur toute la largeur avec contenu à gauche */
 .astro-layout .tables-wrapper {
   display: flex;
   flex-direction: row;
@@ -27,14 +27,11 @@
   margin-inline: auto;
 }
 
-/* Même hauteur utile que les autres loteries (style.css → .table-container) */
 .astro-layout .table-container {
   flex: 0 0 auto;
   width: max-content;
   max-height: calc(100vh - var(--header-h, 56px) - 2rem);
   overflow: auto;
-  /* pas margin-inline: auto ici : avec .tables-wrapper en largeur 100 %, les marges auto
-     absorbent l’espace libre et écartent fortement les deux tableaux de stats. */
   margin-inline: 0;
   border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--table-shell-border, var(--border, #475569));
@@ -48,15 +45,15 @@
   gap: 1.25rem;
 }
 
-.astro-layout .tables-wrapper[data-astro-view="mois"] .astro-stats-mois {
+.astro-layout .tables-wrapper[data-astro-view='mois'] .astro-stats-mois {
   display: flex;
 }
 
-.astro-layout .tables-wrapper[data-astro-view="jour"] .astro-stats-jour {
+.astro-layout .tables-wrapper[data-astro-view='jour'] .astro-stats-jour {
   display: flex;
 }
 
-/* Annuler le 150px global (.number-stats-table pour Q2–Q4 / Vie) : Astro a 3 colonnes visibles. */
+/* Pas de largeur 150px (Vie / Q) : 3 colonnes visibles */
 .astro-layout .number-stats-table {
   flex: 0 0 auto;
   width: max-content;
@@ -101,8 +98,6 @@ html.theme-light .astro-layout .number-stats-table select {
   color: var(--text, #1e293b);
 }
 
-/* Plages stats (contour) : style.css — .number-stats-table tr.color-range-* */
-
 .astro-layout .number-stats-table td:nth-child(3),
 .astro-layout .number-stats-table th:nth-child(3) {
   border-left: 1px solid var(--table-cell-border, #64748b);
@@ -110,24 +105,8 @@ html.theme-light .astro-layout .number-stats-table select {
   padding-right: 0.25rem !important;
 }
 
-.astro-layout--info #infoBlock.info-list {
-  margin-top: 16px;
-  margin-bottom: 28px;
-}
-
-.astro-layout--info #infoBlock.info-list .info-sign.info-sign--cost,
-.astro-layout--info #infoBlock.info-list .info-sign.info-sign--sum {
-  font-size: 0.95rem;
-  width: 1.75rem;
-  line-height: 1.2;
-}
-
-
-/*
- * Page Info Astro — grilles digit-grid (même logique visuelle que Q2–Q4 Info ;
- * variables globales --info-grid-* dans style.css).
- */
-.astro-layout--info.astroinfo-layout {
+/* ----- Page Info ----- */
+.astroinfo-layout {
   width: min(100%, 980px);
   max-width: 980px;
   min-width: 0;
@@ -138,28 +117,28 @@ html.theme-light .astro-layout .number-stats-table select {
   color: var(--table-text, var(--text));
 }
 
-.astro-layout--info.astroinfo-layout .astro-analytics {
+.astroinfo-layout .astro-analytics {
   margin: 0 0 14px;
   width: 100%;
 }
 
-.astro-layout--info.astroinfo-layout .astro-analytics h3 {
+.astroinfo-layout .astro-analytics h3 {
   margin: 6px 0 8px;
   font-size: 0.98rem;
 }
 
-.astro-layout--info.astroinfo-layout .astro-heatmap {
+.astroinfo-layout .astro-heatmap {
   display: grid;
   grid-template-columns: repeat(16, minmax(0, 1fr));
   gap: 4px;
   margin-bottom: 10px;
 }
 
-.astro-layout--info.astroinfo-layout .astro-heatmap--years {
+.astroinfo-layout .astro-heatmap--years {
   grid-template-columns: repeat(25, minmax(0, 1fr));
 }
 
-.astro-layout--info.astroinfo-layout .astro-heatcell {
+.astroinfo-layout .astro-heatcell {
   border: 1px solid var(--table-cell-border, #64748b);
   border-radius: 6px;
   padding: 2px;
@@ -167,20 +146,20 @@ html.theme-light .astro-layout .number-stats-table select {
   background: color-mix(in oklab, var(--accent, #38bdf8) calc(10% + (var(--heat) * 65%)), transparent);
 }
 
-.astro-layout--info.astroinfo-layout .astro-heatcell .v {
+.astroinfo-layout .astro-heatcell .v {
   display: block;
   font-size: 0.65rem;
   font-weight: 700;
   line-height: 1.15;
 }
 
-.astro-layout--info.astroinfo-layout .astro-heatcell .c {
+.astroinfo-layout .astro-heatcell .c {
   display: block;
   font-size: 0.62rem;
   opacity: 0.9;
 }
 
-.astro-layout--info.astroinfo-layout .astro-metrics-grid {
+.astroinfo-layout .astro-metrics-grid {
   display: flex;
   flex-wrap: nowrap;
   align-items: flex-start;
@@ -188,80 +167,62 @@ html.theme-light .astro-layout .number-stats-table select {
   gap: 0.5rem;
 }
 
-.astro-layout--info.astroinfo-layout .astro-metrics-grid .number-stats-table {
-  flex: 0 0 auto;
+.astroinfo-layout .astro-metrics-grid .number-stats-table {
   width: max-content;
   max-width: none;
-  margin-inline: 0;
   margin: 0;
 }
 
-/* Jour + Année : hauteur max. de la zone de défilement */
-.astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--jour,
-.astro-layout--info.astroinfo-layout .table-wrapper.astroinfo-grid--annee {
-  max-height: 24vh;
+.astroinfo-layout .table-wrapper + .table-wrapper--signe {
+  margin-top: 12px;
 }
 
-/* Jour + Année : .digit-grid standard (style.css) */
-
-/* Mois + Signe : colonnes tirages serrées ; libellés sans « trou » après le texte */
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid {
-  width: max-content;
-  border-collapse: collapse;
+/* Mois / Signe : libellés texte (surcharge .digit-grid 20px fixe) */
+.astroinfo-layout .digit-grid--astro-labels {
   table-layout: auto;
-  font-size: 12px;
-  color: var(--info-grid-text, #000);
 }
 
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid td,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th {
+.astroinfo-layout .digit-grid--astro-labels td,
+.astroinfo-layout .digit-grid--astro-labels th {
+  width: auto;
   min-width: 1.1rem;
   min-height: 20px;
   height: auto;
-  text-align: center;
-  border: 1px solid var(--info-grid-cell-border, #ccc);
   padding: 0 1px;
-  box-sizing: border-box;
 }
 
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid th,
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid th {
-  height: 60px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 0.7em;
-  background: var(--info-grid-muted-bg, #eee);
-  color: var(--info-grid-column-header-text, #000);
-}
-
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid thead th:nth-child(n + 3),
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid thead th:nth-child(n + 3) {
+.astroinfo-layout .digit-grid--astro-labels thead th:nth-child(n + 3) {
   width: 1.35rem;
   max-width: 1.6rem;
 }
 
-.astro-layout--info.astroinfo-layout .astroinfo-grid--mois .digit-grid tbody td:nth-child(2),
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid tbody td:nth-child(2) {
+.astroinfo-layout .digit-grid--astro-labels tbody td:nth-child(2) {
   min-width: 4.25rem;
   max-width: 5.75rem;
   white-space: nowrap;
-  word-break: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: inherit;
   font-weight: 700;
-  line-height: normal;
   text-align: center;
   padding: 0 2px;
 }
 
-.astro-layout--info.astroinfo-layout .astroinfo-grid--signe .digit-grid td.hit--sign {
+.astroinfo-layout .digit-grid--astro-labels td.hit--sign {
   font-size: 1.05rem;
   line-height: 1;
   white-space: nowrap;
+}
+
+.astroinfo-layout #infoBlock.info-list {
+  margin-top: 16px;
+  margin-bottom: 28px;
+}
+
+.astroinfo-layout #infoBlock.info-list .info-sign.info-sign--cost,
+.astroinfo-layout #infoBlock.info-list .info-sign.info-sign--sum {
+  font-size: 0.95rem;
+  width: 1.75rem;
+  line-height: 1.2;
 }
 
 @media (max-width: 899px) {
@@ -285,7 +246,7 @@ html.theme-light .astro-layout .number-stats-table select {
     width: 100%;
   }
 
-  .astro-layout--info.astroinfo-layout .astro-metrics-grid {
+  .astroinfo-layout .astro-metrics-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 8px;

@@ -211,13 +211,13 @@ $anneeMax = max(1, ...$sumsAnnee);
   <div id="astro-meta" data-count="<?= (int) $astroCount ?>" data-view="<?= htmlspecialchars($astroView, ENT_QUOTES, 'UTF-8') ?>" data-header-sub-fr="<?= htmlspecialchars(t_for_lang('astro.header.sub', 'fr'), ENT_QUOTES, 'UTF-8') ?>" data-header-sub-en="<?= htmlspecialchars(t_for_lang('astro.header.sub', 'en'), ENT_QUOTES, 'UTF-8') ?>"></div>
 
   <?php if (!$hasStats): ?>
-    <p class="no-data" style="margin: 1rem 0;"><?= htmlspecialchars(t('astroinfo.no_stats_table'), ENT_QUOTES, 'UTF-8') ?></p>
+    <p class="no-data"><?= htmlspecialchars(t('astroinfo.no_stats_table'), ENT_QUOTES, 'UTF-8') ?></p>
   <?php elseif (empty($tirages)): ?>
-    <p class="no-data" style="margin: 1rem 0;"><?= htmlspecialchars(t('astroinfo.no_data'), ENT_QUOTES, 'UTF-8') ?></p>
+    <p class="no-data"><?= htmlspecialchars(t('astroinfo.no_data'), ENT_QUOTES, 'UTF-8') ?></p>
   <?php else: ?>
     <?php if ($viewMois): ?>
-      <div class="table-wrapper astroinfo-grid astroinfo-grid--mois">
-        <table class="digit-grid">
+      <div class="table-wrapper">
+        <table class="digit-grid digit-grid--astro-labels">
           <thead>
             <tr>
               <th>Σ</th>
@@ -244,8 +244,8 @@ $anneeMax = max(1, ...$sumsAnnee);
           </tbody>
         </table>
       </div>
-      <div class="table-wrapper astroinfo-grid astroinfo-grid--signe">
-        <table class="digit-grid">
+      <div class="table-wrapper table-wrapper--signe">
+        <table class="digit-grid digit-grid--astro-labels">
           <thead>
             <tr>
               <th>Σ</th>
