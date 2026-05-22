@@ -371,6 +371,64 @@
   font-weight: 700;
 }
 
+.toutinfo-layout .analyse-grid .analyse-grid-axis {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Light : rgba sur fond clair des cellules (#eee) */
+html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td {
+  background-color: rgba(37, 99, 235, 0.14);
+}
+
+html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.sticky-label {
+  background-color: rgba(37, 99, 235, 0.22);
+}
+
+html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.empty {
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+html.theme-light .toutinfo-layout .analyse-grid th.col-highlight,
+html.theme-light .toutinfo-layout .analyse-grid td.col-highlight {
+  background-color: rgba(37, 99, 235, 0.14);
+}
+
+html.theme-light .toutinfo-layout .analyse-grid thead th.col-highlight {
+  background-color: rgba(37, 99, 235, 0.22);
+}
+
+html.theme-light .toutinfo-layout .analyse-grid tr.row-highlight td.col-highlight {
+  background-color: rgba(37, 99, 235, 0.26) !important;
+}
+
+/* Dark : opaques, un peu plus foncés que la light (lisibles sur fond sombre) */
+html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td {
+  background-color: #b5c2d8;
+}
+
+html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.sticky-label {
+  background-color: #a3b4cf;
+}
+
+html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.empty {
+  background-color: #adb9cc;
+}
+
+html:not(.theme-light) .toutinfo-layout .analyse-grid th.col-highlight,
+html:not(.theme-light) .toutinfo-layout .analyse-grid td.col-highlight {
+  background-color: #b5c2d8;
+}
+
+html:not(.theme-light) .toutinfo-layout .analyse-grid thead th.col-highlight {
+  background-color: #a3b4cf;
+}
+
+html:not(.theme-light) .toutinfo-layout .analyse-grid tr.row-highlight td.col-highlight {
+  background-color: #92a5c4 !important;
+}
+
 .toutinfo-layout .toutinfo-no-data {
   text-align: center;
   color: var(--error, #c0392b);

@@ -803,6 +803,63 @@
     });
   }
 
+  function initToutInfoAnalyseGrid() {
+    var grid = container.querySelector('.toutinfo-layout .analyse-grid');
+    if (!grid) return;
+
+    var activeRow = null;
+    var activeColIndex = null;
+
+    function clearRowHighlight() {
+      if (activeRow) {
+        activeRow.classList.remove('row-highlight');
+        activeRow = null;
+      }
+    }
+
+    function clearColHighlight() {
+      grid.querySelectorAll('.col-highlight').forEach(function (el) {
+        el.classList.remove('col-highlight');
+      });
+      activeColIndex = null;
+    }
+
+    grid.querySelectorAll('tbody td.sticky-label').forEach(function (label) {
+      label.classList.add('analyse-grid-axis');
+      label.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var tr = label.closest('tr');
+        if (!tr) return;
+        if (activeRow === tr) {
+          clearRowHighlight();
+        } else {
+          clearRowHighlight();
+          tr.classList.add('row-highlight');
+          activeRow = tr;
+        }
+      });
+    });
+
+    grid.querySelectorAll('thead th').forEach(function (th, colIndex) {
+      if (colIndex === 0) return;
+      th.classList.add('analyse-grid-axis');
+      th.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        if (activeColIndex === colIndex) {
+          clearColHighlight();
+        } else {
+          clearColHighlight();
+          activeColIndex = colIndex;
+          th.classList.add('col-highlight');
+          grid.querySelectorAll('tbody tr').forEach(function (tr) {
+            var cell = tr.querySelectorAll('td')[colIndex];
+            if (cell) cell.classList.add('col-highlight');
+          });
+        }
+      });
+    });
+  }
+
   function bindToutInfoLimitSelect(select, page) {
     if (!select) return;
     toutInfoLimit = parseInt(select.value, 10) || 50;
@@ -811,6 +868,7 @@
       toutInfoLimit = parseInt(select.value, 10) || 50;
       loadPage(page, { preserveAltView: true });
     });
+    initToutInfoAnalyseGrid();
   }
 
   var vieInfoGridAllowed = [50, 100, 200];
