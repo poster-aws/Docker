@@ -202,6 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("siiiiii", $date, $n1, $n2, $n3, $n4, $n5, $gn);
             $stmt->execute();
             $stmt->close();
+            $vieConn->query('CALL fill_Vie_info()');
             $vieMsg = ['class' => 'success', 'text' => '✅ Vie: данные добавлены.'];
           }
         }
