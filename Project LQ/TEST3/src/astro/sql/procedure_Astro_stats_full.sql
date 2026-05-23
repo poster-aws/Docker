@@ -7,13 +7,13 @@
 -- Установка:
 --   выполнить этот файл целиком
 -- Полная пересборка:
---   CALL Astro_stats_full();
+--   CALL fill_Astro_stats_full();
 
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS Astro_stats_full$$
+DROP PROCEDURE IF EXISTS fill_Astro_stats_full$$
 
-CREATE PROCEDURE Astro_stats_full()
+CREATE PROCEDURE fill_Astro_stats_full()
 BEGIN
 
 DROP TABLE IF EXISTS Astro_stats;

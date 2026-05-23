@@ -5,7 +5,7 @@
 -- Установка:
 --   выполнить этот файл целиком (индекс создастся только если его ещё нет)
 -- Запуск после нового тиража:
---   CALL Astro_stats();
+--   CALL fill_Astro_stats();
 
 -- Индекс для точечного поиска по комбинации в Astro_stats
 SET @idx_exists = (
@@ -28,9 +28,9 @@ DEALLOCATE PREPARE stmt;
 
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS Astro_stats$$
+DROP PROCEDURE IF EXISTS fill_Astro_stats$$
 
-CREATE PROCEDURE Astro_stats()
+CREATE PROCEDURE fill_Astro_stats()
 BEGIN
 
 DECLARE v_astro_max DATE;
