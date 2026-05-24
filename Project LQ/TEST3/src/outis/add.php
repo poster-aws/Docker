@@ -207,6 +207,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $stmt->execute();
           $stmt->close();
           add_log('  → OK', 'ok');
+          add_log('Пересчёт Astro_stats…', 'info');
+          add_call_procedure($astroConn, 'fill_Astro_stats');
           add_log('Тираж сохранён', 'ok');
         }
       }
