@@ -100,6 +100,15 @@
   --theme-toutinfo-analyse-hl-label: #a3b4cf;
   --theme-toutinfo-analyse-hl-empty: #adb9cc;
   --theme-toutinfo-analyse-hl-cross: #92a5c4;
+  /* Scrollbars — page (.main) */
+  --theme-scrollbar-thumb: rgba(226, 232, 240, 0.82);
+  --theme-scrollbar-track: rgba(15, 23, 42, 0.42);
+  /* Scrollbars — panneaux stats (fond --table-shell-bg sombre) */
+  --theme-scrollbar-thumb-panel: rgba(226, 232, 240, 0.78);
+  --theme-scrollbar-track-panel: rgba(15, 23, 42, 0.5);
+  /* Scrollbars — grilles digit (fond --info-grid-wrap-bg clair) */
+  --theme-scrollbar-thumb-grid: rgba(51, 65, 85, 0.9);
+  --theme-scrollbar-track-grid: rgba(148, 163, 184, 0.38);
 }
 
 html.theme-light {
@@ -183,6 +192,12 @@ html.theme-light {
   --theme-toutinfo-analyse-hl-label: rgba(37, 99, 235, 0.22);
   --theme-toutinfo-analyse-hl-empty: rgba(37, 99, 235, 0.08);
   --theme-toutinfo-analyse-hl-cross: rgba(37, 99, 235, 0.26);
+  --theme-scrollbar-thumb: rgba(71, 85, 105, 0.72);
+  --theme-scrollbar-track: rgba(241, 245, 249, 0.85);
+  --theme-scrollbar-thumb-panel: rgba(100, 116, 139, 0.55);
+  --theme-scrollbar-track-panel: transparent;
+  --theme-scrollbar-thumb-grid: rgba(71, 85, 105, 0.68);
+  --theme-scrollbar-track-grid: rgba(226, 232, 240, 0.55);
 }
 
 /* Thème sombre — Ardoise (défaut) : autres jetons + alias page/en-tête */
@@ -356,23 +371,78 @@ html.theme-light {
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Прокрутка : прозрачный фон дорожки (главная .main, Info, любые overflow:auto) */
+/* Прокрутка — page / zones génériques */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+  scrollbar-color: var(--theme-scrollbar-thumb) var(--theme-scrollbar-track);
 }
 
-html.theme-light * {
-  scrollbar-color: rgba(100, 116, 139, 0.5) transparent;
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--theme-scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 *::-webkit-scrollbar-corner {
-  background: transparent;
+  background: var(--theme-scrollbar-track);
 }
 
 *::-webkit-scrollbar-track,
 *::-webkit-scrollbar-track-piece {
-  background: transparent;
+  background: var(--theme-scrollbar-track);
+}
+
+/* Scrollbars — grilles digit (.table-wrapper) */
+.table-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-scrollbar-thumb-panel) var(--theme-scrollbar-track-panel);
+}
+
+.table-wrapper:has(.digit-grid) {
+  scrollbar-color: var(--theme-scrollbar-thumb-grid) var(--theme-scrollbar-track-grid);
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--theme-scrollbar-thumb-panel);
+}
+
+.table-wrapper:has(.digit-grid)::-webkit-scrollbar-thumb {
+  background-color: var(--theme-scrollbar-thumb-grid);
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--theme-scrollbar-track-panel);
+}
+
+.table-wrapper:has(.digit-grid)::-webkit-scrollbar-track {
+  background: var(--theme-scrollbar-track-grid);
+}
+
+/* Panneaux stats : barres masquées (les deux thèmes) */
+.table-container,
+.combo-table-container,
+.number-stats-table {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.table-container::-webkit-scrollbar,
+.combo-table-container::-webkit-scrollbar,
+.number-stats-table::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 html {
@@ -898,21 +968,6 @@ input:checked + .slider::before { transform: translateX(18px); }
 }
 
 .table-container,
-.combo-table-container,
-.number-stats-table {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.table-container::-webkit-scrollbar,
-.combo-table-container::-webkit-scrollbar,
-.number-stats-table::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-}
-
-.table-container,
 .combo-table-container {
   flex: 0 0 auto;
 }
@@ -1133,18 +1188,6 @@ button.circle.locked {
   width: 100% !important;
   border-radius: var(--radius-sm, 8px);
   clip-path: inset(0 round var(--radius-sm, 8px));
-}
-
-.table-wrapper::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.table-wrapper {
-  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
 }
 
 .tables-wrapper {
