@@ -96,6 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         add_call_procedure($conn, $proc);
       }
 
+      add_log('Пересчёт Q_info…', 'info');
+      add_call_procedure($conn, 'fill_Q_info');
+
       add_log('Тираж сохранён', 'ok');
     }
   }

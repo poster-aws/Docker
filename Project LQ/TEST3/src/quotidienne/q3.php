@@ -2,11 +2,7 @@
 require_once "db.php";
 require_once __DIR__ . "/../i18n.php";
 
-$countResult = $conn->query("SELECT COUNT(*) as total FROM Q3");
-$q3count = 0;
-if ($countResult && $row = $countResult->fetch_assoc()) {
-    $q3count = (int)$row['total'];
-}
+$q3count = quotidienne_q_info_count($conn, 'Q3');
 
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $table     = $isNorder ? 'Q3_stats_norder' : 'Q3_stats_order';

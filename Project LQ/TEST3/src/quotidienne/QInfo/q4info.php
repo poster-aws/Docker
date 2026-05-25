@@ -8,11 +8,7 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
-$countResult = $conn->query("SELECT COUNT(*) as total FROM Q4");
-$q4count = 0;
-if ($countResult && $row = $countResult->fetch_assoc()) {
-    $q4count = (int)$row['total'];
-}
+$q4count = quotidienne_q_info_count($conn, 'Q4');
 
 function isUniqueCombo($n1, $n2, $n3, $n4) {
     return count(array_unique([$n1, $n2, $n3, $n4])) === 4;

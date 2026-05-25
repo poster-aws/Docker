@@ -6,11 +6,7 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
-$countResult = $conn->query("SELECT COUNT(*) as total FROM Q3");
-$q3count = 0;
-if ($countResult && $row = $countResult->fetch_assoc()) {
-    $q3count = (int)$row['total'];
-}
+$q3count = quotidienne_q_info_count($conn, 'Q3');
 
 $allowedLimits = [50, 100, 200, 500];
 $limit = isset($_GET['limit']) && in_array((int)$_GET['limit'], $allowedLimits, true) ? (int)$_GET['limit'] : 50;

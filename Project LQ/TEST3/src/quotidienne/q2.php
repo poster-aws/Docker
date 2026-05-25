@@ -6,12 +6,7 @@ header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
 
-$countQuery = "SELECT COUNT(*) as total FROM Q2";
-$countResult = $conn->query($countQuery);
-$q2count = 0;
-if ($countResult && $row = $countResult->fetch_assoc()) {
-    $q2count = (int)$row['total'];
-}
+$q2count = quotidienne_q_info_count($conn, 'Q2');
 
 $isNorder = isset($_GET['norder']) && $_GET['norder'] === '1';
 $tableMain  = $isNorder ? 'Q2_stats_norder' : 'Q2_stats_order';

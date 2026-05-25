@@ -19,12 +19,7 @@ $gridLimit = isset($_GET['grid_limit']) && in_array((int)$_GET['grid_limit'], $a
     ? (int)$_GET['grid_limit']
     : 50;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-$conn->set_charset("utf8");
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$q2count = quotidienne_q_info_count($conn, 'Q2');
 
 $sql = "SELECT n1, n2, days FROM $table ORDER BY Tirage DESC";
 if ($limit > 0) {
@@ -64,12 +59,6 @@ foreach ($tirages as $t) {
     foreach ($t['nums'] as $num) {
         $digitSums[$num]++;
     }
-}
-
-$q2count = 0;
-$countResult = $conn->query("SELECT COUNT(*) as total FROM Q2");
-if ($countResult && $row = $countResult->fetch_assoc()) {
-    $q2count = (int)$row['total'];
 }
 
 $conn->close();
