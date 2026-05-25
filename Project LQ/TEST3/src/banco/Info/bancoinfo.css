@@ -85,12 +85,14 @@
   margin: 0;
   padding: var(--banco-info-block-pad);
   box-sizing: border-box;
-  background: var(--info-grid-wrap-bg, rgba(255, 255, 255, 0.08));
+  background: var(--table-shell-bg, var(--bg-card, #fff));
+  border: 1px solid var(--table-shell-border, var(--border, #e2e8f0));
   border-left: 4px solid var(--accent, #007bff);
-  border-radius: var(--radius-sm, 6px);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
   font-size: 0.95rem;
   text-align: center;
-  color: var(--banco-info-ink);
+  color: var(--table-text, var(--text, #1e293b));
 }
 
 .banco-layout--info .banco-info-block--grid {
@@ -100,18 +102,33 @@
   gap: var(--banco-info-block-gap);
 }
 
+/* Stats comb */
 .banco-layout--info .banco-info-block--stats {
   border-left-color: #ff8c00;
   text-align: left;
-}
-
-.banco-layout--info .banco-info-block--stats {
-  font-size: 0.8rem;
+  font-size: 0.95em;
   line-height: 1.35;
+  padding: 7px 8px;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .banco-layout--info .banco-info-block--stats p {
-  margin: 0.3rem 0;
+  margin: 0.15rem 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.banco-layout--info .banco-info-block--stats p:first-child {
+  margin-top: 0;
+}
+
+.banco-layout--info .banco-info-block--stats p:last-child {
+  margin-bottom: 0;
 }
 
 .banco-layout--info .banco-numbers-grid {
@@ -136,7 +153,7 @@
   border-radius: 5px;
   border: 2px solid var(--info-grid-cell-border, #7eb0ea);
   background: transparent;
-  color: var(--banco-info-ink);
+  color: var(--table-text, var(--text, #1e293b));
   font-weight: bold;
   font-size: 12px;
   font-family: var(--font);
