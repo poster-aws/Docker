@@ -18,6 +18,10 @@
   let astroView = 'mois';
   /** Fenêtre tirages (grilles digit) sur la page Info Astro */
   let astroInfoGridLimit = 100;
+  /** Banco Info : combinaison (c2|c3|c4), périmètre, filtre numéros */
+  let bancoInfoCombo = 'c2';
+  let bancoInfoScope = 'dernier';
+  let bancoInfoSel = '';
 
   function clampVieGnTirageCount(v) {
     const n = parseInt(v, 10) || 50;
@@ -556,6 +560,12 @@
     } else if (page === 'astro/Info/astroinfo.php') {
       params.set('grid_limit', String(astroInfoGridLimit || 100));
       params.set('astro_view', toggleSwitch && toggleSwitch.checked ? 'jour' : 'mois');
+    } else if (page === 'banco/Info/bancoinfo.php') {
+      params.set('combo', bancoInfoCombo || 'c2');
+      params.set('scope', bancoInfoScope || 'dernier');
+      if (bancoInfoSel) {
+        params.set('sel', bancoInfoSel);
+      }
     }
 
     var query = params.toString();
@@ -625,6 +635,8 @@
           bindAstroMainPage(page);
         } else if (page === 'astro/Info/astroinfo.php') {
           bindAstroInfoPage(page);
+        } else if (page === 'banco/Info/bancoinfo.php') {
+          initBancoInfoPage(page);
         }
 
         var meta = container.querySelector('[id$="-meta"]');
@@ -984,6 +996,147 @@
         loadPage(page, { preserveAltView: true });
       });
     }
+  }
+
+  function reloadBancoInfoPage(page, overrides) {
+    overrides = overrides || {};
+    if (overrides.combo) bancoInfoCombo = overrides.combo;
+    if (overrides.scope) bancoInfoScope = overrides.scope;
+    if (Object.prototype.hasOwnProperty.call(overrides, 'sel')) {
+      bancoInfoSel = overrides.sel || '';
+    }
+    loadPage(page, { preserveAltView: true });
+  }
+
+  function initBancoInfoPage(page) {
+    var boot = container.querySelector('#bancoinfo-bootstrap');
+    if (boot) {
+      var comboAttr = boot.getAttribute('data-combo');
+      var scopeAttr = boot.getAttribute('data-scope');
+      if (comboAttr === 'c2' || comboAttr === 'c3' || comboAttr === 'c4') {
+        bancoInfoCombo = comboAttr;
+      }
+      if (scopeAttr === 'dernier' || scopeAttr === 'tous') {
+        bancoInfoScope = scopeAttr;
+      }
+      bancoInfoSel = boot.getAttribute('data-sel') || '';
+    }
+
+    var maxSel = boot ? parseInt(boot.getAttribute('data-max-sel'), 10) || 2 : 2;
+    var serverFilter = boot && boot.getAttribute('data-server-filter') === '1';
+    var scope = bancoInfoScope;
+
+    var comboSel = container.querySelector('#bancoInfoCombo');
+    var scopeSel = container.querySelector('#bancoInfoScope');
+    if (comboSel) {
+      comboSel.addEventListener('change', function () {
+        bancoInfoCombo = comboSel.value;
+        bancoInfoSel = '';
+        reloadBancoInfoPage(page, { combo: bancoInfoCombo, scope: scopeSel ? scopeSel.value : bancoInfoScope, sel: '' });
+      });
+    }
+    if (scopeSel) {
+      scopeSel.addEventListener('change', function () {
+        bancoInfoScope = scopeSel.value;
+        bancoInfoSel = '';
+        reloadBancoInfoPage(page, { scope: bancoInfoScope, sel: '' });
+      });
+    }
+
+    var squares = Array.from(container.querySelectorAll('.banco-filter-num'));
+    var rows = Array.from(container.querySelectorAll('.banco-info-table tbody tr'));
+    var executeBtn = container.querySelector('#bancoInfoExecute');
+    var resetBtn = container.querySelector('#bancoInfoReset');
+    var filterMsg = container.querySelector('#bancoInfoFilterMessage');
+
+    var selectedNums = [];
+    if (bancoInfoSel) {
+      bancoInfoSel.split(',').forEach(function (part) {
+        var n = parseInt(part, 10);
+        if (!isNaN(n) && n >= 1 && n <= 70) selectedNums.push(n);
+      });
+    }
+
+    function updateSquaresVisual() {
+      squares.forEach(function (span) {
+        var num = parseInt(span.dataset.num, 10);
+        span.classList.toggle('selected', selectedNums.indexOf(num) !== -1);
+      });
+    }
+
+    function applyClientFilter() {
+      if (selectedNums.length === 0) {
+        rows.forEach(function (row) { row.style.display = ''; });
+        if (filterMsg && scope === 'tous' && serverFilter) {
+          filterMsg.hidden = rows.length > 0;
+        }
+        return;
+      }
+      if (filterMsg) filterMsg.hidden = true;
+      rows.forEach(function (row) {
+        var nums = Array.from(row.querySelectorAll('.circle')).map(function (s) {
+          return parseInt(s.textContent.trim(), 10);
+        });
+        var show = true;
+        for (var i = 0; i < selectedNums.length; i++) {
+          if (nums.indexOf(selectedNums[i]) === -1) {
+            show = false;
+            break;
+          }
+        }
+        row.style.display = show ? '' : 'none';
+      });
+    }
+
+    function onExecuteClick() {
+      if (scope === 'tous' && serverFilter) {
+        if (selectedNums.length === 0) {
+          reloadBancoInfoPage(page, { scope: 'tous', sel: '' });
+          return;
+        }
+        bancoInfoSel = selectedNums.join(',');
+        reloadBancoInfoPage(page, { scope: 'tous', sel: bancoInfoSel });
+      } else {
+        applyClientFilter();
+      }
+    }
+
+    function onResetClick() {
+      selectedNums = [];
+      updateSquaresVisual();
+      if (scope === 'tous' && serverFilter) {
+        reloadBancoInfoPage(page, { scope: 'tous', sel: '' });
+      } else {
+        rows.forEach(function (row) { row.style.display = ''; });
+        if (filterMsg) filterMsg.hidden = true;
+      }
+    }
+
+    squares.forEach(function (span) {
+      span.addEventListener('click', function () {
+        var num = parseInt(span.dataset.num, 10);
+        var idx = selectedNums.indexOf(num);
+        if (idx !== -1) {
+          selectedNums.splice(idx, 1);
+        } else {
+          if (selectedNums.length >= maxSel) {
+            selectedNums.shift();
+          }
+          selectedNums.push(num);
+        }
+        updateSquaresVisual();
+      });
+      span.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          span.click();
+        }
+      });
+    });
+
+    if (executeBtn) executeBtn.addEventListener('click', onExecuteClick);
+    if (resetBtn) resetBtn.addEventListener('click', onResetClick);
+    updateSquaresVisual();
   }
 
   function initQ2InfoPage(page) {
