@@ -12,12 +12,15 @@
 
 .banco-layout--info {
   /* 10×7 : taille cellule + écart identique H/V */
-  --banco-info-cell: 23px;
+  --banco-info-cell: 26px;
   --banco-info-gap: 4px;
   --banco-info-grid-w: calc(10 * var(--banco-info-cell) + 9 * var(--banco-info-gap));
   --banco-info-block-pad: 10px;
   --banco-info-panel-w: calc(var(--banco-info-grid-w) + 2 * var(--banco-info-block-pad));
   --banco-info-block-gap: 10px;
+  /* Texte : noir comme en thème clair (lisible sur fonds Info clairs) */
+  --banco-info-ink: #000;
+  --banco-info-muted: #444;
   /* hauteur table : base 80 % + 10 % ≈ 88 % de la zone utile */
   --banco-info-table-max-h: calc((100vh - var(--header-h, 56px) - 2rem) * 0.88);
 
@@ -58,7 +61,13 @@
   margin: 0;
   padding: var(--banco-info-block-pad);
   gap: var(--banco-info-block-gap);
+  color: var(--banco-info-ink);
   box-sizing: border-box;
+}
+
+.banco-layout--info #infoBlock.banco-info-schedule.info-list .info-text,
+.banco-layout--info #infoBlock.banco-info-schedule.info-list .info-sign {
+  color: var(--banco-info-ink);
 }
 
 .banco-layout--info .banco-info-left {
@@ -89,7 +98,7 @@
   border-radius: var(--radius-sm, 6px);
   font-size: 0.95rem;
   text-align: center;
-  color: var(--table-text, var(--text));
+  color: var(--banco-info-ink);
 }
 
 .banco-layout--info .banco-info-block--grid {
@@ -135,7 +144,7 @@
   border-radius: 5px;
   border: 2px solid var(--info-grid-cell-border, #7eb0ea);
   background: transparent;
-  color: var(--table-text, var(--text));
+  color: var(--banco-info-ink);
   font-weight: bold;
   font-size: 12px;
   font-family: var(--font);
@@ -146,7 +155,7 @@
 }
 
 .banco-layout--info .banco-filter-num.in-last {
-  color: #22aa22;
+  color: #0d8f0d;
 }
 
 .banco-layout--info .banco-filter-num.selected {
@@ -155,7 +164,7 @@
 }
 
 .banco-layout--info .banco-filter-num.in-last.selected {
-  color: #22aa22;
+  color: #0d8f0d;
 }
 
 .banco-layout--info .banco-info-actions {
@@ -171,7 +180,7 @@
   border-radius: 6px;
   border: 1px solid var(--border, #888);
   background: var(--btn-bg, rgba(255, 255, 255, 0.12));
-  color: var(--text);
+  color: var(--banco-info-ink);
   cursor: pointer;
   font-family: var(--font);
 }
@@ -182,22 +191,26 @@
 
 .banco-layout--info .banco-info-menu {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: var(--banco-info-block-gap);
   margin: 0;
   width: 100%;
 }
 
 .banco-layout--info .banco-info-menu select {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
   font-size: 12px;
   padding: 5px 8px;
   box-sizing: border-box;
   border-radius: 6px;
   border: 1px solid var(--border, #ccc);
   background: var(--input-bg, rgba(255, 255, 255, 0.1));
-  color: var(--text);
+  color: var(--banco-info-ink);
   cursor: pointer;
   font-family: var(--font);
 }
@@ -221,9 +234,9 @@
 }
 
 .banco-layout--info .banco-filter-message {
-  padding: 1rem;
+  padding: 5px;
   text-align: center;
-  color: var(--muted, #94a3b8);
+  color: var(--banco-info-muted);
   font-style: italic;
 }
 
@@ -233,7 +246,7 @@
   border-collapse: collapse;
   font-size: 14px;
   font-family: var(--font);
-  color: var(--table-text, var(--text));
+  color: var(--banco-info-ink);
 }
 
 .banco-layout--info .interactive-table.banco-info-table thead th {
@@ -285,6 +298,21 @@
   border-radius: 6px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
   margin: 0 2px;
+}
+
+/* Thème sombre : fonds clairs des blocs Info + texte noir (comme thème clair) */
+html:not(.theme-light) .banco-layout--info .banco-info-actions button,
+html:not(.theme-light) .banco-layout--info .banco-info-menu select {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--banco-info-ink);
+  border-color: #999;
+}
+
+html:not(.theme-light) .banco-layout--info #infoBlock.banco-info-schedule.info-list,
+html:not(.theme-light) .banco-layout--info #infoBlock.banco-info-schedule.info-list .info-row {
+  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
+  border-color: var(--info-grid-wrap-border, #ccc);
+  color: var(--banco-info-ink);
 }
 
 @media (max-width: 899px) {
