@@ -54,20 +54,12 @@
   box-sizing: border-box;
 }
 
-/* #infoBlock : margin 30px dans style.css — annuler ici (spécificité id) */
-.banco-layout--info #infoBlock.banco-info-schedule.info-list {
+/* #infoBlock : styles visuels = style.css (comme Q2, Vie, Tout…) ; ici layout seulement */
+.banco-layout--info .banco-info-center > #infoBlock.info-list {
   width: 100%;
   max-width: 100%;
   margin: 0;
-  padding: var(--banco-info-block-pad);
-  gap: var(--banco-info-block-gap);
-  color: var(--banco-info-ink);
   box-sizing: border-box;
-}
-
-.banco-layout--info #infoBlock.banco-info-schedule.info-list .info-text,
-.banco-layout--info #infoBlock.banco-info-schedule.info-list .info-sign {
-  color: var(--banco-info-ink);
 }
 
 .banco-layout--info .banco-info-left {
@@ -306,13 +298,6 @@ html:not(.theme-light) .banco-layout--info .banco-info-menu select {
   background: rgba(255, 255, 255, 0.92);
   color: var(--banco-info-ink);
   border-color: #999;
-}
-
-html:not(.theme-light) .banco-layout--info #infoBlock.banco-info-schedule.info-list,
-html:not(.theme-light) .banco-layout--info #infoBlock.banco-info-schedule.info-list .info-row {
-  background: var(--info-grid-wrap-bg, rgba(173, 216, 230, 0.85));
-  border-color: var(--info-grid-wrap-border, #ccc);
-  color: var(--banco-info-ink);
 }
 
 @media (max-width: 899px) {

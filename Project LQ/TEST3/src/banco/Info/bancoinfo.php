@@ -283,7 +283,7 @@ $line5Text = $statsMaxMax !== null
     </div>
   </div>
 
-  <div id="infoBlock" class="info-list banco-info-schedule">
+  <div id="infoBlock" class="info-list">
     <div class="info-row info-row--schedule">
       <span class="info-sign" aria-hidden="true">&#8505;</span>
       <div class="info-text"><?= htmlspecialchars(t('infoblock.schedule.daily'), ENT_QUOTES, 'UTF-8') ?></div>
