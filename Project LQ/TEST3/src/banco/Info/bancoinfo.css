@@ -6,47 +6,84 @@
 .main:has(.banco-layout--info) {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .banco-layout--info {
+  /* 10×7 : taille cellule + écart identique H/V */
+  --banco-info-cell: 23px;
+  --banco-info-gap: 4px;
+  --banco-info-grid-w: calc(10 * var(--banco-info-cell) + 9 * var(--banco-info-gap));
+  --banco-info-block-pad: 10px;
+  --banco-info-panel-w: calc(var(--banco-info-grid-w) + 2 * var(--banco-info-block-pad));
+  --banco-info-block-gap: 10px;
+  /* hauteur table : base 80 % + 10 % ≈ 88 % de la zone utile */
+  --banco-info-table-max-h: calc((100vh - var(--header-h, 56px) - 2rem) * 0.88);
+
   width: 100%;
   max-width: none;
-  padding: 0 8px 0.5rem;
+  padding: var(--banco-info-block-gap) var(--banco-info-block-gap) var(--banco-info-block-pad);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.banco-layout--info #infoBlock.info-list {
-  max-width: 400px;
-  margin: 0 0 10px;
+.banco-layout--info .banco-info-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--banco-info-block-gap);
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .banco-layout--info .banco-info-layout {
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
-  gap: 16px;
-  width: 100%;
+  justify-content: center;
+  gap: var(--banco-info-block-gap);
+  width: max-content;
   max-width: 100%;
   box-sizing: border-box;
 }
 
+/* #infoBlock : margin 30px dans style.css — annuler ici (spécificité id) */
+.banco-layout--info #infoBlock.banco-info-schedule.info-list {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: var(--banco-info-block-pad);
+  gap: var(--banco-info-block-gap);
+  box-sizing: border-box;
+}
+
 .banco-layout--info .banco-info-left {
-  flex: 0 0 400px;
-  max-width: 400px;
+  flex: 0 0 var(--banco-info-panel-w);
+  width: var(--banco-info-panel-w);
+  max-width: var(--banco-info-panel-w);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--banco-info-block-gap);
 }
 
 .banco-layout--info .banco-info-right {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
   min-width: 0;
+  align-self: flex-start;
 }
 
 .banco-layout--info .banco-info-block {
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--banco-info-panel-w);
   margin: 0;
-  padding: 10px;
+  padding: var(--banco-info-block-pad);
+  box-sizing: border-box;
   background: var(--info-grid-wrap-bg, rgba(255, 255, 255, 0.08));
   border-left: 4px solid var(--accent, #007bff);
   border-radius: var(--radius-sm, 6px);
@@ -57,6 +94,9 @@
 
 .banco-layout--info .banco-info-block--grid {
   border-left-color: #28a745;
+  display: flex;
+  flex-direction: column;
+  gap: var(--banco-info-block-gap);
 }
 
 .banco-layout--info .banco-info-block--stats {
@@ -64,34 +104,43 @@
   text-align: left;
 }
 
+.banco-layout--info .banco-info-block--stats {
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
 .banco-layout--info .banco-info-block--stats p {
-  margin: 0.35rem 0;
+  margin: 0.3rem 0;
 }
 
 .banco-layout--info .banco-numbers-grid {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 2px;
-  justify-items: center;
-  max-height: 240px;
-  overflow-y: auto;
-  padding: 2px 1px;
+  grid-template-columns: repeat(10, var(--banco-info-cell));
+  grid-template-rows: repeat(7, var(--banco-info-cell));
+  gap: var(--banco-info-gap);
+  width: var(--banco-info-grid-w);
+  margin: 0 auto;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .banco-layout--info .banco-filter-num {
-  display: inline-block;
-  width: 26px;
-  height: 26px;
-  line-height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--banco-info-cell);
+  height: var(--banco-info-cell);
+  box-sizing: border-box;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 5px;
   border: 2px solid var(--info-grid-cell-border, #7eb0ea);
   background: transparent;
   color: var(--table-text, var(--text));
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
   font-family: var(--font);
-  margin: 1px 2px;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -110,15 +159,15 @@
 }
 
 .banco-layout--info .banco-info-actions {
-  margin: 8px 0 6px;
+  margin: 0;
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: var(--banco-info-block-gap);
 }
 
 .banco-layout--info .banco-info-actions button {
-  font-size: 14px;
-  padding: 6px 14px;
+  font-size: 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--border, #888);
   background: var(--btn-bg, rgba(255, 255, 255, 0.12));
@@ -133,16 +182,18 @@
 
 .banco-layout--info .banco-info-menu {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--banco-info-block-gap);
+  margin: 0;
+  width: 100%;
 }
 
 .banco-layout--info .banco-info-menu select {
-  font-size: 14px;
-  padding: 6px 12px;
+  width: 100%;
+  font-size: 12px;
+  padding: 5px 8px;
+  box-sizing: border-box;
   border-radius: 6px;
   border: 1px solid var(--border, #ccc);
   background: var(--input-bg, rgba(255, 255, 255, 0.1));
@@ -152,8 +203,9 @@
 }
 
 .banco-layout--info .banco-info-table-wrap {
-  width: 100%;
-  max-height: calc(100vh - var(--header-h, 56px) - 2rem);
+  width: max-content;
+  max-width: 100%;
+  max-height: var(--banco-info-table-max-h);
   overflow: auto;
   border-radius: var(--radius-sm, 12px);
   border: 1px solid var(--info-grid-wrap-border, #a4a1a1);
@@ -176,9 +228,10 @@
 }
 
 .banco-layout--info .interactive-table.banco-info-table {
-  width: 100%;
+  width: auto;
+  table-layout: auto;
   border-collapse: collapse;
-  font-size: 15px;
+  font-size: 14px;
   font-family: var(--font);
   color: var(--table-text, var(--text));
 }
@@ -221,9 +274,10 @@
 
 .banco-layout--info .banco-info-table .circle {
   display: inline-block;
-  min-width: 26px;
-  height: 26px;
-  line-height: 26px;
+  min-width: 22px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 12px;
   background: var(--info-grid-cell-bg, #7eb0ea);
   color: var(--info-grid-cell-text, #000);
   font-weight: bold;
@@ -234,17 +288,32 @@
 }
 
 @media (max-width: 899px) {
-  .banco-layout--info .banco-info-layout {
-    flex-direction: column;
-  }
-
-  .banco-layout--info .banco-info-left {
-    flex: 1 1 auto;
-    max-width: 100%;
+  .banco-layout--info .banco-info-center {
     width: 100%;
   }
 
-  .banco-layout--info #infoBlock.info-list {
+  .banco-layout--info .banco-info-layout {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .banco-layout--info .banco-info-left {
+    flex: 0 0 auto;
+    width: var(--banco-info-panel-w);
+    max-width: 100%;
+    align-self: center;
+  }
+
+  .banco-layout--info .banco-info-right {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .banco-layout--info .banco-info-table-wrap {
+    width: 100%;
     max-width: 100%;
   }
 }
