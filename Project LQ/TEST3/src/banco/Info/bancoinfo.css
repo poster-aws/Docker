@@ -207,22 +207,21 @@
   font-family: var(--font);
 }
 
-.banco-layout--info .banco-info-table-wrap {
+/* Table combinaisons : .tables-wrapper / .table-container / .interactive-table / .circle → style.css */
+.banco-layout--info .banco-info-tables.tables-wrapper {
+  margin: 0;
+  gap: 0;
   width: max-content;
   max-width: 100%;
-  max-height: var(--banco-info-table-max-h);
-  overflow: auto;
-  border-radius: var(--radius-sm, 12px);
-  border: 1px solid var(--info-grid-wrap-border, #a4a1a1);
-  background: var(--info-grid-wrap-bg, rgba(0, 0, 0, 0.05));
-  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-  scrollbar-width: none;
 }
 
-.banco-layout--info .banco-info-table-wrap::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+.banco-layout--info .banco-info-tables .table-container {
+  max-height: var(--banco-info-table-max-h);
+}
+
+.banco-layout--info .banco-info-tables .table-container .interactive-table {
+  width: max-content;
+  min-width: 0;
 }
 
 .banco-layout--info .banco-filter-message {
@@ -232,67 +231,7 @@
   font-style: italic;
 }
 
-.banco-layout--info .interactive-table.banco-info-table {
-  width: auto;
-  table-layout: auto;
-  border-collapse: collapse;
-  font-size: 14px;
-  font-family: var(--font);
-  color: var(--banco-info-ink);
-}
-
-.banco-layout--info .interactive-table.banco-info-table thead th {
-  position: sticky;
-  top: 0;
-  padding: 4px 6px;
-  background: var(--table-head-bg, rgb(163, 216, 234));
-  color: var(--table-head-text, #111);
-  z-index: 2;
-  border-bottom: 2px solid var(--border, #888);
-  line-height: 1.15;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.banco-layout--info .interactive-table.banco-info-table td {
-  padding: 3px 6px;
-  border-bottom: 1px dashed var(--border, #777);
-  text-align: center;
-  white-space: nowrap;
-  font-size: 14px;
-  line-height: 1.2;
-}
-
-.banco-layout--info .interactive-table.banco-info-table tr:hover {
-  background: var(--table-row-hover, rgba(161, 161, 161, 0.25));
-}
-
-.banco-layout--info .interactive-table.banco-info-table th.sort-asc::after {
-  content: " ▲";
-  font-size: 0.75em;
-}
-
-.banco-layout--info .interactive-table.banco-info-table th.sort-desc::after {
-  content: " ▼";
-  font-size: 0.75em;
-}
-
-.banco-layout--info .banco-info-table .circle {
-  display: inline-block;
-  min-width: 22px;
-  height: 22px;
-  line-height: 22px;
-  font-size: 12px;
-  background: var(--info-grid-cell-bg, #7eb0ea);
-  color: var(--info-grid-cell-text, #000);
-  font-weight: bold;
-  text-align: center;
-  border-radius: 6px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
-  margin: 0 2px;
-}
-
-/* Thème sombre : fonds clairs des blocs Info + texte noir (comme thème clair) */
+/* Thème sombre : formulaire gauche (grille / boutons / menus) */
 html:not(.theme-light) .banco-layout--info .banco-info-actions button,
 html:not(.theme-light) .banco-layout--info .banco-info-menu select {
   background: rgba(255, 255, 255, 0.92);
@@ -325,7 +264,8 @@ html:not(.theme-light) .banco-layout--info .banco-info-menu select {
     justify-content: center;
   }
 
-  .banco-layout--info .banco-info-table-wrap {
+  .banco-layout--info .banco-info-tables.tables-wrapper,
+  .banco-layout--info .banco-info-tables .table-container {
     width: 100%;
     max-width: 100%;
   }

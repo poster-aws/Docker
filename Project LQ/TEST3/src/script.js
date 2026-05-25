@@ -1044,7 +1044,7 @@
     }
 
     var squares = Array.from(container.querySelectorAll('.banco-filter-num'));
-    var rows = Array.from(container.querySelectorAll('.banco-info-table tbody tr'));
+    var rows = Array.from(container.querySelectorAll('.banco-info-tables .interactive-table tbody tr'));
     var executeBtn = container.querySelector('#bancoInfoExecute');
     var resetBtn = container.querySelector('#bancoInfoReset');
     var filterMsg = container.querySelector('#bancoInfoFilterMessage');

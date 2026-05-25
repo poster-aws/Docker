@@ -244,13 +244,14 @@ $line5Text = $statsMaxMax !== null
     </div>
 
     <div class="banco-info-right">
-      <div class="banco-info-table-wrap">
+      <div class="tables-wrapper banco-info-tables">
+        <div class="table-container">
         <p id="bancoInfoFilterMessage" class="banco-filter-message"<?= $showFilterMessage ? '' : ' hidden' ?>>
           <?= htmlspecialchars(t('bancoinfo.filter.prompt'), ENT_QUOTES, 'UTF-8') ?>
         </p>
 
         <?php if ($combTableExists): ?>
-        <table class="interactive-table banco-info-table">
+        <table class="interactive-table">
           <thead>
             <tr>
               <th><?= htmlspecialchars(t('bancoinfo.col.tirage'), ENT_QUOTES, 'UTF-8') ?></th>
@@ -279,6 +280,7 @@ $line5Text = $statsMaxMax !== null
           </tbody>
         </table>
         <?php endif; ?>
+        </div>
       </div>
     </div>
   </div>
